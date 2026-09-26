@@ -2,9 +2,9 @@
   "playbook_id": "modernization-angular-v2",
   "playbook_name": "Modernize Angular V2 — AngularJS / old Angular → Angular 22",
   "status": "running",
-  "phase_id": "assess",
-  "phase_label": "Find the Angular side",
-  "phase_index": 7,
+  "phase_id": "scaffold-app",
+  "phase_label": "Lay the Angular workspace",
+  "phase_index": 8,
   "phase_total": 15,
   "updated_at": 1790440479
 }

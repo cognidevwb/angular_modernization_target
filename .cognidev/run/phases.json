@@ -1,5 +1,10 @@
 {
   "phases": {
+    "assess": {
+      "at": 1790440479,
+      "reused": false,
+      "status": "Ok"
+    },
     "classify": {
       "at": 1790440477,
       "reused": false,

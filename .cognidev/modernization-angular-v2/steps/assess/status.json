@@ -1,0 +1,18 @@
+{
+  "elapsedMs": 121,
+  "finishedAt": 1790440479,
+  "inputs": [],
+  "kind": "rust-binary",
+  "outputs": [
+    {
+      "exists": true,
+      "kind": null,
+      "name": "angular-assessment",
+      "optional": false,
+      "path": "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/.cognidev/understand/angular-assessment.json"
+    }
+  ],
+  "status": "Ok",
+  "step": "assess",
+  "summary": "Tool `tools/assess-angular/target/release/assess-angular` completed."
+}
