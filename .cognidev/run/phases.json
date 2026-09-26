@@ -1,5 +1,10 @@
 {
   "phases": {
+    "classify": {
+      "at": 1790440477,
+      "reused": false,
+      "status": "Ok"
+    },
     "disposition": {
       "at": 1790440471,
       "reused": false,
