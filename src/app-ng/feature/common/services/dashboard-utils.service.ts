@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { TimeService } from '../../api/services/time.service';
 import { UtilsService } from './utils.service';
 import { types } from '../constants/types';
-import { bindMethods } from '../../../legacy-injector';
+import { bindMethods } from '../../../bind-methods';
 
 /**
  * Ported from the AngularJS factory `dashboardUtils` (module `thingsboard.dashboardUtils`) in src/app/common/dashboard-utils.service.js:16.

@@ -1,0 +1,51 @@
+apiVersion: cognidev.ai/v1
+kind: QuestionnaireSection
+
+section:
+  id: quality
+  title: "Quality & scope safety"
+  intro: |
+    Optional guardrails — how strict, what to keep, and what not to touch. Sensible
+    2026 defaults if you skip this.
+  estimated_seconds: 30
+
+questions:
+
+  - id: residue_model
+    kind: enum
+    label: "Let a model propose edits for the port's residue lines?"
+    description: "The port rewrites every registration by syntax tree. What has no Angular equivalent is left as a TODO(port) line. A model can propose one edit per line, for review; nothing runs unless you say yes."
+    default: "no"
+    required: false
+    options:
+      - { value: "no",  label: "No — the residue stays for a person", hint: "Every TODO(port) line is listed in the validation report with its file and line." }
+      - { value: "yes", label: "Yes — one proposed edit per line", hint: "The develop step sends each generated file's residue lines, with context, and applies the model's minimal edits behind the build gate." }
+
+  - id: strictness
+    kind: enum
+    label: "TypeScript / template strictness?"
+    description: "Modern Angular projects are strict by default; loosening helps a big legacy app land in stages."
+    default: strict
+    required: true
+    options:
+      - { value: strict,    label: "Strict (recommended)", hint: "strict TS + strict templates — the Angular 22 default." }
+      - { value: phased,    label: "Phased — loosen, then tighten", hint: "Start permissive on a big legacy port; tighten file-by-file." }
+
+  - id: e2e
+    kind: enum
+    label: "End-to-end tests?"
+    description: "Playwright is the 2026 default; Protractor is dead (removed long ago)."
+    default: playwright
+    required: false
+    options:
+      - { value: playwright, label: "Playwright", hint: "Recommended — the modern e2e standard." }
+      - { value: cypress,    label: "Cypress", hint: "If your team already uses it." }
+      - { value: none,       label: "None for now", hint: "Defer e2e." }
+
+  - id: keep_untouched
+    kind: string
+    label: "Anything that must NOT change?"
+    description: "Optional. Files/paths/public APIs to leave byte-for-byte (vendored code, generated clients, a frozen module)."
+    default: ""
+    multiline: true
+    required: false

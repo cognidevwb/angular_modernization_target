@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { bindMethods } from '../../../legacy-injector';
+import { bindMethods } from '../../../bind-methods';
 
 /**
  * Ported from the AngularJS provider `tbRaf` (module `thingsboard.raf`) in src/app/common/raf.provider.js:16.

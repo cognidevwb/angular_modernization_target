@@ -1,0 +1,46 @@
+apiVersion: cognidev.ai/v1
+kind: QuestionnaireSection
+
+section:
+  id: intent
+  title: "Modernization goal"
+  intro: |
+    We detect your current Angular generation from package.json / angular.json /
+    bower.json automatically — these answers set the goal and how far to go. We
+    only ask the decisions a parser can't make for you.
+  estimated_seconds: 40
+
+questions:
+
+  - id: current_generation
+    kind: enum
+    label: "Roughly where are you starting? (we verify by detection)"
+    description: "A hint to scope the deck; the detector reads the exact version from source and overrides this."
+    default: unsure
+    required: true
+    options:
+      - { value: angularjs-1x,    label: "AngularJS 1.x (legacy, EOL)", hint: "ng-app, $scope, .module() — a different framework; rewrite or hybrid." }
+      - { value: angular-2-8,     label: "Angular 2–8", hint: "NgModule, pre-Ivy; big stepwise jump." }
+      - { value: angular-9-15,    label: "Angular 9–15", hint: "Ivy, NgModule-based; stepwise + idiom schematics." }
+      - { value: angular-16-21,   label: "Angular 16–21", hint: "standalone/signals partially there; finish the jump to 22." }
+      - { value: unsure,          label: "Not sure — detect it", hint: "Recommended — let the detector classify the app." }
+
+  - id: driver
+    kind: enum
+    label: "What's driving the modernization?"
+    description: "Shapes how aggressively we adopt new idioms vs just reaching a supported version."
+    default: reach-supported
+    required: true
+    options:
+      - { value: reach-supported,  label: "Get onto a supported version", hint: "Recommended first goal — security + support; idioms come after." }
+      - { value: full-modernize,   label: "Fully modernize (signals, zoneless)", hint: "Reach 22 AND adopt standalone, control flow, signals, zoneless." }
+      - { value: security-eol,     label: "Escape EOL / security risk", hint: "AngularJS or Angular ≤19 — unsupported; prioritize getting current." }
+      - { value: performance,      label: "Performance & bundle size", hint: "Zoneless + signals + OnPush + modern build for speed." }
+
+  - id: scope
+    kind: string
+    label: "Anything to leave alone, or migrate first?"
+    description: "Optional. Name modules/features to defer, or one to migrate first. Blank = strangler order (leaf, low-coupling first)."
+    default: ""
+    multiline: true
+    required: false

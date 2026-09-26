@@ -1,0 +1,60 @@
+apiVersion: cognidev.ai/v1
+kind: QuestionnaireSection
+
+section:
+  id: target-stack
+  title: "Target stack (2026)"
+  intro: |
+    The defaults are the mid-2026 reference — Angular 22 on TypeScript 6 / Node 22,
+    standalone + zoneless, built-in control flow, signals, and Vitest. Override
+    only where you have a reason; the plan pins exact versions either way.
+  estimated_seconds: 45
+
+questions:
+
+  - id: target_version
+    kind: enum
+    label: "Target Angular version?"
+    description: "22 is the current stable (June 2026). 21/20 are LTS if you must stay one behind."
+    default: "22"
+    required: true
+    options:
+      - { value: "22", label: "Angular 22 (latest)", hint: "Recommended — signal-first, zoneless default, signal forms." }
+      - { value: "21", label: "Angular 21 (LTS → May 2027)", hint: "One behind; LTS if a dependency lags 22." }
+      - { value: "20", label: "Angular 20 (LTS → Nov 2026)", hint: "Conservative LTS floor." }
+
+  - id: adopt_idioms
+    kind: multi-enum
+    label: "Which 2026 idioms to adopt?"
+    description: "Applied via migration schematics after you reach a supported version. Get-supported-first, then these."
+    default: [standalone, control-flow, signals]
+    required: true
+    options:
+      - { value: standalone,    label: "Standalone (drop NgModule)", hint: "Recommended — the foundation everything else builds on." }
+      - { value: control-flow,  label: "Built-in control flow (@if/@for)", hint: "Recommended — replaces *ngIf/*ngFor." }
+      - { value: signals,       label: "Signals (state, inputs, queries)", hint: "Recommended — signal() / input() / computed()." }
+      - { value: zoneless,      label: "Zoneless change detection", hint: "Remove zone.js; do this LAST, after standalone + OnPush." }
+      - { value: signal-forms,  label: "Signal Forms (new forms)", hint: "Stable in v22; for new/migrated forms." }
+      - { value: ssr-hydration, label: "SSR + hydration", hint: "@angular/ssr + incremental hydration." }
+
+  - id: test_runner
+    kind: enum
+    label: "Test runner?"
+    description: "Angular's new default is Vitest; Karma/Jasmine is removed from new projects."
+    default: vitest
+    required: true
+    options:
+      - { value: vitest,    label: "Vitest (default)", hint: "Recommended — @angular/build:unit-test; fast, modern." }
+      - { value: jest,      label: "Jest", hint: "If you have an existing Jest setup to preserve." }
+      - { value: keep-karma, label: "Keep Karma/Jasmine for now", hint: "Defer the test-runner migration; not for greenfield." }
+
+  - id: package_manager
+    kind: enum
+    label: "Package manager?"
+    description: "Used in the scaffold's lockfile + CI."
+    default: npm
+    required: true
+    options:
+      - { value: npm,  label: "npm", hint: "Default; ubiquitous." }
+      - { value: pnpm, label: "pnpm", hint: "Recommended for monorepos / strict deps." }
+      - { value: yarn, label: "Yarn", hint: "If your org standardizes on Yarn." }

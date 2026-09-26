@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { bindMethods } from '../../../legacy-injector';
+import { bindMethods } from '../../../bind-methods';
 
 /**
  * Ported from the AngularJS factory `tbMissingTranslationHandler` (module `thingsboard.locale`) in src/app/locale/translate-handler.js:16.

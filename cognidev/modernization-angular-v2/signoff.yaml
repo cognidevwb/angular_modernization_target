@@ -1,0 +1,173 @@
+# ─────────────────────────────────────────────────────────────
+#  Sign-off checklist — Modernize Angular (AngularJS / old Angular → 22)
+#
+#  Every claim this playbook makes, and the artifact on disk that settles it.
+#  Read by ../tools/signoff-report, which computes each verdict; nothing here
+#  is asserted. A claim whose evidence is absent reads NOT VERIFIED, with the
+#  path it looked for. It never passes by silence.
+#
+#  Each line points at the artifact that would be different if the claim were
+#  false. "The build is green" is evidenced by the validate phase reaching
+#  terminal Ok, because validate.sh exits non-zero when the build fails and
+#  exits 2 when it could not run at all.
+# ─────────────────────────────────────────────────────────────
+
+title: "Angular modernization — sign-off"
+subject: "The application was read, its generation detected, the next step chosen from the briefing, planned against the real files, edited batch by batch with a build after each, and built in production mode at the end."
+
+groups:
+
+  - name: "The application was read"
+    checks:
+      - id: si-present
+        claim: "The structural pass read this repository."
+        evidence: { kind: file_exists, path: .cognidev/understand/index.json }
+      - id: understand-ran
+        claim: "The Angular-family scan ran to completion in this run."
+        evidence: { kind: phase_ok, phase: understand }
+      - id: angular-shard
+        claim: "The framework shard (both halves, routes, closures, bridge) was written and is readable."
+        evidence: { kind: json_parses, path: .cognidev/understand/angular.json }
+      - id: documentation
+        claim: "What the pass read was written for a person to read: the documentation site, generated from the shards."
+        evidence: { kind: file_exists, path: docs/index.html }
+
+  - name: "The generation was detected, not assumed"
+    checks:
+      - id: detect-ran
+        claim: "The detector ran to completion."
+        evidence: { kind: phase_ok, phase: detect-version }
+      - id: generation-written
+        claim: "The detected band, version, strategy and cliffs were written down for every later step."
+        evidence: { kind: json_parses, path: .cognidev/angular/generation.json }
+      - id: band-named
+        claim: "The detection names a band."
+        evidence: { kind: log_contains, path: .cognidev/angular/generation.json, needle: "band" }
+
+  - name: "The briefing — what this modernization contains"
+    checks:
+      - id: briefing-ran
+        claim: "The briefing ran to completion; it refuses an application that is not Angular-family."
+        evidence: { kind: phase_ok, phase: briefing }
+      - id: assessment-written
+        claim: "The ownership ledger, module grades and route readiness were written."
+        evidence: { kind: json_parses, path: .cognidev/understand/angular-assessment.json }
+      - id: strangle-order-written
+        claim: "The strangle order (ranked routes, runtime-composed set aside, no-closure listed) was written."
+        evidence: { kind: json_parses, path: .cognidev/modernization-angular-v2/strangle.json }
+      - id: assessment-report
+        claim: "The briefing was written for a person to read and commit."
+        evidence: { kind: file_exists, path: ANGULAR-ASSESSMENT.md }
+
+  - name: "Build environment — proved before planning"
+    checks:
+      - id: env-gate-ran
+        claim: "A Node that can build the target was proved available before anything was planned."
+        evidence: { kind: phase_ok, phase: setup-environment }
+      - id: env-recorded
+        claim: "The build mode the whole run uses was written down, so develop and validate build the same way."
+        evidence: { kind: file_exists, path: .cognidev/env.json }
+
+  - name: "The plan — one step, held to the briefing"
+    checks:
+      - id: context-written
+        claim: "The planner's map was distilled from the shards, never the raw source."
+        evidence: { kind: file_exists, path: .cognidev/feature/context.md }
+      - id: request-written
+        claim: "This run's step was read off the briefing and written down."
+        evidence: { kind: file_exists, path: .cognidev/feature/request.md }
+      - id: plan-frozen
+        claim: "The plan the task list is built from was written and is readable."
+        evidence: { kind: json_parses, path: .cognidev/feature/plan.json }
+      - id: plan-modifies-something
+        claim: "The plan changes at least one existing file — a step that adds files and removes nothing is not progress."
+        evidence:
+          kind: json_count
+          path: .cognidev/feature/plan.json
+          pointer: /modify
+          min: 1
+        detail: "{count} file(s) modified"
+      - id: plan-checked
+        claim: "The plan was checked before it was materialized: a modify of a missing file dropped, a hand-over held to the briefing's files."
+        evidence: { kind: phase_ok, phase: plan-apply }
+      - id: tasks-written
+        claim: "The ordered per-file task list was written."
+        evidence: { kind: dir_nonempty, path: .cognidev/modernization-angular-v2/plan }
+      - id: plan-reviewed
+        claim: "A person saw the task list before any file was edited."
+        evidence: { kind: phase_ok, phase: plan-tasks }
+
+  - name: "The static port — one Angular file per legacy registration"
+    checks:
+      - id: port-ledger
+        claim: "Every AngularJS registration has its Angular file written or accounted for, and the ledger says which."
+        evidence: { kind: json_parses, path: .cognidev/modernization-angular-v2/port/units.json }
+      - id: port-ledger-report
+        claim: "The port ledger was written for a person to read."
+        evidence: { kind: file_exists, path: PORT-LEDGER.md }
+
+  - name: "The edits — batch by batch, a build after each"
+    checks:
+      - id: develop-ran
+        claim: "The develop loop ran to completion."
+        evidence: { kind: phase_ok, phase: develop }
+      - id: outcomes-written
+        claim: "Every task's outcome was recorded."
+        evidence: { kind: json_parses, path: .cognidev/modernization-angular-v2/plan/_outcomes.json }
+      - id: no-task-failed
+        claim: "No task ended failed."
+        evidence: { kind: log_absent, path: .cognidev/modernization-angular-v2/plan/_outcomes.json, needle: "\"failed\"" }
+      - id: no-task-needs-attention
+        claim: "No task was left for a person to finish."
+        evidence: { kind: log_absent, path: .cognidev/modernization-angular-v2/plan/_outcomes.json, needle: "\"attention\"" }
+      - id: migration-report
+        claim: "The tree and this run's diff were written for a person to read."
+        evidence: { kind: file_exists, path: docs/MIGRATION-REPORT.html }
+
+  - name: "Old unit, new unit — compared by structure"
+    checks:
+      - id: units-compared
+        claim: "Every AngularJS registration was held against the Angular file that replaces it: bindings, injections, members, template. UNIT-COMPARE.md lists each pair with what is missing."
+        evidence: { kind: json_parses, path: .cognidev/modernization-angular-v2/unit-compare.json }
+      - id: no-unit-lost-structure
+        claim: "No ported unit lost part of its original's structure: every binding has its input or output, every injected service its injected class, every member its class member, every template its templateUrl. A unit still carrying its original is counted as unported, not as a mismatch; a hand-written modern component answering to a legacy selector is reported in UNIT-COMPARE.md, not counted here."
+        evidence: { kind: json_equals, path: .cognidev/modernization-angular-v2/unit-compare.json, pointer: /counts/mismatched-generated, value: 0 }
+      - id: nothing-unported-in-a-flipped-batch
+        claim: "Nothing moved to the Angular Router before its generated files were ported and matched — the flip refuses NOT PORTED and NOT EQUIVALENT, so a move on record is a matched one."
+        evidence: { kind: log_absent, path: .cognidev/run/phases.json, needle: "NOT EQUIVALENT" }
+
+  - name: "The move — counted after, against the briefing"
+    checks:
+      - id: ledger-after-written
+        claim: "The application was read again after the flip and its ledger written."
+        evidence: { kind: json_parses, path: .cognidev/modernization-angular-v2/ledger-after.json }
+      - id: legacy-routes-not-increased
+        claim: "No legacy route appeared: the count after is at most the briefing's."
+        evidence:
+          kind: json_compare
+          path_a: .cognidev/understand/angular-assessment.json
+          pointer_a: /briefing/ledger/routes_legacy
+          path_b: .cognidev/modernization-angular-v2/ledger-after.json
+          pointer_b: /routes_legacy
+          relation: gte
+      - id: modern-routes-not-decreased
+        claim: "No modern route was lost: the count after is at least the briefing's."
+        evidence:
+          kind: json_compare
+          path_a: .cognidev/modernization-angular-v2/ledger-after.json
+          pointer_a: /routes_modern
+          path_b: .cognidev/understand/angular-assessment.json
+          pointer_b: /briefing/ledger/routes_modern
+          relation: gte
+      - id: request-fulfilled
+        claim: "The run did the one step its request named — the router wired, the fix-forward files done, the batch's routes moved, the runtime removed, or the major reached — as read back from the tree, not from the plan."
+        evidence: { kind: json_equals, path: .cognidev/modernization-angular-v2/request-result.json, pointer: /done, value: true }
+
+  - name: "Build proof — the result compiles in production mode"
+    checks:
+      - id: validate-ran
+        claim: "The production build, lint and audit pipeline reached terminal Ok. validate.sh exits 1 on a failed build and 2 when the build could not run, so terminal Ok is the proof."
+        evidence: { kind: phase_ok, phase: validate }
+      - id: routes-answer
+        claim: "Every route with a URL opened in a browser without a page or console error and rendered its outlet. Not verified when the app was not running for this run."
+        evidence: { kind: json_equals, path: .cognidev/modernization-angular-v2/route-check.json, pointer: /failed, value: 0 }

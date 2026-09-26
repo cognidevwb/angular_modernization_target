@@ -1,4 +1,4 @@
-import { Component, inject, input, model, output } from '@angular/core';
+import { Component, inject, input, model, output, effect } from '@angular/core';
 import { DestroyRef } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';

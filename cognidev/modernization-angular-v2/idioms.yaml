@@ -1,0 +1,696 @@
+# The AngularJS surface, idiom by idiom, as the port meets it.
+#
+# One entry per API the legacy code can use, grouped by the shape it takes in
+# the syntax tree. The scan (scan-idioms) matches every occurrence in the
+# legacy sources and templates against this list, so a repo's unknowns are
+# named before anything is written; the port (scaffold-units) treats each
+# entry by its class:
+#
+#   mechanical  the port rewrites it to the target, nothing left to read
+#   note        the port rewrites it and leaves a comment saying how
+#   decision    the port leaves a TODO(port) line; a person (or a model, on
+#               request, one line at a time) chooses the Angular shape
+#
+# Shapes:
+#   helper     angular.<name>                 module     angular.module(...).<name>(...)
+#   token      an injection token             member     <token>.<name> (a call or a property)
+#   scope      $scope.<name> / scope.<name>   ddo        a directive or component definition key
+#   binding    a scope/bindings kind          hook       a controller lifecycle hook
+#   require    a `require:` form              jqlite     <$element|angular.element(...)>.<name>
+#   ngmodel    a $-member of an ngModel/form controller
+#   provider   <xProvider>.<name> in config   event      a $-prefixed broadcast/emit/on name
+#   attribute  a template directive (ng-*)    filter     a built-in template filter
+#   expression a template expression form
+#
+# Sources: AngularJS 1.8 API reference (ng, ngRoute, ngAnimate, ngResource,
+# ngSanitize, ngMessages, ngCookies, ngTouch, ngAria), angular-ui-router 0.4
+# and 1.x. Third-party libraries (ui-bootstrap, angular-translate, toastr…)
+# are not here on purpose: the scan lists what a repo uses of them as unknown,
+# by name, so each gets a decision.
+version: 1
+idioms:
+  # ── angular.* helpers ──────────────────────────────────────────────────
+  - { id: helper.module,      shape: helper, match: angular.module,      class: mechanical, target: "the registration becomes the file" }
+  - { id: helper.copy,        shape: helper, match: angular.copy,        class: mechanical, target: "structuredClone(x)", rewrite: { call: "structuredClone" } }
+  - { id: helper.extend,      shape: helper, match: angular.extend,      class: mechanical, target: "Object.assign(...)", rewrite: { call: "Object.assign" } }
+  - { id: helper.merge,       shape: helper, match: angular.merge,       class: decision,   target: "a deep merge: write one, or lodash merge when present", residue: "angular.merge: a deep merge; write one or use a library" }
+  - { id: helper.equals,      shape: helper, match: angular.equals,      class: decision,   target: "a deep comparison: lodash isEqual when present", residue: "angular.equals: a deep comparison; write one or use a library" }
+  - { id: helper.forEach,     shape: helper, match: angular.forEach,     class: decision,   target: "for…of, or Object.entries()", residue: "angular.forEach: for…of, or Object.entries()" }
+  - { id: helper.isDefined,   shape: helper, match: angular.isDefined,   class: mechanical, target: "x !== undefined", rewrite: { predicate: ["(", " !== undefined)"] } }
+  - { id: helper.isUndefined, shape: helper, match: angular.isUndefined, class: mechanical, target: "x === undefined", rewrite: { predicate: ["(", " === undefined)"] } }
+  - { id: helper.isString,    shape: helper, match: angular.isString,    class: mechanical, target: "typeof x === 'string'", rewrite: { predicate: ["(typeof ", " === 'string')"] } }
+  - { id: helper.isNumber,    shape: helper, match: angular.isNumber,    class: mechanical, target: "typeof x === 'number'", rewrite: { predicate: ["(typeof ", " === 'number')"] } }
+  - { id: helper.isFunction,  shape: helper, match: angular.isFunction,  class: mechanical, target: "typeof x === 'function'", rewrite: { predicate: ["(typeof ", " === 'function')"] } }
+  - { id: helper.isObject,    shape: helper, match: angular.isObject,    class: decision, target: "x !== null && typeof x === 'object'" }
+  - { id: helper.isArray,     shape: helper, match: angular.isArray,     class: mechanical, target: "Array.isArray(x)", rewrite: { call: "Array.isArray" } }
+  - { id: helper.isDate,      shape: helper, match: angular.isDate,      class: mechanical, target: "x instanceof Date", rewrite: { predicate: ["(", " instanceof Date)"] } }
+  - { id: helper.isElement,   shape: helper, match: angular.isElement,   class: mechanical, target: "x instanceof Element", rewrite: { predicate: ["(", " instanceof Element)"] } }
+  - { id: helper.toJson,      shape: helper, match: angular.toJson,      class: mechanical, target: "JSON.stringify(x)", rewrite: { call: "JSON.stringify" } }
+  - { id: helper.fromJson,    shape: helper, match: angular.fromJson,    class: mechanical, target: "JSON.parse(x)", rewrite: { call: "JSON.parse" } }
+  - { id: helper.noop,        shape: helper, match: angular.noop,        class: decision, target: "() => {}" }
+  - { id: helper.identity,    shape: helper, match: angular.identity,    class: decision, target: "(x) => x" }
+  - { id: helper.bind,        shape: helper, match: angular.bind,        class: decision, target: "fn.bind(self, ...)" }
+  - { id: helper.lowercase,   shape: helper, match: angular.lowercase,   class: decision, target: "x.toLowerCase()", until: "1.6" }
+  - { id: helper.uppercase,   shape: helper, match: angular.uppercase,   class: decision, target: "x.toUpperCase()", until: "1.6" }
+  - { id: helper.element,     shape: helper, match: angular.element,     class: mechanical, target: "$(x) when jQuery is a dependency; else ElementRef.nativeElement", residue: "angular.element (jqLite): use ElementRef.nativeElement or a Renderer2" }
+  - { id: helper.bootstrap,   shape: helper, match: angular.bootstrap,   class: decision,   target: "bootstrapApplication / platformBrowser().bootstrapModule — the bootstrap step" }
+  - { id: helper.injector,    shape: helper, match: angular.injector,    class: decision,   target: "inject() / Injector.get" }
+  - { id: helper.version,     shape: helper, match: angular.version,     class: decision,   target: "VERSION from @angular/core" }
+  - { id: helper.errorHandlingConfig, shape: helper, match: angular.errorHandlingConfig, class: decision, target: "an ErrorHandler provider" }
+  - { id: helper.reloadWithDebugInfo, shape: helper, match: angular.reloadWithDebugInfo, class: decision, target: "none; drop" }
+  - { id: helper.mock,        shape: helper, match: angular.mock,        class: decision,   target: "TestBed" }
+  # ── module registration kinds ──────────────────────────────────────────
+  - { id: module.component,   shape: module, match: component,  class: mechanical, target: "@Component standalone", angular_min: "15", target_before: "@Component in an NgModule", since: "1.5" }
+  - { id: module.directive,   shape: module, match: directive,  class: mechanical, target: "@Component when it has a template, else @Directive", angular_min: "15", target_before: "@Component / @Directive in an NgModule" }
+  - { id: module.controller,  shape: module, match: controller, class: mechanical, target: "@Component (the template that names it)", angular_min: "15", target_before: "@Component in an NgModule" }
+  - { id: module.factory,     shape: module, match: factory,    class: mechanical, target: "@Injectable({ providedIn: 'root' }); a returned constructor becomes the class" }
+  - { id: module.service,     shape: module, match: service,    class: mechanical, target: "@Injectable({ providedIn: 'root' })" }
+  - { id: module.provider,    shape: module, match: provider,   class: decision,   target: "@Injectable + an InjectionToken for the configured part" }
+  - { id: module.filter,      shape: module, match: filter,     class: mechanical, target: "@Pipe" }
+  - { id: module.constant,    shape: module, match: constant,   class: mechanical, target: "an exported const" }
+  - { id: module.value,       shape: module, match: value,      class: mechanical, target: "an exported const, or an InjectionToken" }
+  - { id: module.config,      shape: module, match: config,     class: decision,   target: "providers / route config / APP_INITIALIZER — see provider.*" }
+  - { id: module.run,         shape: module, match: run,        class: decision,   target: "APP_INITIALIZER, or a root service constructor" }
+  - { id: module.decorator,   shape: module, match: decorator,  class: decision,   target: "a subclass provided in place of the class", since: "1.4" }
+  - { id: module.animation,   shape: module, match: animation,  class: decision,   target: "@angular/animations triggers" }
+  - { id: module.requires,    shape: module, match: requires,   class: note,       target: "imports on the standalone component / module" }
+  - { id: module.info,        shape: module, match: info,       class: mechanical, target: "none; drop" }
+  # ── injection tokens (ng) ──────────────────────────────────────────────
+  - { id: token.$scope,        shape: token, match: $scope,        class: note,       target: "component state: fields and signals on the class", rewrite: { note: "component state: fields and signals on this class" } }
+  - { id: token.$rootScope,    shape: token, match: $rootScope,    class: decision,   target: "a root-provided service, or a signal in one", rewrite: { note: "a shared service, or a signal in a root-provided service" } }
+  - { id: token.$element,      shape: token, match: $element,      class: mechanical, target: "inject(ElementRef)", residue: "$element (jqLite): this.element.nativeElement", rewrite: { inject: { prop: element, class: ElementRef, from: "@angular/core" } }, angular_min: "14" }
+  - { id: token.$attrs,        shape: token, match: $attrs,        class: decision,   target: "inputs; HostAttributeToken for static attributes", residue: "$attrs: an input() on the component", rewrite: { note: "input() on the component" } }
+  - { id: token.$transclude,   shape: token, match: $transclude,   class: decision,   target: "<ng-content>, or a TemplateRef input", residue: "$transclude: <ng-content>", rewrite: { note: "<ng-content>" } }
+  - { id: token.$http,         shape: token, match: $http,         class: mechanical, target: "inject(HttpClient)", residue: "$http: this.http returns an Observable; the response body is the value, not .data", rewrite: { inject: { prop: http, class: HttpClient, from: "@angular/common/http" } }, angular_min: "14" }
+  - { id: token.$httpBackend,  shape: token, match: $httpBackend,  class: decision,   target: "HttpTestingController (tests)" }
+  - { id: token.$httpParamSerializer, shape: token, match: $httpParamSerializer, class: decision, target: "HttpParams" }
+  - { id: token.$httpParamSerializerJQLike, shape: token, match: $httpParamSerializerJQLike, class: decision, target: "HttpParams, or qs" }
+  - { id: token.$q,            shape: token, match: $q,            class: note,       target: "Promise, or an Observable", rewrite: { note: "use Promise, or an Observable" } }
+  - { id: token.$timeout,      shape: token, match: $timeout,      class: mechanical, target: "setTimeout (a call), or an rxjs timer", rewrite: { note: "use setTimeout, or an rxjs timer" } }
+  - { id: token.$interval,     shape: token, match: $interval,     class: mechanical, target: "setInterval (a call), or an rxjs interval", rewrite: { note: "use setInterval, or an rxjs interval" } }
+  - { id: token.$window,       shape: token, match: $window,       class: note, target: "window", rewrite: { note: "use window directly, or inject(DOCUMENT).defaultView" } }
+  - { id: token.$document,     shape: token, match: $document,     class: mechanical, target: "inject(DOCUMENT)", rewrite: { inject: { prop: document, class: DOCUMENT, from: "@angular/common" } }, angular_min: "14" }
+  - { id: token.$location,     shape: token, match: $location,     class: note,       target: "inject(Router) / Location; the members are decisions", rewrite: { inject: { prop: router, class: Router, from: "@angular/router" } }, angular_min: "14" }
+  - { id: token.$anchorScroll, shape: token, match: $anchorScroll, class: decision,   target: "ViewportScroller.scrollToAnchor" }
+  - { id: token.$log,          shape: token, match: $log,          class: mechanical, target: "console", rewrite: { note: "console" } }
+  - { id: token.$filter,       shape: token, match: $filter,       class: decision,   target: "inject the pipe class and call transform()", residue: "$filter: inject the pipe class and call transform()", rewrite: { note: "inject the pipe class and call transform()" } }
+  - { id: token.$compile,      shape: token, match: $compile,      class: decision,   target: "not in Angular: compose with components, ViewContainerRef.createComponent", residue: "$compile: compose with components instead", rewrite: { note: "not in Angular: compose with components instead" } }
+  - { id: token.$parse,        shape: token, match: $parse,        class: decision,   target: "not in Angular: a function input, or a small evaluator", residue: "$parse: bind in the template", rewrite: { note: "not in Angular: bind in the template" } }
+  - { id: token.$interpolate,  shape: token, match: $interpolate,  class: decision,   target: "a template literal, or a pipe", residue: "$interpolate: bind in the template", rewrite: { note: "not in Angular: bind in the template" } }
+  - { id: token.$templateCache,   shape: token, match: $templateCache,   class: note,     target: "templateUrl on the component", residue: "$templateCache: templateUrl on the component", rewrite: { note: "templateUrl on the component" } }
+  - { id: token.$templateRequest, shape: token, match: $templateRequest, class: decision, target: "HttpClient.get(url, { responseType: 'text' })", since: "1.3" }
+  - { id: token.$cacheFactory, shape: token, match: $cacheFactory, class: decision,   target: "a Map in a root service" }
+  - { id: token.$sce,          shape: token, match: $sce,          class: mechanical, target: "inject(DomSanitizer)", residue: "$sce: DomSanitizer", rewrite: { inject: { prop: sanitizer, class: DomSanitizer, from: "@angular/platform-browser" } }, angular_min: "14" }
+  - { id: token.$sceDelegate,  shape: token, match: $sceDelegate,  class: decision,   target: "DomSanitizer" }
+  - { id: token.$controller,   shape: token, match: $controller,   class: decision,   target: "none; the controller is a component" }
+  - { id: token.$injector,     shape: token, match: $injector,     class: decision,   target: "inject(Injector)", residue: "$injector: inject() at the use site", rewrite: { note: "inject() at the use site" } }
+  - { id: token.$exceptionHandler, shape: token, match: $exceptionHandler, class: decision, target: "ErrorHandler" }
+  - { id: token.$animate,      shape: token, match: $animate,      class: decision,   target: "@angular/animations, or AnimationBuilder", rewrite: { note: "@angular/animations" } }
+  - { id: token.$animateCss,   shape: token, match: $animateCss,   class: decision,   target: "AnimationBuilder" }
+  - { id: token.$locale,       shape: token, match: $locale,       class: decision,   target: "LOCALE_ID and @angular/common formatters" }
+  - { id: token.$rootElement,  shape: token, match: $rootElement,  class: decision,   target: "ApplicationRef / DOCUMENT" }
+  - { id: token.$browser,      shape: token, match: $browser,      class: decision,   target: "private API; drop" }
+  - { id: token.$xhrFactory,   shape: token, match: $xhrFactory,   class: decision,   target: "HttpClient" }
+  - { id: token.$jsonpCallbacks, shape: token, match: $jsonpCallbacks, class: decision, target: "HttpClient.jsonp" }
+  - { id: token.$$rAF,         shape: token, match: $$rAF,         class: mechanical, target: "requestAnimationFrame" }
+  - { id: token.$delegate,     shape: token, match: $delegate,     class: decision,   target: "the decorated class, as a subclass provided in its place" }
+  # ngRoute / ui-router / other modules
+  - { id: token.$route,        shape: token, match: $route,        class: decision,   target: "Router / ActivatedRoute" }
+  - { id: token.$routeParams,  shape: token, match: $routeParams,  class: mechanical, target: "inject(ActivatedRoute); .x reads snapshot.params['x']", rewrite: { inject: { prop: route, class: ActivatedRoute, from: "@angular/router" } }, angular_min: "14" }
+  - { id: token.$state,        shape: token, match: $state,        class: note,       target: "inject(Router); the members are decisions", rewrite: { inject: { prop: router, class: Router, from: "@angular/router" } }, angular_min: "14", since: "ui-router" }
+  - { id: token.$stateParams,  shape: token, match: $stateParams,  class: mechanical, target: "inject(ActivatedRoute); .x reads snapshot.params['x']", residue: "$stateParams: this.route.snapshot.params", rewrite: { inject: { prop: route, class: ActivatedRoute, from: "@angular/router" } }, angular_min: "14" }
+  - { id: token.$transitions,  shape: token, match: $transitions,  class: decision,   target: "Router events, guards and resolvers", since: "1.0 (ui-router 1.x)" }
+  - { id: token.$transition$,  shape: token, match: $transition$,  class: decision,   target: "ActivatedRouteSnapshot in a guard or resolver" }
+  - { id: token.$uiRouter,     shape: token, match: $uiRouter,     class: decision,   target: "Router" }
+  - { id: token.$uiRouterGlobals, shape: token, match: $uiRouterGlobals, class: decision, target: "Router events / ActivatedRoute" }
+  - { id: token.$urlRouter,    shape: token, match: $urlRouter,    class: decision,   target: "Router" }
+  - { id: token.$urlService,   shape: token, match: $urlService,   class: decision,   target: "Router / Location" }
+  - { id: token.$stateRegistry, shape: token, match: $stateRegistry, class: decision, target: "Router.config / resetConfig" }
+  - { id: token.$view,         shape: token, match: $view,         class: decision,   target: "router-outlet" }
+  - { id: token.$trace,        shape: token, match: $trace,        class: decision,   target: "Router enableTracing" }
+  - { id: token.$resolve,      shape: token, match: $resolve,      class: decision,   target: "route resolvers and ActivatedRoute.data" }
+  - { id: token.$resource,     shape: token, match: $resource,     class: decision,   target: "HttpClient methods on a service" }
+  - { id: token.$sanitize,     shape: token, match: $sanitize,     class: decision,   target: "DomSanitizer.sanitize(SecurityContext.HTML, x)" }
+  - { id: token.$cookies,      shape: token, match: $cookies,      class: decision,   target: "document.cookie, or ngx-cookie-service", rewrite: { note: "document.cookie, or a cookie service" } }
+  - { id: token.$cookieStore,  shape: token, match: $cookieStore,  class: decision,   target: "document.cookie, or ngx-cookie-service" }
+  - { id: token.$swipe,        shape: token, match: $swipe,        class: decision,   target: "pointer events, or HammerJS" }
+  - { id: token.$aria,         shape: token, match: $aria,         class: decision,   target: "@angular/cdk/a11y" }
+  # providers, in config blocks
+  - { id: token.$provide,             shape: token, match: $provide,             class: decision, target: "providers: [...]" }
+  - { id: token.$httpProvider,        shape: token, match: $httpProvider,        class: decision, target: "provideHttpClient(withInterceptors([...]))" }
+  - { id: token.$locationProvider,    shape: token, match: $locationProvider,    class: decision, target: "provideRouter(...) with withHashLocation() or none" }
+  - { id: token.$compileProvider,     shape: token, match: $compileProvider,     class: decision, target: "none; drop, or DomSanitizer settings" }
+  - { id: token.$controllerProvider,  shape: token, match: $controllerProvider,  class: decision, target: "none; components are classes" }
+  - { id: token.$filterProvider,      shape: token, match: $filterProvider,      class: decision, target: "a @Pipe" }
+  - { id: token.$animateProvider,     shape: token, match: $animateProvider,     class: decision, target: "@angular/animations" }
+  - { id: token.$interpolateProvider, shape: token, match: $interpolateProvider, class: decision, target: "none; Angular templates use {{ }}" }
+  - { id: token.$logProvider,         shape: token, match: $logProvider,         class: decision, target: "isDevMode()" }
+  - { id: token.$parseProvider,       shape: token, match: $parseProvider,       class: decision, target: "none" }
+  - { id: token.$qProvider,           shape: token, match: $qProvider,           class: decision, target: "none; unhandled rejections are the platform's" }
+  - { id: token.$rootScopeProvider,   shape: token, match: $rootScopeProvider,   class: decision, target: "none" }
+  - { id: token.$sceProvider,         shape: token, match: $sceProvider,         class: decision, target: "none; sanitization is always on" }
+  - { id: token.$sceDelegateProvider, shape: token, match: $sceDelegateProvider, class: decision, target: "DomSanitizer bypass calls where trusted" }
+  - { id: token.$templateRequestProvider, shape: token, match: $templateRequestProvider, class: decision, target: "none" }
+  - { id: token.$anchorScrollProvider, shape: token, match: $anchorScrollProvider, class: decision, target: "provideRouter(withInMemoryScrolling())" }
+  - { id: token.$stateProvider,       shape: token, match: $stateProvider,       class: decision, target: "the Routes array (wire-router writes it)" }
+  - { id: token.$urlRouterProvider,   shape: token, match: $urlRouterProvider,   class: decision, target: "the wildcard route / redirectTo" }
+  - { id: token.$routeProvider,       shape: token, match: $routeProvider,       class: decision, target: "the Routes array" }
+  - { id: token.$urlMatcherFactoryProvider, shape: token, match: $urlMatcherFactoryProvider, class: decision, target: "route matchers" }
+  - { id: token.$uiRouterProvider,    shape: token, match: $uiRouterProvider,    class: decision, target: "provideRouter" }
+  # ── members on tokens ──────────────────────────────────────────────────
+  - { id: member.$q.defer,   shape: member, match: $q.defer,   class: decision,   target: "new Promise((resolve, reject) => …)", residue: "$q.defer: return new Promise((resolve, reject) => …) instead" }
+  - { id: member.$q.all,     shape: member, match: $q.all,     class: mechanical, target: "Promise.all", rewrite: { call: "Promise.all" } }
+  - { id: member.$q.race,    shape: member, match: $q.race,    class: mechanical, target: "Promise.race", rewrite: { call: "Promise.race" } }
+  - { id: member.$q.when,    shape: member, match: $q.when,    class: mechanical, target: "Promise.resolve", rewrite: { call: "Promise.resolve" } }
+  - { id: member.$q.resolve, shape: member, match: $q.resolve, class: mechanical, target: "Promise.resolve", rewrite: { call: "Promise.resolve" } }
+  - { id: member.$q.reject,  shape: member, match: $q.reject,  class: mechanical, target: "Promise.reject", rewrite: { call: "Promise.reject" } }
+  - { id: member.$q.call,    shape: member, match: "$q()",     class: mechanical, target: "new Promise(fn)" }
+  - { id: member.$http.get,    shape: member, match: $http.get,    class: note, target: "this.http.get(url, { params }) — an Observable; the callers await via firstValueFrom" }
+  - { id: member.$http.post,   shape: member, match: $http.post,   class: note, target: "this.http.post(url, body)" }
+  - { id: member.$http.put,    shape: member, match: $http.put,    class: note, target: "this.http.put(url, body)" }
+  - { id: member.$http.patch,  shape: member, match: $http.patch,  class: note, target: "this.http.patch(url, body)" }
+  - { id: member.$http.delete, shape: member, match: $http.delete, class: note, target: "this.http.delete(url)" }
+  - { id: member.$http.head,   shape: member, match: $http.head,   class: note, target: "this.http.head(url)" }
+  - { id: member.$http.jsonp,  shape: member, match: $http.jsonp,  class: note, target: "this.http.jsonp(url, callbackParam)", since: "1.0" }
+  - { id: member.$http.call,   shape: member, match: "$http()",    class: note, target: "this.http.request(method, url, options)" }
+  - { id: member.$http.success, shape: member, match: $http.success, class: decision, target: ".then(r => …) — removed in AngularJS 1.6", until: "1.5" }
+  - { id: member.$http.error,   shape: member, match: $http.error,   class: decision, target: ".catch(e => …) — removed in AngularJS 1.6", until: "1.5" }
+  - { id: member.$http.defaults, shape: member, match: $http.defaults, class: decision, target: "an interceptor" }
+  - { id: member.$http.pendingRequests, shape: member, match: $http.pendingRequests, class: decision, target: "none; track in the caller" }
+  - { id: member.$timeout.call,   shape: member, match: "$timeout()",   class: mechanical, target: "setTimeout(fn, ms)", rewrite: { call: "setTimeout" } }
+  - { id: member.$timeout.cancel, shape: member, match: $timeout.cancel, class: mechanical, target: "clearTimeout(handle)", rewrite: { call: "clearTimeout" } }
+  - { id: member.$interval.call,   shape: member, match: "$interval()",   class: mechanical, target: "setInterval(fn, ms)", rewrite: { call: "setInterval" } }
+  - { id: member.$interval.cancel, shape: member, match: $interval.cancel, class: mechanical, target: "clearInterval(handle)", rewrite: { call: "clearInterval" } }
+  - { id: member.$log.log,   shape: member, match: $log.log,   class: mechanical, target: "console.log", rewrite: { call: "console.log" } }
+  - { id: member.$log.info,  shape: member, match: $log.info,  class: mechanical, target: "console.info", rewrite: { call: "console.info" } }
+  - { id: member.$log.warn,  shape: member, match: $log.warn,  class: mechanical, target: "console.warn", rewrite: { call: "console.warn" } }
+  - { id: member.$log.error, shape: member, match: $log.error, class: mechanical, target: "console.error", rewrite: { call: "console.error" } }
+  - { id: member.$log.debug, shape: member, match: $log.debug, class: mechanical, target: "console.debug", rewrite: { call: "console.debug" } }
+  - { id: member.$location.path,     shape: member, match: $location.path,     class: decision, target: "this.router.url (read) / this.router.navigate([...]) (write)", residue: "$location.path: this.router.navigate / this.router.url" }
+  - { id: member.$location.url,      shape: member, match: $location.url,      class: decision, target: "this.router.url / this.router.navigateByUrl(url)", residue: "$location.url: this.router.url (read) / this.router.navigateByUrl(url)" }
+  - { id: member.$location.search,   shape: member, match: $location.search,   class: decision, target: "this.route.snapshot.queryParams / navigate with { queryParams }", residue: "$location.search: this.route.snapshot.queryParams" }
+  - { id: member.$location.hash,     shape: member, match: $location.hash,     class: decision, target: "this.route.snapshot.fragment / navigate with { fragment }", residue: "$location.hash: this.route.snapshot.fragment / navigate with { fragment }" }
+  - { id: member.$location.absUrl,   shape: member, match: $location.absUrl,   class: decision, target: "window.location.href", residue: "$location.absUrl: window.location.href" }
+  - { id: member.$location.host,     shape: member, match: $location.host,     class: decision, target: "window.location.host", residue: "$location.host: window.location.host" }
+  - { id: member.$location.port,     shape: member, match: $location.port,     class: decision, target: "window.location.port" }
+  - { id: member.$location.protocol, shape: member, match: $location.protocol, class: decision, target: "window.location.protocol" }
+  - { id: member.$location.replace,  shape: member, match: $location.replace,  class: decision, target: "navigate with { replaceUrl: true }", residue: "$location.replace: navigate with { replaceUrl: true }" }
+  - { id: member.$location.state,    shape: member, match: $location.state,    class: decision, target: "history.state / navigate with { state }" }
+  - { id: member.$state.go,           shape: member, match: $state.go,           class: decision, target: "this.router.navigate([...]) — the state name maps to a path in the routes file", residue: "$state.go: this.router.navigate([...])" }
+  - { id: member.$state.transitionTo, shape: member, match: $state.transitionTo, class: decision, target: "this.router.navigate([...])", residue: "$state.transitionTo: this.router.navigate([...])" }
+  - { id: member.$state.href,         shape: member, match: $state.href,         class: decision, target: "this.router.createUrlTree([...]).toString()", residue: "$state.href: this.router.createUrlTree([...]).toString()" }
+  - { id: member.$state.includes,     shape: member, match: $state.includes,     class: decision, target: "this.router.url.startsWith(...)", residue: "$state.includes: this.router.url.startsWith(...)" }
+  - { id: member.$state.is,           shape: member, match: $state.is,           class: decision, target: "compare this.router.url", residue: "$state.is: compare this.router.url" }
+  - { id: member.$state.reload,       shape: member, match: $state.reload,       class: decision, target: "navigate to the same url with onSameUrlNavigation: 'reload'", residue: "$state.reload: navigate to the same url with onSameUrlNavigation: 'reload'" }
+  - { id: member.$state.get,          shape: member, match: $state.get,          class: decision, target: "this.router.config", residue: "$state.get: the Routes array, or router.config" }
+  - { id: member.$state.current,      shape: member, match: $state.current,      class: decision, target: "this.router.url, or the ActivatedRoute snapshot", residue: "$state.current: this.router.url, or the ActivatedRoute snapshot" }
+  - { id: member.$state.params,       shape: member, match: $state.params,       class: decision, target: "this.route.snapshot.params", residue: "$state.params: this.route.snapshot.params" }
+  - { id: member.$state.$current,     shape: member, match: $state.$current,     class: decision, target: "the ActivatedRoute snapshot" }
+  - { id: member.$sce.trustAsHtml,        shape: member, match: $sce.trustAsHtml,        class: mechanical, target: "this.sanitizer.bypassSecurityTrustHtml", rewrite: { call: "this.sanitizer.bypassSecurityTrustHtml" } }
+  - { id: member.$sce.trustAsResourceUrl, shape: member, match: $sce.trustAsResourceUrl, class: mechanical, target: "this.sanitizer.bypassSecurityTrustResourceUrl", rewrite: { call: "this.sanitizer.bypassSecurityTrustResourceUrl" } }
+  - { id: member.$sce.trustAsUrl,         shape: member, match: $sce.trustAsUrl,         class: mechanical, target: "this.sanitizer.bypassSecurityTrustUrl", rewrite: { call: "this.sanitizer.bypassSecurityTrustUrl" } }
+  - { id: member.$sce.trustAsJs,          shape: member, match: $sce.trustAsJs,          class: mechanical, target: "this.sanitizer.bypassSecurityTrustScript", rewrite: { call: "this.sanitizer.bypassSecurityTrustScript" } }
+  - { id: member.$sce.trustAsCss,         shape: member, match: $sce.trustAsCss,         class: mechanical, target: "this.sanitizer.bypassSecurityTrustStyle", rewrite: { call: "this.sanitizer.bypassSecurityTrustStyle" } }
+  - { id: member.$sce.trustAs,            shape: member, match: $sce.trustAs,            class: decision,   target: "the bypassSecurityTrust* call for the context" }
+  - { id: member.$sce.getTrustedHtml,     shape: member, match: $sce.getTrustedHtml,     class: decision,   target: "sanitize(SecurityContext.HTML, x)" }
+  - { id: member.$sce.getTrustedResourceUrl, shape: member, match: $sce.getTrustedResourceUrl, class: decision, target: "sanitize(SecurityContext.RESOURCE_URL, x)" }
+  - { id: member.$sce.parseAsHtml,        shape: member, match: $sce.parseAsHtml,        class: decision,   target: "none" }
+  - { id: member.$sce.isEnabled,          shape: member, match: $sce.isEnabled,          class: mechanical, target: "true" }
+  - { id: member.$templateCache.get,       shape: member, match: $templateCache.get,       class: note,     target: "templateUrl on the component when the argument is a string; else a decision" }
+  - { id: member.$templateCache.put,       shape: member, match: $templateCache.put,       class: decision, target: "none; templates are files" }
+  - { id: member.$templateCache.remove,    shape: member, match: $templateCache.remove,    class: decision, target: "none" }
+  - { id: member.$templateCache.removeAll, shape: member, match: $templateCache.removeAll, class: decision, target: "none" }
+  - { id: member.$cacheFactory.call, shape: member, match: "$cacheFactory()", class: decision, target: "a Map in a root service" }
+  - { id: member.$compile.call,   shape: member, match: "$compile()",   class: decision, target: "ViewContainerRef.createComponent / createEmbeddedView" }
+  - { id: member.$parse.call,     shape: member, match: "$parse()",     class: decision, target: "a function input" }
+  - { id: member.$interpolate.call, shape: member, match: "$interpolate()", class: decision, target: "a template literal" }
+  - { id: member.$filter.call,    shape: member, match: "$filter()",    class: decision, target: "inject the pipe and call transform()" }
+  - { id: member.$controller.call, shape: member, match: "$controller()", class: decision, target: "none" }
+  - { id: member.$injector.get,   shape: member, match: $injector.get,  class: decision, target: "this.injector.get(Class)" }
+  - { id: member.$injector.has,   shape: member, match: $injector.has,  class: decision, target: "this.injector.get(Class, null) !== null" }
+  - { id: member.$injector.invoke, shape: member, match: $injector.invoke, class: decision, target: "runInInjectionContext" }
+  - { id: member.$injector.instantiate, shape: member, match: $injector.instantiate, class: decision, target: "Injector.create" }
+  - { id: member.$injector.annotate, shape: member, match: $injector.annotate, class: decision, target: "none" }
+  - { id: member.$attrs.$observe,     shape: member, match: $attrs.$observe,     class: decision, target: "an input, read in ngOnChanges" }
+  - { id: member.$attrs.$set,         shape: member, match: $attrs.$set,         class: decision, target: "Renderer2.setAttribute / a host binding" }
+  - { id: member.$attrs.$addClass,    shape: member, match: $attrs.$addClass,    class: decision, target: "Renderer2.addClass / a host class binding" }
+  - { id: member.$attrs.$removeClass, shape: member, match: $attrs.$removeClass, class: decision, target: "Renderer2.removeClass" }
+  - { id: member.$attrs.$updateClass, shape: member, match: $attrs.$updateClass, class: decision, target: "host class bindings" }
+  - { id: member.$attrs.$normalize,   shape: member, match: $attrs.$normalize,   class: decision, target: "none" }
+  - { id: member.$attrs.$attr,        shape: member, match: $attrs.$attr,        class: decision, target: "none" }
+  - { id: member.$transclude.call,    shape: member, match: "$transclude()",     class: decision, target: "<ng-content>, or ViewContainerRef.createEmbeddedView(templateRef)" }
+  - { id: member.$transclude.isSlotFilled, shape: member, match: $transclude.isSlotFilled, class: decision, target: "@ContentChild(...) presence" }
+  - { id: member.$animate.enter,       shape: member, match: $animate.enter,       class: decision, target: "@angular/animations :enter" }
+  - { id: member.$animate.leave,       shape: member, match: $animate.leave,       class: decision, target: "@angular/animations :leave" }
+  - { id: member.$animate.addClass,    shape: member, match: $animate.addClass,    class: decision, target: "class binding with a transition" }
+  - { id: member.$animate.removeClass, shape: member, match: $animate.removeClass, class: decision, target: "class binding with a transition" }
+  - { id: member.$animate.setClass,    shape: member, match: $animate.setClass,    class: decision, target: "class bindings" }
+  - { id: member.$animate.animate,     shape: member, match: $animate.animate,     class: decision, target: "AnimationBuilder" }
+  - { id: member.$animate.enabled,     shape: member, match: $animate.enabled,     class: decision, target: "@.disabled binding" }
+  - { id: member.$animate.on,          shape: member, match: $animate.on,          class: decision, target: "animation callbacks (@trigger.done)" }
+  - { id: member.$animate.off,         shape: member, match: $animate.off,         class: decision, target: "none" }
+  - { id: member.$window.member,       shape: member, match: "$window.*",          class: mechanical, target: "window.<member>; a name the legacy page set is declared in legacy-prototypes.d.ts" }
+  - { id: member.$document.jqlite,     shape: member, match: "$document.*",        class: mechanical, target: "$(document).<member> when jQuery is a dependency; else document.<member>" }
+  - { id: member.$rootScope.$on,        shape: member, match: $rootScope.$on,        class: decision, target: "an rxjs Subject on a root-provided service", residue: "a root scope event: subscribe to the service that raises it" }
+  - { id: member.$rootScope.$broadcast, shape: member, match: $rootScope.$broadcast, class: decision, target: "a root-provided service Subject", residue: "a root scope event: call the service that listens" }
+  - { id: member.$rootScope.$emit,      shape: member, match: $rootScope.$emit,      class: decision, target: "a root-provided service Subject", residue: "a root scope event: call the service that listens" }
+  - { id: member.$rootScope.scope,     shape: member, match: "$rootScope.$*",      class: decision,   target: "see scope.*; app-wide state belongs in a root service" }
+  - { id: member.$rootScope.field,     shape: member, match: "$rootScope.*",       class: decision,   target: "a field on a root-provided service" }
+  - { id: member.$scope.field,         shape: member, match: "$scope.*",           class: mechanical, target: "a field (or a signal) on the class" }
+  - { id: member.$attrs.field,         shape: member, match: "$attrs.*",           class: decision,   target: "an input, or HostAttributeToken for a static attribute" }
+  - { id: member.$locale.field,        shape: member, match: "$locale.*",          class: decision,   target: "LOCALE_ID / @angular/common formatters" }
+  - { id: member.$templateCache.field, shape: member, match: "$templateCache.*",   class: decision,   target: "none; templates are files" }
+  - { id: member.$stateParams.field,   shape: member, match: "$stateParams.*",     class: mechanical, target: "this.route.snapshot.params['<name>']" }
+  - { id: member.$routeParams.field,   shape: member, match: "$routeParams.*",     class: mechanical, target: "this.route.snapshot.params['<name>']" }
+  - { id: member.$rootElement.jqlite,  shape: member, match: "$rootElement.*",     class: decision,   target: "document.body, or the DOCUMENT token" }
+  - { id: member.$delegate.call,       shape: member, match: "$delegate()",        class: decision,   target: "super(...) in the subclass" }
+  - { id: member.$delegate.field,      shape: member, match: "$delegate.*",        class: decision,   target: "the base class's member" }
+  - { id: member.$httpBackend.test,    shape: member, match: "$httpBackend.*",     class: decision,   target: "HttpTestingController (tests): expectOne, flush, verify" }
+  - { id: member.$exceptionHandler.call, shape: member, match: "$exceptionHandler()", class: decision, target: "ErrorHandler.handleError" }
+  - { id: member.$resource.call,       shape: member, match: "$resource()",        class: decision,   target: "a service with HttpClient methods; $promise/$resolved go" }
+  - { id: member.$cookies.get,         shape: member, match: $cookies.get,         class: decision,   target: "document.cookie parse, or a cookie service" }
+  - { id: member.$cookies.put,         shape: member, match: $cookies.put,         class: decision,   target: "document.cookie" }
+  - { id: member.$cookies.remove,      shape: member, match: $cookies.remove,      class: decision,   target: "document.cookie" }
+  - { id: member.$cookies.getObject,   shape: member, match: $cookies.getObject,   class: decision,   target: "JSON.parse of the cookie" }
+  - { id: member.$cookies.putObject,   shape: member, match: $cookies.putObject,   class: decision,   target: "JSON.stringify into the cookie" }
+  - { id: member.$cookies.getAll,      shape: member, match: $cookies.getAll,      class: decision,   target: "document.cookie parse" }
+  - { id: member.$anchorScroll.call,   shape: member, match: "$anchorScroll()",    class: decision,   target: "ViewportScroller.scrollToAnchor(id)" }
+  - { id: member.$route.reload,        shape: member, match: $route.reload,        class: decision,   target: "navigate to the same url with onSameUrlNavigation: 'reload'" }
+  - { id: member.$route.current,       shape: member, match: $route.current,       class: decision,   target: "ActivatedRoute snapshot" }
+  - { id: member.$transitions.onStart,   shape: member, match: $transitions.onStart,   class: decision, target: "a CanActivate guard, or Router events NavigationStart" }
+  - { id: member.$transitions.onSuccess, shape: member, match: $transitions.onSuccess, class: decision, target: "Router events NavigationEnd" }
+  - { id: member.$transitions.onBefore,  shape: member, match: $transitions.onBefore,  class: decision, target: "a CanActivate / CanDeactivate guard" }
+  - { id: member.$transitions.onError,   shape: member, match: $transitions.onError,   class: decision, target: "Router events NavigationError" }
+  - { id: member.$transitions.onExit,    shape: member, match: $transitions.onExit,    class: decision, target: "a CanDeactivate guard" }
+  - { id: member.$transitions.onEnter,   shape: member, match: $transitions.onEnter,   class: decision, target: "a CanActivate guard" }
+  - { id: member.$transitions.onFinish,  shape: member, match: $transitions.onFinish,  class: decision, target: "Router events NavigationEnd" }
+  - { id: member.$transitions.onRetain,  shape: member, match: $transitions.onRetain,  class: decision, target: "none" }
+  # ── $scope API ─────────────────────────────────────────────────────────
+  - { id: scope.$watch,           shape: scope, match: $watch,           class: decision, target: "effect() over a signal, or ngOnChanges for an input", residue: "a $watch: compute this from a signal or an effect()" }
+  - { id: scope.$watchCollection, shape: scope, match: $watchCollection, class: decision, target: "effect() over a signal; a computed() for derived lists", residue: "a $watchCollection: compute this from a signal or an effect()" }
+  - { id: scope.$watchGroup,      shape: scope, match: $watchGroup,      class: decision, target: "one effect() reading several signals", since: "1.3" }
+  - { id: scope.$on,              shape: scope, match: $on,              class: decision, target: "an rxjs Subject on a shared service; $destroy → ngOnDestroy", residue: "a scope event: subscribe to the service that raises it" }
+  - { id: scope.$emit,            shape: scope, match: $emit,            class: decision, target: "an output, or a shared service Subject", residue: "a scope event: call the service that listens" }
+  - { id: scope.$broadcast,       shape: scope, match: $broadcast,       class: decision, target: "a shared service Subject", residue: "a scope event: call the service that listens" }
+  - { id: scope.$apply,           shape: scope, match: $apply,           class: mechanical, rewrite: { scope_call: run }, target: "none; change detection is automatic (dropped, the callback runs)", residue: "$apply is not needed: Angular detects the change" }
+  - { id: scope.$applyAsync,      shape: scope, match: $applyAsync,      class: mechanical, rewrite: { scope_call: microtask }, target: "none (dropped, the callback runs)", since: "1.3" }
+  - { id: scope.$digest,          shape: scope, match: $digest,          class: mechanical, rewrite: { scope_call: run }, target: "none (dropped)", residue: "$digest is not needed: Angular detects the change" }
+  - { id: scope.$evalAsync,       shape: scope, match: $evalAsync,       class: mechanical, rewrite: { scope_call: microtask }, target: "queueMicrotask(fn)", residue: "$evalAsync: queueMicrotask, or a signal" }
+  - { id: scope.$eval,            shape: scope, match: $eval,            class: decision, target: "call the function directly; an expression string needs $parse" }
+  - { id: scope.$new,             shape: scope, match: $new,             class: decision, target: "a child component, or an embedded view context" }
+  - { id: scope.$destroy,         shape: scope, match: $destroy,         class: decision, target: "ngOnDestroy / DestroyRef", angular_min: "16" }
+  - { id: scope.$parent,          shape: scope, match: $parent,          class: decision, target: "an input from the parent, or a shared service" }
+  - { id: scope.$root,            shape: scope, match: $root,            class: decision, target: "a root-provided service" }
+  - { id: scope.$id,              shape: scope, match: $id,              class: decision, target: "none" }
+  - { id: scope.$$phase,          shape: scope, match: $$phase,          class: mechanical, target: "none (a digest guard; dropped)" }
+  - { id: scope.$$postDigest,     shape: scope, match: $$postDigest,     class: decision, target: "afterNextRender", angular_min: "16" }
+  - { id: scope.$$destroyed,      shape: scope, match: $$destroyed,      class: decision, target: "DestroyRef.destroyed" }
+  - { id: scope.$$listeners,      shape: scope, match: $$listeners,      class: decision, target: "none" }
+  - { id: scope.$$childHead,      shape: scope, match: $$childHead,      class: decision, target: "none; @ViewChildren / @ContentChildren" }
+  - { id: scope.$$childTail,      shape: scope, match: $$childTail,      class: decision, target: "none; @ViewChildren / @ContentChildren" }
+  - { id: scope.$$nextSibling,    shape: scope, match: $$nextSibling,    class: decision, target: "none" }
+  - { id: scope.$$prevSibling,    shape: scope, match: $$prevSibling,    class: decision, target: "none" }
+  - { id: scope.$$watchers,       shape: scope, match: $$watchers,       class: decision, target: "none" }
+  - { id: scope.$index,           shape: scope, match: $index,           class: mechanical, target: "$index from the @for context, passed as an input" }
+  - { id: scope.$first,           shape: scope, match: $first,           class: mechanical, target: "$first from the @for context, passed as an input" }
+  - { id: scope.$last,            shape: scope, match: $last,            class: mechanical, target: "$last from the @for context, passed as an input" }
+  - { id: scope.$even,            shape: scope, match: $even,            class: mechanical, target: "$even from the @for context" }
+  - { id: scope.$odd,             shape: scope, match: $odd,             class: mechanical, target: "$odd from the @for context" }
+  - { id: scope.$middle,          shape: scope, match: $middle,          class: mechanical, target: "!$first && !$last" }
+  # ── definition object keys ─────────────────────────────────────────────
+  - { id: ddo.restrict,          shape: ddo, match: restrict,          class: mechanical, target: "the selector form: E → element, A → [attr], C → .class" }
+  - { id: ddo.scope,             shape: ddo, match: scope,             class: mechanical, target: "inputs and outputs from the object; true/false → no isolate scope (note)" }
+  - { id: ddo.bindings,          shape: ddo, match: bindings,          class: mechanical, target: "inputs and outputs" }
+  - { id: ddo.bindToController,  shape: ddo, match: bindToController,  class: mechanical, target: "inputs on the class (always so in Angular)", since: "1.3" }
+  - { id: ddo.controller,        shape: ddo, match: controller,        class: mechanical, target: "the class body" }
+  - { id: ddo.controllerAs,      shape: ddo, match: controllerAs,      class: mechanical, target: "none; the template refers to the class directly" }
+  - { id: ddo.template,          shape: ddo, match: template,          class: mechanical, target: "template: (a string) / a function is a decision" }
+  - { id: ddo.templateUrl,       shape: ddo, match: templateUrl,       class: mechanical, target: "templateUrl: (a string) / a function is a decision" }
+  - { id: ddo.templateNamespace, shape: ddo, match: templateNamespace, class: decision,   target: "svg: prefix in the template" }
+  - { id: ddo.transclude,        shape: ddo, match: transclude,        class: decision,   target: "<ng-content> (true) / <ng-content select> per slot (an object)", since: "1.0" }
+  - { id: ddo.link,              shape: ddo, match: link,              class: decision,   target: "ngAfterViewInit for DOM work; the element is ElementRef.nativeElement" }
+  - { id: ddo.compile,           shape: ddo, match: compile,           class: decision,   target: "none; a structural directive if it rewrote the DOM" }
+  - { id: ddo.require,           shape: ddo, match: require,           class: decision,   target: "inject(ParentComponent), NgModel/NgForm injection — see require.*" }
+  - { id: ddo.replace,           shape: ddo, match: replace,           class: note,       target: "none in Angular; the host element stays (deprecated in AngularJS)", until: "1.3 (deprecated)" }
+  - { id: ddo.priority,          shape: ddo, match: priority,          class: note,       target: "none; directive order is by declaration" }
+  - { id: ddo.terminal,          shape: ddo, match: terminal,          class: decision,   target: "a structural directive" }
+  - { id: ddo.multiElement,      shape: ddo, match: multiElement,      class: decision,   target: "wrap the range in an element or <ng-container>", since: "1.3" }
+  - { id: ddo.name,              shape: ddo, match: name,              class: mechanical, target: "none" }
+  - { id: ddo.$canActivate,      shape: ddo, match: $canActivate,      class: decision,   target: "a CanActivate guard" }
+  # ── binding kinds ──────────────────────────────────────────────────────
+  - { id: binding.one-way,  shape: binding, match: "<",  class: mechanical, target: "input<any>()", angular_min: "17.1", target_before: "@Input()", since: "1.5" }
+  - { id: binding.two-way,  shape: binding, match: "=",  class: mechanical, target: "model<any>() (two-way)", angular_min: "17.2", target_before: "@Input() + @Output() xChange" }
+  - { id: binding.string,   shape: binding, match: "@",  class: mechanical, target: "input<string>()", angular_min: "17.1", target_before: "@Input()" }
+  - { id: binding.callback, shape: binding, match: "&",  class: mechanical, target: "output<any>(); a return value read by the parent is a decision", angular_min: "17.3", target_before: "@Output() = new EventEmitter()" }
+  - { id: binding.optional, shape: binding, match: "?",  class: note,       target: "inputs are optional by default; an output is always there" }
+  - { id: binding.alias,    shape: binding, match: "alias", class: mechanical, target: "input<any>(undefined, { alias })", angular_min: "17.1", target_before: "@Input('alias')" }
+  # ── lifecycle hooks ────────────────────────────────────────────────────
+  - { id: hook.$onInit,    shape: hook, match: $onInit,    class: mechanical, target: "ngOnInit", rewrite: { lifecycle: ngOnInit }, since: "1.5" }
+  - { id: hook.$onChanges, shape: hook, match: $onChanges, class: mechanical, target: "ngOnChanges", rewrite: { lifecycle: ngOnChanges }, since: "1.5" }
+  - { id: hook.$onDestroy, shape: hook, match: $onDestroy, class: mechanical, target: "ngOnDestroy", rewrite: { lifecycle: ngOnDestroy }, since: "1.5" }
+  - { id: hook.$postLink,  shape: hook, match: $postLink,  class: mechanical, target: "ngAfterViewInit", rewrite: { lifecycle: ngAfterViewInit }, since: "1.5" }
+  - { id: hook.$doCheck,   shape: hook, match: $doCheck,   class: mechanical, target: "ngDoCheck", rewrite: { lifecycle: ngDoCheck }, since: "1.5.3" }
+  # ── require forms ──────────────────────────────────────────────────────
+  - { id: require.ngModel,  shape: require, match: ngModel,  class: decision, target: "inject(NgControl) / implement ControlValueAccessor" }
+  - { id: require.form,     shape: require, match: form,     class: decision, target: "inject(NgForm) / ControlContainer" }
+  - { id: require.parent,   shape: require, match: "^",      class: decision, target: "inject(ParentClass) (host or ancestor)" }
+  - { id: require.ancestor, shape: require, match: "^^",     class: decision, target: "inject(ParentClass, { skipSelf: true })" }
+  - { id: require.optional, shape: require, match: "?",      class: decision, target: "inject(Class, { optional: true })" }
+  - { id: require.self,     shape: require, match: "self",   class: decision, target: "inject(OwnClass)" }
+  # ── jqLite on $element / angular.element(...) ──────────────────────────
+  - { id: jqlite.find,        shape: jqlite, match: find,        class: mechanical, target: "$(el).find when jQuery is a dependency; else querySelectorAll" }
+  - { id: jqlite.on,          shape: jqlite, match: on,          class: mechanical, target: "$(el).on / addEventListener; a host listener is the Angular shape" }
+  - { id: jqlite.off,         shape: jqlite, match: off,         class: mechanical, target: "$(el).off / removeEventListener" }
+  - { id: jqlite.bind,        shape: jqlite, match: bind,        class: mechanical, target: "$(el).on" }
+  - { id: jqlite.unbind,      shape: jqlite, match: unbind,      class: mechanical, target: "$(el).off" }
+  - { id: jqlite.one,         shape: jqlite, match: one,         class: mechanical, target: "$(el).one" }
+  - { id: jqlite.addClass,    shape: jqlite, match: addClass,    class: mechanical, target: "el.classList.add; a host class binding" }
+  - { id: jqlite.removeClass, shape: jqlite, match: removeClass, class: mechanical, target: "el.classList.remove" }
+  - { id: jqlite.toggleClass, shape: jqlite, match: toggleClass, class: mechanical, target: "el.classList.toggle" }
+  - { id: jqlite.hasClass,    shape: jqlite, match: hasClass,    class: mechanical, target: "el.classList.contains" }
+  - { id: jqlite.attr,        shape: jqlite, match: attr,        class: mechanical, target: "getAttribute/setAttribute; a host attribute binding" }
+  - { id: jqlite.removeAttr,  shape: jqlite, match: removeAttr,  class: mechanical, target: "removeAttribute" }
+  - { id: jqlite.prop,        shape: jqlite, match: prop,        class: mechanical, target: "el[prop]" }
+  - { id: jqlite.css,         shape: jqlite, match: css,         class: mechanical, target: "el.style; a host style binding" }
+  - { id: jqlite.html,        shape: jqlite, match: html,        class: mechanical, target: "innerHTML — with DomSanitizer" }
+  - { id: jqlite.text,        shape: jqlite, match: text,        class: mechanical, target: "textContent" }
+  - { id: jqlite.val,         shape: jqlite, match: val,         class: mechanical, target: "el.value" }
+  - { id: jqlite.append,      shape: jqlite, match: append,      class: mechanical, target: "el.append / a template" }
+  - { id: jqlite.prepend,     shape: jqlite, match: prepend,     class: mechanical, target: "el.prepend" }
+  - { id: jqlite.after,       shape: jqlite, match: after,       class: mechanical, target: "el.after" }
+  - { id: jqlite.remove,      shape: jqlite, match: remove,      class: mechanical, target: "el.remove()" }
+  - { id: jqlite.detach,      shape: jqlite, match: detach,      class: mechanical, target: "el.remove()" }
+  - { id: jqlite.empty,       shape: jqlite, match: empty,       class: mechanical, target: "el.replaceChildren()" }
+  - { id: jqlite.replaceWith, shape: jqlite, match: replaceWith, class: mechanical, target: "el.replaceWith" }
+  - { id: jqlite.wrap,        shape: jqlite, match: wrap,        class: mechanical, target: "a template" }
+  - { id: jqlite.children,    shape: jqlite, match: children,    class: mechanical, target: "el.children" }
+  - { id: jqlite.contents,    shape: jqlite, match: contents,    class: mechanical, target: "el.childNodes" }
+  - { id: jqlite.parent,      shape: jqlite, match: parent,      class: mechanical, target: "el.parentElement" }
+  - { id: jqlite.next,        shape: jqlite, match: next,        class: mechanical, target: "el.nextElementSibling" }
+  - { id: jqlite.eq,          shape: jqlite, match: eq,          class: mechanical, target: "index" }
+  - { id: jqlite.clone,       shape: jqlite, match: clone,       class: mechanical, target: "el.cloneNode(true)" }
+  - { id: jqlite.data,        shape: jqlite, match: data,        class: decision,   target: "a field on the component" }
+  - { id: jqlite.removeData,  shape: jqlite, match: removeData,  class: decision,   target: "none" }
+  - { id: jqlite.ready,       shape: jqlite, match: ready,       class: decision,   target: "ngAfterViewInit" }
+  - { id: jqlite.triggerHandler, shape: jqlite, match: triggerHandler, class: decision, target: "call the handler / dispatchEvent" }
+  - { id: jqlite.controller,  shape: jqlite, match: controller,  class: decision,   target: "inject the component class" }
+  - { id: jqlite.scope,       shape: jqlite, match: scope,       class: decision,   target: "none; state lives on the class" }
+  - { id: jqlite.isolateScope, shape: jqlite, match: isolateScope, class: decision, target: "none" }
+  - { id: jqlite.injector,    shape: jqlite, match: injector,    class: decision,   target: "inject(Injector)" }
+  - { id: jqlite.inheritedData, shape: jqlite, match: inheritedData, class: decision, target: "none" }
+  - { id: jqlite.index,       shape: jqlite, match: "[0]",       class: mechanical, target: "ElementRef.nativeElement" }
+  # jQuery proper (present when jQuery loads before AngularJS): kept as $(el).<name> when jQuery is a dependency
+  - { id: jqlite.closest,     shape: jqlite, match: closest,     class: mechanical, target: "el.closest(sel)" }
+  - { id: jqlite.parents,     shape: jqlite, match: parents,     class: mechanical, target: "$(el).parents when jQuery is a dependency" }
+  - { id: jqlite.siblings,    shape: jqlite, match: siblings,    class: mechanical, target: "$(el).siblings when jQuery is a dependency" }
+  - { id: jqlite.prev,        shape: jqlite, match: prev,        class: mechanical, target: "el.previousElementSibling" }
+  - { id: jqlite.first,       shape: jqlite, match: first,       class: mechanical, target: "$(el).first when jQuery is a dependency" }
+  - { id: jqlite.last,        shape: jqlite, match: last,        class: mechanical, target: "$(el).last when jQuery is a dependency" }
+  - { id: jqlite.filter,      shape: jqlite, match: filter,      class: mechanical, target: "$(el).filter when jQuery is a dependency" }
+  - { id: jqlite.not,         shape: jqlite, match: not,         class: mechanical, target: "$(el).not when jQuery is a dependency" }
+  - { id: jqlite.is,          shape: jqlite, match: is,          class: mechanical, target: "el.matches(sel)" }
+  - { id: jqlite.each,        shape: jqlite, match: each,        class: mechanical, target: "for…of over the nodes" }
+  - { id: jqlite.map,         shape: jqlite, match: map,         class: mechanical, target: "Array.from(nodes).map" }
+  - { id: jqlite.get,         shape: jqlite, match: get,         class: mechanical, target: "nodes[i]" }
+  - { id: jqlite.length,      shape: jqlite, match: length,      class: mechanical, target: "nodes.length" }
+  - { id: jqlite.height,      shape: jqlite, match: height,      class: mechanical, target: "el.offsetHeight / el.style.height" }
+  - { id: jqlite.width,       shape: jqlite, match: width,       class: mechanical, target: "el.offsetWidth / el.style.width" }
+  - { id: jqlite.innerHeight, shape: jqlite, match: innerHeight, class: mechanical, target: "el.clientHeight" }
+  - { id: jqlite.innerWidth,  shape: jqlite, match: innerWidth,  class: mechanical, target: "el.clientWidth" }
+  - { id: jqlite.outerHeight, shape: jqlite, match: outerHeight, class: mechanical, target: "el.offsetHeight" }
+  - { id: jqlite.outerWidth,  shape: jqlite, match: outerWidth,  class: mechanical, target: "el.offsetWidth" }
+  - { id: jqlite.offset,      shape: jqlite, match: offset,      class: mechanical, target: "el.getBoundingClientRect()" }
+  - { id: jqlite.position,    shape: jqlite, match: position,    class: mechanical, target: "el.offsetTop / el.offsetLeft" }
+  - { id: jqlite.scrollTop,   shape: jqlite, match: scrollTop,   class: mechanical, target: "el.scrollTop" }
+  - { id: jqlite.scrollLeft,  shape: jqlite, match: scrollLeft,  class: mechanical, target: "el.scrollLeft" }
+  - { id: jqlite.focus,       shape: jqlite, match: focus,       class: mechanical, target: "el.focus()" }
+  - { id: jqlite.blur,        shape: jqlite, match: blur,        class: mechanical, target: "el.blur()" }
+  - { id: jqlite.click,       shape: jqlite, match: click,       class: mechanical, target: "el.click() / (click)" }
+  - { id: jqlite.trigger,     shape: jqlite, match: trigger,     class: mechanical, target: "el.dispatchEvent(new Event(name))" }
+  - { id: jqlite.show,        shape: jqlite, match: show,        class: mechanical, target: "[hidden]=\"false\"" }
+  - { id: jqlite.hide,        shape: jqlite, match: hide,        class: mechanical, target: "[hidden]=\"true\"" }
+  - { id: jqlite.toggle,      shape: jqlite, match: toggle,      class: mechanical, target: "a [hidden] binding" }
+  - { id: jqlite.fadeIn,      shape: jqlite, match: fadeIn,      class: decision,   target: "@angular/animations" }
+  - { id: jqlite.fadeOut,     shape: jqlite, match: fadeOut,     class: decision,   target: "@angular/animations" }
+  - { id: jqlite.slideUp,     shape: jqlite, match: slideUp,     class: decision,   target: "@angular/animations" }
+  - { id: jqlite.slideDown,   shape: jqlite, match: slideDown,   class: decision,   target: "@angular/animations" }
+  - { id: jqlite.animate,     shape: jqlite, match: animate,     class: decision,   target: "@angular/animations" }
+  - { id: jqlite.stop,        shape: jqlite, match: stop,        class: decision,   target: "@angular/animations" }
+  - { id: jqlite.before,      shape: jqlite, match: before,      class: mechanical, target: "el.before" }
+  - { id: jqlite.insertAfter, shape: jqlite, match: insertAfter, class: mechanical, target: "target.after(el)" }
+  - { id: jqlite.insertBefore, shape: jqlite, match: insertBefore, class: mechanical, target: "target.before(el)" }
+  - { id: jqlite.appendTo,    shape: jqlite, match: appendTo,    class: mechanical, target: "target.append(el)" }
+  - { id: jqlite.prependTo,   shape: jqlite, match: prependTo,   class: mechanical, target: "target.prepend(el)" }
+  - { id: jqlite.hover,       shape: jqlite, match: hover,       class: mechanical, target: "(mouseenter) / (mouseleave)" }
+  - { id: jqlite.keydown,     shape: jqlite, match: keydown,     class: mechanical, target: "(keydown)" }
+  - { id: jqlite.keyup,       shape: jqlite, match: keyup,       class: mechanical, target: "(keyup)" }
+  - { id: jqlite.change,      shape: jqlite, match: change,      class: mechanical, target: "(change)" }
+  - { id: jqlite.submit,      shape: jqlite, match: submit,      class: mechanical, target: "(ngSubmit)" }
+  - { id: jqlite.select,      shape: jqlite, match: select,      class: mechanical, target: "el.select()" }
+  - { id: jqlite.serialize,   shape: jqlite, match: serialize,   class: decision,   target: "the form's value object" }
+  - { id: jqlite.setAttribute, shape: jqlite, match: setAttribute, class: mechanical, target: "el.setAttribute (already the DOM call)" }
+  - { id: jqlite.getAttribute, shape: jqlite, match: getAttribute, class: mechanical, target: "el.getAttribute (already the DOM call)" }
+  - { id: jqlite.querySelector, shape: jqlite, match: querySelector, class: mechanical, target: "el.querySelector (already the DOM call)" }
+  - { id: jqlite.querySelectorAll, shape: jqlite, match: querySelectorAll, class: mechanical, target: "el.querySelectorAll (already the DOM call)" }
+  - { id: jqlite.addEventListener, shape: jqlite, match: addEventListener, class: mechanical, target: "already the DOM call; a host listener is the Angular shape" }
+  - { id: jqlite.removeEventListener, shape: jqlite, match: removeEventListener, class: mechanical, target: "already the DOM call" }
+  - { id: jqlite.classList,   shape: jqlite, match: classList,   class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.style,       shape: jqlite, match: style,       class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.innerHTML,   shape: jqlite, match: innerHTML,   class: mechanical, target: "already the DOM property — with DomSanitizer" }
+  - { id: jqlite.textContent, shape: jqlite, match: textContent, class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.value,       shape: jqlite, match: value,       class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.getBoundingClientRect, shape: jqlite, match: getBoundingClientRect, class: mechanical, target: "already the DOM call" }
+  - { id: jqlite.scrollIntoView, shape: jqlite, match: scrollIntoView, class: mechanical, target: "already the DOM call" }
+  - { id: jqlite.contains,    shape: jqlite, match: contains,    class: mechanical, target: "el.contains (already the DOM call)" }
+  - { id: jqlite.tagName,     shape: jqlite, match: tagName,     class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.id,          shape: jqlite, match: id,          class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.className,   shape: jqlite, match: className,   class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.parentNode,  shape: jqlite, match: parentNode,  class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.parentElement, shape: jqlite, match: parentElement, class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.childNodes,  shape: jqlite, match: childNodes,  class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.firstChild,  shape: jqlite, match: firstChild,  class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.nodeName,    shape: jqlite, match: nodeName,    class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.dataset,     shape: jqlite, match: dataset,     class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.outerHTML,   shape: jqlite, match: outerHTML,   class: mechanical, target: "already the DOM property" }
+  - { id: jqlite.plugin,      shape: jqlite, match: "<plugin>",  class: decision,   target: "a jQuery plugin (popover, tooltip, sortable, datepicker, modal, dropdown, tab, collapse…): keep it behind jQuery, or replace it with a component" }
+  # ── ngModel / form controller members ──────────────────────────────────
+  - { id: ngmodel.$setViewValue,  shape: ngmodel, match: $setViewValue,  class: decision, target: "ControlValueAccessor onChange" }
+  - { id: ngmodel.$viewValue,     shape: ngmodel, match: $viewValue,     class: decision, target: "the control's value" }
+  - { id: ngmodel.$modelValue,    shape: ngmodel, match: $modelValue,    class: decision, target: "the control's value" }
+  - { id: ngmodel.$parsers,       shape: ngmodel, match: $parsers,       class: decision, target: "ControlValueAccessor: parse in onChange" }
+  - { id: ngmodel.$formatters,    shape: ngmodel, match: $formatters,    class: decision, target: "ControlValueAccessor: format in writeValue" }
+  - { id: ngmodel.$validators,    shape: ngmodel, match: $validators,    class: decision, target: "a Validator directive (NG_VALIDATORS)" }
+  - { id: ngmodel.$asyncValidators, shape: ngmodel, match: $asyncValidators, class: decision, target: "NG_ASYNC_VALIDATORS" }
+  - { id: ngmodel.$validate,      shape: ngmodel, match: $validate,      class: decision, target: "control.updateValueAndValidity()" }
+  - { id: ngmodel.$setValidity,   shape: ngmodel, match: $setValidity,   class: decision, target: "control.setErrors" }
+  - { id: ngmodel.$render,        shape: ngmodel, match: $render,        class: decision, target: "ControlValueAccessor.writeValue" }
+  - { id: ngmodel.$isEmpty,       shape: ngmodel, match: $isEmpty,       class: decision, target: "a check in the validator" }
+  - { id: ngmodel.$setPristine,   shape: ngmodel, match: $setPristine,   class: decision, target: "control.markAsPristine()" }
+  - { id: ngmodel.$setDirty,      shape: ngmodel, match: $setDirty,      class: decision, target: "control.markAsDirty()" }
+  - { id: ngmodel.$setTouched,    shape: ngmodel, match: $setTouched,    class: decision, target: "control.markAsTouched()" }
+  - { id: ngmodel.$setUntouched,  shape: ngmodel, match: $setUntouched,  class: decision, target: "control.markAsUntouched()" }
+  - { id: ngmodel.$rollbackViewValue, shape: ngmodel, match: $rollbackViewValue, class: decision, target: "control.reset(previous)" }
+  - { id: ngmodel.$commitViewValue,   shape: ngmodel, match: $commitViewValue,   class: decision, target: "control.updateValueAndValidity()" }
+  - { id: ngmodel.$viewChangeListeners, shape: ngmodel, match: $viewChangeListeners, class: decision, target: "control.valueChanges" }
+  - { id: ngmodel.$error,         shape: ngmodel, match: $error,         class: decision, target: "control.errors" }
+  - { id: ngmodel.$pending,       shape: ngmodel, match: $pending,       class: decision, target: "control.pending" }
+  - { id: ngmodel.$valid,         shape: ngmodel, match: $valid,         class: decision, target: "control.valid" }
+  - { id: ngmodel.$invalid,       shape: ngmodel, match: $invalid,       class: decision, target: "control.invalid" }
+  - { id: ngmodel.$dirty,         shape: ngmodel, match: $dirty,         class: decision, target: "control.dirty" }
+  - { id: ngmodel.$pristine,      shape: ngmodel, match: $pristine,      class: decision, target: "control.pristine" }
+  - { id: ngmodel.$touched,       shape: ngmodel, match: $touched,       class: decision, target: "control.touched" }
+  - { id: ngmodel.$untouched,     shape: ngmodel, match: $untouched,     class: decision, target: "control.untouched" }
+  - { id: ngmodel.$name,          shape: ngmodel, match: $name,          class: decision, target: "the control's name" }
+  - { id: ngmodel.$options,       shape: ngmodel, match: $options,       class: decision, target: "updateOn on the control" }
+  - { id: ngmodel.$overrideModelOptions, shape: ngmodel, match: $overrideModelOptions, class: decision, target: "updateOn on the control" }
+  - { id: ngmodel.$processModelValue,    shape: ngmodel, match: $processModelValue,    class: decision, target: "writeValue" }
+  - { id: form.$submitted,        shape: ngmodel, match: $submitted,     class: decision, target: "form.submitted" }
+  - { id: form.$setSubmitted,     shape: ngmodel, match: $setSubmitted,  class: decision, target: "form.onSubmit()" }
+  - { id: form.$addControl,       shape: ngmodel, match: $addControl,    class: decision, target: "form.addControl" }
+  - { id: form.$removeControl,    shape: ngmodel, match: $removeControl, class: decision, target: "form.removeControl" }
+  - { id: form.$getControls,      shape: ngmodel, match: $getControls,   class: decision, target: "form.controls" }
+  - { id: resource.$promise,      shape: ngmodel, match: $promise,       class: decision, target: "the Observable / Promise itself ($resource)" }
+  - { id: resource.$resolved,     shape: ngmodel, match: $resolved,      class: decision, target: "a loading flag ($resource)" }
+  - { id: resource.$save,         shape: ngmodel, match: $save,          class: decision, target: "HttpClient.post ($resource)" }
+  - { id: resource.$delete,       shape: ngmodel, match: $delete,        class: decision, target: "HttpClient.delete ($resource)" }
+  - { id: resource.$remove,       shape: ngmodel, match: $remove,        class: decision, target: "HttpClient.delete ($resource)" }
+  - { id: resource.$get,          shape: ngmodel, match: $get,           class: decision, target: "HttpClient.get ($resource)" }
+  - { id: resource.$query,        shape: ngmodel, match: $query,         class: decision, target: "HttpClient.get ($resource)" }
+  - { id: resource.$update,       shape: ngmodel, match: $update,        class: decision, target: "HttpClient.put ($resource)" }
+  - { id: resource.$cancelRequest, shape: ngmodel, match: $cancelRequest, class: decision, target: "unsubscribe" }
+  # ── provider configuration ─────────────────────────────────────────────
+  - { id: provider.$httpProvider.interceptors,      shape: provider, match: $httpProvider.interceptors,      class: decision, target: "withInterceptors([fn])" }
+  - { id: provider.$httpProvider.defaults,          shape: provider, match: $httpProvider.defaults,          class: decision, target: "an interceptor setting headers" }
+  - { id: provider.$httpProvider.useApplyAsync,     shape: provider, match: $httpProvider.useApplyAsync,     class: mechanical, target: "none (dropped)" }
+  - { id: provider.$httpProvider.useLegacyPromiseExtensions, shape: provider, match: $httpProvider.useLegacyPromiseExtensions, class: mechanical, target: "none (dropped)", until: "1.5" }
+  - { id: provider.$httpProvider.responseInterceptors, shape: provider, match: $httpProvider.responseInterceptors, class: decision, target: "withInterceptors([fn])", until: "1.2 (renamed interceptors)" }
+  - { id: provider.$locationProvider.html5Mode,     shape: provider, match: $locationProvider.html5Mode,     class: decision, target: "provideRouter without withHashLocation" }
+  - { id: provider.$locationProvider.hashPrefix,    shape: provider, match: $locationProvider.hashPrefix,    class: decision, target: "withHashLocation()" }
+  - { id: provider.$compileProvider.debugInfoEnabled, shape: provider, match: $compileProvider.debugInfoEnabled, class: mechanical, target: "none (dropped)" }
+  - { id: provider.$compileProvider.preAssignBindingsEnabled, shape: provider, match: $compileProvider.preAssignBindingsEnabled, class: mechanical, target: "none (dropped)", until: "1.6" }
+  - { id: provider.$compileProvider.aHrefSanitizationWhitelist, shape: provider, match: $compileProvider.aHrefSanitizationWhitelist, class: decision, target: "DomSanitizer bypass where trusted", until: "1.8 (renamed TrustedUrlList)" }
+  - { id: provider.$compileProvider.aHrefSanitizationTrustedUrlList, shape: provider, match: $compileProvider.aHrefSanitizationTrustedUrlList, class: decision, target: "DomSanitizer bypass where trusted" }
+  - { id: provider.$compileProvider.imgSrcSanitizationWhitelist, shape: provider, match: $compileProvider.imgSrcSanitizationWhitelist, class: decision, target: "DomSanitizer bypass where trusted" }
+  - { id: provider.$compileProvider.commentDirectivesEnabled, shape: provider, match: $compileProvider.commentDirectivesEnabled, class: mechanical, target: "none (dropped)" }
+  - { id: provider.$compileProvider.cssClassDirectivesEnabled, shape: provider, match: $compileProvider.cssClassDirectivesEnabled, class: mechanical, target: "none (dropped)" }
+  - { id: provider.$compileProvider.directive,      shape: provider, match: $compileProvider.directive,      class: decision, target: "a @Directive" }
+  - { id: provider.$compileProvider.component,      shape: provider, match: $compileProvider.component,      class: decision, target: "a @Component" }
+  - { id: provider.$controllerProvider.register,    shape: provider, match: $controllerProvider.register,    class: decision, target: "a @Component" }
+  - { id: provider.$filterProvider.register,        shape: provider, match: $filterProvider.register,        class: decision, target: "a @Pipe" }
+  - { id: provider.$provide.decorator,              shape: provider, match: $provide.decorator,              class: decision, target: "a subclass provided in place of the class" }
+  - { id: provider.$provide.factory,                shape: provider, match: $provide.factory,                class: decision, target: "a provider with useFactory" }
+  - { id: provider.$provide.service,                shape: provider, match: $provide.service,                class: decision, target: "a provider" }
+  - { id: provider.$provide.value,                  shape: provider, match: $provide.value,                  class: decision, target: "a provider with useValue" }
+  - { id: provider.$provide.constant,               shape: provider, match: $provide.constant,               class: decision, target: "an exported const" }
+  - { id: provider.$provide.provider,               shape: provider, match: $provide.provider,               class: decision, target: "an InjectionToken with a factory" }
+  - { id: provider.$animateProvider.classNameFilter, shape: provider, match: $animateProvider.classNameFilter, class: decision, target: "none" }
+  - { id: provider.$logProvider.debugEnabled,       shape: provider, match: $logProvider.debugEnabled,       class: mechanical, target: "isDevMode()" }
+  - { id: provider.$qProvider.errorOnUnhandledRejections, shape: provider, match: $qProvider.errorOnUnhandledRejections, class: mechanical, target: "none (dropped)" }
+  - { id: provider.$interpolateProvider.startSymbol, shape: provider, match: $interpolateProvider.startSymbol, class: decision, target: "none; templates use {{ }}" }
+  - { id: provider.$interpolateProvider.endSymbol,   shape: provider, match: $interpolateProvider.endSymbol,   class: decision, target: "none; templates use {{ }}" }
+  - { id: provider.$sceProvider.enabled,            shape: provider, match: $sceProvider.enabled,            class: decision, target: "none; sanitization is always on" }
+  - { id: provider.$sceDelegateProvider.resourceUrlWhitelist, shape: provider, match: $sceDelegateProvider.resourceUrlWhitelist, class: decision, target: "bypassSecurityTrustResourceUrl where trusted", until: "1.8 (renamed trustedResourceUrlList)" }
+  - { id: provider.$sceDelegateProvider.trustedResourceUrlList, shape: provider, match: $sceDelegateProvider.trustedResourceUrlList, class: decision, target: "bypassSecurityTrustResourceUrl where trusted" }
+  - { id: provider.$stateProvider.state,            shape: provider, match: $stateProvider.state,            class: decision, target: "a Routes entry (wire-router / plan-migration)" }
+  - { id: provider.$stateProvider.decorator,        shape: provider, match: $stateProvider.decorator,        class: decision, target: "none" }
+  - { id: provider.$urlRouterProvider.otherwise,    shape: provider, match: $urlRouterProvider.otherwise,    class: decision, target: "{ path: '**', redirectTo }" }
+  - { id: provider.$urlRouterProvider.when,         shape: provider, match: $urlRouterProvider.when,         class: decision, target: "a redirectTo route" }
+  - { id: provider.$urlRouterProvider.rule,         shape: provider, match: $urlRouterProvider.rule,         class: decision, target: "a UrlMatcher" }
+  - { id: provider.$urlRouterProvider.deferIntercept, shape: provider, match: $urlRouterProvider.deferIntercept, class: decision, target: "initialNavigation" }
+  - { id: provider.$routeProvider.when,             shape: provider, match: $routeProvider.when,             class: decision, target: "a Routes entry" }
+  - { id: provider.$routeProvider.otherwise,        shape: provider, match: $routeProvider.otherwise,        class: decision, target: "{ path: '**', redirectTo }" }
+  - { id: provider.$urlMatcherFactoryProvider.strictMode, shape: provider, match: $urlMatcherFactoryProvider.strictMode, class: decision, target: "none" }
+  - { id: provider.$urlMatcherFactoryProvider.caseInsensitive, shape: provider, match: $urlMatcherFactoryProvider.caseInsensitive, class: decision, target: "none" }
+  - { id: provider.$urlMatcherFactoryProvider.type, shape: provider, match: $urlMatcherFactoryProvider.type, class: decision, target: "a UrlMatcher" }
+  - { id: provider.$uiRouterProvider.plugin,        shape: provider, match: $uiRouterProvider.plugin,        class: decision, target: "none" }
+  - { id: provider.$anchorScrollProvider.disableAutoScrolling, shape: provider, match: $anchorScrollProvider.disableAutoScrolling, class: decision, target: "withInMemoryScrolling" }
+  # ── events ─────────────────────────────────────────────────────────────
+  - { id: event.$destroy,               shape: event, match: $destroy,               class: mechanical, target: "ngOnDestroy" }
+  - { id: event.$locationChangeStart,   shape: event, match: $locationChangeStart,   class: decision,   target: "Router events NavigationStart / a CanDeactivate guard" }
+  - { id: event.$locationChangeSuccess, shape: event, match: $locationChangeSuccess, class: decision,   target: "Router events NavigationEnd" }
+  - { id: event.$routeChangeStart,      shape: event, match: $routeChangeStart,      class: decision,   target: "Router events NavigationStart" }
+  - { id: event.$routeChangeSuccess,    shape: event, match: $routeChangeSuccess,    class: decision,   target: "Router events NavigationEnd" }
+  - { id: event.$routeChangeError,      shape: event, match: $routeChangeError,      class: decision,   target: "Router events NavigationError" }
+  - { id: event.$routeUpdate,           shape: event, match: $routeUpdate,           class: decision,   target: "ActivatedRoute.params" }
+  - { id: event.$stateChangeStart,      shape: event, match: $stateChangeStart,      class: decision,   target: "a CanActivate guard / NavigationStart", until: "ui-router 0.x" }
+  - { id: event.$stateChangeSuccess,    shape: event, match: $stateChangeSuccess,    class: decision,   target: "Router events NavigationEnd", until: "ui-router 0.x" }
+  - { id: event.$stateChangeError,      shape: event, match: $stateChangeError,      class: decision,   target: "Router events NavigationError", until: "ui-router 0.x" }
+  - { id: event.$stateNotFound,         shape: event, match: $stateNotFound,         class: decision,   target: "the wildcard route", until: "ui-router 0.x" }
+  - { id: event.$viewContentLoaded,     shape: event, match: $viewContentLoaded,     class: decision,   target: "ngAfterViewInit on the outlet's component" }
+  - { id: event.$viewContentLoading,    shape: event, match: $viewContentLoading,    class: decision,   target: "Router events ResolveStart" }
+  - { id: event.$includeContentLoaded,  shape: event, match: $includeContentLoaded,  class: decision,   target: "ngAfterViewInit" }
+  - { id: event.$includeContentRequested, shape: event, match: $includeContentRequested, class: decision, target: "none" }
+  - { id: event.$includeContentError,   shape: event, match: $includeContentError,   class: decision,   target: "none" }
+  # ── template directives ────────────────────────────────────────────────
+  - { id: attribute.ng-app,            shape: attribute, match: ng-app,            class: decision,   target: "bootstrapApplication (the bootstrap step)" }
+  - { id: attribute.ng-controller,     shape: attribute, match: ng-controller,     class: decision,   target: "the component that owns this template" }
+  - { id: attribute.ng-if,             shape: attribute, match: ng-if,             class: mechanical, target: "@if (...) { }", angular_min: "17", target_before: "*ngIf" }
+  - { id: attribute.ng-show,           shape: attribute, match: ng-show,           class: mechanical, target: "[hidden]=\"!(...)\"" }
+  - { id: attribute.ng-hide,           shape: attribute, match: ng-hide,           class: mechanical, target: "[hidden]=\"...\"" }
+  - { id: attribute.ng-repeat,         shape: attribute, match: ng-repeat,         class: mechanical, target: "@for (x of xs; track ...) { } — the comprehension is parsed", angular_min: "17", target_before: "*ngFor=\"let x of xs; trackBy\"" }
+  - { id: attribute.ng-repeat-start,   shape: attribute, match: ng-repeat-start,   class: decision,   target: "@for over an <ng-container> spanning the range" }
+  - { id: attribute.ng-repeat-end,     shape: attribute, match: ng-repeat-end,     class: decision,   target: "the end of that <ng-container>" }
+  - { id: attribute.ng-class,          shape: attribute, match: ng-class,          class: mechanical, target: "[ngClass] / [class.x] for an object literal" }
+  - { id: attribute.ng-class-even,     shape: attribute, match: ng-class-even,     class: mechanical, target: "[class.x]=\"$even && ...\"" }
+  - { id: attribute.ng-class-odd,      shape: attribute, match: ng-class-odd,      class: mechanical, target: "[class.x]=\"$odd && ...\"" }
+  - { id: attribute.ng-style,          shape: attribute, match: ng-style,          class: mechanical, target: "[ngStyle]" }
+  - { id: attribute.ng-click,          shape: attribute, match: ng-click,          class: mechanical, target: "(click)" }
+  - { id: attribute.ng-dblclick,       shape: attribute, match: ng-dblclick,       class: mechanical, target: "(dblclick)" }
+  - { id: attribute.ng-mousedown,      shape: attribute, match: ng-mousedown,      class: mechanical, target: "(mousedown)" }
+  - { id: attribute.ng-mouseup,        shape: attribute, match: ng-mouseup,        class: mechanical, target: "(mouseup)" }
+  - { id: attribute.ng-mouseenter,     shape: attribute, match: ng-mouseenter,     class: mechanical, target: "(mouseenter)" }
+  - { id: attribute.ng-mouseleave,     shape: attribute, match: ng-mouseleave,     class: mechanical, target: "(mouseleave)" }
+  - { id: attribute.ng-mousemove,      shape: attribute, match: ng-mousemove,      class: mechanical, target: "(mousemove)" }
+  - { id: attribute.ng-mouseover,      shape: attribute, match: ng-mouseover,      class: mechanical, target: "(mouseover)" }
+  - { id: attribute.ng-keydown,        shape: attribute, match: ng-keydown,        class: mechanical, target: "(keydown)" }
+  - { id: attribute.ng-keyup,          shape: attribute, match: ng-keyup,          class: mechanical, target: "(keyup)" }
+  - { id: attribute.ng-keypress,       shape: attribute, match: ng-keypress,       class: mechanical, target: "(keypress)" }
+  - { id: attribute.ng-change,         shape: attribute, match: ng-change,         class: mechanical, target: "(ngModelChange) / (change)" }
+  - { id: attribute.ng-submit,         shape: attribute, match: ng-submit,         class: mechanical, target: "(ngSubmit)" }
+  - { id: attribute.ng-focus,          shape: attribute, match: ng-focus,          class: mechanical, target: "(focus)" }
+  - { id: attribute.ng-blur,           shape: attribute, match: ng-blur,           class: mechanical, target: "(blur)" }
+  - { id: attribute.ng-copy,           shape: attribute, match: ng-copy,           class: mechanical, target: "(copy)" }
+  - { id: attribute.ng-cut,            shape: attribute, match: ng-cut,            class: mechanical, target: "(cut)" }
+  - { id: attribute.ng-paste,          shape: attribute, match: ng-paste,          class: mechanical, target: "(paste)" }
+  - { id: attribute.ng-model,          shape: attribute, match: ng-model,          class: mechanical, target: "[(ngModel)] (FormsModule)" }
+  - { id: attribute.ng-model-options,  shape: attribute, match: ng-model-options,  class: decision,   target: "[ngModelOptions] (updateOn); debounce is a decision" }
+  - { id: attribute.ng-bind,           shape: attribute, match: ng-bind,           class: mechanical, target: "{{ ... }}" }
+  - { id: attribute.ng-bind-html,      shape: attribute, match: ng-bind-html,      class: mechanical, target: "[innerHTML]" }
+  - { id: attribute.ng-bind-template,  shape: attribute, match: ng-bind-template,  class: mechanical, target: "interpolated text" }
+  - { id: attribute.ng-disabled,       shape: attribute, match: ng-disabled,       class: mechanical, target: "[disabled]" }
+  - { id: attribute.ng-readonly,       shape: attribute, match: ng-readonly,       class: mechanical, target: "[readonly]" }
+  - { id: attribute.ng-checked,        shape: attribute, match: ng-checked,        class: mechanical, target: "[checked]" }
+  - { id: attribute.ng-selected,       shape: attribute, match: ng-selected,       class: mechanical, target: "[selected]" }
+  - { id: attribute.ng-required,       shape: attribute, match: ng-required,       class: mechanical, target: "[required]" }
+  - { id: attribute.ng-open,           shape: attribute, match: ng-open,           class: mechanical, target: "[open]" }
+  - { id: attribute.ng-src,            shape: attribute, match: ng-src,            class: mechanical, target: "[src]" }
+  - { id: attribute.ng-srcset,         shape: attribute, match: ng-srcset,         class: mechanical, target: "[srcset]" }
+  - { id: attribute.ng-href,           shape: attribute, match: ng-href,           class: mechanical, target: "[href]" }
+  - { id: attribute.ng-value,          shape: attribute, match: ng-value,          class: mechanical, target: "[value]" }
+  - { id: attribute.ng-attr,           shape: attribute, match: "ng-attr-*",       class: mechanical, target: "[attr.name]" }
+  - { id: attribute.ng-minlength,      shape: attribute, match: ng-minlength,      class: mechanical, target: "[minlength]" }
+  - { id: attribute.ng-maxlength,      shape: attribute, match: ng-maxlength,      class: mechanical, target: "[maxlength]" }
+  - { id: attribute.ng-pattern,        shape: attribute, match: ng-pattern,        class: mechanical, target: "[pattern]" }
+  - { id: attribute.ng-list,           shape: attribute, match: ng-list,           class: decision,   target: "a split in the component" }
+  - { id: attribute.ng-trim,           shape: attribute, match: ng-trim,           class: decision,   target: "a trim in the component" }
+  - { id: attribute.ng-true-value,     shape: attribute, match: ng-true-value,     class: decision,   target: "a mapping in the component" }
+  - { id: attribute.ng-false-value,    shape: attribute, match: ng-false-value,    class: decision,   target: "a mapping in the component" }
+  - { id: attribute.ng-options,        shape: attribute, match: ng-options,        class: mechanical, target: "@for over <option> — the comprehension is parsed", angular_min: "17", target_before: "*ngFor over <option>" }
+  - { id: attribute.ng-switch,         shape: attribute, match: ng-switch,         class: mechanical, target: "@switch (...) { }", angular_min: "17", target_before: "[ngSwitch]" }
+  - { id: attribute.ng-switch-when,    shape: attribute, match: ng-switch-when,    class: mechanical, target: "@case (...) { }", angular_min: "17", target_before: "*ngSwitchCase" }
+  - { id: attribute.ng-switch-default, shape: attribute, match: ng-switch-default, class: mechanical, target: "@default { }", angular_min: "17", target_before: "*ngSwitchDefault" }
+  - { id: attribute.ng-include,        shape: attribute, match: ng-include,        class: decision,   target: "a child component per included template" }
+  - { id: attribute.ng-init,           shape: attribute, match: ng-init,           class: decision,   target: "a field initializer in the class" }
+  - { id: attribute.ng-transclude,     shape: attribute, match: ng-transclude,     class: mechanical, target: "<ng-content> / <ng-content select>" }
+  - { id: attribute.ng-non-bindable,   shape: attribute, match: ng-non-bindable,   class: mechanical, target: "ngNonBindable" }
+  - { id: attribute.ng-cloak,          shape: attribute, match: ng-cloak,          class: mechanical, target: "none (dropped)" }
+  - { id: attribute.ng-csp,            shape: attribute, match: ng-csp,            class: mechanical, target: "none (dropped)" }
+  - { id: attribute.ng-jq,             shape: attribute, match: ng-jq,             class: mechanical, target: "none (dropped)" }
+  - { id: attribute.ng-pluralize,      shape: attribute, match: ng-pluralize,      class: decision,   target: "ICU plural in the template" }
+  - { id: attribute.ng-ref,            shape: attribute, match: ng-ref,            class: mechanical, target: "a template reference variable #x", since: "1.7.1" }
+  - { id: attribute.ng-form,           shape: attribute, match: ng-form,           class: mechanical, target: "ngModelGroup" }
+  - { id: attribute.ng-messages,       shape: attribute, match: ng-messages,       class: decision,   target: "@if over control.errors", since: "1.3 (ngMessages)" }
+  - { id: attribute.ng-message,        shape: attribute, match: ng-message,        class: decision,   target: "@if (control.errors?.['x'])" }
+  - { id: attribute.ng-message-exp,    shape: attribute, match: ng-message-exp,    class: decision,   target: "@if" }
+  - { id: attribute.ng-messages-include, shape: attribute, match: ng-messages-include, class: decision, target: "a shared messages component" }
+  - { id: attribute.ng-animate-children, shape: attribute, match: ng-animate-children, class: decision, target: "@angular/animations" }
+  - { id: attribute.ng-animate-swap,   shape: attribute, match: ng-animate-swap,   class: decision,   target: "@angular/animations" }
+  - { id: attribute.ng-swipe-left,     shape: attribute, match: ng-swipe-left,     class: decision,   target: "(swipeleft) with HammerJS, or pointer events" }
+  - { id: attribute.ng-swipe-right,    shape: attribute, match: ng-swipe-right,    class: decision,   target: "(swiperight)" }
+  - { id: attribute.ng-view,           shape: attribute, match: ng-view,           class: mechanical, target: "<router-outlet>" }
+  - { id: attribute.ui-view,           shape: attribute, match: ui-view,           class: mechanical, target: "<router-outlet> / a named outlet" }
+  - { id: attribute.ui-sref,           shape: attribute, match: ui-sref,           class: decision,   target: "[routerLink] — the state name maps to a path" }
+  - { id: attribute.ui-sref-active,    shape: attribute, match: ui-sref-active,    class: mechanical, target: "routerLinkActive" }
+  - { id: attribute.ui-sref-active-eq, shape: attribute, match: ui-sref-active-eq, class: mechanical, target: "routerLinkActive with { exact: true }" }
+  - { id: attribute.ui-sref-opts,      shape: attribute, match: ui-sref-opts,      class: decision,   target: "routerLink options" }
+  - { id: attribute.ui-state,          shape: attribute, match: ui-state,          class: decision,   target: "[routerLink]" }
+  - { id: attribute.ng-template-script, shape: attribute, match: "text/ng-template", class: mechanical, target: "the template becomes a file" }
+  - { id: attribute.ng-container,      shape: attribute, match: ng-container,      class: mechanical, target: "<ng-container> — already Angular syntax in a hybrid template" }
+  - { id: attribute.ng-content,        shape: attribute, match: ng-content,        class: mechanical, target: "<ng-content> — already Angular syntax" }
+  # ── built-in template filters ──────────────────────────────────────────
+  - { id: filter.currency,  shape: filter, match: currency,  class: mechanical, target: "| currency" }
+  - { id: filter.date,      shape: filter, match: date,      class: mechanical, target: "| date (format names differ: a decision when a custom format is passed)" }
+  - { id: filter.filter,    shape: filter, match: filter,    class: decision,   target: "a computed() in the component, or a pipe written for it" }
+  - { id: filter.json,      shape: filter, match: json,      class: mechanical, target: "| json" }
+  - { id: filter.limitTo,   shape: filter, match: limitTo,   class: mechanical, target: "| slice" }
+  - { id: filter.lowercase, shape: filter, match: lowercase, class: mechanical, target: "| lowercase" }
+  - { id: filter.uppercase, shape: filter, match: uppercase, class: mechanical, target: "| uppercase" }
+  - { id: filter.number,    shape: filter, match: number,    class: mechanical, target: "| number" }
+  - { id: filter.orderBy,   shape: filter, match: orderBy,   class: decision,   target: "a computed() sort in the component" }
+  # ── template expression forms ──────────────────────────────────────────
+  - { id: expression.interpolation, shape: expression, match: "{{ }}",      class: mechanical, target: "{{ }}" }
+  - { id: expression.one-time,      shape: expression, match: "::",        class: mechanical, target: "none; drop the ::" }
+  - { id: expression.filter-chain,  shape: expression, match: "|",         class: mechanical, target: "| pipe (args with : as in AngularJS)" }
+  - { id: expression.track-by,      shape: expression, match: "track by",  class: mechanical, target: "track", angular_min: "17" }
+  - { id: expression.repeat-alias,  shape: expression, match: " as ",      class: decision,   target: "a computed() holding the filtered list" }
+  - { id: expression.repeat-key-value, shape: expression, match: "(k, v) in", class: mechanical, target: "@for over Object.entries / keyvalue pipe", angular_min: "17" }
+  - { id: expression.$index,        shape: expression, match: $index,      class: mechanical, target: "$index" }
+  - { id: expression.$first,        shape: expression, match: $first,      class: mechanical, target: "$first" }
+  - { id: expression.$last,         shape: expression, match: $last,       class: mechanical, target: "$last" }
+  - { id: expression.$middle,       shape: expression, match: $middle,     class: mechanical, target: "!$first && !$last" }
+  - { id: expression.$even,         shape: expression, match: $even,       class: mechanical, target: "$even" }
+  - { id: expression.$odd,          shape: expression, match: $odd,        class: mechanical, target: "$odd" }
+  - { id: expression.$event,        shape: expression, match: $event,      class: mechanical, target: "$event" }
+  - { id: expression.$parent,       shape: expression, match: $parent,     class: decision,   target: "none; the outer context is in scope" }
+  - { id: expression.ng-options-comprehension, shape: expression, match: "for … in", class: mechanical, target: "@for over <option> with [value] and label" }
+  - { id: expression.controllerAs-prefix, shape: expression, match: "ctrl.", class: mechanical, target: "the prefix is dropped" }

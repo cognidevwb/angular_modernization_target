@@ -1,0 +1,46 @@
+apiVersion: cognidev.ai/v1
+kind: QuestionnaireSection
+
+section:
+  id: strategy
+  title: "Migration strategy"
+  intro: |
+    How we get from where you are to Angular 22. The detector recommends a path
+    from your actual generation; pick `auto` to follow it, or force a strategy.
+  estimated_seconds: 40
+
+questions:
+
+  - id: migration_strategy
+    kind: enum
+    label: "Migration strategy?"
+    description: "AngularJS 1.x can only rewrite or run hybrid (ngUpgrade). Angular 2–21 is a stepwise ng update. `auto` lets the detector choose."
+    default: auto
+    required: true
+    options:
+      - { value: auto,     label: "Auto — follow the detector", hint: "Recommended — stepwise for Angular N, hybrid/rewrite for AngularJS." }
+      - { value: stepwise, label: "Stepwise ng update (Angular 2–21)", hint: "One major at a time to 22 + idiom schematics." }
+      - { value: hybrid,   label: "Hybrid ngUpgrade (AngularJS)", hint: "Run AngularJS + Angular side by side; migrate piece by piece." }
+      - { value: rewrite,  label: "Rewrite into a fresh Angular 22 app", hint: "Greenfield target; port screens behind a flag. Small apps / feature freeze." }
+
+  - id: state_management
+    kind: enum
+    label: "State management for the target?"
+    description: "Signals cover most app state in 2026; add a store only if you genuinely need one."
+    default: signals
+    required: true
+    options:
+      - { value: signals,       label: "Signals + services (default)", hint: "Recommended — signal()/computed() in injectable services." }
+      - { value: ngrx-signals,  label: "NgRx SignalStore", hint: "Signal-based store for larger shared state." }
+      - { value: ngrx-classic,  label: "NgRx (classic, RxJS)", hint: "If you already have NgRx actions/effects to carry over." }
+
+  - id: styling
+    kind: enum
+    label: "Styling approach?"
+    description: "Drives the scaffold's style extension and component style files."
+    default: scss
+    required: true
+    options:
+      - { value: scss, label: "SCSS", hint: "Recommended — most common in Angular apps." }
+      - { value: css,  label: "Plain CSS", hint: "Simplest; modern CSS nesting covers a lot." }
+      - { value: tailwind, label: "Tailwind CSS", hint: "Utility-first; adds the Tailwind pipeline." }

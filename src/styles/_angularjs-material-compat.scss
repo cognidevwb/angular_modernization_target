@@ -1,0 +1,73 @@
+// AngularJS Material 1.1's utility classes, for templates ported to Angular
+// Material that keep them (the values are AngularJS Material's own, MIT).
+// Carried by wire-app for a rewrite; a screen restyled in Angular Material's
+// own terms drops the class and this file stops mattering to it.
+
+.md-toolbar-tools {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+  max-height: 64px;
+  padding: 0 16px;
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 0.005em;
+  box-sizing: border-box;
+  font-weight: 400;
+  h1, h2, h3 { font-size: inherit; font-weight: inherit; margin: inherit; }
+}
+
+.md-display-4 { font-size: 112px; font-weight: 300; letter-spacing: -0.010em; line-height: 112px; }
+.md-display-3 { font-size: 56px; font-weight: 400; letter-spacing: -0.005em; line-height: 56px; }
+.md-display-2 { font-size: 45px; font-weight: 400; line-height: 64px; }
+.md-display-1 { font-size: 34px; font-weight: 400; line-height: 40px; }
+.md-headline  { font-size: 24px; font-weight: 400; line-height: 32px; }
+.md-title     { font-size: 20px; font-weight: 500; letter-spacing: 0.005em; }
+.md-subhead   { font-size: 16px; font-weight: 400; letter-spacing: 0.010em; line-height: 24px; }
+.md-body-1    { font-size: 14px; font-weight: 400; letter-spacing: 0.010em; line-height: 20px; }
+.md-body-2    { font-size: 14px; font-weight: 500; letter-spacing: 0.010em; line-height: 24px; }
+.md-caption   { font-size: 12px; letter-spacing: 0.020em; }
+
+.md-padding { padding: 8px; }
+.md-margin { margin: 8px; }
+.md-block { display: block; }
+.md-inline-form { display: inline-block; }
+
+.md-content {
+  display: block;
+  position: relative;
+  overflow: auto;
+}
+
+.md-subheader {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1em;
+  padding: 16px 16px;
+}
+
+.md-dialog {
+  display: flex;
+  flex-direction: column;
+  max-width: 80vw;
+  max-height: 80vh;
+  > form {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+  }
+}
+
+.md-card-header-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+// a toolbar row in a dialog or a card, as AngularJS Material laid it out
+mat-toolbar.mat-toolbar {
+  min-height: 64px;
+}

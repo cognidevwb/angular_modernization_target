@@ -1,10 +1,11 @@
-import { Component, inject, model, output } from '@angular/core';
+import { Component, inject, model, output, effect } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { types } from '../../common/constants/types';
 import tinycolor from 'tinycolor2';
 import $ from 'jquery';
+import { isEqual } from 'lodash-es';
 const datasourceEntityTemplate = '../../../../app/components/datasource-entity.tpl.html';
 const datakeyConfigDialogTemplate = '../../../../app/components/datakey-config-dialog.tpl.html';
 

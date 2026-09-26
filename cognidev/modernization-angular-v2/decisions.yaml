@@ -1,0 +1,100 @@
+# Open decisions: the catalog's `decision` idioms as named options.
+#
+# S5 (`resolve`) asks Jev to pick one option (or "none") for each open task,
+# from the code around the line. A `fact` settles a task without Jev when a
+# repo fact decides it (the fact is checked in code). An idiom not listed
+# here goes straight to the gap list.
+#
+# Accept rule (tested on AWB, 2026-09-25): take the pick when its
+# probability is >= 0.6, "none" is < 0.2, and the pick's own yes/no fit is
+# >= 0.2; otherwise the task goes to the gap list with Jev's answers.
+version: 1
+decisions:
+  helper.equals:
+    fact: { lodash: lodash }
+    options:
+      lodash: "_.isEqual(a, b) — a deep comparison, for any type"
+      strict: "a === b — both sides are plain values (strings, numbers, booleans)"
+  helper.forEach:
+    fact: { lodash: lodash_each }
+    options:
+      for_of: "for (const x of list) — the value is an array"
+      object_entries: "for (const [k, v] of Object.entries(obj)) — the value is a plain object"
+      lodash_each: "_.forEach(value, fn) — works for arrays and objects; the type is not known here"
+  scope.$watch:
+    options:
+      effect: "effect() over a signal: re-run when a signal the component owns changes"
+      on_changes: "ngOnChanges: re-run when an @Input from the parent changes"
+      mutation_observer: "a MutationObserver on the host element: re-run when the DOM inside it changes"
+      setter: "a setter or computed() on the watched value: react where the value is set"
+  scope.$on:
+    options:
+      service_subject: "an rxjs Subject on a shared service that raises the event"
+      router_events: "Angular Router events (NavigationStart/End/Error)"
+      output: "an @Output() the parent binds to"
+      dom_event: "a DOM event listener on the host (HostListener)"
+  member.$rootScope.$on:
+    options:
+      service_subject: "an rxjs Subject on a root-provided service that raises the event"
+      router_events: "Angular Router events (NavigationStart/End/Error)"
+  scope.$destroy:
+    options:
+      destroy_ref: "the component's own teardown: DestroyRef.onDestroy / ngOnDestroy"
+      child_destroy: "destroying a dynamically created child: ComponentRef.destroy() / ViewRef.destroy()"
+  scope.$new:
+    options:
+      child_component: "a child component with inputs, instead of a child scope"
+      embedded_view_context: "an embedded view (<ng-template>) with a context object"
+  attribute.ng-include:
+    options:
+      child_component: "a child component for the included template"
+      template_outlet: "an <ng-template> rendered with ngTemplateOutlet"
+  attribute.ng-init:
+    options:
+      field_initializer: "initialise a class field once"
+      template_let: "@let in the template: a local value (per loop item)"
+  member.$attrs.field:
+    options:
+      input: "an @Input() (the attribute can change or holds an expression)"
+      host_attribute: "HostAttributeToken: a static attribute read once"
+  token.$attrs:
+    options:
+      input: "inputs (the attributes can change or hold expressions)"
+      host_attribute: "HostAttributeToken: static attributes read once"
+  scope.$root:
+    options:
+      root_service: "a root-provided service holding the shared state"
+      window_global: "a global on window"
+  member.$rootScope.field:
+    options:
+      root_service_field: "a field on a root-provided service"
+      window_global: "a global on window"
+  scope.$parent:
+    options:
+      input: "an input from the parent component"
+      shared_service: "a shared service both components inject"
+  member.$injector.get:
+    options:
+      injector_get: "inject(Injector).get(Class) — looked up at run time"
+      inject_field: "inject(Class) as a field — known at construction"
+  member.$q.defer:
+    options:
+      new_promise: "new Promise((resolve, reject) => …)"
+      subject: "an rxjs Subject / ReplaySubject (several values, or subscribed to)"
+  member.$filter.call:
+    options:
+      pipe_transform: "inject the pipe class and call transform()"
+      plain_function: "a plain function doing the same formatting"
+  member.$compile.call:
+    options:
+      create_component: "ViewContainerRef.createComponent with a component for this template"
+      embedded_view: "createEmbeddedView from an <ng-template>"
+      plain_html: "insert the HTML as plain markup (it has no bindings or directives)"
+  jqlite.scope:
+    options:
+      state_on_class: "read the state from the component class that owns the element"
+      model_of_element: "look up the model bound to that element (a data attribute, or a map from element to model)"
+  jqlite.plugin:
+    options:
+      keep_jquery: "keep the jQuery plugin call on the element (jQuery stays a dependency)"
+      component: "replace the plugin with an Angular component"

@@ -1,4 +1,4 @@
-import { Component, model } from '@angular/core';
+import { Component, model, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import widgetTpl from '../../../../app/widget/lib/date-range-navigator/date-range-navigator.tpl.html';

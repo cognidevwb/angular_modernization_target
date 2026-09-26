@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, model } from '@angular/core';
+import { Component, forwardRef, inject, model, effect } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { ToastService } from '../../services/toast.service';
 import { UtilsService } from '../../common/services/utils.service';
@@ -23,6 +23,7 @@ declare let ngModelCtrl: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 import * as beautify from 'js-beautify';
+import { isEqual } from 'lodash-es';
 const js_beautify: any = beautify.js;
 
 /**

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { bindMethods } from '../../../legacy-injector';
+import { bindMethods } from '../../../bind-methods';
 import tinycolor from 'tinycolor2';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.

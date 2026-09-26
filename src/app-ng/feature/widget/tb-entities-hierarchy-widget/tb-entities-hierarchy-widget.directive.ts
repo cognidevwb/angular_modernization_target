@@ -1,4 +1,4 @@
-import { Component, forwardRef, model } from '@angular/core';
+import { Component, forwardRef, model, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TbNavTreeDirective } from '../../components/tb-nav-tree/tb-nav-tree.directive';
 import entitiesHierarchyWidgetTemplate from '../../../../app/widget/lib/entities-hierarchy-widget.tpl.html?raw';

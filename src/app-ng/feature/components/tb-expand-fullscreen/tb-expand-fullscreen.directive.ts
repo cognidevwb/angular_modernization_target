@@ -1,4 +1,4 @@
-import { Directive, inject, model, output } from '@angular/core';
+import { Directive, inject, model, output, effect } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { DestroyRef } from '@angular/core';
 import { ElementRef } from '@angular/core';

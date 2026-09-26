@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { RootState } from '../../root-state';
 import { Router } from '@angular/router';
 import { UserService } from '../api/services/user.service';
-import { bindMethods } from '../../legacy-injector';
+import { bindMethods } from '../../bind-methods';
 
 /**
  * Ported from the AngularJS factory `menu` (module `thingsboard.menu`) in src/app/services/menu.service.js:18.

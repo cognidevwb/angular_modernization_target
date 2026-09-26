@@ -1,0 +1,36 @@
+apiVersion: cognidev.ai/v1
+kind: QuestionnaireSection
+
+# ─────────────────────────────────────────────────────────────
+#  Git strategy — the shared first section every in-place / additive
+#  transformation playbook carries (PLAYBOOK-AUTHORING-RUNBOOK.md §3). Asked
+#  FIRST so you know the end-state going in; executed by the terminal `finalize`
+#  phase (git-finalize) as a deterministic, non-destructive git cutover — your
+#  original history is always reachable.
+#  CANONICAL COPY — playbooks carry a per-playbook copy of this file. Keep them
+#  in sync (a future prebundle step copies from here).
+# ─────────────────────────────────────────────────────────────
+
+section:
+  id: git-strategy
+  title: "Git strategy"
+  intro: |
+    Where the resulting code should land, so old and new never sit mixed in your
+    working tree with no decision. The default keeps your current branch exactly
+    as it is and puts the work on its own branch to review + merge — safe and
+    reversible.
+  estimated_seconds: 20
+
+questions:
+
+  - id: git_strategy
+    kind: enum
+    label: "Where should the resulting code go?"
+    description: "Chosen up front; executed by a deterministic git cutover at the end. Nothing is destructive — the original is always reachable (an untouched branch, an archive branch, or the frozen `source` branch)."
+    default: work-branch
+    required: true
+    options:
+      - { value: work-branch,       label: "Keep my branch as-is; put the work on a new branch", hint: "Recommended default. Your current branch is untouched; the work lands on `cognidev/<playbook>` to review + merge via PR." }
+      - { value: archive-and-adopt, label: "The work becomes my branch; archive the old code", hint: "The work becomes your current branch; the pre-run code is snapshotted onto `archive/pre-<playbook>-<sha>`." }
+      - { value: new-repo,          label: "Export the work to a brand-new repository", hint: "The resulting tree is exported to a fresh standalone repo under `dist/<name>/`, leaving this repo entirely as-is." }
+      - { value: in-place-commit,   label: "Commit the work straight onto the current branch", hint: "For throwaway/solo work. The pre-run code stays recoverable on the frozen `source` branch." }

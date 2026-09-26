@@ -8,6 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import * as L from 'leaflet';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
 

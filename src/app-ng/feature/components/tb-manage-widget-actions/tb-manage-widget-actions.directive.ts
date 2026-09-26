@@ -1,4 +1,4 @@
-import { Component, model, output } from '@angular/core';
+import { Component, model, output, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import manageWidgetActionsTemplate from '../../../../app/components/widget/action/manage-widget-actions.tpl.html?raw';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,6 +9,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { isEqual } from 'lodash-es';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
 

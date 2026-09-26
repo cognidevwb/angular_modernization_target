@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, model } from '@angular/core';
+import { Component, forwardRef, inject, model, effect } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

@@ -1,0 +1,171 @@
+# AngularJS Material 1.x → Angular Material, element by element.
+#
+# The template port (scaffold-units) reads this before it converts the
+# AngularJS directives: every `md-*` element named here becomes the Angular
+# Material element or attribute directive, its `md-*` attributes become the
+# Angular inputs, and the component imports the module that declares it.
+# An element with no one-to-one Angular form is listed under `left`: it stays
+# as written with a TODO(port) note saying what to use.
+#
+# Layout attributes (`layout`, `flex`, `layout-align`, `hide-*`, `show-*` …)
+# are not here: they are plain CSS in AngularJS Material, and the target keeps
+# them by carrying that stylesheet (see `stylesheets`).
+#
+# Sources: AngularJS Material 1.1 API docs; Angular Material 22 API docs.
+version: 1
+
+# md-x → { tag, attrs added, module, from }. `link_tag` is the tag used when
+# the element navigates (has href / ng-href / ui-sref).
+elements:
+  md-button:            { tag: button, attrs: [mat-button], link_tag: a, variant: true, module: MatButtonModule, from: "@angular/material/button" }
+  md-icon:              { tag: mat-icon, module: MatIconModule, from: "@angular/material/icon" }
+  md-input-container:   { tag: mat-form-field, module: MatInputModule, from: "@angular/material/input", form_field: true }
+  md-select:            { tag: mat-select, module: MatSelectModule, from: "@angular/material/select" }
+  md-option:            { tag: mat-option, module: MatSelectModule, from: "@angular/material/select" }
+  md-optgroup:          { tag: mat-optgroup, module: MatSelectModule, from: "@angular/material/select" }
+  md-checkbox:          { tag: mat-checkbox, module: MatCheckboxModule, from: "@angular/material/checkbox" }
+  md-switch:            { tag: mat-slide-toggle, module: MatSlideToggleModule, from: "@angular/material/slide-toggle" }
+  md-radio-group:       { tag: mat-radio-group, module: MatRadioModule, from: "@angular/material/radio" }
+  md-radio-button:      { tag: mat-radio-button, module: MatRadioModule, from: "@angular/material/radio" }
+  md-toolbar:           { tag: mat-toolbar, module: MatToolbarModule, from: "@angular/material/toolbar" }
+  # `ng-disabled` on a progress indicator hid it (AngularJS Material kept its space)
+  md-progress-linear:   { tag: mat-progress-bar, attrs: ['mode="indeterminate"'], disabled_hides: true, module: MatProgressBarModule, from: "@angular/material/progress-bar" }
+  md-progress-circular: { tag: mat-progress-spinner, attrs: ['mode="indeterminate"'], disabled_hides: true, module: MatProgressSpinnerModule, from: "@angular/material/progress-spinner" }
+  # angular-material-icons: the icon's name is an attribute; a mat-icon's is its text
+  ng-md-icon:           { tag: mat-icon, content_from: icon, drop: [size], module: MatIconModule, from: "@angular/material/icon" }
+  md-dialog-content:    { tag: mat-dialog-content, module: MatDialogModule, from: "@angular/material/dialog" }
+  md-dialog-actions:    { tag: mat-dialog-actions, module: MatDialogModule, from: "@angular/material/dialog" }
+  md-card:              { tag: mat-card, module: MatCardModule, from: "@angular/material/card" }
+  md-card-content:      { tag: mat-card-content, module: MatCardModule, from: "@angular/material/card" }
+  md-card-title:        { tag: mat-card-header, module: MatCardModule, from: "@angular/material/card" }
+  md-card-title-text:   { tag: mat-card-title, module: MatCardModule, from: "@angular/material/card" }
+  md-card-header:       { tag: mat-card-header, module: MatCardModule, from: "@angular/material/card" }
+  md-card-actions:      { tag: mat-card-actions, module: MatCardModule, from: "@angular/material/card" }
+  md-list:              { tag: mat-list, module: MatListModule, from: "@angular/material/list" }
+  md-list-item:         { tag: mat-list-item, module: MatListModule, from: "@angular/material/list" }
+  md-divider:           { tag: mat-divider, module: MatDividerModule, from: "@angular/material/divider" }
+  md-tabs:              { tag: mat-tab-group, module: MatTabsModule, from: "@angular/material/tabs" }
+  md-tab:               { tag: mat-tab, module: MatTabsModule, from: "@angular/material/tabs" }
+  md-tab-label:         { tag: ng-template, attrs: [mat-tab-label], module: MatTabsModule, from: "@angular/material/tabs" }
+  md-slider:            { tag: mat-slider, module: MatSliderModule, from: "@angular/material/slider" }
+  # containers that are plain boxes in the Angular app (their CSS class keeps the look)
+  md-content:           { tag: div, class: md-content }
+  md-dialog:            { tag: div, class: md-dialog }
+  md-subheader:         { tag: div, class: md-subheader }
+  md-tab-body:          { tag: ng-container }
+  md-card-header-text:  { tag: div, class: md-card-header-text }
+  md-whiteframe:        { tag: div, class: md-whiteframe }
+
+# The button variant, read from its classes (the class is dropped; the rest stay).
+button_variants:
+  md-raised: mat-raised-button
+  md-icon-button: mat-icon-button
+  md-fab: mat-fab
+  md-mini: mat-mini-fab
+# The palette, read from classes on a button, toolbar, checkbox, progress …
+colors:
+  md-primary: primary
+  md-accent: accent
+  md-warn: warn
+
+# md-x attribute → the Angular attribute; `~` drops it (it only styled
+# AngularJS Material's own ink ripple or animation).
+attributes:
+  md-svg-icon: svgIcon
+  md-font-icon: fontIcon
+  md-font-set: fontSet
+  md-mode: mode
+  md-diameter: diameter
+  md-autofocus: cdkFocusInitial
+  md-maxlength: maxlength
+  md-selected: ng-prop-selectedIndex
+  md-no-ink: ~
+  md-ink-ripple: ~
+  md-no-float: ~
+  md-dynamic-height: ~
+  md-border-bottom: ~
+  md-stretch-tabs: ~
+  md-center-tabs: ~
+  md-autoselect: ~
+  md-no-asterisk: ~
+  md-is-error: ~
+  md-on-close: ~
+  md-container-class: ~
+  md-theme: ~
+  md-disable-backdrop: ~
+  md-colors: ~
+
+# md-x child → an attribute of its parent, holding the child's text.
+hoist:
+  md-tooltip: { attr: matTooltip, position_from: md-direction, position_attr: matTooltipPosition, module: MatTooltipModule, from: "@angular/material/tooltip" }
+
+# md-menu → a trigger (its first element) bound to a mat-menu (its md-menu-content).
+menu:
+  container: md-menu
+  content: md-menu-content
+  item: md-menu-item
+  item_attr: mat-menu-item
+  open_calls: ["$mdMenu.open", "$mdOpenMenu"]
+  module: MatMenuModule
+  from: "@angular/material/menu"
+
+# Inside a form field: the label and the control.
+form_field:
+  label: mat-label
+  controls: [input, textarea]
+  control_attr: matInput
+
+# No one-to-one Angular Material form: left in place with this note.
+left:
+  md-chips: "md-chips: a mat-chip-grid with an input bound by matChipInputFor"
+  md-chip-template: "md-chip-template: the content of each mat-chip-row"
+  md-autocomplete: "md-autocomplete: an input with [matAutocomplete] and a mat-autocomplete panel"
+  md-item-template: "md-item-template: the content of each mat-option in the autocomplete"
+  md-not-found: "md-not-found: a mat-option shown when the filtered list is empty"
+  md-virtual-repeat-container: "md-virtual-repeat-container: a cdk-virtual-scroll-viewport with *cdkVirtualFor"
+  md-fab-speed-dial: "md-fab-speed-dial: a mat-fab that toggles a list of mat-mini-fab buttons"
+  md-fab-trigger: "md-fab-trigger: the mat-fab that opens the speed dial"
+  md-fab-actions: "md-fab-actions: the buttons the speed dial shows"
+  md-sidenav: "md-sidenav: a mat-sidenav inside a mat-sidenav-container"
+  md-datepicker: "md-datepicker: an input with [matDatepicker] and a mat-datepicker"
+  md-grid-list: "md-grid-list: a mat-grid-list"
+  md-grid-tile: "md-grid-tile: a mat-grid-tile"
+  md-nav-bar: "md-nav-bar: a nav with mat-tab-nav-bar"
+  md-toast: "md-toast: MatSnackBar, opened from the class"
+  md-backdrop: "md-backdrop: the overlay a CDK Overlay draws"
+  md-expansion-panel-group: "md-expansion-panel-group (angular-material-expansion-panel): a mat-accordion"
+  md-expansion-panel: "md-expansion-panel: a mat-expansion-panel"
+  md-expansion-panel-collapsed: "md-expansion-panel-collapsed: the mat-expansion-panel-header"
+  md-expansion-panel-expanded: "md-expansion-panel-expanded: the panel's content"
+  md-expansion-panel-header: "md-expansion-panel-header: a mat-expansion-panel-header"
+  md-expansion-panel-content: "md-expansion-panel-content: the panel's content"
+  md-expansion-panel-footer: "md-expansion-panel-footer: mat-action-row"
+  md-expansion-panel-icon: "md-expansion-panel-icon: the header's toggle indicator (built in)"
+  md-steppers: "md-steppers (material-steppers): a mat-stepper"
+  md-step: "md-step: a mat-step"
+  md-step-body: "md-step-body: the mat-step's content"
+  md-step-actions: "md-step-actions: the buttons calling stepper.next()/previous()"
+  md-table-container: "md-table-container (angular-material-data-table): a mat-table with MatSort"
+  md-table-pagination: "md-table-pagination: a mat-paginator"
+  md-color-picker: "md-color-picker: a color input, or a color picker component"
+  md-date-range-picker: "md-date-range-picker: a mat-date-range-input with a mat-date-range-picker"
+  md-truncate: "md-truncate: a span with text-overflow: ellipsis"
+
+# AngularJS Material's layout attributes are CSS; the target keeps them.
+stylesheets:
+  layout: "angular-material/layouts/angular-material.layout-attributes.css"
+
+# AngularJS Material's services → the Angular Material / CDK class the port
+# injects in their place. The members differ ($mdDialog.show → dialog.open):
+# the calls are the model pass's, the injection is the port's.
+tokens:
+  $mdDialog:   { prop: dialog, class: MatDialog, from: "@angular/material/dialog" }
+  $mdToast:    { prop: snackBar, class: MatSnackBar, from: "@angular/material/snack-bar" }
+  $mdMedia:    { prop: breakpoints, class: BreakpointObserver, from: "@angular/cdk/layout" }
+  $mdPanel:    { prop: overlay, class: Overlay, from: "@angular/cdk/overlay" }
+  $mdSidenav:  { prop: sidenavs, class: MatSidenavRegistry, from: "@angular/material/sidenav", note: "no registry in Angular Material: query the MatSidenav with viewChild" }
+  $mdUtil:     { note: "AngularJS Material's internals: debounce/throttle → rxjs; nextTick → queueMicrotask" }
+  $mdConstant: { note: "key codes: @angular/cdk/keycodes" }
+  $mdColorPalette: { note: "the Material palette: a constant in the app" }
+  $mdTheming:  { note: "theming is SCSS in Angular Material" }
+  $mdExpansionPanel: { note: "a mat-expansion-panel, reached with viewChild" }

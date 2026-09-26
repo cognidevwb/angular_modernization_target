@@ -16,7 +16,7 @@ import { WidgetService } from '../../api/services/widget.service';
 import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
-import { bindMethods } from '../../../legacy-injector';
+import { bindMethods } from '../../../bind-methods';
 import importDialogTemplate from '../../../../app/import-export/import-dialog.tpl.html?raw';
 import importDialogCSVTemplate from '../../../../app/import-export/import-dialog-csv.tpl.html?raw';
 import entityAliasesTemplate from '../../../../app/entity/alias/entity-aliases.tpl.html?raw';

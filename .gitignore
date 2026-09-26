@@ -1,2 +1,7 @@
 node_modules
 .tern-project
+dist
+.angular
+.cognidev/modernization-angular-v2/freehand/llm-cache
+.cognidev/modernization-angular-v2/freehand/pre-llm
+.cognidev/modernization-angular-v2/freehand/ngc-out

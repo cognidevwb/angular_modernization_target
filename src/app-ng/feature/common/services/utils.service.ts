@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { TranslateService } from '@ngx-translate/core';
 import { types } from '../constants/types';
-import { bindMethods } from '../../../legacy-injector';
+import { bindMethods } from '../../../bind-methods';
 // @ts-ignore
 import materialIconsCodepoints from 'raw-loader!material-design-icons/iconfont/codepoints';
 import tinycolor from 'tinycolor2';

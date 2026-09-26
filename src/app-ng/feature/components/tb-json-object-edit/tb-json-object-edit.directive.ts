@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, inject, model, effect } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ElementRef } from '@angular/core';
 import { ToastService } from '../../services/toast.service';
@@ -9,6 +9,8 @@ import { linkAttrs } from '../../../legacy-link';
 import fixAceEditor from '../../../../app/components/ace-editor-fix';
 // @ts-ignore
 import jsonObjectEditTemplate from '../../../../app/components/json-object-edit.tpl.html';
+import { isEqual } from 'lodash-es';
+import { takeUntil } from 'rxjs/operators';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;

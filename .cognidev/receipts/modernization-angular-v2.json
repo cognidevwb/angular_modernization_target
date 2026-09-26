@@ -1,0 +1,225 @@
+{
+  "schema": 1,
+  "stage": "run",
+  "playbook": "modernization-angular-v2",
+  "version": "2.0.0",
+  "digest": "blake3:2458bb623af07085",
+  "substrate": {
+    "os": "macos",
+    "arch": "aarch64"
+  },
+  "mode": "advisory",
+  "blocks_matched": [],
+  "conflicts": [],
+  "invariants": [],
+  "effects_declared": {
+    "apply": {
+      "fs_write": [
+        "src/**",
+        ".cognidev/modernization-angular-v2/port/**",
+        "PORT-LEDGER.md"
+      ],
+      "fs_read": [
+        ".cognidev/understand/**",
+        ".cognidev/modernization-angular-v2/idioms.json",
+        "src/**",
+        "package.json"
+      ]
+    },
+    "assess": {
+      "fs_write": [
+        ".cognidev/understand/angular-assessment.json",
+        ".cognidev/modernization-angular-v2/strangle.json",
+        "ANGULAR-ASSESSMENT.md"
+      ],
+      "fs_read": [
+        ".cognidev/understand/angular.json",
+        "src/**"
+      ]
+    },
+    "classify": {
+      "fs_write": [
+        ".cognidev/modernization-angular-v2/classification.json",
+        ".cognidev/modernization-angular-v2/CLASSIFICATION.md",
+        ".cognidev/modernization-angular-v2/classify-cache/**"
+      ],
+      "fs_read": [
+        ".cognidev/modernization-angular-v2/candidates.json",
+        ".cognidev/understand/angular.json",
+        "src/**"
+      ],
+      "net_egress": [
+        "api.typesafe.ai"
+      ]
+    },
+    "compare": {
+      "fs_write": [
+        ".cognidev/modernization-angular-v2/pair-compare.json",
+        ".cognidev/modernization-angular-v2/PAIR-COMPARE.md",
+        ".cognidev/modernization-angular-v2/compare-cache/**"
+      ],
+      "fs_read": [
+        ".cognidev/modernization-angular-v2/order.json",
+        ".cognidev/modernization-angular-v2/port/units.json",
+        "src/**"
+      ],
+      "net_egress": [
+        "api.typesafe.ai"
+      ]
+    },
+    "disposition": {
+      "fs_write": [
+        ".cognidev/modernization-angular-v2/candidates.json",
+        ".cognidev/modernization-angular-v2/CANDIDATES.md"
+      ],
+      "fs_read": [
+        ".cognidev/understand/angular.json",
+        ".cognidev/modernization-angular-v2/si-ready.json"
+      ]
+    },
+    "fill-gaps": {
+      "fs_write": [
+        "src/**",
+        ".cognidev/modernization-angular-v2/llm-edits.json"
+      ],
+      "fs_read": [
+        ".cognidev/modernization-angular-v2/gaps.json",
+        "src/**"
+      ]
+    },
+    "gaps": {
+      "fs_write": [
+        ".cognidev/modernization-angular-v2/gaps.json",
+        ".cognidev/modernization-angular-v2/GAPS.md"
+      ],
+      "fs_read": [
+        ".cognidev/modernization-angular-v2/**",
+        "src/**"
+      ]
+    },
+    "idioms": {
+      "fs_write": [
+        ".cognidev/modernization-angular-v2/idioms.json",
+        ".cognidev/modernization-angular-v2/idiom-occurrences.json",
+        ".cognidev/modernization-angular-v2/idioms.local.yaml",
+        "IDIOM-COVERAGE.md"
+      ],
+      "fs_read": [
+        ".cognidev/understand/angular.json",
+        "src/**"
+      ]
+    },
+    "order": {
+      "fs_write": [
+        ".cognidev/modernization-angular-v2/order.json",
+        ".cognidev/modernization-angular-v2/ORDER.md"
+      ],
+      "fs_read": [
+        ".cognidev/modernization-angular-v2/candidates.json",
+        ".cognidev/modernization-angular-v2/classification.json",
+        ".cognidev/understand/angular.json"
+      ]
+    },
+    "resolve": {
+      "fs_write": [
+        ".cognidev/modernization-angular-v2/decisions.json",
+        ".cognidev/modernization-angular-v2/DECISIONS.md",
+        ".cognidev/modernization-angular-v2/resolve-cache/**"
+      ],
+      "fs_read": [
+        ".cognidev/modernization-angular-v2/tasks.json",
+        ".cognidev/modernization-angular-v2/order.json",
+        "src/**",
+        "package.json"
+      ],
+      "net_egress": [
+        "api.typesafe.ai"
+      ]
+    },
+    "scaffold-app": {
+      "fs_write": [
+        "package.json",
+        "angular.json",
+        "tsconfig*.json",
+        "src/main.ts",
+        "src/index.html",
+        "src/styles.*",
+        "src/app*/**",
+        ".gitignore",
+        "Dockerfile",
+        "eslint.config.js",
+        "public/**"
+      ],
+      "fs_read": [
+        ".cognidev/understand/angular.json",
+        ".cognidev/understand/angular-assessment.json",
+        "package.json"
+      ]
+    },
+    "si-ready": {
+      "fs_write": [
+        ".cognidev/modernization-angular-v2/si-ready.json"
+      ],
+      "fs_read": [
+        ".cognidev/understand/**"
+      ]
+    },
+    "tasks": {
+      "fs_write": [
+        ".cognidev/modernization-angular-v2/tasks.json",
+        ".cognidev/modernization-angular-v2/TASKS.md",
+        ".cognidev/modernization-angular-v2/tasks/**"
+      ],
+      "fs_read": [
+        ".cognidev/modernization-angular-v2/order.json",
+        ".cognidev/modernization-angular-v2/classification.json",
+        ".cognidev/modernization-angular-v2/idiom-occurrences.json",
+        ".cognidev/understand/angular.json",
+        "src/**"
+      ]
+    },
+    "typecheck": {
+      "fs_write": [
+        "src/**",
+        ".cognidev/modernization-angular-v2/tsconfig.generated.json",
+        ".cognidev/modernization-angular-v2/typecheck.json",
+        ".cognidev/modernization-angular-v2/TYPECHECK.md"
+      ],
+      "fs_read": [
+        ".cognidev/modernization-angular-v2/port/units.json",
+        "src/**",
+        "tsconfig.json",
+        "node_modules/**"
+      ]
+    },
+    "verify-tasks": {
+      "fs_write": [
+        ".cognidev/modernization-angular-v2/task-status.json",
+        ".cognidev/modernization-angular-v2/TASK-STATUS.md"
+      ],
+      "fs_read": [
+        ".cognidev/modernization-angular-v2/tasks.json",
+        ".cognidev/modernization-angular-v2/port/units.json",
+        "src/**"
+      ]
+    }
+  },
+  "phases_run": [
+    "si-ready",
+    "disposition",
+    "classify",
+    "order",
+    "idioms",
+    "tasks",
+    "assess",
+    "scaffold-app",
+    "apply",
+    "typecheck",
+    "verify-tasks",
+    "compare",
+    "resolve",
+    "gaps",
+    "fill-gaps"
+  ],
+  "enforcement": "none"
+}

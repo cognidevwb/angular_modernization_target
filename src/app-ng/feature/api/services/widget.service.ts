@@ -4,7 +4,7 @@ import { RootState } from '../../../root-state';
 import { TranslateService } from '@ngx-translate/core';
 import { UtilsService } from '../../common/services/utils.service';
 import { types } from '../../common/constants/types';
-import { bindMethods } from '../../../legacy-injector';
+import { bindMethods } from '../../../bind-methods';
 import $ from 'jquery';
 import moment from 'moment';
 import tinycolor from 'tinycolor2';
@@ -17,6 +17,8 @@ import TbMapWidget from '../../../../app/widget/lib/map-widget';
 import TbMapWidgetV2 from '../../../../app/widget/lib/map-widget2';
 import cssjs from '../../../../vendor/css.js/css';
 
+import { filter } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let vm: any;
 declare let $filter: any;

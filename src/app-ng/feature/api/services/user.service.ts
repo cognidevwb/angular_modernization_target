@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { TimeService } from './time.service';
 import { ToastService } from '../../services/toast.service';
 import { TranslateService } from '@ngx-translate/core';
-import { bindMethods } from '../../../legacy-injector';
+import { bindMethods } from '../../../bind-methods';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $q: any;

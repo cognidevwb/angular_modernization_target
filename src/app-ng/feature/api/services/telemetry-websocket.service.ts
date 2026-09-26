@@ -3,7 +3,7 @@ import { RootState } from '../../../root-state';
 import { ToastService } from '../../services/toast.service';
 import { UserService } from './user.service';
 import { types } from '../../common/constants/types';
-import { bindMethods } from '../../../legacy-injector';
+import { bindMethods } from '../../../bind-methods';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $mdUtil: any;

@@ -1,4 +1,4 @@
-import { Component, model } from '@angular/core';
+import { Component, model, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 // @ts-expect-error - html template import not typed
@@ -14,6 +14,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { isEqual } from 'lodash-es';
+import tinycolor from 'tinycolor2';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
 

@@ -1,0 +1,414 @@
+# ─────────────────────────────────────────────────────────────
+#  CogniDev Playbook Manifest — Modernize Angular V2
+#
+#  Rebuilt step by step from ~/Downloads/Jev-Angular-Migration-Flow-Final.md:
+#    S0  structural intelligence   (before the playbook: the IDE's Understand)
+#    S1  si-ready                  prove S0's shards are present and readable
+#    Built: S2 disposition, S2b classify, S3 order, S4a idioms, S4 tasks,
+#    S6a assess, S6 apply, S7a verify-tasks, S7b compare (Jev).
+#    S5 resolve (Jev), gaps; Step B fill-gaps (LLM, optional, separate).
+#    Next: the final build and test (needs the private npm package), close slice, finish.
+#
+#  The full V1-derived lifecycle this replaced is saved at
+#  ~/Downloads/modernization-angular-v2.playbook.full.yaml. Tools for later
+#  steps stay in tools/ until their step is added back.
+# ─────────────────────────────────────────────────────────────
+
+apiVersion: cognidev.ai/v1
+kind: Playbook
+
+metadata:
+  id: modernization-angular-v2
+  name: "Modernize Angular V2 — AngularJS / old Angular → Angular 22"
+  # Closed enum {greenfield|migrate|rescue|understand}; modernize semantics live
+  # in `intent` + the maps. `understand` keeps target_dir == workdir so the
+  # upgrade happens in-place on target-master.
+  category: understand
+  intent: modernize
+  # TRANSFORMER: this playbook walks its own deck (00-intent → 03-quality),
+  # detects the Angular generation, and plans a STAGED migration of the EXISTING
+  # app — it does not design a brand-new product. The golden rule (2026): get to
+  # a supported version FIRST, then adopt idioms; never combine a version jump
+  # with a rewrite in one step.
+  archetype: transformer
+  source: angular
+  target: angular
+  runtime: angular
+  # Git-workflow transform shape (PLAYBOOK-AUTHORING-RUNBOOK.md §2).
+  transform_shape: in-place
+  version: 2.0.0
+  tags: [angular, angularjs, typescript, modernization, upgrade, migration, standalone, signals, zoneless, control-flow, ngupgrade, vite, vitest]
+  summary: "Being rebuilt step by step. Structure first, Jev second, an LLM last: the structural intelligence decides what needs migrating and ports everything a rule can port, Jev decides what the rules can't choose and checks before/after, and an LLM fills only what is left. Current steps: S1 (structural intelligence is ready), S2 (decide what needs migrating), S2b (classify it with Jev), S3 (order it by route slice, dependencies first), S4 (write the task list: one plain sentence per edit), S6 (write the Angular files by rule), S7 (check every task, and compare old and new behaviour function by function with Jev)."
+  description: |
+    Follows ~/Downloads/Jev-Angular-Migration-Flow-Final.md. The structural
+    intelligence (S0) comes from the IDE before this playbook runs. S1 proves
+    it is present. Later steps are added one at a time: disposition and
+    candidate ledger, order, unit plan, Jev call A, routing, deterministic
+    transform, checks, Jev call B, LLM on residue only, closing each route
+    slice, and finishing (remove AngularJS, upgrades, validate, sign-off).
+
+compatibility:
+  surfaces: [ide, cli]
+  workspace:
+    file_count: { min: 1 }
+
+intake:
+  runHint: "Checks the structural intelligence, lists what needs migrating, then asks Jev what each of those units does, orders them by route slice, dependencies first, and writes one plain task per edit. Nothing in the source is changed."
+
+lifecycle:
+
+  # ── S1: structural intelligence is ready ──
+  # S0 (the IDE's Understand) runs before this playbook. This step does not
+  # produce or refresh it; it proves the shards every later step reads —
+  # angular.json, graph.json, files.json, index.json — exist and parse, and
+  # records their counts. Missing or unreadable → SI NOT READY, no model, no
+  # network.
+  - id: si-ready
+    name: "Structural intelligence is ready"
+    description: "Check that .cognidev/understand holds the Angular structural map, the dependency graph, the file index and the merkle root this playbook reads. Nothing is rebuilt and no source is changed. Writes si-ready.json with the counts."
+    kind: rust-binary
+    tool: tools/si-ready/target/release/si-ready
+    effects:
+      fs_read: [".cognidev/understand/**"]
+      fs_write: [".cognidev/modernization-angular-v2/si-ready.json"]
+    outputs:
+      - { path: .cognidev/modernization-angular-v2/si-ready.json, scope: workspace }
+
+  # ── S2: disposition — what needs migrating, from code alone ──
+  # Every AngularJS registration, route, Angular class and template gets one
+  # disposition with its evidence: live AngularJS → migrate; downgrade
+  # registrations and upgrade wrappers → bridge glue; Angular classes → kept
+  # (upgrade only, or exposed to AngularJS until its last consumer goes);
+  # modules no bootstrap loads → orphaned; S0-excluded paths → vendored.
+  # No model and no network: whether a unit needs migration is read from its
+  # registration and the graphs, never from what the code means.
+  - id: disposition
+    name: "Decide what needs migrating"
+    description: "Give every unit in the structural map one disposition with its evidence, and list every file that needs migration. Reads .cognidev/understand/angular.json only; no source file is changed and no model is called."
+    kind: rust-binary
+    tool: tools/disposition/target/release/disposition
+    requires: [si-ready]
+    effects:
+      fs_read: [".cognidev/understand/angular.json", ".cognidev/modernization-angular-v2/si-ready.json"]
+      fs_write: [".cognidev/modernization-angular-v2/candidates.json", ".cognidev/modernization-angular-v2/CANDIDATES.md"]
+    outputs:
+      - { path: .cognidev/modernization-angular-v2/candidates.json, scope: workspace }
+      - { path: .cognidev/modernization-angular-v2/CANDIDATES.md, scope: workspace, kind: report }
+
+  # ── S2b: classify — the question bank, one Jev request per candidate unit ──
+  # For each AngularJS code unit S2 marked for migration: the questions whose
+  # ask_when holds (questions/classify.md), the unit's fact card and its source
+  # (whole up to ~8k tokens, else an excerpt) in ONE request; low-confidence
+  # choices re-asked once with their top 3 options + unknown. Layer and
+  # mixed-concern are derived in code. Routes, modules, config/run, constants
+  # and templates are classified by kind, without Jev. Answers are cached by
+  # request hash, so a re-run only asks about units whose code changed.
+  - id: classify
+    name: "Classify what needs migrating"
+    description: "Top-down, per unit that needs migrating: what it is comes from its registration; Jev answers what kind of that thing it is (screen, directive, service state) and, one yes/no at a time, what it touches (forms, auth, data, state, navigation, …) plus AngularJS behaviours the parser cannot see and how hard it is to migrate. The layer is then derived in code. Unit source is sent to Jev (api.typesafe.ai); no source file is changed."
+    kind: rust-binary
+    tool: tools/classify/target/release/classify
+    requires: [disposition]
+    effects:
+      fs_read: [".cognidev/modernization-angular-v2/candidates.json", ".cognidev/understand/angular.json", "src/**"]
+      fs_write: [".cognidev/modernization-angular-v2/classification.json", ".cognidev/modernization-angular-v2/CLASSIFICATION.md", ".cognidev/modernization-angular-v2/classify-cache/**"]
+      net_egress: ["api.typesafe.ai"]
+    outputs:
+      - { path: .cognidev/modernization-angular-v2/classification.json, scope: workspace }
+      - { path: .cognidev/modernization-angular-v2/CLASSIFICATION.md, scope: workspace, kind: report }
+
+  # ── S3: order — route slices, dependencies first ──
+  # Each unit S2 marked goes to the deepest route state that contains every
+  # route needing it (S0's route closures); units needed across top-level
+  # states go to the foundation, units no recorded route reaches to "no route
+  # evidence". Inside a slice, what a unit uses moves first (S0's edges); ties
+  # by rank from S2b's stored layer. Code only: Jev is not asked again.
+  - id: order
+    name: "Order the migration"
+    description: "Put every unit that needs migrating into a route slice and order it so nothing moves before what it uses. Reads the candidates, the classification and the structural map; no source file is changed, no model is called."
+    kind: rust-binary
+    tool: tools/order/target/release/order
+    requires: [classify]
+    effects:
+      fs_read: [".cognidev/modernization-angular-v2/candidates.json", ".cognidev/modernization-angular-v2/classification.json", ".cognidev/understand/angular.json"]
+      fs_write: [".cognidev/modernization-angular-v2/order.json", ".cognidev/modernization-angular-v2/ORDER.md"]
+    outputs:
+      - { path: .cognidev/modernization-angular-v2/order.json, scope: workspace }
+      - { path: .cognidev/modernization-angular-v2/ORDER.md, scope: workspace, kind: report }
+
+  # ── S4a: idioms — every AngularJS idiom at its line ──
+  # Matches every AngularJS API use in the legacy code and templates against
+  # the playbook's idiom catalog (idioms.yaml, compiled into the tool), and
+  # writes each use with its file, line, catalog class (mechanical / note /
+  # decision) and target. Names the catalog does not place are recorded in
+  # idioms.local.yaml as "no rewrite known". Code only.
+  - id: idioms
+    name: "Find every AngularJS idiom"
+    description: "Match every AngularJS API use in the legacy code and templates against the idiom catalog, and record each use at its file and line. No source file is changed and no model is called."
+    kind: rust-binary
+    tool: tools/scan-idioms/target/release/scan-idioms
+    requires: [si-ready]
+    effects:
+      fs_read: [".cognidev/understand/angular.json", "src/**"]
+      fs_write: [".cognidev/modernization-angular-v2/idioms.json", ".cognidev/modernization-angular-v2/idiom-occurrences.json", ".cognidev/modernization-angular-v2/idioms.local.yaml", "IDIOM-COVERAGE.md"]
+    outputs:
+      - { path: .cognidev/modernization-angular-v2/idiom-occurrences.json, scope: workspace }
+      - { path: .cognidev/modernization-angular-v2/idioms.json, scope: workspace }
+      - { path: IDIOM-COVERAGE.md, scope: workspace, kind: report }
+
+  # ── S4: tasks — one plain sentence per edit ──
+  # Walks S3's order (slice → unit → function) and writes one task per edit:
+  # create, inject, split review, one change per idiom use (in function
+  # order), template changes (idioms, the controller alias, child inputs),
+  # bridge add/remove pairs from the graph, and a closing check. Each task
+  # has a source, a target, the state before and after, who performs it
+  # (code / code after Jev's pick / Jev yes-no then code / LLM / person) and
+  # how it is checked. Code only: Jev and the LLM act on these in later steps.
+  - id: tasks
+    name: "Write the task list"
+    description: "Turn the ordered units and functions into a task list: one plain sentence per edit, with the file and lines it reads, the file it writes, what is true before and after, who does it and how it is checked. No source file is changed and no model is called."
+    kind: rust-binary
+    tool: tools/tasks/target/release/tasks
+    requires: [order, idioms, classify]
+    effects:
+      fs_read: [".cognidev/modernization-angular-v2/order.json", ".cognidev/modernization-angular-v2/classification.json", ".cognidev/modernization-angular-v2/idiom-occurrences.json", ".cognidev/understand/angular.json", "src/**"]
+      fs_write: [".cognidev/modernization-angular-v2/tasks.json", ".cognidev/modernization-angular-v2/TASKS.md", ".cognidev/modernization-angular-v2/tasks/**"]
+    outputs:
+      - { path: .cognidev/modernization-angular-v2/tasks.json, scope: workspace }
+      - { path: .cognidev/modernization-angular-v2/TASKS.md, scope: workspace, kind: report }
+
+  # ── S6a: assess — where the Angular side lives ──
+  # Reads the structural map and the source tree, and records the app's
+  # modern root and bootstraps, which S6 writes under. Code only.
+  - id: assess
+    name: "Find the Angular side"
+    description: "Record where the Angular side of the app lives (its modern root and bootstraps), so the generated files go beside it. No source file is changed and no model is called."
+    kind: rust-binary
+    tool: tools/assess-angular/target/release/assess-angular
+    requires: [si-ready]
+    effects:
+      fs_read: [".cognidev/understand/angular.json", "src/**"]
+      fs_write: [".cognidev/understand/angular-assessment.json", ".cognidev/modernization-angular-v2/strangle.json", "ANGULAR-ASSESSMENT.md"]
+    outputs:
+      - { path: .cognidev/understand/angular-assessment.json, scope: workspace }
+
+  # ── S5b: scaffold-app — the Angular workspace a pure AngularJS app lacks ──
+  # A hybrid or an Angular app already has its workspace; this writes nothing
+  # there. A pure AngularJS app gets the Angular 22 skeleton (package.json,
+  # angular.json, tsconfig, main.ts, the root component, app.config, routes)
+  # with the app folder at the briefing's modern root, and its manifest keeps
+  # every runtime library that is not AngularJS. Deterministic, no model.
+  - id: scaffold-app
+    name: "Lay the Angular workspace"
+    description: "For an app with no Angular yet: write the Angular 22 workspace (package.json, angular.json, tsconfig, bootstrap, root component, app config and routes) at the modern root the briefing chose, keeping the legacy runtime libraries that are not AngularJS. An existing Angular workspace is left alone. No model is called."
+    kind: shell
+    tool: scripts/scaffold-app.sh
+    requires: [assess]
+    effects:
+      fs_read: [".cognidev/understand/angular.json", ".cognidev/understand/angular-assessment.json", "package.json"]
+      fs_write: ["package.json", "angular.json", "tsconfig*.json", "src/main.ts", "src/index.html", "src/styles.*", "src/app*/**", ".gitignore", "Dockerfile", "eslint.config.js", "public/**"]
+
+  # ── S6: apply — write the Angular files ──
+  # For every AngularJS registration: the Angular file that replaces it, by
+  # syntax tree — class and decorator, inputs and outputs from the bindings,
+  # injections mapped to Angular classes, the body ported rule by rule from
+  # the idiom catalog (link and controller functions, scope digest calls,
+  # $destroy handlers, callbacks passed as values), and the template
+  # converted (child-component attributes bound as inputs and outputs).
+  # What no rule covers stays as a TODO(port) line and is on S7a's gap list.
+  # A file this tool did not write is never touched. Code only.
+  - id: apply
+    name: "Write the Angular files"
+    description: "Write the Angular file for every AngularJS registration, by syntax tree and the idiom catalog: the class, its inputs, outputs and injections, the ported body and the converted template. Anything no rule covers is marked TODO(port) for the gap list. No model is called."
+    kind: rust-binary
+    tool: tools/scaffold-units/target/release/scaffold-units
+    requires: [assess, scaffold-app, idioms, tasks]
+    effects:
+      fs_read: [".cognidev/understand/**", ".cognidev/modernization-angular-v2/idioms.json", "src/**", "package.json"]
+      fs_write: ["src/**", ".cognidev/modernization-angular-v2/port/**", "PORT-LEDGER.md"]
+    outputs:
+      - { path: .cognidev/modernization-angular-v2/port/units.json, scope: workspace }
+      - { path: PORT-LEDGER.md, scope: workspace, kind: report }
+
+  # ── S6b: type-check the generated files ──
+  # tsc with the project's own tsconfig over the files S6 wrote. Fixes that
+  # change only what TypeScript knows (a non-null `!`, a unary `+` on an
+  # arithmetic operand) are made, tsc runs again after each round, and a
+  # round that breaks a file's syntax is undone. What is left is reported:
+  # as in the old code (kept), or for the port to change (the gap list).
+  - id: typecheck
+    name: "Type-check the Angular files"
+    description: "Type-check the generated files with the project's tsconfig, make the type-only fixes that cannot change what runs, and list what is left: what the old code does the same way, and what the port must change. No model is called."
+    kind: rust-binary
+    tool: tools/typecheck/target/release/typecheck
+    requires: [apply]
+    effects:
+      fs_read: [".cognidev/modernization-angular-v2/port/units.json", "src/**", "tsconfig.json", "node_modules/**"]
+      fs_write: ["src/**", ".cognidev/modernization-angular-v2/tsconfig.generated.json", ".cognidev/modernization-angular-v2/typecheck.json", ".cognidev/modernization-angular-v2/TYPECHECK.md"]
+    outputs:
+      - { path: .cognidev/modernization-angular-v2/typecheck.json, scope: workspace }
+      - { path: .cognidev/modernization-angular-v2/TYPECHECK.md, scope: workspace, kind: report }
+
+  # ── S7a: verify the tasks ──
+  # Each S4 task's "after" checked against the file S6 wrote: done, not
+  # done, or waiting on a later step (Jev, the LLM step, a bridge, the build).
+  # Counts the AngularJS uses left in the new code. Code only.
+  - id: verify-tasks
+    name: "Check every task"
+    description: "Check each task's promised end state against the generated files, and count the AngularJS uses still in the new code. What is not done is the gap list. No model is called."
+    kind: rust-binary
+    tool: tools/verify-tasks/target/release/verify-tasks
+    requires: [typecheck]
+    effects:
+      fs_read: [".cognidev/modernization-angular-v2/tasks.json", ".cognidev/modernization-angular-v2/port/units.json", "src/**"]
+      fs_write: [".cognidev/modernization-angular-v2/task-status.json", ".cognidev/modernization-angular-v2/TASK-STATUS.md"]
+    outputs:
+      - { path: .cognidev/modernization-angular-v2/task-status.json, scope: workspace }
+      - { path: .cognidev/modernization-angular-v2/TASK-STATUS.md, scope: workspace, kind: report }
+
+  # ── S7b: old vs new, function by function ──
+  # Each old AngularJS function paired with its Angular port. A pair that is
+  # the same code once the port's renames are undone passes on code
+  # evidence; the rest go to Jev as four yes/no questions (same behaviour,
+  # nothing missing, nothing added, errors the same). Seeded breaks of real
+  # ports prove the check fails when it should; the thresholds are
+  # calibrated on them. Every answer is cached, so a rerun is nearly free.
+  - id: compare
+    name: "Compare old and new behaviour"
+    description: "Pair every old function with its Angular port and check that it behaves the same: by code where the two are the same once renames are undone, else by Jev's yes/no answers. Seeded breaks show the check catches real mistakes. Function source is sent to Jev (api.typesafe.ai)."
+    kind: rust-binary
+    tool: tools/compare-behaviour/target/release/compare-behaviour
+    requires: [typecheck]
+    effects:
+      fs_read: [".cognidev/modernization-angular-v2/order.json", ".cognidev/modernization-angular-v2/port/units.json", "src/**"]
+      fs_write: [".cognidev/modernization-angular-v2/pair-compare.json", ".cognidev/modernization-angular-v2/PAIR-COMPARE.md", ".cognidev/modernization-angular-v2/compare-cache/**"]
+      net_egress: ["api.typesafe.ai"]
+    outputs:
+      - { path: .cognidev/modernization-angular-v2/pair-compare.json, scope: workspace }
+      - { path: .cognidev/modernization-angular-v2/PAIR-COMPARE.md, scope: workspace, kind: report }
+
+  # ── S5: resolve — Jev settles what code cannot ──
+  # "Pick one" tasks: a repo fact where decisions.yaml names one that decides
+  # (lodash present → _.isEqual), else Jev's pick among named options, taken
+  # only when clear (p ≥ 0.6, none < 0.2, fit ≥ 0.2). Split reviews: one Jev
+  # request per screen, one yes/no per function — "does this function itself
+  # hold logic that belongs in a service?"; hooks and oversized functions are
+  # not asked. Measured against two blind reviewers (40 items): accepted picks
+  # 7/10, split stay 9/10, no wrong "move" after the question was tightened.
+  # Jev never writes code. Cached.
+  - id: resolve
+    name: "Settle the open choices with Jev"
+    description: "For each task that needs a choice: settle it by a repo fact where one decides, else ask Jev to pick among named options and take the pick only when it is clear. For screens that also hold other logic: ask Jev, function by function, what belongs in a service. Code and function source are sent to Jev (api.typesafe.ai); no source file is changed."
+    kind: rust-binary
+    tool: tools/resolve/target/release/resolve
+    requires: [tasks]
+    effects:
+      fs_read: [".cognidev/modernization-angular-v2/tasks.json", ".cognidev/modernization-angular-v2/order.json", "src/**", "package.json"]
+      fs_write: [".cognidev/modernization-angular-v2/decisions.json", ".cognidev/modernization-angular-v2/DECISIONS.md", ".cognidev/modernization-angular-v2/resolve-cache/**"]
+      net_egress: ["api.typesafe.ai"]
+    outputs:
+      - { path: .cognidev/modernization-angular-v2/decisions.json, scope: workspace }
+      - { path: .cognidev/modernization-angular-v2/DECISIONS.md, scope: workspace, kind: report }
+
+  # ── End of step A: the gap list ──
+  # Everything no rule, repo fact or Jev pick settled, one package each: the
+  # task, the old lines, the lines in the new file, before and after, Jev's
+  # answers or decision, and the check. fix/apply go to step B; move and
+  # review go to a person. Code only.
+  - id: gaps
+    name: "List what is left"
+    description: "Gather every item no rule, fact or Jev pick settled into one package each — task, old and new lines, before and after, Jev's answers, and how it is checked — for the LLM step or a person. No model is called."
+    kind: rust-binary
+    tool: tools/gaps/target/release/gaps
+    requires: [verify-tasks, resolve, compare]
+    effects:
+      fs_read: [".cognidev/modernization-angular-v2/**", "src/**"]
+      fs_write: [".cognidev/modernization-angular-v2/gaps.json", ".cognidev/modernization-angular-v2/GAPS.md"]
+    outputs:
+      - { path: .cognidev/modernization-angular-v2/gaps.json, scope: workspace }
+      - { path: .cognidev/modernization-angular-v2/GAPS.md, scope: workspace, kind: report }
+
+  # ── Step B: the LLM, separate and optional ──
+  # Runs only when started on purpose, through the host's single LLM path.
+  # Batched by file: ONE call per file (bounded chunks for a large file)
+  # carrying every open item in it — fixes, decided choices, and old-vs-new
+  # reviews (answer: a replacement, or SAME with a reason). Each item is
+  # checked on its own; accepted ones are applied bottom-up, the rest left as
+  # they were. Items over 150 lines, moves (two files) and unlocated items
+  # stay for a person. Every answer is logged in llm-edits.json, apart from
+  # step A's work. Rerun S7a/S7b after it. AWB dry run: 234 calls cover 894
+  # packages (~418k input tokens).
+  - id: fill-gaps
+    name: "Fill the gaps with the LLM (optional)"
+    description: "Send the open items to the LLM one file at a time (all of a file's items in one call) and apply each answer only when its check passes. Everything it changes is logged separately as an LLM edit. Runs only when you start it."
+    kind: tool-loop
+    tool: tools/fill-gaps/target/release/fill-gaps
+    requires: [gaps]
+    optional: true
+    effects:
+      fs_read: [".cognidev/modernization-angular-v2/gaps.json", "src/**"]
+      fs_write: ["src/**", ".cognidev/modernization-angular-v2/llm-edits.json"]
+
+questionnaire:
+  mode: full
+  sections:
+    - { file: 00-git-strategy.yaml, required: true, estimated_q: 1 }
+    - { file: 00-intent.yaml,      required: true,  estimated_q: 3 }
+    - { file: 01-target-stack.yaml, required: true, estimated_q: 4 }
+    - { file: 02-strategy.yaml,    required: true,  estimated_q: 3 }
+    - { file: 03-quality.yaml,     required: false, estimated_q: 3 }
+    - { file: 04-strangler.yaml,   required: false, estimated_q: 3 }
+
+# A failure whose message carries one of these is not code the repair agent can
+# fix: the environment is missing a toolchain (typecheck.sh, validate.sh), or the
+# application is not what this playbook modernizes (assess-angular). The engine
+# hands these straight to the user instead of opening a repair loop.
+repair_stop_signatures:
+  # si-ready: structural intelligence is produced by the IDE, not repaired here.
+  - "SI NOT READY"
+  # classify: the key or the Jev service, not code the repair agent can fix.
+  - "JEV KEY MISSING"
+  - "JEV NOT REACHABLE"
+  - "CLASSIFY INCOMPLETE"
+  # order: a missing earlier output or a broken plan, not code to repair.
+  - "ORDER INPUT MISSING"
+  - "ORDER INCOMPLETE"
+  # tasks: an earlier output is missing, not code to repair.
+  - "TASKS INPUT MISSING"
+  # apply / verify / compare: an earlier output, the catalog or the Jev service — not code to repair.
+  - "NOT CATALOGUED"
+  - "TYPECHECK INPUT MISSING"
+  - "VERIFY INPUT MISSING"
+  - "COMPARE INPUT MISSING"
+  - "COMPARE INCOMPLETE"
+  - "RESOLVE INPUT MISSING"
+  - "RESOLVE INCOMPLETE"
+  - "GAPS INPUT MISSING"
+  - "GAPS MISSING"
+  - "ENVIRONMENT NOT READY"
+  - "NOT AN ANGULAR APP"
+  - "HYBRID ASSESSMENT BLOCKED"
+  # A failed sign-off is a verdict on evidence, not code the repair agent can edit.
+  - "NOT SIGNED OFF"
+  # flip-route: the batch's generated files still carry their original — the
+  # develop step ports them, not a repair loop over the flip; and no route can
+  # move before the router hand-over.
+  - "NOT PORTED"
+  - "HAND-OVER PENDING"
+  # scaffold-units: an idiom this repo uses has no decision — the person's
+  # local catalog answers it, not a repair loop.
+  - "NOT CATALOGUED"
+  # flip-route: a generated file that does not hold its original's structure
+  # is the develop step's to finish, not a repair loop's; no record, no flip.
+  - "NOT EQUIVALENT"
+  - "NOT COMPARED"
+
+# The planner's read tools are scoped to the SOURCE repo, so rules can't be folded
+# into the plan step — the plan prompt (context/plan-migration.md) carries the 2026
+# stack + the staged method inline. rules/angular/*.md remain the authoritative
+# reference for the scaffold + develop steps, which run where they're reachable.
+rules:
+  - id: angular-target
+    include: rules/angular/
+    when: always
+    description: "Angular 22 target stack + the staged migration method + modern conventions — folded into the develop step's system prompt."

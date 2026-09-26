@@ -1,4 +1,4 @@
-import { Component, inject, model, output } from '@angular/core';
+import { Component, inject, model, output, effect } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';

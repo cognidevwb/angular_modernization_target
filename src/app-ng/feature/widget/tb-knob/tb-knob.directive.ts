@@ -2,6 +2,7 @@ import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import knobTemplate from '../../../../app/widget/lib/rpc/knob.tpl.html?raw';
 
+import tinycolor from 'tinycolor2';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
 

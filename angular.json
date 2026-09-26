@@ -15,33 +15,98 @@
             "outputPath": "dist/angular-modernization-target",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
-            "assets": [{ "glob": "**/*", "input": "public" }],
-            "styles": ["src/styles.scss"]
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              },
+              {
+                "glob": "thingsboard.ico",
+                "input": "src",
+                "output": "/"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/app/locale",
+                "output": "locale",
+                "ignore": [
+                  "**/*.js"
+                ]
+              },
+              {
+                "glob": "**/*",
+                "input": "src/svg",
+                "output": "svg"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/png",
+                "output": "png"
+              }
+            ],
+            "styles": [
+              "src/styles/layout-attributes.css",
+              "node_modules/jquery.terminal/css/jquery.terminal.min.css",
+              "node_modules/jstree-bootstrap-theme/dist/themes/proton/style.min.css",
+              "node_modules/font-awesome/css/font-awesome.min.css",
+              "node_modules/tooltipster/dist/css/tooltipster.bundle.min.css",
+              "node_modules/tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css",
+              "node_modules/leaflet/dist/leaflet.css",
+              "node_modules/leaflet.markercluster/dist/MarkerCluster.css",
+              "node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css",
+              "src/styles.scss"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src",
+                "node_modules"
+              ]
+            },
+            "allowedCommonJsDependencies": [
+              "*"
+            ]
           },
           "configurations": {
             "production": {
               "outputHashing": "all",
               "budgets": [
-                { "type": "initial", "maximumWarning": "500kB", "maximumError": "1MB" }
+                {
+                  "type": "initial",
+                  "maximumWarning": "3MB",
+                  "maximumError": "6MB"
+                }
               ]
             },
-            "development": { "optimization": false, "extractLicenses": false, "sourceMap": true }
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
-            "production": { "buildTarget": "angular-modernization-target:build:production" },
-            "development": { "buildTarget": "angular-modernization-target:build:development" }
+            "production": {
+              "buildTarget": "angular-modernization-target:build:production"
+            },
+            "development": {
+              "buildTarget": "angular-modernization-target:build:development"
+            }
           },
           "defaultConfiguration": "development"
         },
         "test": {
           "builder": "@angular/build:unit-test",
-          "options": { "tsConfig": "tsconfig.spec.json", "runner": "vitest" }
+          "options": {
+            "tsConfig": "tsconfig.spec.json",
+            "runner": "vitest"
+          }
         }
       }
     }

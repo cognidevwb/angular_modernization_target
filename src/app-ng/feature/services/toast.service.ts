@@ -3,7 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import $ from 'jquery';
-import { bindMethods } from '../../legacy-injector';
+import { bindMethods } from '../../bind-methods';
 import infoToast from '../../../app/services/info-toast.tpl.html?raw';
 import successToast from '../../../app/services/success-toast.tpl.html?raw';
 import errorToast from '../../../app/services/error-toast.tpl.html?raw';

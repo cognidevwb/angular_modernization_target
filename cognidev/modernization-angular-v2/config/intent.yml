@@ -1,0 +1,26 @@
+playbook_id: modernization-angular-v2
+captured_at: 2026-09-08T17:34:27Z
+workdir: /Users/rajasekharkarawalla/Downloads/gap-ng17
+answers:
+  adopt_idioms:
+  - standalone
+  - control-flow
+  - signals
+  - zoneless
+  batch_size: continuous
+  current_generation: angular-16-21
+  driver: full-modernize
+  e2e: none
+  git_strategy: in-place-commit
+  keep_untouched: ''
+  migration_strategy: auto
+  package_manager: npm
+  residue_model: no
+  route_gate: build-only
+  router_ownership: modern-owns
+  scope: ''
+  state_management: signals
+  strictness: strict
+  styling: scss
+  target_version: '22'
+  test_runner: vitest

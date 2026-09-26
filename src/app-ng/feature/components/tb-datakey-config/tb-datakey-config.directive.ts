@@ -1,4 +1,4 @@
-import { Component, inject, model, output } from '@angular/core';
+import { Component, inject, model, output, effect } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { types } from '../../common/constants/types';
 

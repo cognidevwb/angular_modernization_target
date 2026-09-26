@@ -1,0 +1,42 @@
+apiVersion: cognidev.ai/v1
+kind: QuestionnaireSection
+section:
+  id: strangler
+  title: "When AngularJS is still in the app"
+  intro: |
+    Used when the detector finds AngularJS beside Angular, or an AngularJS app
+    that will be strangled through a hybrid. While both frameworks are live,
+    one of them owns the browser URL and hands unmatched routes to the other;
+    each route is migrated, built, checked and committed on its own. These
+    three answers say who owns the URL, how many routes go by before the run
+    pauses, and what has to pass before a route counts as done.
+  estimated_seconds: 45
+questions:
+  - id: router_ownership
+    kind: enum
+    label: "While both frameworks are live, which one owns the URL?"
+    description: "The single highest-risk decision in the migration. It is made once, before any route moves, because changing it later invalidates every route already migrated."
+    default: modern-owns
+    required: true
+    options:
+      - { value: modern-owns, label: "Modern Angular owns the URL and delegates unknown routes to the legacy router", hint: "Recommended. Every migrated route is a normal Angular route from day one, and the legacy router shrinks to a fallback that is deleted at the end. Costs more up front: the shell, the guards and the deep links move first." }
+      - { value: legacy-owns, label: "The legacy router keeps the URL and hosts migrated routes inside it", hint: "Far less disruption to start — the shell is untouched and route one can ship in days. But every migrated route stays wrapped in a legacy host, and the whole arrangement has to be unwound at the end, which is a second migration nobody budgets for." }
+  - id: batch_size
+    kind: enum
+    label: "How many routes should it attempt before pausing for review?"
+    description: "Each route is migrated, built, checked and committed on its own regardless. This only controls how many go by before the run stops and waits for you."
+    default: one
+    required: true
+    options:
+      - { value: one,        label: "One at a time — stop after every route", hint: "Recommended for the first several routes. You see exactly what the port looks like on your code before letting it run further, and a bad pattern is caught once instead of forty times." }
+      - { value: three,      label: "Three at a time", hint: "Once the first few routes have established the pattern." }
+      - { value: continuous, label: "Keep going until the ledger is empty or something fails", hint: "Unattended. Every route is still individually gated and committed, so a failure stops the loop rather than corrupting the tree — but nobody is reading the diffs as they land." }
+  - id: route_gate
+    kind: enum
+    label: "What has to pass before a route counts as migrated?"
+    description: "The ledger's claim — this route is done, its AngularJS is gone — is only as good as the gate behind it."
+    default: build-and-suite
+    required: true
+    options:
+      - { value: build-and-suite, label: "A green build and the existing test suite", hint: "Recommended. The build proves the port compiles; the suite proves the screen still behaves." }
+      - { value: build-only,      label: "A green build", hint: "When the app has no suite worth the name. The ledger says so." }
