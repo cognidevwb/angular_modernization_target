@@ -1,0 +1,60 @@
+{
+  "ready": true,
+  "shards": [
+    {
+      "bytes": 884461,
+      "facts": {
+        "angularjs": 255,
+        "angularjsModules": 124,
+        "bootstraps": 1,
+        "bridges": 26,
+        "components": 0,
+        "dependencyEdges": 590,
+        "directives": 0,
+        "fileReferences": 39,
+        "flavor": "angularjs",
+        "modules": 0,
+        "pipes": 0,
+        "routeClosures": 36,
+        "routes": 36,
+        "services": 0,
+        "specVersion": 6,
+        "versions": 18
+      },
+      "ok": true,
+      "problems": [],
+      "shard": "angular.json"
+    },
+    {
+      "bytes": 2839405,
+      "facts": {
+        "edges": 13649,
+        "nodes": 382
+      },
+      "ok": true,
+      "problems": [],
+      "shard": "graph.json"
+    },
+    {
+      "bytes": 1158680,
+      "facts": {
+        "files": 664
+      },
+      "ok": true,
+      "problems": [],
+      "shard": "files.json"
+    },
+    {
+      "bytes": 35589,
+      "facts": {
+        "generated_at": "2026-09-26T09:40:27Z",
+        "merkle_root": "8cafda1475082c504ed86726d312fcd82ba7f4bcde48374934cc26a38b09f3ee"
+      },
+      "ok": true,
+      "problems": [],
+      "shard": "index.json"
+    }
+  ],
+  "step": "S1",
+  "understand_dir": ".cognidev/understand"
+}
