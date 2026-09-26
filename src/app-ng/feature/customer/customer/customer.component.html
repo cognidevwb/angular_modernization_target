@@ -17,7 +17,7 @@
 
 -->
 <tb-grid (gridConfiguration)="customerGridConfig">
-	<div [tbHelp]="'customers'" help-container-id="help-container">
+	<div details-buttons tb-help [tbHelp]="'customers'" help-container-id="help-container">
 		<div id="help-container"></div>
 	</div>
 	<mat-tab-group [ngClass]="{'tb-headless': grid?.detailsConfig?.isDetailsEditMode}" id="tabs" flex class="tb-absolute-fill">

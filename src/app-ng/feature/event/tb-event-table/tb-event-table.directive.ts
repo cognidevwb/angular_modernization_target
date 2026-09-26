@@ -1,184 +1,151 @@
-import { Component, forwardRef, inject, model } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { EventService } from '../../api/services/event.service';
-import { RootState } from '../../../root-state';
-import { types } from '../../common/constants/types';
-import { CommonModule } from '@angular/common';
+import { Component, ElementRef, OnInit, effect, forwardRef, inject, model, untracked, viewChild } from '@angular/core';
+import { NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TbTimewindowDirective } from '../../components/tb-timewindow/tb-timewindow.directive';
-import { TbEventHeaderDirective } from '../tb-event-header/tb-event-header.directive';
-import { TbScopeElementDirective } from '../../components/tb-scope-element/tb-scope-element.directive';
-import { TbEventRowDirective } from '../tb-event-row/tb-event-row.directive';
-
-import $ from 'jquery';
-import { linkAttrs } from '../../../legacy-link';
-import eventTableTemplate from '../../../../app/event/event-table.tpl.html';
+import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
+import { EventService } from '../../api/services/event.service';
+import { RootState } from '../../../root-state';
+import { types } from '../../common/constants/types';
+import { linkAttrs } from '../../../legacy-link';
+import { TbTimewindowDirective } from '../../components/tb-timewindow/tb-timewindow.directive';
+import { TbEventHeaderDirective } from '../tb-event-header/tb-event-header.directive';
+import { TbEventRowDirective } from '../tb-event-row/tb-event-row.directive';
 
 /**
  * Ported from the AngularJS directive `tbEventTable` (module `thingsboard.event`) in src/app/event/index.js:23.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The on-demand `md-virtual-repeat` is a cdk virtual scroll over the loaded pages; the next
+ * page is fetched when the scroll reaches the end of what is loaded.
+ * `default-event-type`, `disabled-event-types` and `debug-event-types` stay plain host attributes.
  */
 @Component({
   selector: 'tb-event-table',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatSelectModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbTimewindowDirective), forwardRef(() => TbEventHeaderDirective), forwardRef(() => TbScopeElementDirective), forwardRef(() => TbEventRowDirective)],
+  imports: [
+    TranslatePipe, NgStyle, FormsModule, ScrollingModule, MatTooltipModule, MatSelectModule, MatProgressBarModule,
+    MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule,
+    forwardRef(() => TbTimewindowDirective), forwardRef(() => TbEventHeaderDirective), forwardRef(() => TbEventRowDirective),
+  ],
   templateUrl: './tb-event-table.directive.html',
 })
-export class TbEventTableDirective {
+export class TbEventTableDirective implements OnInit {
   readonly entityType = model<any>();
   readonly entityId = model<any>();
   readonly tenantId = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly rootScope = inject(RootState);
   protected readonly eventService = inject(EventService);
   protected readonly element = inject(ElementRef);
-  // TODO(port): elements not resolved to a component: md-virtual-repeat-container
-  // TODO(port): template: 1 × md-virtual-repeat-container left in place
+  private readonly viewport = viewChild(CdkVirtualScrollViewport);
 
-  protected template: any = $templateCache.get(eventTableTemplate);
-  eventType: any;
+  protected readonly rowHeight = 48;
   protected pageSize: any = 20;
   protected startTime: any = 0;
   protected endTime: any = 0;
+
+  eventType: any;
   timewindow: any = {
             history: {
                 timewindowMs: 24 * 60 * 60 * 1000 // 1 day
             }
         };
   topIndex: any = 0;
-  theEvents: any;
-  $watch: any;
-  eventTypes: any;
-  events: any;
-  repeatContainer: any;
+  eventTypes: any = {};
+  events: any = { data: [], hasNext: false, pending: false };
   selected: any;
 
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  private initialized = false;
+  private prevEntityId: any;
+  /** Snapshot of the timewindow the rows were loaded for (the legacy deep watch compares copies). */
+  private timewindowJson = '';
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
-    if (this.attrs.disabledEventTypes) {
-            var disabledEventTypes: any = this.attrs.disabledEventTypes.split(',');
-            this.eventTypes = {};
-            for (var type in types.eventType) {
-                var eventType: any = types.eventType[type];
-                var enabled: any = true;
-                for (var i: any=0;i<disabledEventTypes.length;i++) {
-                    if (eventType.value === disabledEventTypes[i]) {
-                        enabled = false;
-                        break;
-                    }
+    // Legacy `$watch("entityId")`: a new entity resets the filter and reloads.
+    effect(() => {
+      const entityId = this.entityId();
+      untracked(() => this.onEntityIdChange(entityId));
+    });
+  }
+
+  ngOnInit(): void {
+    const attrs = this.attrs;
+    if (attrs.disabledEventTypes) {
+        var disabledEventTypes: any = attrs.disabledEventTypes.split(',');
+        this.eventTypes = {};
+        for (var type in types.eventType) {
+            var eventType: any = types.eventType[type];
+            var enabled: any = true;
+            for (var i: any = 0; i < disabledEventTypes.length; i++) {
+                if (eventType.value === disabledEventTypes[i]) {
+                    enabled = false;
+                    break;
                 }
-                if (enabled) {
+            }
+            if (enabled) {
+                this.eventTypes[type] = eventType;
+            }
+        }
+    } else {
+        this.eventTypes = structuredClone(types.eventType);
+    }
+    if (attrs.debugEventTypes) {
+        var debugEventTypes: any = attrs.debugEventTypes.split(',');
+        for (i = 0; i < debugEventTypes.length; i++) {
+            for (type in types.debugEventType) {
+                eventType = types.debugEventType[type];
+                if (eventType.value === debugEventTypes[i]) {
                     this.eventTypes[type] = eventType;
                 }
             }
-        } else {
-            this.eventTypes = structuredClone(types.eventType);
         }
-    if (this.attrs.debugEventTypes) {
-            var debugEventTypes: any = this.attrs.debugEventTypes.split(',');
-            for (i=0;i<debugEventTypes.length;i++) {
-                for (type in types.debugEventType) {
-                    eventType = types.debugEventType[type];
-                    if (eventType.value === debugEventTypes[i]) {
-                        this.eventTypes[type] = eventType;
-                    }
-                }
-            }
-        }
-    this.eventType = this.attrs.defaultEventType;
-    this.theEvents = {
-            getItemAtIndex: (index?: any, ...rest: any[]) => {
-                if (index > this.events.data.length) {
-                    this.theEvents.fetchMoreItems_(index);
-                    return null;
-                }
-                var item: any = this.events.data[index];
-                if (item) {
-                    item.indexNumber = index + 1;
-                }
-                return item;
-            },
-
-            getLength: (...rest: any[]) => {
-                if (this.events.hasNext) {
-                    return this.events.data.length + this.events.nextPageLink.limit;
-                } else {
-                    return this.events.data.length;
-                }
-                return undefined;
-            },
-
-            fetchMoreItems_: (...rest: any[]) => {
-                if (this.events.hasNext && !this.events.pending) {
-                    if (this.entityType() && this.entityId() && this.eventType && this.tenantId()) {
-                        var promise: any = this.eventService.getEvents(this.entityType(), this.entityId(),
-                            this.eventType, this.tenantId(), this.events.nextPageLink);
-                        if (promise) {
-                            this.events.pending = true;
-                            promise.then(
-                                (events?: any) => {
-                                    this.events.data = this.events.data.concat(events.data);
-                                    this.events.nextPageLink = events.nextPageLink;
-                                    this.events.hasNext = events.hasNext;
-                                    if (this.events.hasNext) {
-                                        this.events.nextPageLink.limit = this.pageSize;
-                                    }
-                                    this.events.pending = false;
-                                },
-                                () => {
-                                    this.events.hasNext = false;
-                                    this.events.pending = false;
-                                });
-                        } else {
-                            this.events.hasNext = false;
-                        }
-                    } else {
-                        this.events.hasNext = false;
-                    }
-                }
-            }
-        };
-    this.$watch("entityId", (newVal?: any, prevVal?: any) => {
-            if (newVal && !angular.equals(newVal, prevVal)) {
-                this.resetFilter();
-                this.reload();
-            }
-        });
-    this.$watch("eventType", (newVal?: any, prevVal?: any) => {
-            if (newVal && !angular.equals(newVal, prevVal)) {
-                this.reload();
-            }
-        });
-    this.$watch("timewindow", (newVal?: any, prevVal?: any) => {
-            if (newVal && !angular.equals(newVal, prevVal)) {
-                this.reload();
-            }
-        }, true);
+    }
+    this.eventType = attrs.defaultEventType;
+    this.prevEntityId = this.entityId();
+    this.initialized = true;
     this.reload();
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
-  resetFilter(...rest: any[]): any {
+  /** The legacy `ng-repeat="type in eventTypes"` over an object: its values. */
+  eventTypeList(): any[] {
+    return Object.values(this.eventTypes);
+  }
+
+  /** Legacy `$watch("eventType")`. */
+  onEventTypeChange(eventType: any): void {
+    const prev = this.eventType;
+    this.eventType = eventType;
+    if (eventType && !this.equals(eventType, prev)) {
+        this.reload();
+    }
+  }
+
+  /** Legacy deep `$watch("timewindow")`. */
+  onTimewindowChange(timewindow: any): void {
+    const prev = this.timewindowJson;
+    this.timewindow = timewindow;
+    if (timewindow && JSON.stringify(timewindow) !== prev) {
+        this.reload();
+    }
+  }
+
+  /** The virtual scroll reached `index`: fetch the next page when the end of the loaded rows is in view. */
+  onScrolledIndexChange(index: number): void {
+    if (index + this.pageSize >= this.events.data.length) {
+        this.fetchMoreItems();
+    }
+  }
+
+  trackByIndex(index: number): number {
+    return index;
+  }
+
+  resetFilter(): void {
     this.timewindow = {
         history: {
             timewindowMs: 24 * 60 * 60 * 1000 // 1 day
@@ -187,7 +154,7 @@ export class TbEventTableDirective {
     this.eventType = this.attrs.defaultEventType;
   }
 
-  updateTimeWindowRange(...rest: any[]): any {
+  updateTimeWindowRange(): void {
     if (this.timewindow.history.timewindowMs) {
         var currentTime: any = (new Date).getTime();
         this.startTime = currentTime - this.timewindow.history.timewindowMs;
@@ -198,10 +165,11 @@ export class TbEventTableDirective {
     }
   }
 
-  reload(...rest: any[]): any {
+  reload(): void {
     this.topIndex = 0;
     this.selected = [];
     this.updateTimeWindowRange();
+    this.timewindowJson = JSON.stringify(this.timewindow);
     this.events = {
         data: [],
         nextPageLink: {
@@ -212,33 +180,83 @@ export class TbEventTableDirective {
         hasNext: true,
         pending: false
     };
-    this.theEvents.getItemAtIndex(this.pageSize);
+    this.viewport()?.scrollToIndex(0);
+    this.fetchMoreItems();
   }
 
-  noData(...rest: any[]): any {
+  /** Legacy `theEvents.fetchMoreItems_`: loads the next page of events. */
+  fetchMoreItems(): void {
+    if (this.events.hasNext && !this.events.pending) {
+        if (this.entityType() && this.entityId() && this.eventType && this.tenantId()) {
+            var promise: any = this.eventService.getEvents(this.entityType(), this.entityId(),
+                this.eventType, this.tenantId(), this.events.nextPageLink);
+            if (promise) {
+                const events = this.events;
+                events.pending = true;
+                promise.then(
+                    (page?: any) => {
+                        const offset = events.data.length;
+                        page.data.forEach((item: any, i: number) => {
+                            if (item) {
+                                item.indexNumber = offset + i + 1;
+                            }
+                        });
+                        events.data = events.data.concat(page.data);
+                        events.nextPageLink = page.nextPageLink;
+                        events.hasNext = page.hasNext;
+                        if (events.hasNext) {
+                            events.nextPageLink.limit = this.pageSize;
+                        }
+                        events.pending = false;
+                    },
+                    () => {
+                        events.hasNext = false;
+                        events.pending = false;
+                    });
+            } else {
+                this.events.hasNext = false;
+            }
+        } else {
+            this.events.hasNext = false;
+        }
+    }
+  }
+
+  noData(): boolean {
     return this.events.data.length == 0 && !this.events.hasNext;
   }
 
-  hasData(...rest: any[]): any {
+  hasData(): boolean {
     return this.events.data.length > 0;
   }
 
-  loading(...rest: any[]): any {
+  loading(): any {
     return this.rootScope.loading;
   }
 
-  hasScroll(...rest: any[]): any {
-    var repeatContainer: any = this.repeatContainer[0];
-    if (repeatContainer) {
-        var scrollElement: any = repeatContainer.children[0];
-        if (scrollElement) {
-            return scrollElement.scrollHeight > scrollElement.clientHeight;
-        }
+  hasScroll(): boolean {
+    const scrollElement = this.viewport()?.elementRef.nativeElement;
+    if (scrollElement) {
+        return scrollElement.scrollHeight > scrollElement.clientHeight;
     }
     return false;
   }
 
-  /** The link's `attrs`: the host element's attributes, read live. */
+  private onEntityIdChange(entityId: any): void {
+    const prev = this.prevEntityId;
+    this.prevEntityId = entityId;
+    if (this.initialized && entityId && !this.equals(entityId, prev)) {
+        this.resetFilter();
+        this.reload();
+    }
+  }
+
+  /** Legacy `angular.equals` for the watched values (ids, event types, plain timewindow objects). */
+  private equals(a: any, b: any): boolean {
+    return JSON.stringify(a) === JSON.stringify(b);
+  }
+
+  /** The host element's attributes (`default-event-type`, `disabled-event-types`, `debug-event-types`). */
   protected get attrs(): any {
     return linkAttrs(this.element.nativeElement);
   }

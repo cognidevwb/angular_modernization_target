@@ -17,20 +17,14 @@
 
 -->
 <div md-scroll-y layout="column" class="md-content gateway-form">
-    @let configurations = $any(this).configurations;
-    @let types = $any(this).types;
-    @let changeAlignment = $any(this).changeAlignment;
-    @let isReadOnlyForm = isReadOnly();
-    @let idForm = $any(this).idForm;
-    @let securityTypes = $any(this).securityTypes;
-    <form name="gatewayConfiguration">
+    <form name="gatewayConfiguration" #gatewayConfiguration="ngForm">
         <mat-accordion>
             <mat-expansion-panel [id]="idForm + 'thingsboardPanelId'">
-                <mat-expansion-panel-header (click)="$any(this).collapsePanel(idForm + 'thingsboardPanelId')">
+                <mat-expansion-panel-header>
                     <mat-panel-title>{{ 'gateway.thingsboard' | translate | uppercase }}</mat-panel-title>
                 </mat-expansion-panel-header>
                 @if (!isStateForm()) {
-                  <tb-gateway-config-select [tbRequired]="true" [(ngModel)]="configurations.gateway" [(theForm)]="$any(this).gatewayConfiguration" [(gatewayList)]="$any(this).gateways" get_access_token="vm.getAccessToken" [(createDevice)]="$any(this).createDevice">
+                  <tb-gateway-config-select [tbRequired]="true" name="gateway" [(ngModel)]="configurations.gateway" [theForm]="gatewayConfiguration" [gatewayList]="gateways" [getAccessToken]="getAccessTokenFn" [createDevice]="createDeviceFn">
                 </tb-gateway-config-select>
                 }
                         @if (isStateForm()) {
@@ -52,28 +46,13 @@
                         <div layout="row" class="gateway-form-row" [ngClass]="{'gateway-config-row-vertical': changeAlignment}">
                             <mat-form-field class="md-block" flex>
                                 <mat-label>{{ 'gateway.thingsboard-host' | translate }}</mat-label>
-                                <input matInput [disabled]="isReadOnlyForm" type="text" name="host" [(ngModel)]="configurations.host" required>
-                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                <div ng-messages="gatewayConfiguration?.host?.$error">
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="required" translate>gateway.thingsboard-host-required</div>
-                                </div>
+                                <input matInput [disabled]="isReadOnlyForm" type="text" name="host" [(ngModel)]="configurations.host" required #f1="ngModel">
+                                @if (f1.hasError('required')) {<mat-error>{{ 'gateway.thingsboard-host-required' | translate }}</mat-error>}
                             </mat-form-field>
                             <mat-form-field class="md-block" flex>
                                 <mat-label>{{ 'gateway.thingsboard-port' | translate }}</mat-label>
-                                <!-- TODO(port): expression not parsed: `/^-?[0-9]+$/` -->
-                                <input matInput [disabled]="isReadOnlyForm" type="number" min="1" max="65535" [pattern]="/^-?[0-9]+$/" name="port" [(ngModel)]="configurations.port" required>
-                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                <div ng-messages="gatewayConfiguration?.port?.$error">
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="required" translate>gateway.thingsboard-port-required</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="max" translate>gateway.thingsboard-port-max</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="min" translate>gateway.thingsboard-port-min</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="pattern" translate>gateway.thingsboard-port-pattern</div>
-                                </div>
+                                                                <input matInput [disabled]="isReadOnlyForm" type="number" min="1" max="65535" pattern="^-?[0-9]+$" name="port" [(ngModel)]="configurations.port" required #f2="ngModel">
+                                @if (f2.hasError('required')) {<mat-error>{{ 'gateway.thingsboard-port-required' | translate }}</mat-error>} @else if (f2.hasError('max')) {<mat-error>{{ 'gateway.thingsboard-port-max' | translate }}</mat-error>} @else if (f2.hasError('min')) {<mat-error>{{ 'gateway.thingsboard-port-min' | translate }}</mat-error>} @else if (f2.hasError('pattern')) {<mat-error>{{ 'gateway.thingsboard-port-pattern' | translate }}</mat-error>}
                             </mat-form-field>
                         </div>
                         @if (configurations?.securityType=='tls') {
@@ -99,7 +78,7 @@
                             <mat-form-field class="md-block md-select-container" flex>
                                 <mat-label>{{'gateway.remote-logging-level' | translate }}</mat-label>
                                 <mat-select [disabled]="isReadOnlyForm" name="loggingLevel" [(ngModel)]="configurations.remoteLoggingLevel">
-                                    @for (logLevel of types?.gatewayLogLevel; track $index) {
+                                    @for (logLevel of __values(types?.gatewayLogLevel); track $index) {
                                       <mat-option [value]="logLevel">
                                         {{logLevel}}
                                     </mat-option>
@@ -108,23 +87,19 @@
                             </mat-form-field>
                             <mat-form-field class="md-block" flex>
                                 <mat-label>{{'gateway.path-logs' | translate }}</mat-label>
-                                <input matInput [disabled]="isReadOnlyForm" type="text" [(ngModel)]="configurations.remoteLoggingPathToLogs" name="remoteLoggingPathToLogs" required>
-                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                <div ng-messages="gatewayConfiguration?.remoteLoggingPathToLogs?.$error">
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="required" translate>gateway.path-logs-required</div>
-                                </div>
+                                <input matInput [disabled]="isReadOnlyForm" type="text" [(ngModel)]="configurations.remoteLoggingPathToLogs" name="remoteLoggingPathToLogs" required #f3="ngModel">
+                                @if (f3.hasError('required')) {<mat-error>{{ 'gateway.path-logs-required' | translate }}</mat-error>}
                             </mat-form-field>
                         </div>
             </mat-expansion-panel>
             <mat-expansion-panel [id]="idForm + 'storagePanelId'">
-                <mat-expansion-panel-header (click)="$any(this).collapsePanel(idForm + 'storagePanelId')">
+                <mat-expansion-panel-header>
                     <mat-panel-title>{{ 'gateway.storage' | translate | uppercase }}</mat-panel-title>
                 </mat-expansion-panel-header>
                         <mat-form-field class="md-block" flex>
                             <mat-label>{{'gateway.storage-type' | translate }}</mat-label>
-                            <mat-select [disabled]="isReadOnlyForm" required [(ngModel)]="configurations.storageType">
-                                @for (storageType of types?.storageTypes; track $index) {
+                            <mat-select [disabled]="isReadOnlyForm" required name="storageType" [(ngModel)]="configurations.storageType">
+                                @for (storageType of storageTypes; track $index) {
                                   <mat-option [value]="storageType?.value">
                                     {{storageType?.name | translate}}
                                 </mat-option>
@@ -134,80 +109,48 @@
                         <div layout="row" class="gateway-form-row" [ngClass]="{'gateway-config-row-vertical': changeAlignment}">
                             <mat-form-field class="md-block" flex>
                                 <mat-label>{{'gateway.storage-pack-size' | translate }}</mat-label>
-                                <!-- TODO(port): expression not parsed: `/^-?[0-9]+$/` -->
-                                <input matInput [disabled]="isReadOnlyForm" type="number" min="1" name="readRecordsCount" [pattern]="/^-?[0-9]+$/" [(ngModel)]='configurations.readRecordsCount' required>
-                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                <div ng-messages="gatewayConfiguration?.readRecordsCount?.$error">
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="required" translate>gateway.storage-pack-size-required</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="min" translate>gateway.storage-pack-size-min</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="pattern" translate>gateway.storage-pack-size-pattern</div>
-                                </div>
+                                                                <input matInput [disabled]="isReadOnlyForm" type="number" min="1" name="readRecordsCount" pattern="^-?[0-9]+$" [(ngModel)]='configurations.readRecordsCount' required #f4="ngModel">
+                                @if (f4.hasError('required')) {<mat-error>{{ 'gateway.storage-pack-size-required' | translate }}</mat-error>} @else if (f4.hasError('min')) {<mat-error>{{ 'gateway.storage-pack-size-min' | translate }}</mat-error>} @else if (f4.hasError('pattern')) {<mat-error>{{ 'gateway.storage-pack-size-pattern' | translate }}</mat-error>}
                             </mat-form-field>
                             <mat-form-field class="md-block" flex>
-                                <mat-label translate>{{ configurations?.storageType !== 'fileStorage' ? 'gateway.storage-max-records' : 'gateway.storage-max-file-records' }}</mat-label>
-                                <!-- TODO(port): expression not parsed: `/^-?[0-9]+$/` -->
-                                <input matInput [disabled]="isReadOnlyForm" type="number" min="1" name="maxRecordsCount" [pattern]="/^-?[0-9]+$/" [(ngModel)]='configurations.maxRecordsCount' required>
-                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                <div ng-messages="gatewayConfiguration?.maxRecordsCount?.$error">
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="required" translate>gateway.storage-max-records-required</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="min" translate>gateway.storage-max-records-min</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="pattern" translate>gateway.storage-max-records-pattern</div>
-                                </div>
+                                <mat-label>{{ (configurations?.storageType !== 'fileStorage' ? 'gateway.storage-max-records' : 'gateway.storage-max-file-records') | translate }}</mat-label>
+                                                                <input matInput [disabled]="isReadOnlyForm" type="number" min="1" name="maxRecordsCount" pattern="^-?[0-9]+$" [(ngModel)]='configurations.maxRecordsCount' required #f5="ngModel">
+                                @if (f5.hasError('required')) {<mat-error>{{ 'gateway.storage-max-records-required' | translate }}</mat-error>} @else if (f5.hasError('min')) {<mat-error>{{ 'gateway.storage-max-records-min' | translate }}</mat-error>} @else if (f5.hasError('pattern')) {<mat-error>{{ 'gateway.storage-max-records-pattern' | translate }}</mat-error>}
                             </mat-form-field>
                         </div>
                         @if (configurations?.storageType == 'fileStorage') {
                           <div layout="row" class="gateway-form-row" [ngClass]="{'gateway-config-row-vertical': changeAlignment}">
                             <mat-form-field class="md-block" flex>
                                 <mat-label>{{'gateway.storage-max-files' | translate }}</mat-label>
-                                <!-- TODO(port): expression not parsed: `/^-?[0-9]+$/` -->
-                                <input matInput [disabled]="isReadOnlyForm" type="number" min="1" name="maxFilesCount" [pattern]="/^-?[0-9]+$/" [(ngModel)]='configurations.maxFilesCount' required>
-                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                <div ng-messages="gatewayConfiguration?.maxFilesCount?.$error">
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="required" translate>gateway.storage-max-files-required</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="min" translate>gateway.storage-max-files-min</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="pattern" translate>gateway.storage-max-files-pattern</div>
-                                </div>
+                                                                <input matInput [disabled]="isReadOnlyForm" type="number" min="1" name="maxFilesCount" pattern="^-?[0-9]+$" [(ngModel)]='configurations.maxFilesCount' required #f6="ngModel">
+                                @if (f6.hasError('required')) {<mat-error>{{ 'gateway.storage-max-files-required' | translate }}</mat-error>} @else if (f6.hasError('min')) {<mat-error>{{ 'gateway.storage-max-files-min' | translate }}</mat-error>} @else if (f6.hasError('pattern')) {<mat-error>{{ 'gateway.storage-max-files-pattern' | translate }}</mat-error>}
                             </mat-form-field>
                             <mat-form-field class="md-block" flex>
                                 <mat-label>{{'gateway.storage-path' | translate }}</mat-label>
-                                <input matInput [disabled]="isReadOnlyForm" type="text" name="dataFolderPath" [(ngModel)]='configurations.dataFolderPath' required>
-                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                <div ng-messages="gatewayConfiguration?.dataFolderPath?.$error">
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="required" translate>gateway.storage-path-required</div>
-                                </div>
+                                <input matInput [disabled]="isReadOnlyForm" type="text" name="dataFolderPath" [(ngModel)]='configurations.dataFolderPath' required #f7="ngModel">
+                                @if (f7.hasError('required')) {<mat-error>{{ 'gateway.storage-path-required' | translate }}</mat-error>}
                             </mat-form-field>
                         </div>
                         }
             </mat-expansion-panel>
             <mat-expansion-panel [id]="idForm + 'connectorsPanelId'">
-                <mat-expansion-panel-header (click)="$any(this).collapsePanel(idForm + 'connectorsPanelId')">
+                <mat-expansion-panel-header>
                     <mat-panel-title>{{ 'gateway.connectors' | translate | uppercase }}</mat-panel-title>
                 </mat-expansion-panel-header>
-                <tb-gateway-config [(gatewayConfig)]="configurations.connectors" [(theForm)]="$any(this).gatewayConfiguration" [(changeAlignment)]="$any(this).changeAlignment" [(isReadOnly)]="isReadOnly">
+                <tb-gateway-config [(gatewayConfig)]="configurations.connectors" [theForm]="gatewayConfiguration" [changeAlignment]="changeAlignment" [isReadOnly]="isReadOnlyForm">
                 </tb-gateway-config>
             </mat-expansion-panel>
         </mat-accordion>
         <section [hidden]="!(!isReadOnlyForm)" layout="row" layout-align="end center" class="form-action-buttons">
             @if (!configurations?.remoteConfiguration) {
-              <button mat-raised-button color="primary" (click)="$any(this).exportConfig()" [disabled]="$any(this).gatewayConfiguration?.$invalid || !$any(this).gatewayConfiguration?.$dirty" attr.aria-label="{{ 'gateway.download-tip' | translate }}" attr.matTooltip="{{'gateway.download-tip' | translate }}">
+              <button mat-raised-button color="primary" (click)="exportConfig()" [disabled]="gatewayConfiguration.invalid || !gatewayConfiguration.dirty" attr.aria-label="{{ 'gateway.download-tip' | translate }}" matTooltip="{{'gateway.download-tip' | translate }}">
                 {{'action.download' | translate }}
                 
             </button>
             }
             @if (configurations?.remoteConfiguration) {
-              <button mat-raised-button color="primary" (click)="$any(this).saveAttributeConfig()" [disabled]="$any(this).gatewayConfiguration?.$invalid || !$any(this).gatewayConfiguration?.$dirty" attr.aria-label="{{ 'gateway.save-tip' | translate }}" attr.matTooltip="{{'gateway.save-tip' | translate }}">
+              <button mat-raised-button color="primary" (click)="saveAttributeConfig()" [disabled]="gatewayConfiguration.invalid || !gatewayConfiguration.dirty" attr.aria-label="{{ 'gateway.save-tip' | translate }}" matTooltip="{{'gateway.save-tip' | translate }}">
                 {{'action.save' | translate }}
-                <!-- TODO(port): the md-tooltip had its own AngularJS directives; bind matTooltipDisabled for them -->
             </button>
             }
         </section>

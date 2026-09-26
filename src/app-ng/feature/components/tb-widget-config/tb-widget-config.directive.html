@@ -1,0 +1,377 @@
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<mat-tab-group [ngClass]="{'tb-headless': (widgetType() === types.widgetType.static.value && !displayAdvanced())}"
+               id="tabs" flex class="tb-widget-config tb-absolute-fill"
+               [(selectedIndex)]="selectedTab">
+    @if (widgetType() !== types.widgetType.static.value) {
+    <mat-tab label="{{ 'widget-config.data' | translate }}">
+        <div class="md-padding" layout="column">
+            <div [hidden]="!(widgetType() === types.widgetType.timeseries.value || widgetType() === types.widgetType.alarm.value)" layout='column' layout-align="center"
+                 layout-gt-sm='row' layout-align-gt-sm="start center">
+                <div layout="column" flex>
+                    <mat-checkbox flex attr.aria-label="{{ 'widget-config.use-dashboard-timewindow' | translate }}"
+                                  [ngModel]="useDashboardTimewindow" (ngModelChange)="setField('useDashboardTimewindow', $event)">{{ 'widget-config.use-dashboard-timewindow' | translate }}
+                    </mat-checkbox>
+                    <mat-checkbox [disabled]="useDashboardTimewindow" flex attr.aria-label="{{ 'widget-config.display-timewindow' | translate }}"
+                                  [ngModel]="displayTimewindow" (ngModelChange)="setField('displayTimewindow', $event)">{{ 'widget-config.display-timewindow' | translate }}
+                    </mat-checkbox>
+                </div>
+                <section flex layout="row" layout-align="start center" style="margin-bottom: 16px;">
+                    <span [ngClass]="{'tb-disabled-label': useDashboardTimewindow}" style="padding-right: 8px;">{{ 'widget-config.timewindow' | translate }}</span>
+                    <tb-timewindow [ngDisabled]="useDashboardTimewindow" [asButton]="true"
+                                   [attr.aggregation]="widgetType() === types.widgetType.timeseries.value"
+                                   flex [ngModel]="timewindow" (ngModelChange)="onTimewindowChange($event)"></tb-timewindow>
+                </section>
+            </div>
+            <div [hidden]="widgetType() !== types.widgetType.alarm.value" layout='column' layout-align="center">
+                <div layout-gt-sm='row' layout-align-gt-sm="start center">
+                    <mat-form-field class="md-block" flex>
+                        <mat-label>{{ 'alarm.alarm-status' | translate }}</mat-label>
+                        <mat-select [ngModel]="alarmSearchStatus" (ngModelChange)="setField('alarmSearchStatus', $event)" style="padding-bottom: 24px;">
+                            @for (searchStatus of alarmSearchStatuses; track searchStatus) {
+                            <mat-option [value]="searchStatus">
+                                {{ ('alarm.search-status.' + searchStatus) | translate }}
+                            </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field flex class="md-block">
+                        <mat-label>{{ 'alarm.polling-interval' | translate }}</mat-label>
+                        <input matInput [required]="widgetType() === types.widgetType.alarm.value"
+                               type="number"
+                               step="1"
+                               min="1"
+                               name="alarmsPollingInterval"
+                               #alarmsPollingIntervalCtrl="ngModel"
+                               [ngModel]="alarmsPollingInterval" (ngModelChange)="setField('alarmsPollingInterval', $event)"/>
+                        @if (alarmsPollingIntervalCtrl.errors?.['required']) {
+                        <mat-error>{{ 'alarm.polling-interval-required' | translate }}</mat-error>
+                        }
+                        @if (alarmsPollingIntervalCtrl.errors?.['min']) {
+                        <mat-error>{{ 'alarm.min-polling-interval-message' | translate }}</mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+                <div layout-gt-sm='row' layout-align-gt-sm="start center">
+                    <mat-form-field flex class="md-block">
+                        <mat-label>{{ 'alarm.max-count-load' | translate }}</mat-label>
+                        <input matInput [required]="widgetType() === types.widgetType.alarm.value"
+                               type="number"
+                               step="1"
+                               min="0"
+                               name="alarmsMaxCountLoad"
+                               #alarmsMaxCountLoadCtrl="ngModel"
+                               [ngModel]="alarmsMaxCountLoad" (ngModelChange)="setField('alarmsMaxCountLoad', $event)"/>
+                        @if (alarmsMaxCountLoadCtrl.errors?.['required']) {
+                        <mat-error>{{ 'alarm.max-count-load-required' | translate }}</mat-error>
+                        }
+                        @if (alarmsMaxCountLoadCtrl.errors?.['min']) {
+                        <mat-error>{{ 'alarm.max-count-load-error-min' | translate }}</mat-error>
+                        }
+                    </mat-form-field>
+                    <mat-form-field flex class="md-block">
+                        <mat-label>{{ 'alarm.fetch-size' | translate }}</mat-label>
+                        <input matInput [required]="widgetType() === types.widgetType.alarm.value"
+                               type="number"
+                               step="1"
+                               min="10"
+                               name="alarmsFetchSize"
+                               #alarmsFetchSizeCtrl="ngModel"
+                               [ngModel]="alarmsFetchSize" (ngModelChange)="setField('alarmsFetchSize', $event)"/>
+                        @if (alarmsFetchSizeCtrl.errors?.['required']) {
+                        <mat-error>{{ 'alarm.fetch-size-required' | translate }}</mat-error>
+                        }
+                        @if (alarmsFetchSizeCtrl.errors?.['min']) {
+                        <mat-error>{{ 'alarm.fetch-size-error-min' | translate }}</mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+            </div>
+            <mat-accordion id="datasources-accordion" class="vAccordion--default"
+                           [hidden]="!(widgetType() !== types.widgetType.rpc.value
+                                   && widgetType() !== types.widgetType.alarm.value
+                                   && widgetType() !== types.widgetType.static.value
+                                   && isDataEnabled())">
+                <mat-expansion-panel id="datasources-pane" [expanded]="true">
+                    <mat-expansion-panel-header>
+                        <div layout="column">
+                            <div>{{ 'widget-config.datasources' | translate }}</div>
+                            @if (typeParameters()?.maxDatasources > -1) {
+                            <div class="md-caption" style="color: rgba(0,0,0,0.57);">
+                                {{ 'widget-config.maximum-datasources' | translate: {count: typeParameters()?.maxDatasources} }}
+                            </div>
+                            }
+                        </div>
+                    </mat-expansion-panel-header>
+                    @if (datasources?.length === 0) {
+                    <div>
+                        <span layout-align="center center" class="tb-prompt">{{ 'datasource.add-datasource-prompt' | translate }}</span>
+                    </div>
+                    }
+                    @if (datasources?.length > 0) {
+                    <div>
+                        <div flex layout="row" layout-align="start center">
+                            <span flex="5"></span>
+                            <div flex layout="row" layout-align="start center"
+                                 style="padding: 0 0 0 10px; margin: 5px;">
+                                <span style="min-width: 110px;">{{ 'widget-config.datasource-type' | translate }}</span>
+                                <span hide show-gt-sm flex
+                                      style="padding-left: 10px;">{{ 'widget-config.datasource-parameters' | translate }}</span>
+                                <span style="min-width: 40px;"></span>
+                            </div>
+                        </div>
+                        <div style="overflow: auto; padding-bottom: 15px;">
+                            @for (datasource of datasources; track datasource; let i = $index) {
+                            <div flex layout="row" layout-align="start center">
+                                <span flex="5">{{i + 1}}.</span>
+                                <div class="md-whiteframe-4dp" flex layout="row" layout-align="start center"
+                                     style="padding: 0 0 0 10px; margin: 5px;">
+                                    <tb-datasource flex [ngModel]="datasource.value"
+                                                   (ngModelChange)="datasource.value = $event; onDatasourcesChange()"
+                                                   [widgetType]="widgetType()"
+                                                   [maxDataKeys]="typeParameters()?.maxDataKeys"
+                                                   [optDataKeys]="typeParameters()?.dataKeysOptional"
+                                                   [aliasController]="aliasController()"
+                                                   [functionsOnly]="functionsOnly()"
+                                                   [datakeySettingsSchema]="datakeySettingsSchema()"
+                                                   (generateDataKey)="generateDataKey($event?.chip, $event?.type)"
+                                                   (fetchEntityKeys)="fetchEntityKeys.emit($event)"
+                                                   (onCreateEntityAlias)="onCreateEntityAlias.emit($event)"></tb-datasource>
+                                    <button mat-icon-button color="primary" type="button" [disabled]="rootScope.loading"
+                                            style="min-width: 40px;"
+                                            (click)="removeDatasource($event, datasource)"
+                                            attr.aria-label="{{ 'action.remove' | translate }}"
+                                            matTooltip="{{ 'widget-config.remove-datasource' | translate }}"
+                                            matTooltipPosition="above">
+                                        <mat-icon attr.aria-label="{{ 'action.delete' | translate }}"
+                                                  class="material-icons">
+                                            close
+                                        </mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                    <div flex layout="row" layout-align="start center">
+                        @if (typeParameters()?.maxDatasources == -1 || datasources?.length < typeParameters()?.maxDatasources) {
+                        <button mat-raised-button color="primary" type="button" [disabled]="rootScope.loading"
+                                (click)="addDatasource($event)" attr.aria-label="{{ 'action.add' | translate }}"
+                                matTooltip="{{ 'widget-config.add-datasource' | translate }}"
+                                matTooltipPosition="above">
+                            <mat-icon class="material-icons">add</mat-icon>
+                            <span>{{ 'action.add' | translate }}</span>
+                        </button>
+                        }
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <mat-accordion id="target-devices-accordion" class="vAccordion--default"
+                           [hidden]="!(widgetType() === types.widgetType.rpc.value && isDataEnabled())">
+                <mat-expansion-panel id="target-devices-pane" [expanded]="true">
+                    <mat-expansion-panel-header>
+                        {{ 'widget-config.target-device' | translate }}
+                    </mat-expansion-panel-header>
+                    <div style="padding: 0 5px;">
+                        <tb-entity-alias-select flex
+                                                [tbRequired]="widgetType() === types.widgetType.rpc.value && !widgetEditMode"
+                                                [aliasController]="aliasController()"
+                                                [allowedEntityTypes]="[types.entityType.device]"
+                                                [ngModel]="targetDeviceAlias.value"
+                                                (ngModelChange)="onTargetDeviceAliasChange($event)"
+                                                (onCreateEntityAlias)="onCreateEntityAlias.emit($event)">
+                        </tb-entity-alias-select>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+            @if (widgetType() === types.widgetType.alarm.value && isDataEnabled()) {
+            <mat-accordion id="alarm-source-accordion" class="vAccordion--default">
+                <mat-expansion-panel id="alarm-source-pane" [expanded]="true">
+                    <mat-expansion-panel-header>
+                        {{ 'widget-config.alarm-source' | translate }}
+                    </mat-expansion-panel-header>
+                    <div style="padding: 0 5px;">
+                        <tb-datasource flex
+                                       [ngModel]="alarmSource.value"
+                                       (ngModelChange)="onAlarmSourceChange($event)"
+                                       [widgetType]="widgetType()"
+                                       [functionsOnly]="functionsOnly()"
+                                       [aliasController]="aliasController()"
+                                       [datakeySettingsSchema]="datakeySettingsSchema()"
+                                       (generateDataKey)="generateDataKey($event?.chip, $event?.type)"
+                                       (onCreateEntityAlias)="onCreateEntityAlias.emit($event)"></tb-datasource>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+            }
+        </div>
+    </mat-tab>
+    }
+    <mat-tab label="{{ 'widget-config.settings' | translate }}">
+        <div id="settings-tab">
+            <div class="md-padding" layout="column">
+                <span>{{ 'widget-config.general-settings' | translate }}</span>
+                <div layout='column' layout-align="center" layout-gt-sm='row' layout-align-gt-sm="start center">
+                    <mat-form-field flex class="md-block">
+                        <mat-label>{{ 'widget-config.title' | translate }}</mat-label>
+                        <input matInput name="title" [ngModel]="title" (ngModelChange)="setField('title', $event)">
+                    </mat-form-field>
+                    <div flex [hidden]="!showTitle">
+                        <mat-form-field class="md-block tb-json-style-editor">
+                            <mat-label>{{ 'widget-config.title-style' | translate }}</mat-label>
+                            <textarea matInput name="titleStyle" style="min-height: 100px; font-family: monospace;"
+                                      [ngModel]="titleStyle" (ngModelChange)="setField('titleStyle', $event)"></textarea>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div layout='column' layout-align="center" layout-gt-sm='row' layout-align-gt-sm="start center">
+                    <div layout="row" flex layout-padding>
+                        <mat-checkbox attr.aria-label="{{ 'widget-config.display-icon' | translate }}"
+                                      [ngModel]="showTitleIcon" (ngModelChange)="setField('showTitleIcon', $event)">{{ 'widget-config.display-icon' | translate }}
+                        </mat-checkbox>
+                    </div>
+                    <div flex>
+                        <tb-material-icon-select [ngModel]="titleIcon" [disabled]="!showTitleIcon"
+                                                 (ngModelChange)="setField('titleIcon', $event)">
+                        </tb-material-icon-select>
+                    </div>
+                    <mat-form-field flex>
+                        <mat-label>{{ 'widget-config.icon-color' | translate }}</mat-label>
+                        <input matInput name="iconColor" placeholder="rgba(0, 0, 0, 0.87)"
+                               [ngModel]="iconColor" (ngModelChange)="setField('iconColor', $event)">
+                        <mat-icon matSuffix [style.color]="iconColor">format_color_fill</mat-icon>
+                    </mat-form-field>
+                    <mat-form-field flex>
+                        <mat-label>{{ 'widget-config.icon-size' | translate }}</mat-label>
+                        <input matInput name="iconSize" [ngModel]="iconSize" (ngModelChange)="setField('iconSize', $event)">
+                    </mat-form-field>
+                    <mat-form-field flex class="md-block">
+                        <mat-label>{{ 'widget-config.title-tooltip' | translate }}</mat-label>
+                        <input matInput name="titleTooltip" [ngModel]="titleTooltip" (ngModelChange)="setField('titleTooltip', $event)">
+                    </mat-form-field>
+                </div>
+                <div layout='column' layout-align="center" layout-gt-sm='row' layout-align-gt-sm="start center">
+                    <div layout="row" layout-padding>
+                        <mat-checkbox attr.aria-label="{{ 'widget-config.display-title' | translate }}"
+                                      [ngModel]="showTitle" (ngModelChange)="setField('showTitle', $event)">{{ 'widget-config.display-title' | translate }}
+                        </mat-checkbox>
+                    </div>
+                    <div layout="row" layout-padding>
+                        <mat-checkbox attr.aria-label="{{ 'widget-config.drop-shadow' | translate }}"
+                                      [ngModel]="dropShadow" (ngModelChange)="setField('dropShadow', $event)">{{ 'widget-config.drop-shadow' | translate }}
+                        </mat-checkbox>
+                    </div>
+                    <div layout="row" layout-padding>
+                        <mat-checkbox attr.aria-label="{{ 'widget-config.enable-fullscreen' | translate }}"
+                                      [ngModel]="enableFullscreen" (ngModelChange)="setField('enableFullscreen', $event)">{{ 'widget-config.enable-fullscreen' | translate }}
+                        </mat-checkbox>
+                    </div>
+                    <div flex>
+                        <mat-form-field class="md-block tb-json-style-editor">
+                            <mat-label>{{ 'widget-config.widget-style' | translate }}</mat-label>
+                            <textarea matInput name="widgetStyle" style="min-height: 100px; font-family: monospace;"
+                                      [ngModel]="widgetStyle" (ngModelChange)="setField('widgetStyle', $event)"></textarea>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div layout='column' layout-align="center" layout-gt-sm='row' layout-align-gt-sm="start center">
+                    <mat-form-field flex>
+                        <mat-label>{{ 'widget-config.background-color' | translate }}</mat-label>
+                        <input matInput name="backgroundColor" placeholder="#fff"
+                               [ngModel]="backgroundColor" (ngModelChange)="setField('backgroundColor', $event)">
+                        <mat-icon matSuffix [style.color]="backgroundColor">format_color_fill</mat-icon>
+                    </mat-form-field>
+                    <mat-form-field flex>
+                        <mat-label>{{ 'widget-config.text-color' | translate }}</mat-label>
+                        <input matInput name="color" placeholder="rgba(0, 0, 0, 0.87)"
+                               [ngModel]="color" (ngModelChange)="setField('color', $event)">
+                        <mat-icon matSuffix [style.color]="color">format_color_fill</mat-icon>
+                    </mat-form-field>
+                    <mat-form-field flex>
+                        <mat-label>{{ 'widget-config.padding' | translate }}</mat-label>
+                        <input matInput name="padding" [ngModel]="padding" (ngModelChange)="setField('padding', $event)">
+                    </mat-form-field>
+                    <mat-form-field flex>
+                        <mat-label>{{ 'widget-config.margin' | translate }}</mat-label>
+                        <input matInput name="margin" [ngModel]="margin" (ngModelChange)="setField('margin', $event)">
+                    </mat-form-field>
+                </div>
+                <div layout='column' layout-align="center" layout-gt-sm='row' layout-align-gt-sm="start center">
+                    <mat-form-field flex>
+                        <mat-label>{{ 'widget-config.units' | translate }}</mat-label>
+                        <input matInput name="units" [ngModel]="units" (ngModelChange)="setField('units', $event)">
+                    </mat-form-field>
+                    <mat-form-field flex>
+                        <mat-label>{{ 'widget-config.decimals' | translate }}</mat-label>
+                        <input matInput name="decimals" type="number" min="0" max="15" step="1" pattern="^\d*$"
+                               [ngModel]="decimals" (ngModelChange)="setField('decimals', $event)">
+                    </mat-form-field>
+                </div>
+                <div [hidden]="!(widgetType() === types.widgetType.timeseries.value ||
+                              widgetType() === types.widgetType.latest.value)" layout='column' layout-align="center"
+                     layout-gt-sm='row' layout-align-gt-sm="start center">
+                    <mat-checkbox flex attr.aria-label="{{ 'widget-config.display-legend' | translate }}"
+                                  [ngModel]="showLegend" (ngModelChange)="setField('showLegend', $event)">{{ 'widget-config.display-legend' | translate }}
+                    </mat-checkbox>
+                    <section flex layout="row" layout-align="start center" style="margin-bottom: 16px;">
+                        <tb-legend-config [ngDisabled]="!showLegend" flex [ngModel]="legendConfig"
+                                          (ngModelChange)="onLegendConfigChange($event)"></tb-legend-config>
+                    </section>
+                </div>
+                <span>{{ 'widget-config.mobile-mode-settings' | translate }}</span>
+                <div layout='column' layout-align="center" layout-gt-sm='row' layout-align-gt-sm="start center">
+                    <mat-form-field flex>
+                        <mat-label>{{ 'widget-config.order' | translate }}</mat-label>
+                        <input matInput name="mobileOrder" type="number" step="1" pattern="^-?[0-9]+$"
+                               [ngModel]="mobileOrder" (ngModelChange)="setField('mobileOrder', $event)">
+                    </mat-form-field>
+                    <mat-form-field flex>
+                        <mat-label>{{ 'widget-config.height' | translate }}</mat-label>
+                        <input matInput name="mobileHeight" min="1" max="10" type="number" step="1" pattern="^\d*$"
+                               [ngModel]="mobileHeight" (ngModelChange)="setField('mobileHeight', $event)">
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+    @if (displayAdvanced()) {
+    <mat-tab label="{{ 'widget-config.advanced' | translate }}">
+        <div flex class="md-padding tb-advanced-widget-config" layout="column">
+            <div flex layout="column" layout-padding>
+                <tb-json-form flex [schema]="currentSettingsSchema"
+                              [form]="currentSettingsForm"
+                              [model]="currentSettings"
+                              [groupInfoes]="currentSettingsGroupInfoes"
+                              [formControl]="advancedForm">
+                </tb-json-form>
+            </div>
+        </div>
+    </mat-tab>
+    }
+    <mat-tab label="{{ 'widget-config.actions' | translate }}">
+        <div class="md-padding" layout="column">
+            <tb-manage-widget-actions
+                    [actionSources]="actionSources()"
+                    [widgetActions]="actions"
+                    (widgetActionsChange)="onActionsChange($event)"
+                    (fetchDashboardStates)="fetchDashboardStates.emit($event)">
+            </tb-manage-widget-actions>
+        </div>
+    </mat-tab>
+</mat-tab-group>

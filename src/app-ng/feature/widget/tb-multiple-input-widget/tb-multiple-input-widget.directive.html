@@ -16,8 +16,8 @@
     limitations under the License.
 
 -->
-<form class="tb-multiple-input" name="multipleInputForm" (ngSubmit)="save()" novalidate autocomplete="off">
-    @if ($any(this).entityDetected && $any(this).isAllParametersValid) {
+<form class="tb-multiple-input" #multipleInputForm="ngForm" (ngSubmit)="save()" novalidate autocomplete="off">
+    @if (entityDetected && isAllParametersValid) {
       <div style="padding: 0 8px;">
         @for (source of sources; track $index) {
           <fieldset [ngClass]="{'fields-group': settings?.showGroupTitle}">
@@ -38,12 +38,10 @@
                                 {{key?.settings?.icon}}
                             </mat-icon>
                             }
-                            <input matInput attr.name="{{key?.name}}" [disabled]="(key?.settings?.isEditable === 'disabled') || key?.settings?.disabledOnCondition" [readonly]="key?.settings?.isEditable === 'readonly'" [(ngModel)]="key.data.currentValue" [required]="key?.settings?.required" type="text" md-select-on-focus (blur)="inputChanged(source,key)">
-                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                            <div ng-messages="multipleInputForm?.[key?.name]?.$error">
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="required">{{ key?.settings?.requiredErrorMessage }}</div>
-                            </div>
+                            <input matInput name="{{key?.name}}" #keyModel="ngModel" [disabled]="(key?.settings?.isEditable === 'disabled') || key?.settings?.disabledOnCondition" [readonly]="key?.settings?.isEditable === 'readonly'" [(ngModel)]="key.data.currentValue" [required]="key?.settings?.required" type="text" (focus)="selectOnFocus($event)" (blur)="inputChanged(source,key)">
+                            @if (keyModel.errors?.['required']) {
+                              <mat-error>{{ key?.settings?.requiredErrorMessage }}</mat-error>
+                            }
                         </mat-form-field>
                     </div>
                     }
@@ -56,12 +54,10 @@
                                 {{key?.settings?.icon}}
                             </mat-icon>
                             }
-                            <input matInput attr.name="{{key?.name}}" [disabled]="key?.settings?.isEditable === 'disabled' || key?.settings?.disabledOnCondition" [readonly]="key?.settings?.isEditable === 'readonly'" [(ngModel)]="key.data.currentValue" [required]="key?.settings?.required" type="number" step="key.settings.step" md-select-on-focus (blur)="inputChanged(source,key)">
-                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                            <div ng-messages="multipleInputForm?.[key?.name]?.$error">
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="required">{{ key?.settings?.requiredErrorMessage }}</div>
-                            </div>
+                            <input matInput name="{{key?.name}}" #keyModel="ngModel" [disabled]="key?.settings?.isEditable === 'disabled' || key?.settings?.disabledOnCondition" [readonly]="key?.settings?.isEditable === 'readonly'" [(ngModel)]="key.data.currentValue" [required]="key?.settings?.required" type="number" step="key.settings.step" (focus)="selectOnFocus($event)" (blur)="inputChanged(source,key)">
+                            @if (keyModel.errors?.['required']) {
+                              <mat-error>{{ key?.settings?.requiredErrorMessage }}</mat-error>
+                            }
                         </mat-form-field>
                     </div>
                     }
@@ -74,15 +70,12 @@
                                 {{key?.settings?.icon}}
                             </mat-icon>
                             }
-                            <!-- TODO(port): expression not parsed: `/^-?[0-9]+$/` -->
-                            <input matInput attr.name="{{key?.name}}" [disabled]="key?.settings?.isEditable === 'disabled' || key?.settings?.disabledOnCondition" [readonly]="key?.settings?.isEditable === 'readonly'" [(ngModel)]="key.data.currentValue" [required]="key?.settings?.required" type="number" step="key.settings.step" md-select-on-focus [pattern]="/^-?[0-9]+$/" (blur)="inputChanged(source,key)">
-                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                            <div ng-messages="multipleInputForm?.[key?.name]?.$error">
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="required">{{ key?.settings?.requiredErrorMessage }}</div>
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div translate ng-message="pattern">value.invalid-integer-value</div>
-                            </div>
+                            <input matInput name="{{key?.name}}" #keyModel="ngModel" [disabled]="key?.settings?.isEditable === 'disabled' || key?.settings?.disabledOnCondition" [readonly]="key?.settings?.isEditable === 'readonly'" [(ngModel)]="key.data.currentValue" [required]="key?.settings?.required" type="number" step="key.settings.step" pattern="^-?[0-9]+$" (focus)="selectOnFocus($event)" (blur)="inputChanged(source,key)">
+                            @if (keyModel.errors?.['required']) {
+                              <mat-error>{{ key?.settings?.requiredErrorMessage }}</mat-error>
+                            } @else if (keyModel.errors?.['pattern']) {
+                              <mat-error>{{ 'value.invalid-integer-value' | translate }}</mat-error>
+                            }
                         </mat-form-field>
                     </div>
                     }
@@ -95,7 +88,7 @@
                     }
                     @if ((key?.settings?.dataKeyValueType === 'booleanSwitch')) {
                       <div class="input-field md-block">
-                        <mat-slide-toggle name="{{key?.name}}" [disabled]="key?.settings?.isEditable === 'disabled' || key?.settings?.disabledOnCondition" [(ngModel)]="key.data.currentValue" (ngModelChange)="inputChanged(source,key)" attr.aria-label="{{key?.label}}" md-invert>
+                        <mat-slide-toggle labelPosition="before" name="{{key?.name}}" [disabled]="key?.settings?.isEditable === 'disabled' || key?.settings?.disabledOnCondition" [(ngModel)]="key.data.currentValue" (ngModelChange)="inputChanged(source,key)" attr.aria-label="{{key?.label}}">
                             {{key?.label}}
                         </mat-slide-toggle>
                     </div>
@@ -107,22 +100,17 @@
                         <label class="date-time-input__label">{{key?.label}}</label>
                         <div layout="row" [ngClass]="{'vertically-aligned': smallWidthContainer}">
                             @if (key?.settings?.dataKeyValueType !== 'time') {
-                              <mdp-date-picker name="{{key?.name + 'Date'}}" mdp-disabled="key.settings.isEditable === 'disabled' || key.settings.disabledOnCondition" [(ngModel)]="key.data.currentValue" (ngModelChange)="inputChanged(source,key)" attr.mdp-placeholder="{{ 'widgets.input-widgets.date' | translate }}">
-                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                <div ng-messages="multipleInputForm?.[key?.name]?.$error">
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="required">{{ key?.settings?.requiredErrorMessage }}</div>
-                                </div>
-                            </mdp-date-picker>
+                              <mat-form-field class="md-block">
+                                <input matInput [matDatepicker]="datePicker" name="{{key?.name + 'Date'}}" [disabled]="key?.settings?.isEditable === 'disabled' || key?.settings?.disabledOnCondition" [ngModel]="key?.data?.currentValue" [ngModelOptions]="{standalone: true}" (dateChange)="onDatePicked(source, key, $event.value)" [placeholder]="'widgets.input-widgets.date' | translate">
+                                <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+                                <mat-datepicker #datePicker></mat-datepicker>
+                              </mat-form-field>
                             }
                             @if (key?.settings?.dataKeyValueType !== 'date') {
-                              <mdp-time-picker name="{{key?.name + 'Time'}}" mdp-disabled="key.settings.isEditable === 'disabled' || key.settings.disabledOnCondition" [(ngModel)]="key.data.currentValue" (ngModelChange)="inputChanged(source,key)" attr.mdp-placeholder="{{ 'widgets.input-widgets.time' | translate }}" mdp-auto-switch="true">
-                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                <div ng-messages="multipleInputForm?.[key?.name]?.$error">
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="required">{{ key?.settings?.requiredErrorMessage }}</div>
-                                </div>
-                            </mdp-time-picker>
+                              <mat-form-field class="md-block">
+                                <input matInput type="time" name="{{key?.name + 'Time'}}" [disabled]="key?.settings?.isEditable === 'disabled' || key?.settings?.disabledOnCondition" [value]="timeText(key?.data?.currentValue)" (change)="onTimePicked(source, key, $any($event.target).value)" [placeholder]="'widgets.input-widgets.time' | translate">
+                                <mat-icon matSuffix>access_time</mat-icon>
+                              </mat-form-field>
                             }
                         </div>
                     </div>
@@ -133,24 +121,24 @@
             </div>
         </fieldset>
         }
-        @if ($any(this).entityDetected && settings?.showActionButtons) {
+        @if (entityDetected && settings?.showActionButtons) {
           <div class="md-padding" layout="row" layout-align="end center">
-            <button mat-button color="primary" (click)="discardAll()" style="max-height: 50px; margin-right:20px;" [disabled]="!multipleInputForm?.$dirty">
+            <button mat-button color="primary" (click)="discardAll()" style="max-height: 50px; margin-right:20px;" [disabled]="!multipleInputForm.dirty">
                 {{ 'action.undo' | translate }}
             </button>
-            <button mat-raised-button color="primary" type="submit" value="Submit" style="max-height: 50px; margin-right:20px;" [disabled]="!multipleInputForm?.$dirty || multipleInputForm?.$invalid" (click)="isFocused = false">
+            <button mat-raised-button color="primary" type="submit" value="Submit" style="max-height: 50px; margin-right:20px;" [disabled]="!multipleInputForm.dirty || multipleInputForm.invalid" (click)="isFocused = false">
                 {{ 'action.save' | translate }}
             </button>
         </div>
         }
     </div>
     }
-    @if (!$any(this).entityDetected || !$any(this).isAllParametersValid) {
+    @if (!entityDetected || !isAllParametersValid) {
       <div class="tb-multiple-input__errors" layout="column" layout-align="center center" style="height: 100%;">
-        <div style="text-align: center; font-size: 18px; color: #a0a0a0;" [hidden]="$any(this).entityDetected">
+        <div style="text-align: center; font-size: 18px; color: #a0a0a0;" [hidden]="entityDetected">
             {{ 'widgets.input-widgets.no-entity-selected' | translate }}
         </div>
-        <div style="text-align: center; font-size: 18px; color: #a0a0a0;" [hidden]="!($any(this).entityDetected && !$any(this).isAllParametersValid)">
+        <div style="text-align: center; font-size: 18px; color: #a0a0a0;" [hidden]="!(entityDetected && !isAllParametersValid)">
             {{ 'widgets.input-widgets.not-allowed-entity' | translate }}
         </div>
     </div>

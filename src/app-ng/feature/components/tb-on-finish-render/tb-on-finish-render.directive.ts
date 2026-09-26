@@ -1,33 +1,29 @@
-import { Directive, inject } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { linkAttrs } from '../../../legacy-link';
+import { Directive, OnInit, input, output } from '@angular/core';
 
 /**
  * Ported from the AngularJS directive `tbOnFinishRender` (module `thingsboard.directives.finishRender`) in src/app/components/finish-render.directive.js:16.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ *
+ * Put on the element repeated by an `@for`: bind `[tbLast]="$last"`; once the last
+ * item has rendered, `finishRender` emits the event name given as the attribute value
+ * (legacy: `scope.$emit(attr.tbOnFinishRender)` after a `$timeout`).
  */
 @Directive({
   selector: '[tb-on-finish-render]',
   standalone: true,
 })
-export class TbOnFinishRenderDirective {
-  protected readonly element = inject(ElementRef);
+export class TbOnFinishRenderDirective implements OnInit {
+  /** The event name (the attribute value). */
+  readonly eventName = input<string>('', { alias: 'tb-on-finish-render' });
+  /** The `@for` block's `$last` (legacy `scope.$last` of the ng-repeat). */
+  readonly tbLast = input<boolean>(false);
+  /** Emits the event name once the last repeated item has rendered. */
+  readonly finishRender = output<string>();
 
-  $emit: any;
-  $last: any;
-
-  // TODO(port): link(scope, element, attr) — `element` is the element (ElementRef.nativeElement) and `attr` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
-  constructor() {
-    if (this.$last === true) {
-                setTimeout(() => {
-                    this.finishRender.next(this.attrs.tbOnFinishRender);
-                });
-            }
-  }
-
-  /** The link's `attrs`: the host element's attributes, read live. */
-  protected get attrs(): any {
-    return linkAttrs(this.element.nativeElement);
+  ngOnInit(): void {
+    if (this.tbLast() === true) {
+      setTimeout(() => {
+        this.finishRender.emit(this.eventName());
+      });
+    }
   }
 }

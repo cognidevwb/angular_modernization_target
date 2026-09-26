@@ -1,41 +1,30 @@
 import { inject, Injectable } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import { RuleChainService } from '../../api/services/rule-chain.service';
 import { UtilsService } from '../../common/services/utils.service';
-
-import $ from 'jquery';
 import { bindMethods } from '../../../bind-methods';
-import { NodeScriptTestComponent } from '../script/node-script-test.component';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $q: any;
+import { NodeScriptTestComponent } from '../node-script-test/node-script-test.component';
 
 /**
  * Ported from the AngularJS factory `ruleNodeScriptTest` (module `thingsboard.ruleChain`) in src/app/rulechain/index.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Scaffolded by the playbook: the shape and the body are ported by syntax tree.
  */
 @Injectable({ providedIn: 'root' })
 export class RuleNodeScriptTestService {
   private readonly __bound = bindMethods(this);
-  // TODO(port): '$q' — use Promise, or an Observable
   private readonly dialog = inject(MatDialog);
-  private readonly document = inject(DOCUMENT);
   private readonly ruleChainService = inject(RuleChainService);
   private readonly utils = inject(UtilsService);
 
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-
-  testNodeScript($event?: any, script?: any, scriptType?: any, functionTitle?: any, functionName?: any, argNames?: any, ruleNodeId?: any, ...rest: any[]): any {
-    var deferred: any = $q.defer();
+  testNodeScript($event?: any, script?: any, scriptType?: any, functionTitle?: any, functionName?: any, argNames?: any, ruleNodeId?: any, ...rest: any[]): Promise<any> {
     if ($event) {
         $event.stopPropagation();
     }
-
-    var msg: any, metadata: any, msgType: any;
     if (ruleNodeId) {
-        this.ruleChainService.getLatestRuleNodeDebugInput(ruleNodeId).then(
+        return this.ruleChainService.getLatestRuleNodeDebugInput(ruleNodeId).then(
             (debugIn?: any) => {
+                let msg: any, metadata: any, msgType: any;
                 if (debugIn) {
                     if (debugIn.data) {
                         msg = JSON.parse(debugIn.data);
@@ -45,37 +34,16 @@ export class RuleNodeScriptTestService {
                     }
                     msgType = debugIn.msgType;
                 }
-                this.openTestScriptDialog($event, script, scriptType, functionTitle,
-                                     functionName, argNames, msg, metadata, msgType).then(
-                    (script?: any) => {
-                        deferred.resolve(script);
-                    },
-                    () => {
-                        deferred.reject();
-                    }
-                );
-            },
-            () => {
-                deferred.reject();
-            }
-        );
-    } else {
-        this.openTestScriptDialog($event, script, scriptType, functionTitle,
-            functionName, argNames).then(
-            (script?: any) => {
-                deferred.resolve(script);
-            },
-            () => {
-                deferred.reject();
+                return this.openTestScriptDialog($event, script, scriptType, functionTitle,
+                                     functionName, argNames, msg, metadata, msgType);
             }
         );
     }
-    return deferred.promise;
+    return this.openTestScriptDialog($event, script, scriptType, functionTitle,
+        functionName, argNames);
   }
 
-  openTestScriptDialog($event?: any, script?: any, scriptType?: any, functionTitle?: any, functionName?: any, argNames?: any, msg?: any, metadata?: any, msgType?: any, ...rest: any[]): any {
-    let vm = this;
-    var deferred: any = $q.defer();
+  openTestScriptDialog($event?: any, script?: any, scriptType?: any, functionTitle?: any, functionName?: any, argNames?: any, msg?: any, metadata?: any, msgType?: any, ...rest: any[]): Promise<any> {
     if (!msg) {
         msg = {
             temperature: 22.4,
@@ -95,19 +63,19 @@ export class RuleNodeScriptTestService {
         msgType = "POST_TELEMETRY_REQUEST";
     }
 
-    var onShowingCallback: any = {
+    const onShowingCallback: any = {
         onShowed: (...rest: any[]) => {
         }
     };
 
-    var inputParams: any = {
+    const inputParams: any = {
         script: script,
         scriptType: scriptType,
         functionName: functionName,
         argNames: argNames
     };
 
-    firstValueFrom(this.dialog.open(NodeScriptTestComponent, {
+    return firstValueFrom(this.dialog.open(NodeScriptTestComponent, {
         data: {
             msg: msg,
             metadata: metadata,
@@ -120,12 +88,10 @@ export class RuleNodeScriptTestService {
     }).afterClosed()).then(
         (script?: any) => {
             if (script !== undefined) {
-                deferred.resolve(script);
-            } else {
-                deferred.reject();
+                return script;
             }
+            return Promise.reject();
         }
     );
-    return deferred.promise;
   }
 }

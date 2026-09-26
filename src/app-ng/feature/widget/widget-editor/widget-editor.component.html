@@ -16,17 +16,17 @@
     limitations under the License.
 
 -->
-<div flex layout="column" tb-confirm-on-exit is-dirty="vm.isDirty">
-    <div flex layout="column" (tbExpandFullscreen)="fullscreen" (hideExpandButton)="true">
+<div flex layout="column" tb-confirm-on-exit [attr.is-dirty]="isDirty">
+    <div flex layout="column" [class.tb-fullscreen]="fullscreen" [style.z-index]="fullscreen ? 70 : null">
         <mat-toolbar class="md-whiteframe-z1 tb-edit-toolbar md-hue-3">
             <div flex class="md-toolbar-tools">
                 <mat-form-field>
                     <mat-label>&nbsp;</mat-label>
-                    <input matInput [disabled]="isReadOnly()" [(ngModel)]="widget.widgetName" attr.placeholder="{{ 'widget.title' | translate }}">
+                    <input matInput [disabled]="isReadOnly()" [ngModel]="widget?.widgetName" (ngModelChange)="widget.widgetName = $event" attr.placeholder="{{ 'widget.title' | translate }}">
                 </mat-form-field>
                 <mat-form-field>
-                    <mat-select [disabled]="isReadOnly()" placeholder="{{ 'widget.type' | translate }}" required id="widgetType" [(ngModel)]="widget.type">
-                        @for (type of widgetTypes; track $index) {
+                    <mat-select [disabled]="isReadOnly()" placeholder="{{ 'widget.type' | translate }}" required id="widgetType" [ngModel]="widget?.type" (ngModelChange)="widget.type = $event">
+                        @for (type of widgetTypeList; track $index) {
                           <mat-option value="{{type?.value}}">
                             {{ type?.name | translate }}
                         </mat-option>
@@ -34,18 +34,18 @@
                     </mat-select>
                 </mat-form-field>
                 <span flex=""></span>
-                <button mat-button hide-xs hide-sm attr.aria-label="{{ 'widget.run' | translate }}" [disabled]="!iframeWidgetEditModeInited" (click)="applyWidgetScript()" attr.matTooltip="{{ 'widget.run' | translate }} (CTRL + Return)" matTooltipPosition="below">
+                <button mat-button hide-xs hide-sm attr.aria-label="{{ 'widget.run' | translate }}" [disabled]="!iframeWidgetEditModeInited" (click)="applyWidgetScript()" matTooltip="{{ 'widget.run' | translate }} (CTRL + Return)" matTooltipPosition="below">
                     
                     <mat-icon attr.aria-label="{{ 'action.run' | translate }}">play_arrow</mat-icon>
                     <span translate>action.run</span>
                 </button>
-                <button mat-raised-button hide-xs hide-sm [disabled]="undoDisabled()" attr.aria-label="{{ 'widget.undo' | translate }}" (click)="undoWidget()" attr.matTooltip="{{ 'widget.undo' | translate }} (CTRL + Q)" matTooltipPosition="below">
+                <button mat-raised-button hide-xs hide-sm [disabled]="undoDisabled()" attr.aria-label="{{ 'widget.undo' | translate }}" (click)="undoWidget()" matTooltip="{{ 'widget.undo' | translate }} (CTRL + Q)" matTooltipPosition="below">
                     
                     <mat-icon attr.aria-label="{{ 'action.undo' | translate }}">undo</mat-icon>
                     <span translate>action.undo</span>
                 </button>
                 @if (!isReadOnly()) {
-                  <button mat-raised-button hide-xs hide-sm [disabled]="saveDisabled()" attr.aria-label="{{ 'widget.save' | translate }}" (click)="saveWidget()" attr.matTooltip="{{ 'widget.save' | translate }} (CTRL + S)" matTooltipPosition="below">
+                  <button mat-raised-button hide-xs hide-sm [disabled]="saveDisabled()" attr.aria-label="{{ 'widget.save' | translate }}" (click)="saveWidget()" matTooltip="{{ 'widget.save' | translate }} (CTRL + S)" matTooltipPosition="below">
                     @if (saveWidgetPending) {
                       <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
                     }
@@ -53,14 +53,14 @@
                     <span translate>action.save</span>
                 </button>
                 }
-                <button mat-raised-button hide-xs hide-sm [disabled]="saveAsDisabled()" attr.aria-label="{{ 'widget.saveAs' | translate }}" (click)="saveWidgetAs($event)" attr.matTooltip="{{ 'widget.saveAs' | translate }} (Shift + CTRL + S)" matTooltipPosition="below">
+                <button mat-raised-button hide-xs hide-sm [disabled]="saveAsDisabled()" attr.aria-label="{{ 'widget.saveAs' | translate }}" (click)="saveWidgetAs($event)" matTooltip="{{ 'widget.saveAs' | translate }} (Shift + CTRL + S)" matTooltipPosition="below">
                     @if (saveWidgetAsPending) {
                       <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
                     }
                     <mat-icon attr.aria-label="{{ 'action.saveAs' | translate }}">save</mat-icon>
                     <span translate>action.saveAs</span>
                 </button>
-                <button mat-button hide-xs hide-sm attr.aria-label="{{ 'widget.toggle-fullscreen' | translate }}" (click)="toggleFullscreen()" attr.matTooltip="{{ 'widget.toggle-fullscreen' | translate }} (Shift + CTRL + F)" matTooltipPosition="below">
+                <button mat-button hide-xs hide-sm attr.aria-label="{{ 'widget.toggle-fullscreen' | translate }}" (click)="toggleFullscreen()" matTooltip="{{ 'widget.toggle-fullscreen' | translate }} (Shift + CTRL + F)" matTooltipPosition="below">
                     
                     <mat-icon [hidden]="!(!fullscreen)" attr.aria-label="{{ 'widget.toggle-fullscreen' | translate }}">
                         fullscreen
@@ -116,7 +116,7 @@
                                             <mat-form-field flex class="md-block" style="margin: 10px 0 0; max-height: 40px;">
                                                 <input matInput attr.placeholder="{{ 'widget.resource-url' | translate }}" [required]="true" name="resource" [(ngModel)]="resource.url">
                                             </mat-form-field>
-                                            <button mat-icon-button color="primary" [disabled]="rootScope?.loading" (click)="removeResource($index)" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'widget.remove-resource' | translate }}" matTooltipPosition="above">
+                                            <button mat-icon-button color="primary" [disabled]="rootScope?.loading" (click)="removeResource($index)" attr.aria-label="{{ 'action.remove' | translate }}" matTooltip="{{ 'widget.remove-resource' | translate }}" matTooltipPosition="above">
                                                 
                                                 <mat-icon attr.aria-label="{{ 'action.delete' | translate }}" class="material-icons">
                                                     close
@@ -125,7 +125,7 @@
                                         </div>
                                         }
                                         <div>
-                                            <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="addResource()" attr.aria-label="{{ 'action.add' | translate }}" attr.matTooltip="{{ 'widget.add-resource' | translate }}" matTooltipPosition="above">
+                                            <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="addResource()" attr.aria-label="{{ 'action.add' | translate }}" matTooltip="{{ 'widget.add-resource' | translate }}" matTooltipPosition="above">
                                                 
                                                 <span translate>action.add</span>
                                             </button>
@@ -134,23 +134,23 @@
                                 </div>
                             </mat-tab>
                             <mat-tab label="{{ 'widget.html' | translate }}">
-                                <div class="tb-resize-container" expand-button-id="expand-button">
+                                <div class="tb-resize-container" [class.tb-fullscreen]="expandedPanel === 'html'" [style.z-index]="expandedPanel === 'html' ? 70 : null">
                                     <div class="tb-editor-area-title-panel">
                                         <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyHtml()">{{ 'widget.tidy' | translate }}
                                         </button>
-                                        <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
+                                        <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32" (click)="toggleExpandedPanel('html', $event)" [matTooltip]="(expandedPanel === 'html' ? 'fullscreen.exit' : 'fullscreen.expand') | translate" [matTooltipPosition]="expandedPanel === 'html' ? 'below' : 'above'"><mat-icon>{{ expandedPanel === 'html' ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon></button>
                                     </div>
-                                    <div id="html_input" ui-ace="vm.htmlEditorOptions" [(ngModel)]="widget.templateHtml"></div>
+                                    <div id="html_input" [tbWidgetAce]="htmlEditorOptions" [value]="widget?.templateHtml" (valueChange)="widget.templateHtml = $event"></div>
                                 </div>
                             </mat-tab>
                             <mat-tab label="{{ 'widget.css' | translate }}">
-                                <div class="tb-resize-container" expand-button-id="expand-button">
+                                <div class="tb-resize-container" [class.tb-fullscreen]="expandedPanel === 'css'" [style.z-index]="expandedPanel === 'css' ? 70 : null">
                                     <div class="tb-editor-area-title-panel">
                                         <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyCss()">{{ 'widget.tidy' | translate }}
                                         </button>
-                                        <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
+                                        <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32" (click)="toggleExpandedPanel('css', $event)" [matTooltip]="(expandedPanel === 'css' ? 'fullscreen.exit' : 'fullscreen.expand') | translate" [matTooltipPosition]="expandedPanel === 'css' ? 'below' : 'above'"><mat-icon>{{ expandedPanel === 'css' ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon></button>
                                     </div>
-                                    <div id="css_input" ui-ace="vm.cssEditorOptions" [(ngModel)]="widget.templateCss"></div>
+                                    <div id="css_input" [tbWidgetAce]="cssEditorOptions" [value]="widget?.templateCss" (valueChange)="widget.templateCss = $event"></div>
                                 </div>
                             </mat-tab>
                         </mat-tab-group>
@@ -158,23 +158,23 @@
                     <div id="top_right_panel" class="tb-split tb-content">
                         <mat-tab-group class="container">
                             <mat-tab label="{{ 'widget.settings-schema' | translate }}">
-                                <div class="tb-resize-container" expand-button-id="expand-button">
+                                <div class="tb-resize-container" [class.tb-fullscreen]="expandedPanel === 'settings'" [style.z-index]="expandedPanel === 'settings' ? 70 : null">
                                     <div class="tb-editor-area-title-panel">
                                         <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyJson()">{{ 'widget.tidy' | translate }}
                                         </button>
-                                        <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
+                                        <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32" (click)="toggleExpandedPanel('settings', $event)" [matTooltip]="(expandedPanel === 'settings' ? 'fullscreen.exit' : 'fullscreen.expand') | translate" [matTooltipPosition]="expandedPanel === 'settings' ? 'below' : 'above'"><mat-icon>{{ expandedPanel === 'settings' ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon></button>
                                     </div>
-                                    <div id="settings_json_input" ui-ace="vm.jsonSettingsEditorOptions" [(ngModel)]="widget.settingsSchema"></div>
+                                    <div id="settings_json_input" [tbWidgetAce]="jsonSettingsEditorOptions" [value]="widget?.settingsSchema" (valueChange)="widget.settingsSchema = $event"></div>
                                 </div>
                             </mat-tab>
                             <mat-tab label="{{ 'widget.datakey-settings-schema' | translate }}">
-                                <div class="tb-resize-container" expand-button-id="expand-button">
+                                <div class="tb-resize-container" [class.tb-fullscreen]="expandedPanel === 'datakey'" [style.z-index]="expandedPanel === 'datakey' ? 70 : null">
                                     <div class="tb-editor-area-title-panel">
                                         <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyDataKeyJson()">{{ 'widget.tidy' | translate }}
                                         </button>
-                                        <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
+                                        <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32" (click)="toggleExpandedPanel('datakey', $event)" [matTooltip]="(expandedPanel === 'datakey' ? 'fullscreen.exit' : 'fullscreen.expand') | translate" [matTooltipPosition]="expandedPanel === 'datakey' ? 'below' : 'above'"><mat-icon>{{ expandedPanel === 'datakey' ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon></button>
                                     </div>
-                                    <div id="settings_json_input" ui-ace="vm.dataKeyJsonSettingsEditorOptions" [(ngModel)]="widget.dataKeySettingsSchema"></div>
+                                    <div id="settings_json_input" [tbWidgetAce]="dataKeyJsonSettingsEditorOptions" [value]="widget?.dataKeySettingsSchema" (valueChange)="widget.dataKeySettingsSchema = $event"></div>
                                 </div>
                             </mat-tab>
                         </mat-tab-group>
@@ -182,24 +182,24 @@
                 </div>
                 <div id="bottom_panel" class="tb-split tb-split-vertical">
                     <div id="javascript_panel" class="tb-split tb-content">
-                        <div class="tb-resize-container" expand-button-id="expand-button">
+                        <div class="tb-resize-container" [class.tb-fullscreen]="expandedPanel === 'javascript'" [style.z-index]="expandedPanel === 'javascript' ? 70 : null">
                             <div class="tb-editor-area-title-panel">
                                 <label translate for="javascript_input">widget.javascript</label>
                                 <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyJs()">{{
                                     'widget.tidy' | translate }}
                                 </button>
-                                <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
+                                <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32" (click)="toggleExpandedPanel('javascript', $event)" [matTooltip]="(expandedPanel === 'javascript' ? 'fullscreen.exit' : 'fullscreen.expand') | translate" [matTooltipPosition]="expandedPanel === 'javascript' ? 'below' : 'above'"><mat-icon>{{ expandedPanel === 'javascript' ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon></button>
                             </div>
-                            <div id="javascript_input" ui-ace="vm.jsEditorOptions" [(ngModel)]="widget.controllerScript"></div>
+                            <div id="javascript_input" [tbWidgetAce]="jsEditorOptions" [value]="widget?.controllerScript" (valueChange)="widget.controllerScript = $event"></div>
                         </div>
                     </div>
                     <div id="frame_panel" class="tb-split tb-content" style="overflow-y: hidden; position: relative;">
                         <div flex layout="column" class="md-content tb-progress-cover" layout-align="center center" [hidden]="!(!iframeWidgetEditModeInited)">
                             <mat-progress-spinner color="warn" [style.visibility]="(iframeWidgetEditModeInited) ? 'hidden' : 'visible'" mode="indeterminate" diameter="100"></mat-progress-spinner>
                         </div>
-                        <div expand-button-id="expand-button" class="container">
+                        <div [class.tb-fullscreen]="expandedPanel === 'frame'" [style.z-index]="expandedPanel === 'frame' ? 70 : null" class="container">
                             <iframe frameborder="0" height="100%" width="100%"></iframe>
-                            <button mat-icon-button id="expand-button" aria-label="Fullscreen" class="tb-fullscreen-button-style" style="position: absolute; top: 10px; left: 10px; bottom: initial;"></button>
+                            <button mat-icon-button id="expand-button" aria-label="Fullscreen" class="tb-fullscreen-button-style" style="position: absolute; top: 10px; left: 10px; bottom: initial;" (click)="toggleExpandedPanel('frame', $event)" [matTooltip]="(expandedPanel === 'frame' ? 'fullscreen.exit' : 'fullscreen.expand') | translate" [matTooltipPosition]="expandedPanel === 'frame' ? 'below' : 'above'"><mat-icon>{{ expandedPanel === 'frame' ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon></button>
                         </div>
                     </div>
                 </div>

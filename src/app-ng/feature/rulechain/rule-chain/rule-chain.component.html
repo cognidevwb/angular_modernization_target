@@ -16,123 +16,108 @@
     limitations under the License.
 
 -->
-<!-- TODO(port): expression not parsed: `` -->
-<div flex tbExpandFullscreen tb-confirm-on-exit is-dirty="vm.isConfirmOnExit" expand-tooltip-direction="bottom" layout="column" class="md-content tb-rulechain" (keydown)="$any(this).keyDown($event)" (keyup)="$any(this).keyUp($event)" (onFullscreenChanged)="isFullscreen = $any($event).expanded">
+<div flex tb-expand-fullscreen tb-confirm-on-exit [attr.is-dirty]="isConfirmOnExit" expand-tooltip-direction="bottom" layout="column" class="md-content tb-rulechain" (onFullscreenChanged)="isFullscreen = $any($event)?.expanded">
     <section class="tb-rulechain-container" flex layout="column">
         <div class="tb-rulechain-layout" flex layout="row">
             <section layout="row" layout-wrap class="tb-header-buttons md-fab tb-library-open">
-                <button mat-fab color="primary" [hidden]="!(!isLibraryOpen)" class="tb-btn-header tb-btn-open-library md-fab-top-left" attr.aria-label="{{ 'rulenode.open-node-library' | translate }}" (click)="isLibraryOpen = true" attr.matTooltip="{{ 'rulenode.open-node-library' | translate }}" attr.matTooltipPosition="{{isFullscreen ? 'bottom' : 'top'}}">
-                    
+                <button mat-fab color="primary" [hidden]="isLibraryOpen" class="tb-btn-header tb-btn-open-library md-fab-top-left" [attr.aria-label]="'rulenode.open-node-library' | translate" (click)="isLibraryOpen = true" [matTooltip]="'rulenode.open-node-library' | translate" [matTooltipPosition]="isFullscreen ? 'below' : 'above'">
                     <mat-icon>menu</mat-icon>
                 </button>
             </section>
-            <!-- TODO(port): md-sidenav: a mat-sidenav inside a mat-sidenav-container --><md-sidenav class="tb-rulechain-library md-sidenav-left md-whiteframe-4dp" md-disable-backdrop md-is-locked-open="vm.isLibraryOpenReadonly" md-is-open="vm.isLibraryOpenReadonly" md-component-id="rulechain-library-sidenav" layout="column">
+            @if (isLibraryOpen) {
+              <div class="tb-rulechain-library md-sidenav-left md-whiteframe-4dp">
                 <mat-toolbar>
                     <div class="md-toolbar-tools">
-                        <button mat-icon-button class="tb-small" attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{'rulenode.search' | translate}}" attr.matTooltipPosition="{{isFullscreen ? 'bottom' : 'top'}}">
-                            <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
-                            
+                        <button mat-icon-button class="tb-small" [attr.aria-label]="'action.search' | translate" [matTooltip]="'rulenode.search' | translate" [matTooltipPosition]="isFullscreen ? 'below' : 'above'">
+                            <mat-icon [attr.aria-label]="'action.search' | translate" class="material-icons">search</mat-icon>
                         </button>
                         <div layout="row" flex>
                             <mat-form-field flex>
-                                <mat-label>&nbsp;</mat-label>
-                                <input matInput [(ngModel)]="ruleNodeSearch" attr.placeholder="{{'rulenode.search' | translate}}">
+                                <input matInput [ngModel]="ruleNodeSearch" (ngModelChange)="setRuleNodeSearch($event)" [placeholder]="'rulenode.search' | translate">
                             </mat-form-field>
                         </div>
-                        <button mat-icon-button class="tb-small" aria-label="Close" [hidden]="!(ruleNodeSearch)" (click)="ruleNodeSearch = ''" attr.matTooltip="{{ 'action.clear-search' | translate }}" attr.matTooltipPosition="{{isFullscreen ? 'bottom' : 'top'}}">
+                        <button mat-icon-button class="tb-small" aria-label="Close" [hidden]="!ruleNodeSearch" (click)="setRuleNodeSearch('')" [matTooltip]="'action.clear-search' | translate" [matTooltipPosition]="isFullscreen ? 'below' : 'above'">
                             <mat-icon aria-label="Close" class="material-icons">close</mat-icon>
-                            
                         </button>
-                        <button mat-icon-button class="tb-small" aria-label="Close" (click)="isLibraryOpen = false" attr.matTooltip="{{ 'action.close' | translate }}" attr.matTooltipPosition="{{isFullscreen ? 'bottom' : 'top'}}">
+                        <button mat-icon-button class="tb-small" aria-label="Close" (click)="isLibraryOpen = false" [matTooltip]="'action.close' | translate" [matTooltipPosition]="isFullscreen ? 'below' : 'above'">
                             <mat-icon aria-label="Close" class="material-icons">chevron_left</mat-icon>
-                            
                         </button>
                     </div>
                 </mat-toolbar>
-                <!-- TODO(port): md-expansion-panel-group (angular-material-expansion-panel): a mat-accordion -->@if (ruleChainLibraryLoaded) {
-                  <md-expansion-panel-group flex class="tb-rulechain-library-panel-group" md-component-id="libraryPanelGroup" auto-expand="true" multiple>
-                    <!-- TODO(port): md-expansion-panel: a mat-expansion-panel -->@for (typeId of __keys(ruleNodeTypesModel); track typeId) {
-                      @let typeModel = (ruleNodeTypesModel)[typeId];
-                      <md-expansion-panel attr.md-component-id="{{typeId}}" id="{{typeId}}">
-                        <!-- TODO(port): md-expansion-panel-collapsed: the mat-expansion-panel-header --><md-expansion-panel-collapsed (mouseenter)="typeHeaderMouseEnter($event, typeId)" (mouseleave)="destroyTooltips()">
+                @if (ruleChainLibraryLoaded) {
+                  <mat-accordion class="tb-rulechain-library-panel-group" [multi]="true">
+                    @for (typeId of __keys(ruleNodeTypesModel); track typeId) {
+                      <mat-expansion-panel [id]="typeId" [expanded]="libraryPanelExpanded[typeId]" (expandedChange)="libraryPanelExpanded[typeId] = $event">
+                        <mat-expansion-panel-header (mouseenter)="typeHeaderMouseEnter($event, typeId)" (mouseleave)="destroyTooltips()">
                             <mat-icon aria-label="node-type-icon" class="material-icons" style="margin-right: 8px;">{{types?.ruleNodeType?.[typeId]?.icon}}</mat-icon>
-                            <div class="tb-panel-title" translate>{{types?.ruleNodeType?.[typeId]?.name}}</div>
-                            <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                        </md-expansion-panel-collapsed>
-                        <!-- TODO(port): md-expansion-panel-expanded: the panel's content --><md-expansion-panel-expanded>
-                            <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><md-expansion-panel-header (mouseenter)="typeHeaderMouseEnter($event, typeId)" (mouseleave)="destroyTooltips()" (click)="$mdExpansionPanel(typeId).collapse()">
-                                <mat-icon aria-label="node-type-icon" class="material-icons" style="margin-right: 8px;">{{types?.ruleNodeType?.[typeId]?.icon}}</mat-icon>
-                                <div class="tb-panel-title" translate>{{types?.ruleNodeType?.[typeId]?.name}}</div>
-                                <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                            </md-expansion-panel-header>
-                            <!-- TODO(port): md-expansion-panel-content: the panel's content --><md-expansion-panel-content>
-                                <fc-canvas id="tb-rulechain-{{typeId}}" model="vm.ruleNodeTypesModel[typeId].model" selected-objects="vm.ruleNodeTypesModel[typeId].selectedObjects" automatic-resize="false" callbacks="vm.nodeLibCallbacks" node-width="170" node-height="50" control="vm.ruleNodeTypesCanvasControl[typeId]" drop-target-id="'tb-rulchain-canvas'"></fc-canvas>
-                            </md-expansion-panel-content>
-                        </md-expansion-panel-expanded>
-                    </md-expansion-panel>
+                            <div class="tb-panel-title">{{ types?.ruleNodeType?.[typeId]?.name | translate }}</div>
+                        </mat-expansion-panel-header>
+                        <tb-rule-chain-canvas id="tb-rulechain-{{typeId}}" [model]="ruleNodeTypesModel[typeId].model" [selectedObjects]="ruleNodeTypesModel[typeId].selectedObjects" [automaticResize]="false" [callbacks]="nodeLibCallbacks" [nodeWidth]="170" [nodeHeight]="50" [control]="ruleNodeTypesCanvasControl[typeId]" dropTargetId="tb-rulchain-canvas"></tb-rule-chain-canvas>
+                      </mat-expansion-panel>
                     }
-                </md-expansion-panel-group>
+                  </mat-accordion>
                 }
-            </md-sidenav>
-            
-                <div class="tb-absolute-fill tb-rulechain-graph" tb-contextmenu="vm.openRuleChainContextMenu($event, $mdOpenMousepointMenu)" [matMenuTriggerFor]="menu1">
-                    <fc-canvas id="tb-rulchain-canvas" model="vm.ruleChainModel" selected-objects="vm.selectedObjects" edge-style="curved" node-width="170" node-height="50" automatic-resize="true" control="vm.canvasControl" callbacks="vm.editCallbacks">
-                    </fc-canvas>
+              </div>
+            }
+            <div class="tb-rulechain-graph-container">
+                <div class="tb-absolute-fill tb-rulechain-graph" (contextmenu)="openRuleChainContextMenu($event)">
+                    <tb-rule-chain-canvas id="tb-rulchain-canvas" [model]="ruleChainModel" [selectedObjects]="selectedObjects" edgeStyle="curved" [nodeWidth]="170" [nodeHeight]="50" [automaticResize]="true" [control]="canvasControl" [callbacks]="editCallbacks">
+                    </tb-rule-chain-canvas>
                 </div>
-                <mat-menu #menu1="matMenu">
-                    <div class="tb-context-menu-header {{contextInfo?.headerClass}}">
-                        @if (!contextInfo?.iconUrl) {
-                          <mat-icon aria-label="node-type-icon" class="material-icons">{{contextInfo?.icon}}</mat-icon>
-                        }
-                        @if (contextInfo?.iconUrl) {
-                          <mat-icon aria-label="node-type-icon" svgIcon="{{contextInfo?.iconUrl}}"></mat-icon>
-                        }
-                        <div flex>
-                            <div class="tb-context-menu-title">{{contextInfo?.title}}</div>
-                            <div class="tb-context-menu-subtitle">{{contextInfo?.subtitle}}</div>
+                <div #contextMenuAnchor #contextMenuTrigger="matMenuTrigger" class="tb-context-menu-anchor" [matMenuTriggerFor]="contextMenu"></div>
+                <mat-menu #contextMenu="matMenu">
+                    <div id="tb-rule-chain-context-menu">
+                        <div class="tb-context-menu-header {{contextInfo?.headerClass}}">
+                            @if (!contextInfo?.iconUrl) {
+                              <mat-icon aria-label="node-type-icon" class="material-icons">{{contextInfo?.icon}}</mat-icon>
+                            }
+                            @if (contextInfo?.iconUrl) {
+                              <img alt="node-type-icon" [src]="contextInfo?.iconUrl" style="width: 24px; height: 24px; padding-right: 10px; padding-left: 2px;">
+                            }
+                            <div flex>
+                                <div class="tb-context-menu-title">{{contextInfo?.title}}</div>
+                                <div class="tb-context-menu-subtitle">{{contextInfo?.subtitle}}</div>
+                            </div>
                         </div>
-                    </div>
-                    @for (item of contextInfo?.items; track $index) {
-                      <div>
-                        @if (item?.divider) {
-                          <mat-divider></mat-divider>
-                        }
-                        
+                        @for (item of contextInfo?.items; track $index) {
+                          @if (item?.divider) {
+                            <mat-divider></mat-divider>
+                          } @else {
                             <button mat-menu-item [disabled]="!item?.enabled" (click)="item.action(contextMenuEvent)">
+                                @if (item?.icon) {
+                                  <mat-icon [attr.aria-label]="item?.value | translate" class="material-icons">{{item?.icon}}</mat-icon>
+                                }
+                                <span>{{ item?.value | translate }}</span>
                                 @if (item?.shortcut) {
                                   <span class="tb-alt-text"> {{ item?.shortcut | keyboardShortcut }}</span>
                                 }
-                                @if (item?.icon) {
-                                  <mat-icon md-menu-align-target attr.aria-label="{{ item?.value | translate }}" class="material-icons">{{item?.icon}}</mat-icon>
-                                }
-                                <span translate>{{item?.value}}</span>
                             </button>
-                        
+                          }
+                        }
                     </div>
-                    }
                 </mat-menu>
-            
+            </div>
         </div>
         <tb-details-sidenav class="tb-rulenode-details-sidenav" headerTitle="{{editingRuleNode?.name}}" headerSubtitle="{{(types?.ruleNodeType?.[editingRuleNode?.component?.type]?.name | translate)
-                            + ' - ' + editingRuleNode?.component?.name}}" [isReadOnly]="$any(this).selectedRuleNodeTabIndex > 0" [(isOpen)]="isEditingRuleNode" tb-enable-backdrop [isAlwaysEdit]="true" (onCloseDetails)="onEditRuleNodeClosed()" (onToggleDetailsEditMode)="onRevertRuleNodeEdit(ruleNodeForm)" (onApplyDetails)="saveRuleNode(ruleNodeForm)" [(theForm)]="ruleNodeForm">
-            <details-buttons [tbHelp]="helpLinkIdForRuleNodeType()" help-container-id="help-container">
+                            + ' - ' + editingRuleNode?.component?.name}}" [isReadOnly]="selectedRuleNodeTabIndex > 0" [(isOpen)]="isEditingRuleNode" tb-enable-backdrop [isAlwaysEdit]="true" (onCloseDetails)="onEditRuleNodeClosed()" (onToggleDetailsEditMode)="onRevertRuleNodeEdit(ruleNodeForm)" (onApplyDetails)="saveRuleNode(ruleNodeForm)" [theForm]="ruleNodeForm">
+            <div details-buttons tb-help [tbHelp]="helpLinkIdForRuleNodeType()" help-container-id="help-container">
                 <div id="help-container"></div>
-            </details-buttons>
+            </div>
             @if (isEditingRuleNode) {
-              <mat-tab-group [selectedIndex]="$any(this).selectedRuleNodeTabIndex" id="ruleNodeTabs" flex class="tb-absolute-fill">
-                <mat-tab label="{{ 'rulenode.details' | translate }}">
-                    <form name="vm.ruleNodeForm">
-                        <tb-rule-node [(ruleNode)]="editingRuleNode" [(ruleChainId)]="ruleChain.id.id" [isEdit]="true" [isReadOnly]="false" (onDeleteRuleNode)="$any(this).deleteRuleNode($event, editingRuleNode)" [(theForm)]="ruleNodeForm">
+              <mat-tab-group [(selectedIndex)]="selectedRuleNodeTabIndex" (selectedTabChange)="triggerResize()" id="ruleNodeTabs" flex class="tb-absolute-fill">
+                <mat-tab [label]="'rulenode.details' | translate">
+                    <form name="ruleNodeForm" #ruleNodeNgForm="ngForm">
+                        <tb-rule-node [(ruleNode)]="editingRuleNode" [ruleChainId]="ruleChain?.id?.id" [isEdit]="true" [isReadOnly]="false" [theForm]="ruleNodeNgForm">
                         </tb-rule-node>
                     </form>
                 </mat-tab>
                 @if (isEditingRuleNode && editingRuleNode?.ruleNodeId) {
-                  <mat-tab md-on-select="vm.triggerResize()" label="{{ 'rulenode.events' | translate }}">
-                    <tb-event-table flex [(entityType)]="types.entityType.rulenode" [(entityId)]="editingRuleNode.ruleNodeId.id" [(tenantId)]="ruleChain.tenantId.id" attr.debug-event-types="{{types?.debugEventType?.debugRuleNode?.value}}" attr.default-event-type="{{types?.debugEventType?.debugRuleNode?.value}}">
+                  <mat-tab [label]="'rulenode.events' | translate">
+                    <tb-event-table flex [entityType]="types.entityType.rulenode" [entityId]="editingRuleNode.ruleNodeId.id" [tenantId]="ruleChain?.tenantId?.id" [attr.debug-event-types]="types?.debugEventType?.debugRuleNode?.value" [attr.default-event-type]="types?.debugEventType?.debugRuleNode?.value">
                     </tb-event-table>
-                </mat-tab>
+                  </mat-tab>
                 }
-                <mat-tab label="{{ 'rulenode.help' | translate }}">
+                <mat-tab [label]="'rulenode.help' | translate">
                     <div class="tb-rule-node-help">
                         <div id="tb-node-content" class="md-padding" layout="column">
                             <div class="tb-node-title">{{editingRuleNode?.component?.name}}</div>
@@ -143,36 +128,32 @@
                         </div>
                     </div>
                 </mat-tab>
-            </mat-tab-group>
+              </mat-tab-group>
             }
         </tb-details-sidenav>
-        <tb-details-sidenav class="tb-rulenode-link-details-sidenav" headerTitle="{{editingRuleNodeLink?.label}}" headerSubtitle="{{'rulenode.link-details' | translate}}" [isReadOnly]="false" [(isOpen)]="isEditingRuleNodeLink" tb-enable-backdrop [isAlwaysEdit]="true" (onCloseDetails)="onEditRuleNodeLinkClosed()" (onToggleDetailsEditMode)="onRevertRuleNodeLinkEdit(ruleNodeLinkForm)" (onApplyDetails)="saveRuleNodeLink(ruleNodeLinkForm)" [(theForm)]="ruleNodeLinkForm">
-            <details-buttons [tbHelp]="'ruleEngine'" help-container-id="link-help-container">
+        <tb-details-sidenav class="tb-rulenode-link-details-sidenav" headerTitle="{{editingRuleNodeLink?.label}}" headerSubtitle="{{'rulenode.link-details' | translate}}" [isReadOnly]="false" [(isOpen)]="isEditingRuleNodeLink" tb-enable-backdrop [isAlwaysEdit]="true" (onCloseDetails)="onEditRuleNodeLinkClosed()" (onToggleDetailsEditMode)="onRevertRuleNodeLinkEdit(ruleNodeLinkForm)" (onApplyDetails)="saveRuleNodeLink(ruleNodeLinkForm)" [theForm]="ruleNodeLinkForm">
+            <div details-buttons tb-help [tbHelp]="'ruleEngine'" help-container-id="link-help-container">
                 <div id="link-help-container"></div>
-            </details-buttons>
+            </div>
             @if (isEditingRuleNodeLink) {
-              <form name="vm.ruleNodeLinkForm">
-                <tb-rule-node-link [(ngModel)]="editingRuleNodeLink" [(allowedLabels)]="editingRuleNodeLinkLabels" [(allowCustom)]="editingRuleNodeAllowCustomLabels" [isEdit]="true" [isReadOnly]="false">
+              <form name="ruleNodeLinkForm" #ruleNodeLinkNgForm="ngForm">
+                <tb-rule-node-link name="ruleNodeLink" [(ngModel)]="editingRuleNodeLink" [(allowedLabels)]="editingRuleNodeLinkLabels" [(allowCustom)]="editingRuleNodeAllowCustomLabels" [isEdit]="true" [isReadOnly]="false">
                 </tb-rule-node-link>
-            </form>
+              </form>
             }
         </tb-details-sidenav>
     </section>
     <section layout="row" layout-wrap class="tb-footer-buttons md-fab" layout-align="start end">
-        <button mat-fab color="accent" [disabled]="rootScope?.loading" [hidden]="!(objectsSelected())" class="tb-btn-footer md-hue-2" (click)="deleteSelected()" attr.aria-label="{{ 'action.delete' | translate }}" attr.matTooltip="{{ 'rulenode.delete-selected-objects' | translate }}" matTooltipPosition="above">
-            
+        <button mat-fab color="accent" [disabled]="rootScope?.['loading']" [hidden]="!objectsSelected()" class="tb-btn-footer md-hue-2" (click)="deleteSelected()" [attr.aria-label]="'action.delete' | translate" [matTooltip]="'rulenode.delete-selected-objects' | translate" matTooltipPosition="above">
             <mat-icon>delete</mat-icon>
         </button>
-        <button mat-fab color="accent" [disabled]="rootScope?.loading || !isDebugModeEnabled()" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'rulenode.reset-debug-mode' | translate }}" (click)="resetDebugModeInAllNodes()" attr.matTooltip="{{ 'rulenode.reset-debug-mode' | translate }}" matTooltipPosition="above">
-            
+        <button mat-fab color="accent" [disabled]="rootScope?.['loading'] || !isDebugModeEnabled()" class="tb-btn-footer md-hue-2" [attr.aria-label]="'rulenode.reset-debug-mode' | translate" (click)="resetDebugModeInAllNodes()" [matTooltip]="'rulenode.reset-debug-mode' | translate" matTooltipPosition="above">
             <mat-icon>bug_report</mat-icon>
         </button>
-        <button mat-fab color="accent" [disabled]="rootScope?.loading  || isInvalid || (!isDirty && !isImport)" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'action.apply' | translate }}" (click)="saveRuleChain()" attr.matTooltip="{{ 'action.apply-changes' | translate }}" matTooltipPosition="above">
-            
+        <button mat-fab color="accent" [disabled]="rootScope?.['loading'] || isInvalid || (!isDirty && !isImport)" class="tb-btn-footer md-hue-2" [attr.aria-label]="'action.apply' | translate" (click)="saveRuleChain()" [matTooltip]="'action.apply-changes' | translate" matTooltipPosition="above">
             <mat-icon>done</mat-icon>
         </button>
-        <button mat-fab color="accent" [disabled]="rootScope?.loading || !isDirty" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'action.decline-changes' | translate }}" (click)="revertRuleChain()" attr.matTooltip="{{ 'action.decline-changes' | translate }}" matTooltipPosition="above">
-            
+        <button mat-fab color="accent" [disabled]="rootScope?.['loading'] || !isDirty" class="tb-btn-footer md-hue-2" [attr.aria-label]="'action.decline-changes' | translate" (click)="revertRuleChain()" [matTooltip]="'action.decline-changes' | translate" matTooltipPosition="above">
             <mat-icon>close</mat-icon>
         </button>
     </section>

@@ -1,180 +1,121 @@
-import { Component, forwardRef, inject, model } from '@angular/core';
-import { AlarmService } from '../../api/services/alarm.service';
-import { ElementRef } from '@angular/core';
-import { RootState } from '../../../root-state';
-import { types } from '../../common/constants/types';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, effect, forwardRef, inject, model, untracked, viewChild } from '@angular/core';
+import { JsonPipe, NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TbTimewindowDirective } from '../../components/tb-timewindow/tb-timewindow.directive';
-import { TbAlarmHeaderDirective } from '../tb-alarm-header/tb-alarm-header.directive';
-import { TbScopeElementDirective } from '../../components/tb-scope-element/tb-scope-element.directive';
-import { TbAlarmRowDirective } from '../tb-alarm-row/tb-alarm-row.directive';
-
-import $ from 'jquery';
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
+import { AlarmService } from '../../api/services/alarm.service';
+import { RootState } from '../../../root-state';
+import { types } from '../../common/constants/types';
+import { TbTimewindowDirective } from '../../components/tb-timewindow/tb-timewindow.directive';
+import { TbAlarmHeaderDirective } from '../tb-alarm-header/tb-alarm-header.directive';
+import { TbAlarmRowDirective } from '../tb-alarm-row/tb-alarm-row.directive';
 
 /**
  * Ported from the AngularJS directive `tbAlarmTable` (module `thingsboard.alarm`) in src/app/alarm/index.js:21.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The on-demand `md-virtual-repeat` is a cdk virtual scroll over the loaded pages; the next
+ * page is fetched when the scroll reaches the end of what is loaded.
  */
 @Component({
   selector: 'tb-alarm-table',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatSelectModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, ScrollingModule, CommonModule, FormsModule, forwardRef(() => TbTimewindowDirective), forwardRef(() => TbAlarmHeaderDirective), forwardRef(() => TbScopeElementDirective), forwardRef(() => TbAlarmRowDirective)],
+  imports: [
+    TranslatePipe, JsonPipe, NgStyle, FormsModule, ScrollingModule, MatTooltipModule, MatSelectModule,
+    MatProgressBarModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule,
+    forwardRef(() => TbTimewindowDirective), forwardRef(() => TbAlarmHeaderDirective), forwardRef(() => TbAlarmRowDirective),
+  ],
   templateUrl: './tb-alarm-table.directive.html',
 })
-export class TbAlarmTableDirective {
+export class TbAlarmTableDirective implements OnInit {
   readonly entityType = model<any>();
   readonly entityId = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly rootScope = inject(RootState);
-  protected readonly typesRef: any = types;
+  protected readonly types: any = types;
   protected readonly alarmService = inject(AlarmService);
-  protected readonly element = inject(ElementRef);
-  // TODO(port): elements not resolved to a component: md-virtual-repeat-container
-  // TODO(port): template: 1 × md-virtual-repeat-container left in place
+  private readonly viewport = viewChild(CdkVirtualScrollViewport);
 
-  types: any;
-  alarmSearchStatus: any;
+  protected readonly alarmSearchStatuses: string[] = Object.values(types.alarmSearchStatus as Record<string, string>);
+  protected readonly rowHeight = 48;
   protected pageSize: any = 20;
   protected startTime: any = 0;
   protected endTime: any = 0;
+
+  alarmSearchStatus: any = types.alarmSearchStatus.any;
   timewindow: any = {
             history: {
                 timewindowMs: 24 * 60 * 60 * 1000 // 1 day
             }
         };
   topIndex: any = 0;
-  theAlarms: any;
-  $watch: any;
-  alarmSearchStatusWatchHandle: any;
-  alarms: any;
-  repeatContainer: any;
+  alarms: any = { data: [], hasNext: false, pending: false };
   selected: any;
-  timewindowWatchHandle: any;
 
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  private initialized = false;
+  private prevEntityId: any;
+  /** Snapshot of the timewindow the rows were loaded for (the legacy deep watch compares copies). */
+  private timewindowJson = '';
 
   constructor() {
-    this.types = this.typesRef;
-    this.alarmSearchStatus = this.typesRef.alarmSearchStatus.any;
-    this.theAlarms = {
-            getItemAtIndex: (index?: any, ...rest: any[]) => {
-                if (index > this.alarms.data.length) {
-                    this.theAlarms.fetchMoreItems_(index);
-                    return null;
-                }
-                var item: any = this.alarms.data[index];
-                if (item) {
-                    item.indexNumber = index + 1;
-                }
-                return item;
-            },
-
-            getLength: (...rest: any[]) => {
-                if (this.alarms.hasNext) {
-                    return this.alarms.data.length + this.alarms.nextPageLink.limit;
-                } else {
-                    return this.alarms.data.length;
-                }
-                return undefined;
-            },
-
-            fetchMoreItems_: (...rest: any[]) => {
-                if (this.alarms.hasNext && !this.alarms.pending) {
-                    if (this.entityType() && this.entityId() && this.alarmSearchStatus) {
-                        var promise: any = this.alarmService.getAlarms(this.entityType(), this.entityId(),
-                            this.alarms.nextPageLink, this.alarmSearchStatus, null, true, false);
-                        if (promise) {
-                            this.alarms.pending = true;
-                            promise.then(
-                                (alarms?: any) => {
-                                    this.alarms.data = this.alarms.data.concat(alarms.data);
-                                    this.alarms.nextPageLink = alarms.nextPageLink;
-                                    this.alarms.hasNext = alarms.hasNext;
-                                    if (this.alarms.hasNext) {
-                                        this.alarms.nextPageLink.limit = this.pageSize;
-                                    }
-                                    this.alarms.pending = false;
-                                },
-                                () => {
-                                    this.alarms.hasNext = false;
-                                    this.alarms.pending = false;
-                                });
-                        } else {
-                            this.alarms.hasNext = false;
-                        }
-                    } else {
-                        this.alarms.hasNext = false;
-                    }
-                }
-            }
-        };
-    this.reload = this.reload;
-    this.$watch("entityId", (newVal?: any, prevVal?: any) => {
-            if (newVal && !angular.equals(newVal, prevVal)) {
-                this.resetFilter();
-                this.reload();
-            }
-        });
-    this.reload();
-    this.initWatchers();
-  }
-
-  destroyWatchers(...rest: any[]): any {
-    if (this.alarmSearchStatusWatchHandle) {
-        this.alarmSearchStatusWatchHandle();
-        this.alarmSearchStatusWatchHandle = null;
-    }
-    if (this.timewindowWatchHandle) {
-        this.timewindowWatchHandle();
-        this.timewindowWatchHandle = null;
-    }
-  }
-
-  initWatchers(...rest: any[]): any {
-    this.alarmSearchStatusWatchHandle = this.$watch("alarmSearchStatus", (newVal?: any, prevVal?: any) => {
-        if (newVal && !angular.equals(newVal, prevVal)) {
-            this.reload();
-        }
+    // Legacy `$watch("entityId")`: a new entity resets the filter and reloads.
+    effect(() => {
+      const entityId = this.entityId();
+      untracked(() => this.onEntityIdChange(entityId));
     });
-    this.timewindowWatchHandle = this.$watch("timewindow", (newVal?: any, prevVal?: any) => {
-        if (newVal && !angular.equals(newVal, prevVal)) {
-            this.reload();
-        }
-    }, true);
   }
 
-  resetFilter(...rest: any[]): any {
-    this.destroyWatchers();
+  ngOnInit(): void {
+    this.prevEntityId = this.entityId();
+    this.initialized = true;
+    this.reload();
+  }
+
+  /** Legacy `$watch("alarmSearchStatus")`. */
+  onAlarmSearchStatusChange(alarmSearchStatus: any): void {
+    const prev = this.alarmSearchStatus;
+    this.alarmSearchStatus = alarmSearchStatus;
+    if (alarmSearchStatus && alarmSearchStatus !== prev) {
+        this.reload();
+    }
+  }
+
+  /** Legacy deep `$watch("timewindow")`. */
+  onTimewindowChange(timewindow: any): void {
+    const prev = this.timewindowJson;
+    this.timewindow = timewindow;
+    if (timewindow && JSON.stringify(timewindow) !== prev) {
+        this.reload();
+    }
+  }
+
+  /** The virtual scroll reached `index`: fetch the next page when the end of the loaded rows is in view. */
+  onScrolledIndexChange(index: number): void {
+    if (index + this.pageSize >= this.alarms.data.length) {
+        this.fetchMoreItems();
+    }
+  }
+
+  trackByIndex(index: number): number {
+    return index;
+  }
+
+  /** Legacy `resetFilter`: its watchers were paused around the reset, so the reset itself does not reload. */
+  resetFilter(): void {
     this.timewindow = {
         history: {
             timewindowMs: 24 * 60 * 60 * 1000 // 1 day
         }
     };
-    this.alarmSearchStatus = this.typesRef.alarmSearchStatus.any;
-    this.initWatchers();
+    this.alarmSearchStatus = types.alarmSearchStatus.any;
   }
 
-  updateTimeWindowRange(...rest: any[]): any {
+  updateTimeWindowRange(): void {
     if (this.timewindow.history.timewindowMs) {
         var currentTime: any = (new Date).getTime();
         this.startTime = currentTime - this.timewindow.history.timewindowMs;
@@ -185,10 +126,11 @@ export class TbAlarmTableDirective {
     }
   }
 
-  reload = (...rest: any[]): any => {
+  reload(): void {
     this.topIndex = 0;
     this.selected = [];
     this.updateTimeWindowRange();
+    this.timewindowJson = JSON.stringify(this.timewindow);
     this.alarms = {
         data: [],
         nextPageLink: {
@@ -199,29 +141,74 @@ export class TbAlarmTableDirective {
         hasNext: true,
         pending: false
     };
-    this.theAlarms.getItemAtIndex(this.pageSize);
-  };
+    this.viewport()?.scrollToIndex(0);
+    this.fetchMoreItems();
+  }
 
-  noData(...rest: any[]): any {
+  /** Legacy `theAlarms.fetchMoreItems_`: loads the next page of alarms. */
+  fetchMoreItems(): void {
+    if (this.alarms.hasNext && !this.alarms.pending) {
+        if (this.entityType() && this.entityId() && this.alarmSearchStatus) {
+            var promise: any = this.alarmService.getAlarms(this.entityType(), this.entityId(),
+                this.alarms.nextPageLink, this.alarmSearchStatus, null, true, false);
+            if (promise) {
+                const alarms = this.alarms;
+                alarms.pending = true;
+                promise.then(
+                    (page?: any) => {
+                        const offset = alarms.data.length;
+                        page.data.forEach((item: any, i: number) => {
+                            if (item) {
+                                item.indexNumber = offset + i + 1;
+                            }
+                        });
+                        alarms.data = alarms.data.concat(page.data);
+                        alarms.nextPageLink = page.nextPageLink;
+                        alarms.hasNext = page.hasNext;
+                        if (alarms.hasNext) {
+                            alarms.nextPageLink.limit = this.pageSize;
+                        }
+                        alarms.pending = false;
+                    },
+                    () => {
+                        alarms.hasNext = false;
+                        alarms.pending = false;
+                    });
+            } else {
+                this.alarms.hasNext = false;
+            }
+        } else {
+            this.alarms.hasNext = false;
+        }
+    }
+  }
+
+  noData(): boolean {
     return this.alarms.data.length == 0 && !this.alarms.hasNext;
   }
 
-  hasData(...rest: any[]): any {
+  hasData(): boolean {
     return this.alarms.data.length > 0;
   }
 
-  loading(...rest: any[]): any {
+  loading(): any {
     return this.rootScope.loading;
   }
 
-  hasScroll(...rest: any[]): any {
-    var repeatContainer: any = this.repeatContainer[0];
-    if (repeatContainer) {
-        var scrollElement: any = repeatContainer.children[0];
-        if (scrollElement) {
-            return scrollElement.scrollHeight > scrollElement.clientHeight;
-        }
+  hasScroll(): boolean {
+    const scrollElement = this.viewport()?.elementRef.nativeElement;
+    if (scrollElement) {
+        return scrollElement.scrollHeight > scrollElement.clientHeight;
     }
     return false;
+  }
+
+  private onEntityIdChange(entityId: any): void {
+    const prev = this.prevEntityId;
+    this.prevEntityId = entityId;
+    if (this.initialized && entityId && JSON.stringify(entityId) !== JSON.stringify(prev)) {
+        this.resetFilter();
+        this.reload();
+    }
   }
 }

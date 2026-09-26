@@ -1,0 +1,107 @@
+<div #canvas class="fc-canvas" style="position: relative;"
+     [style.width.px]="canvasWidth()" [style.height.px]="canvasHeight()"
+     (mousedown)="canvasMouseDown($event)" (dragover)="canvasDragOver($event)" (drop)="canvasDrop($event)">
+    <svg [attr.width]="canvasWidth()" [attr.height]="canvasHeight()" style="position: absolute; top: 0; left: 0;">
+        <defs>
+            <marker class="fc-arrow-marker" [attr.id]="arrowId" markerWidth="5" markerHeight="5" viewBox="-6 -6 12 12"
+                    refX="10" refY="0" markerUnits="strokeWidth" orient="auto">
+                <polygon points="-2,0 -5,5 5,0 -5,-5" stroke-width="1px"></polygon>
+            </marker>
+            <marker class="fc-arrow-marker-selected" [attr.id]="arrowSelectedId" markerWidth="5" markerHeight="5" viewBox="-6 -6 12 12"
+                    refX="10" refY="0" markerUnits="strokeWidth" orient="auto">
+                <polygon points="-2,0 -5,5 5,0 -5,-5" stroke-width="1px"></polygon>
+            </marker>
+        </defs>
+        @for (edge of model().edges; track edge; let i = $index) {
+            <path class="fc-edge" [attr.data-fc-edge-index]="i"
+                  [class.fc-selected]="isSelected(edge)" [class.fc-hover]="hoveredEdge === edge"
+                  [attr.d]="edgePath(edge)"
+                  [attr.marker-end]="'url(#' + (isSelected(edge) ? arrowSelectedId : arrowId) + ')'"
+                  (mousedown)="edgeMouseDown($event, edge)" (dblclick)="edgeDblClick($event, edge)"
+                  (mouseenter)="hoveredEdge = edge" (mouseleave)="hoveredEdge = null"></path>
+        }
+        @if (edgeDrag) {
+            <path class="fc-edge fc-dragging" [attr.d]="pathBetween(edgeDrag.from, edgeDrag.to)"></path>
+            <circle class="edge-endpoint" r="4" [attr.cx]="edgeDrag.to.x" [attr.cy]="edgeDrag.to.y"></circle>
+        }
+    </svg>
+    @for (node of model().nodes; track node; let i = $index) {
+        <div class="fc-node" [id]="node.id" [attr.data-fc-node-index]="i"
+             style="position: absolute;" [style.top.px]="node.y" [style.left.px]="node.x"
+             [class.fc-selected]="isSelected(node)" [class.fc-edit]="isEditable() && isSelected(node)"
+             [class.fc-hover]="hoveredNode === node" [class.fc-dragging]="nodeDrag?.moved && isSelected(node)"
+             [attr.draggable]="isEditable() ? null : 'true'"
+             (dragstart)="nodeDragStart($event, node)" (dragend)="nodeDragEnd()"
+             (mousedown)="nodeMouseDown($event, node)" (mouseup)="nodeMouseUp($event, node)"
+             (dblclick)="nodeDblClick($event, node)"
+             (mouseenter)="nodeMouseEnter($event, node)" (mouseleave)="nodeMouseLeave($event, node)">
+            <div class="fc-node-overlay"></div>
+            <div class="tb-rule-node {{node['nodeClass']}}" [class.tb-rule-node-highlighted]="node['highlighted']" [class.tb-rule-node-invalid]="node['error']">
+                @if (!node['iconUrl']) {
+                    <mat-icon aria-label="node-type-icon" style="flex: 15;" class="material-icons">{{node['icon']}}</mat-icon>
+                } @else {
+                    <img class="tb-node-icon-url" alt="node-type-icon" [src]="node['iconUrl']">
+                }
+                <div style="display: flex; flex-direction: column; justify-content: center; flex: 85; min-width: 0;">
+                    <span class="tb-node-type">{{ node['component']?.name }}</span>
+                    @if (node['name']) {
+                        <span class="tb-node-title">{{ node['name'] }}</span>
+                    }
+                </div>
+                <div class="fc-leftConnectors">
+                    @for (connector of connectorsOf(node, constants.leftConnectorType); track connector.id) {
+                        <div class="fc-magnet" (mouseup)="connectorMouseUp($event, connector)">
+                            <div class="fc-connector" [class.fc-hover]="hoveredConnector === connector"
+                                 (mouseenter)="hoveredConnector = connector" (mouseleave)="hoveredConnector = null"
+                                 (mousedown)="connectorMouseDown($event, connector)"></div>
+                        </div>
+                    }
+                </div>
+                <div class="fc-rightConnectors">
+                    @for (connector of connectorsOf(node, constants.rightConnectorType); track connector.id) {
+                        <div class="fc-magnet" (mouseup)="connectorMouseUp($event, connector)">
+                            <div class="fc-connector" [class.fc-hover]="hoveredConnector === connector"
+                                 (mouseenter)="hoveredConnector = connector" (mouseleave)="hoveredConnector = null"
+                                 (mousedown)="connectorMouseDown($event, connector)"></div>
+                        </div>
+                    }
+                </div>
+            </div>
+            @if (isEditable() && !node.readonly) {
+                <div class="fc-nodeedit" (mousedown)="$event.stopPropagation()" (click)="nodeEdit($event, node)">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                </div>
+                <div class="fc-nodedelete" (mousedown)="$event.stopPropagation()" (click)="nodeDelete($event, node)">
+                    &times;
+                </div>
+            }
+        </div>
+    }
+    @for (edge of model().edges; track edge; let i = $index) {
+        @if (edge.label) {
+            @let point = labelPoint(edge);
+            <div class="fc-edge-label" [attr.data-fc-edge-index]="i"
+                 [class.fc-hover]="hoveredEdge === edge" [class.fc-selected]="isSelected(edge)"
+                 [class.fc-edit]="isEditable() && isSelected(edge)"
+                 [style.top.px]="point.y" [style.left.px]="point.x"
+                 (mousedown)="edgeMouseDown($event, edge)" (dblclick)="edgeDblClick($event, edge)"
+                 (mouseenter)="hoveredEdge = edge" (mouseleave)="hoveredEdge = null">
+                <div class="fc-edge-label-text">
+                    @if (isEditable()) {
+                        <div class="fc-noselect fc-nodeedit" (mousedown)="$event.stopPropagation()" (click)="edgeEdit($event, edge)">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </div>
+                        <div class="fc-noselect fc-nodedelete" (mousedown)="$event.stopPropagation()" (click)="edgeDelete($event, edge)">
+                            &times;
+                        </div>
+                    }
+                    <span>{{ edge.label }}</span>
+                </div>
+            </div>
+        }
+    }
+    @if (selectRect) {
+        <div class="fc-select-rectangle" [style.left.px]="selectRect.x" [style.top.px]="selectRect.y"
+             [style.width.px]="selectRect.width" [style.height.px]="selectRect.height"></div>
+    }
+</div>

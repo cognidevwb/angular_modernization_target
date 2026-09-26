@@ -17,12 +17,12 @@
 
 -->
 <tb-grid (gridConfiguration)="entityViewGridConfig">
-    <details-buttons [tbHelp]="'entityViews'" help-container-id="help-container">
+    <div details-buttons tb-help [tbHelp]="'entityViews'" help-container-id="help-container">
         <div id="help-container"></div>
-    </details-buttons>
+    </div>
     <mat-tab-group [ngClass]="{'tb-headless': grid?.detailsConfig?.isDetailsEditMode}" id="tabs" flex class="tb-absolute-fill">
         <mat-tab label="{{ 'entity-view.details' | translate }}">
-            <tb-entity-view [entityView]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(entityViewScope)]="entityViewsScope" [(theForm)]="grid.detailsForm" (onAssignToCustomer)="assignToCustomer(event, [ grid.detailsConfig.currentItem.id.id ])" (onMakePublic)="makePublic(event, grid.detailsConfig.currentItem)" (onUnassignFromCustomer)="unassignFromCustomer(event, grid.detailsConfig.currentItem, isPublic)" (onDeleteEntityView)="grid.deleteItem(event, grid.detailsConfig.currentItem)"></tb-entity-view>
+            <tb-entity-view [entityView]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(entityViewScope)]="entityViewsScope" [(theForm)]="grid.detailsForm" (onAssignToCustomer)="assignToCustomer($event?.event, [ grid.detailsConfig.currentItem.id.id ])" (onMakePublic)="makePublic($event?.event, grid.detailsConfig.currentItem)" (onUnassignFromCustomer)="unassignFromCustomer($event?.event, grid.detailsConfig.currentItem, $event?.isPublic)" (onDeleteEntityView)="grid.deleteItem($event?.event, grid.detailsConfig.currentItem)"></tb-entity-view>
         </mat-tab>
         @if (!grid?.detailsConfig?.isDetailsEditMode) {
           <mat-tab md-on-select="vm.grid.triggerResize()" label="{{ 'attribute.attributes' | translate }}">

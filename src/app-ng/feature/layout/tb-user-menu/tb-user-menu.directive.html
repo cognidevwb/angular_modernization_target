@@ -26,19 +26,19 @@
     </div>
     
         <button mat-icon-button attr.aria-label="{{ 'home.open-user-menu' | translate }}" [matMenuTriggerFor]="menu1">
-            <mat-icon md-menu-origin attr.aria-label="{{ 'home.open-user-menu' | translate }}" class="material-icons">more_vert</mat-icon>
+            <mat-icon attr.aria-label="{{ 'home.open-user-menu' | translate }}" class="material-icons">more_vert</mat-icon>
         </button>
         <mat-menu #menu1="matMenu">
             
                 <button mat-menu-item (click)="openProfile()">
-                    <mat-icon md-menu-align-target attr.aria-label="{{ 'home.profile' | translate }}" class="material-icons">account_circle</mat-icon>
-                    <span translate>home.profile</span>
+                    <mat-icon attr.aria-label="{{ 'home.profile' | translate }}" class="material-icons">account_circle</mat-icon>
+                    <span>{{ 'home.profile' | translate }}</span>
                 </button>
             
             
                 <button mat-menu-item (click)="logout()">
-                    <mat-icon md-menu-align-target attr.aria-label="{{ 'home.logout' | translate }}" class="material-icons">exit_to_app</mat-icon>
-                    <span translate>home.logout</span>
+                    <mat-icon attr.aria-label="{{ 'home.logout' | translate }}" class="material-icons">exit_to_app</mat-icon>
+                    <span>{{ 'home.logout' | translate }}</span>
                 </button>
             
         </mat-menu>

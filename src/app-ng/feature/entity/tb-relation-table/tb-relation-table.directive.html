@@ -19,115 +19,100 @@
 <div flex class="md-content md-padding tb-absolute-fill tb-relation-table tb-data-table" layout="column">
     <section layout="row">
         <mat-form-field class="md-block" style="width: 200px;">
-            <mat-label translate>relation.direction</mat-label>
-            <mat-select [(ngModel)]="direction" [disabled]="rootScope?.loading">
-                @for (direction of types?.entitySearchDirection; track $index) {
-                  <mat-option [value]="direction">
-                    {{ ('relation.search-direction.' + direction) | translate}}
-                </mat-option>
+            <mat-label>{{ 'relation.direction' | translate }}</mat-label>
+            <mat-select [ngModel]="direction" (ngModelChange)="setDirection($event)" [disabled]="rootScope['loading']">
+                @for (dir of directions; track dir) {
+                  <mat-option [value]="dir">
+                    {{ ('relation.search-direction.' + dir) | translate }}
+                  </mat-option>
                 }
             </mat-select>
         </mat-form-field>
     </section>
     <div layout="column" class="md-whiteframe-z1 toolbarsContainer">
-        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(!selectedRelations?.length
-                                                                 && query?.search === null)">
+        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(!selectedRelations.length && query.search === null)">
             <div class="md-toolbar-tools">
-                <span>{{(direction == types?.entitySearchDirection?.from ?
-                    'relation.from-relations' : 'relation.to-relations') | translate}}</span>
+                <span>{{ (direction == types.entitySearchDirection.from ?
+                    'relation.from-relations' : 'relation.to-relations') | translate }}</span>
                 <span flex></span>
-                <button mat-icon-button (click)="addRelation($event)" attr.matTooltip="{{ 'action.add' | translate }}" matTooltipPosition="above">
+                <button mat-icon-button (click)="addRelation($event)" [matTooltip]="'action.add' | translate" matTooltipPosition="above">
                     <mat-icon>add</mat-icon>
-                    
                 </button>
-                <button mat-icon-button (click)="enterFilterMode($event)" attr.matTooltip="{{ 'action.search' | translate }}" matTooltipPosition="above">
+                <button mat-icon-button (click)="enterFilterMode($event)" [matTooltip]="'action.search' | translate" matTooltipPosition="above">
                     <mat-icon>search</mat-icon>
-                    
                 </button>
-                <button mat-icon-button (click)="reloadRelations()" attr.matTooltip="{{ 'action.refresh' | translate }}" matTooltipPosition="above">
+                <button mat-icon-button (click)="reloadRelations()" [matTooltip]="'action.refresh' | translate" matTooltipPosition="above">
                     <mat-icon>refresh</mat-icon>
-                    
                 </button>
             </div>
         </mat-toolbar>
-        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(!selectedRelations?.length
-                                                                 && query?.search != null)">
+        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(!selectedRelations.length && query.search != null)">
             <div class="md-toolbar-tools">
-                <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{ 'action.search' | translate }}" matTooltipPosition="above">
-                    <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
-                    
+                <button mat-icon-button [attr.aria-label]="'action.search' | translate" [matTooltip]="'action.search' | translate" matTooltipPosition="above">
+                    <mat-icon [attr.aria-label]="'action.search' | translate" class="material-icons">search</mat-icon>
                 </button>
                 <mat-form-field flex>
-                    <mat-label>&nbsp;</mat-label>
-                    <input matInput [(ngModel)]="query.search" (ngModelChange)="updateRelations()" class="searchInput" attr.placeholder="{{ 'common.enter-search' | translate }}">
+                    <input matInput #searchInput [ngModel]="query.search" (ngModelChange)="setSearch($event)" class="searchInput" [placeholder]="'common.enter-search' | translate">
                 </mat-form-field>
-                <button mat-icon-button attr.aria-label="{{ 'action.back' | translate }}" (click)="exitFilterMode()" attr.matTooltip="{{ 'action.close' | translate }}" matTooltipPosition="above">
-                    <mat-icon attr.aria-label="{{ 'action.close' | translate }}" class="material-icons">close</mat-icon>
-                    
+                <button mat-icon-button [attr.aria-label]="'action.back' | translate" (click)="exitFilterMode()" [matTooltip]="'action.close' | translate" matTooltipPosition="above">
+                    <mat-icon [attr.aria-label]="'action.close' | translate" class="material-icons">close</mat-icon>
                 </button>
             </div>
         </mat-toolbar>
-        <mat-toolbar class="md-table-toolbar alternate" [hidden]="!(selectedRelations?.length)">
+        <mat-toolbar class="md-table-toolbar alternate" [hidden]="!selectedRelations.length">
             <div class="md-toolbar-tools">
-                <span translate translate-values="{count: vm.selectedRelations.length}" translate-interpolation="messageformat">relation.selected-relations</span>
+                <span>{{ 'relation.selected-relations' | translate: {count: selectedRelations.length} }}</span>
                 <span flex></span>
-                <button mat-icon-button (click)="deleteRelations($event)" attr.matTooltip="{{ 'action.delete' | translate }}" matTooltipPosition="above">
+                <button mat-icon-button (click)="deleteRelations($event)" [matTooltip]="'action.delete' | translate" matTooltipPosition="above">
                     <mat-icon>delete</mat-icon>
-                    
                 </button>
             </div>
         </mat-toolbar>
-        <!-- TODO(port): md-table-container (angular-material-data-table): a mat-table with MatSort --><md-table-container>
-            <table md-table md-row-select multiple="" [(ngModel)]="selectedRelations" md-progress="vm.relationsDeferred.promise">
-                <thead fix-head md-head md-order="vm.query.order" md-on-reorder="vm.onReorder">
-                <tr md-row>
-                    <th md-column md-order-by="type"><span translate>relation.type</span></th>
-                    @if (direction == types?.entitySearchDirection?.from) {
-                      <th md-column md-order-by="toEntityTypeName"><span translate>relation.to-entity-type</span></th>
-                    }
-                    @if (direction == types?.entitySearchDirection?.to) {
-                      <th md-column md-order-by="fromEntityTypeName"><span translate>relation.from-entity-type</span></th>
-                    }
-                    @if (direction == types?.entitySearchDirection?.from) {
-                      <th md-column md-order-by="toName"><span translate>relation.to-entity-name</span></th>
-                    }
-                    @if (direction == types?.entitySearchDirection?.to) {
-                      <th md-column md-order-by="fromName"><span translate>relation.from-entity-name</span></th>
-                    }
-                    <th md-column><span>&nbsp</span></th>
-                </tr>
-                </thead>
-                <tbody md-body>
-                @for (relation of relations; track $index) {
-                  <tr md-row md-select="relation" md-select-id="relation" md-auto-select>
-                    <td md-cell>{{ relation?.type }}</td>
-                    @if (direction == types?.entitySearchDirection?.from) {
-                      <td md-cell>{{ relation?.toEntityTypeName  }}</td>
-                    }
-                    @if (direction == types?.entitySearchDirection?.to) {
-                      <td md-cell>{{ relation?.fromEntityTypeName  }}</td>
-                    }
-                    @if (direction == types?.entitySearchDirection?.from) {
-                      <td md-cell>{{ relation?.toName }}</td>
-                    }
-                    @if (direction == types?.entitySearchDirection?.to) {
-                      <td md-cell>{{ relation?.fromName }}</td>
-                    }
-                    <td md-cell class="tb-action-cell">
-                        <button mat-icon-button attr.aria-label="{{ 'action.edit' | translate }}" (click)="editRelation($event, relation)" attr.matTooltip="{{ 'relation.edit' | translate }}" matTooltipPosition="above">
-                            <mat-icon attr.aria-label="{{ 'action.edit' | translate }}" class="material-icons">edit</mat-icon>
-                            
+        <div class="md-table-container">
+            <table mat-table [dataSource]="relations" matSort matSortActive="type" matSortDirection="asc" matSortDisableClear (matSortChange)="onReorder($event)" style="width: 100%;">
+                <ng-container matColumnDef="select">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox [checked]="allSelected()" [indeterminate]="selectedRelations.length > 0 && !allSelected()" (change)="toggleAll()"></mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let relation">
+                        <mat-checkbox [checked]="isSelected(relation)" (click)="$event.stopPropagation()" (change)="toggleSelected(relation)"></mat-checkbox>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'relation.type' | translate }}</th>
+                    <td mat-cell *matCellDef="let relation">{{ relation.type }}</td>
+                </ng-container>
+                <ng-container matColumnDef="toEntityTypeName">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'relation.to-entity-type' | translate }}</th>
+                    <td mat-cell *matCellDef="let relation">{{ relation.toEntityTypeName }}</td>
+                </ng-container>
+                <ng-container matColumnDef="fromEntityTypeName">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'relation.from-entity-type' | translate }}</th>
+                    <td mat-cell *matCellDef="let relation">{{ relation.fromEntityTypeName }}</td>
+                </ng-container>
+                <ng-container matColumnDef="toName">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'relation.to-entity-name' | translate }}</th>
+                    <td mat-cell *matCellDef="let relation">{{ relation.toName }}</td>
+                </ng-container>
+                <ng-container matColumnDef="fromName">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'relation.from-entity-name' | translate }}</th>
+                    <td mat-cell *matCellDef="let relation">{{ relation.fromName }}</td>
+                </ng-container>
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef><span>&nbsp;</span></th>
+                    <td mat-cell *matCellDef="let relation" class="tb-action-cell">
+                        <button mat-icon-button [attr.aria-label]="'action.edit' | translate" (click)="editRelation($event, relation)" [matTooltip]="'relation.edit' | translate" matTooltipPosition="above">
+                            <mat-icon [attr.aria-label]="'action.edit' | translate" class="material-icons">edit</mat-icon>
                         </button>
-                        <button mat-icon-button attr.aria-label="{{ 'action.delete' | translate }}" (click)="deleteRelation($event, relation)" attr.matTooltip="{{ 'relation.delete' | translate }}" matTooltipPosition="above">
-                            <mat-icon attr.aria-label="{{ 'action.delete' | translate }}" class="material-icons">delete</mat-icon>
-                            
+                        <button mat-icon-button [attr.aria-label]="'action.delete' | translate" (click)="deleteRelation($event, relation)" [matTooltip]="'relation.delete' | translate" matTooltipPosition="above">
+                            <mat-icon [attr.aria-label]="'action.delete' | translate" class="material-icons">delete</mat-icon>
                         </button>
                     </td>
-                </tr>
-                }
-                </tbody>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+                <tr mat-row *matRowDef="let relation; columns: displayedColumns()" [class.md-selected]="isSelected(relation)" (click)="toggleSelected(relation)"></tr>
             </table>
-        </md-table-container>
+        </div>
         <mat-paginator [length]="relationsCount" [pageSize]="query.limit" [pageSizeOptions]="[5, 10, 15]" [pageIndex]="query.page - 1" (page)="onPaginate($event)" showFirstLastButtons>
         </mat-paginator>
     </div>

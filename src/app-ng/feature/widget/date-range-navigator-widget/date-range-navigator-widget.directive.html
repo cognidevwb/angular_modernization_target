@@ -21,7 +21,33 @@
       <div class="drn__element picker" [hidden]="settings?.hidePicker">
         <div class="picker__wrapper">
             <label [hidden]="settings?.hideLabels">{{ 'widgets.date-range-navigator.localizationMap.Date picker' | translate }}</label>
-            <md-date-range [(ngModel)]="advancedModel" md-on-select="triggerChange()" localization-map="localizationMap" one-panel="settings.onePanel" auto-confirm="settings.autoConfirm" show-template="settings.showTemplate" first-day-of-week="settings.firstDayOfWeek"></md-date-range>
+            <div class="md-date-range">
+                <div class="md-select-value" role="button" tabindex="0" (click)="rangePicker.open()" (keydown.enter)="rangePicker.open()" [attr.aria-label]="localizationMap['Custom Date Range']">
+                    <span>{{ advancedModel?.selectedTemplateName }}</span>
+                    <mat-icon class="md-select-icon">date_range</mat-icon>
+                </div>
+                @if (settings?.showTemplate) {
+                  <button mat-icon-button type="button" [matMenuTriggerFor]="templateMenu" [attr.aria-label]="localizationMap['Date Range Template']">
+                      <mat-icon>arrow_drop_down</mat-icon>
+                  </button>
+                }
+                <mat-date-range-input [rangePicker]="rangePicker" style="display: none;">
+                    <input matStartDate [(ngModel)]="pickStart">
+                    <input matEndDate [(ngModel)]="pickEnd" (dateChange)="onRangePicked()">
+                </mat-date-range-input>
+                <mat-date-range-picker #rangePicker (opened)="onPickerOpened()">
+                    @if (!settings?.autoConfirm) {
+                      <mat-date-range-picker-actions>
+                          <button mat-button matDateRangePickerApply>{{ localizationMap['Ok'] }}</button>
+                      </mat-date-range-picker-actions>
+                    }
+                </mat-date-range-picker>
+                <mat-menu #templateMenu="matMenu">
+                    @for (template of dateRangeTemplates; track template.name) {
+                      <button mat-menu-item (click)="selectTemplate(template)">{{ localizationMap[template.name] }}</button>
+                    }
+                </mat-menu>
+            </div>
         </div>
     </div>
     }

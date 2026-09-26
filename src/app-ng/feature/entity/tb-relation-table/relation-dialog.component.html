@@ -1,0 +1,51 @@
+<div [attr.aria-label]="(isAdd ? 'relation.add' : 'relation.edit') | translate" style="min-width: 600px;" class="md-dialog">
+    <form name="theForm" #theForm="ngForm" (ngSubmit)="save()">
+        <mat-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>{{ (isAdd ? 'relation.add' : 'relation.edit') | translate }}</h2>
+                <span flex></span>
+                <button mat-icon-button type="button" (click)="cancel()">
+                    <mat-icon [attr.aria-label]="'dialog.close' | translate">close</mat-icon>
+                </button>
+            </div>
+        </mat-toolbar>
+        <mat-progress-bar color="warn" mode="indeterminate" [hidden]="!rootScope['loading']"></mat-progress-bar>
+        <span style="min-height: 5px;" flex="" [hidden]="rootScope['loading']"></span>
+        <mat-dialog-content>
+            <div class="md-dialog-content">
+                <div class="md-content md-padding" layout="column">
+                    <fieldset [disabled]="rootScope['loading']">
+                        <tb-relation-type-autocomplete name="relationType" [ngDisabled]="!isAdd"
+                                                       [(ngModel)]="relation.type"
+                                                       [tbRequired]="true">
+                        </tb-relation-type-autocomplete>
+                        <small>{{ (direction == types.entitySearchDirection.from ?
+                            'relation.to-entity' : 'relation.from-entity') | translate }}</small>
+                        <tb-entity-select flex name="targetEntityId"
+                            [ngDisabled]="!isAdd"
+                            [theForm]="theForm"
+                            [tbRequired]="true"
+                            [(ngModel)]="targetEntityId">
+                        </tb-entity-select>
+                        <div class="md-caption" style="padding-left: 3px; padding-bottom: 10px; color: rgba(0,0,0,0.57);">{{ 'relation.additional-info' | translate }}</div>
+                        <div flex class="tb-relation-additional-info-panel" layout="column">
+                            <div flex id="tb-relation-additional-info" #additionalInfoEditor></div>
+                        </div>
+                        @if (additionalInfoInvalid) {
+                            <div class="tb-error-messages" role="alert">
+                                <div class="tb-error-message">{{ 'relation.invalid-additional-info' | translate }}</div>
+                            </div>
+                        }
+                    </fieldset>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions layout="row">
+            <span flex></span>
+            <button mat-raised-button color="primary" [disabled]="rootScope['loading'] || theForm.invalid || additionalInfoInvalid || !theForm.dirty" type="submit">
+                {{ (isAdd ? 'action.add' : 'action.save') | translate }}
+            </button>
+            <button mat-button type="button" [disabled]="rootScope['loading']" (click)="cancel()" style="margin-right:20px;">{{ 'action.cancel' | translate }}</button>
+        </mat-dialog-actions>
+    </form>
+</div>

@@ -1,365 +1,46 @@
-import { Component, effect, inject, model } from '@angular/core';
+import { Component, DestroyRef, effect, inject, model, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import multipleInputWidgetTemplate from '../../../../app/widget/lib/multiple-input-widget.tpl.html' with { loader: 'text' };
+import { FormsModule, NgForm } from '@angular/forms';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { firstValueFrom } from 'rxjs';
-import { httpOptions } from '../../../core/http-options';
-
+import $ from 'jquery';
 import moment from 'moment';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let scope: any;
-
-// Helpers at the legacy file's top level, beside the registration (as written).
-function MultipleInputWidgetController(this: any, $q?: any, $scope?: any, $translate?: any, attributeService?: any, toast?: any, types?: any, utils?: any) {
-    var vm: any = this;
-
-    vm.entityDetected = false;
-    vm.isAllParametersValid = true;
-
-    vm.sources = [];
-    vm.datasources = null;
-
-    vm.discardAll = discardAll;
-    vm.inputChanged = inputChanged;
-    vm.save = save;
-    vm.getGroupTitle = getGroupTitle;
-
-    $scope.$watch('vm.ctx', function () {
-        if (vm.ctx && vm.ctx.defaultSubscription) {
-            vm.settings = vm.ctx.settings;
-            vm.widgetConfig = vm.ctx.widgetConfig;
-            vm.subscription = vm.ctx.defaultSubscription;
-            vm.datasources = vm.subscription.datasources;
-            initializeConfig();
-            updateDatasources();
-        }
-    });
-
-    this.multipleInputDataUpdatedSub = this.sharedService.multipleInputDataUpdated$.subscribe(({ formId }: any) => {
-        if (vm.formId == formId) {
-            updateWidgetData(vm.subscription.data);
-        }
-    });
-
-    this.multipleInputResizeSub = this.sharedService.multipleInputResize$.subscribe(({ formId }: any) => {
-        if (vm.formId == formId) {
-            updateWidgetDisplaying();
-        }
-    });
-
-    function discardAll() {
-        for (var i: any = 0; i < vm.sources.length; i++) {
-            for (var j: any = 0; j < vm.sources[i].keys.length; j++) {
-                vm.sources[i].keys[j].data.currentValue = vm.sources[i].keys[j].data.originalValue;
-            }
-        }
-        $scope.multipleInputForm.$setPristine();
-    }
-
-    function inputChanged(source?: any, key?: any) {
-        if (!vm.settings.showActionButtons) {
-    function inputChanged(source?: any, key?: any) {
-        if (!vm.settings.showActionButtons) {
-            if (!key.settings.required || (key.settings.required && key.data && key.data.currentValue !== undefined)) {
-                var dataToSave: any = {
-                    datasource: source.datasource,
-                    keys: [key]
-                };
-                vm.save(dataToSave);
-            }
-        }
-    }
-        }
-    }
-
-    function save(dataToSave?: any) {
-        var tasks: any = [];
-        var config: any = {
-            ignoreLoading: !vm.settings.showActionButtons
-        };
-        var data: any;
-        if (dataToSave) {
-            data = [dataToSave];
-        } else {
-            data = vm.sources;
-        }
-        for (let i: any = 0; i < data.length; i++) {
-            var serverAttributes: any = [], sharedAttributes: any = [], telemetry: any = [];
-            for (let j: any = 0; j < data[i].keys.length; j++) {
-                var key: any = data[i].keys[j];
-                if ((key.data.currentValue !== key.data.originalValue) || vm.settings.updateAllValues) {
-                    var attribute: any = {
-                        key: key.name
-                    };
-                    if (key.data.currentValue) {
-                        switch (key.settings.dataKeyValueType) {
-                            case 'dateTime':
-                            case 'date':
-                                attribute.value = key.data.currentValue.getTime();
-                                break;
-                            case 'time':
-                                attribute.value = key.data.currentValue.getTime() - (moment as any)().startOf('day').valueOf();//eslint-disable-line
-                                break;
-                            default:
-                                attribute.value = key.data.currentValue;
-                        }
-                    } else {
-                        if (key.data.currentValue === '') {
-                            attribute.value = null;
-                        } else {
-                            attribute.value = key.data.currentValue;
-                        }
-                    }
-
-                    switch (key.settings.dataKeyType) {
-                        case 'shared':
-                            sharedAttributes.push(attribute);
-                            break;
-                        case 'timeseries':
-                            telemetry.push(attribute);
-                            break;
-                        default:
-                            serverAttributes.push(attribute);
-                    }
-                }
-            }
-            if (serverAttributes.length) {
-                tasks.push(attributeService.saveEntityAttributes(
-                    data[i].datasource.entityType,
-                    data[i].datasource.entityId,
-                    types.attributesScope.server.value,
-                    serverAttributes,
-                    config));
-            }
-            if (sharedAttributes.length) {
-                tasks.push(attributeService.saveEntityAttributes(
-                    data[i].datasource.entityType,
-                    data[i].datasource.entityId,
-                    types.attributesScope.shared.value,
-                    sharedAttributes,
-                    config));
-            }
-            if (telemetry.length) {
-                tasks.push(attributeService.saveEntityTimeseries(
-                    data[i].datasource.entityType,
-                    data[i].datasource.entityId,
-                    types.latestTelemetry.value,
-                    telemetry,
-                    config));
-            }
-        }
-
-        if (tasks.length) {
-        if (tasks.length) {
-            Promise.all(tasks).then(
-                function success() {
-                    $scope.multipleInputForm.$setPristine();
-                    if (vm.settings.showResultMessage) {
-                        toast.showSuccess($translate.instant('widgets.input-widgets.update-successful'), 1000, $(vm.ctx.$container), 'bottom left');
-                    }
-                },
-                function fail() {
-                    if (vm.settings.showResultMessage) {
-                        toast.showError($translate.instant('widgets.input-widgets.update-failed'), $(vm.ctx.$container), 'bottom left');
-                    }
-                }
-            );
-        } else {
-            $scope.multipleInputForm.$setPristine();
-        }
-        } else {
-            $scope.multipleInputForm.$setPristine();
-        }
-    }
-
-    function initializeConfig() {
-
-        if (vm.settings.widgetTitle && vm.settings.widgetTitle.length) {
-            vm.widgetTitle = utils.customTranslation(vm.settings.widgetTitle, vm.settings.widgetTitle);
-        } else {
-            vm.widgetTitle = vm.ctx.widgetConfig.title;
-        }
-
-        vm.ctx.widgetTitle = vm.widgetTitle;
-
-        vm.settings.groupTitle = vm.settings.groupTitle || "${entityName}";
-
-        //For backward compatibility
-        if (vm.settings.showActionButtons === undefined) {
-            vm.settings.showActionButtons = true;
-        }
-        if (vm.settings.fieldsAlignment === undefined) {
-            vm.settings.fieldsAlignment = 'row';
-        }
-        if (vm.settings.fieldsInRow === undefined) {
-            vm.settings.fieldsInRow = 2;
-        }
-        //For backward compatibility
-
-        vm.isVerticalAlignment = !(vm.settings.fieldsAlignment === 'row');
-
-        if (!vm.isVerticalAlignment && vm.settings.fieldsInRow) {
-            vm.inputWidthSettings = 100 / vm.settings.fieldsInRow + '%';
-        }
-        updateWidgetDisplaying();
-    }
-
-    function updateDatasources() {
-        if (vm.datasources && vm.datasources.length) {
-            vm.entityDetected = true;
-            for (var i: any = 0; i < vm.datasources.length; i++) {
-                var datasource: any = vm.datasources[i];
-                var source: any = {
-                    datasource: datasource,
-                    keys: []
-                };
-                if (datasource.type === types.datasourceType.entity) {
-                    for (var j: any = 0; j < datasource.dataKeys.length; j++) {
-                        if ((datasource.entityType !== types.entityType.device) && (datasource.dataKeys[j].settings.dataKeyType == 'shared')) {
-                            vm.isAllParametersValid = false;
-                        }
-                        source.keys.push(datasource.dataKeys[j]);
-                        if (source.keys[j].units) {
-                            source.keys[j].label += ' (' + source.keys[j].units + ')';
-                        }
-                        source.keys[j].data = {};
-
-                        //For backward compatibility
-                        if (source.keys[j].settings.dataKeyType === undefined) {
-                            if (vm.settings.attributesShared) {
-                                source.keys[j].settings.dataKeyType = 'shared';
-                            } else {
-                                source.keys[j].settings.dataKeyType = 'server';
-                            }
-                        }
-
-                        if (source.keys[j].settings.dataKeyValueType === undefined) {
-                            if (source.keys[j].settings.inputTypeNumber) {
-                                source.keys[j].settings.dataKeyValueType = 'double';
-                            } else {
-                                source.keys[j].settings.dataKeyValueType = 'string';
-                            }
-                        }
-
-                        if (source.keys[j].settings.isEditable === undefined) {
-                            if (source.keys[j].settings.readOnly) {
-                                source.keys[j].settings.isEditable = 'readonly';
-                            } else {
-                                source.keys[j].settings.isEditable = 'editable';
-                            }
-                        }
-                        //For backward compatibility
-
-                    }
-                } else {
-                    vm.entityDetected = false;
-                }
-                vm.sources.push(source);
-            }
-        }
-    }
-
-    function updateWidgetData(data?: any) {
-        var dataIndex: any = 0;
-        for (var i: any = 0; i < vm.sources.length; i++) {
-            var source: any = vm.sources[i];
-            for (var j: any = 0; j < source.keys.length; j++) {
-                var keyData: any = data[dataIndex].data;
-                var key: any = source.keys[j];
-                if (keyData && keyData.length) {
-                    var value: any;
-                    switch (key.settings.dataKeyValueType) {
-                        case 'dateTime':
-                        case 'date':
-                            value = (moment as any)(keyData[0][1]).toDate(); // eslint-disable-line
-                            break;
-                        case 'time':
-                            value = (moment as any)().startOf('day').add(keyData[0][1], 'ms').toDate(); // eslint-disable-line
-                            break;
-                        case 'booleanCheckbox':
-                        case 'booleanSwitch':
-                            value = (keyData[0][1] === 'true');
-                            break;
-                        default:
-                            value = keyData[0][1];
-                    }
-
-                    key.data = {
-                        currentValue: value,
-                        originalValue: value
-                    };
-                }
-
-                if (key.settings.isEditable === 'editable' && key.settings.disabledOnDataKey) {
-                    var conditions: any = data.filter((item?: any) => {
-                        return item.dataKey.name === key.settings.disabledOnDataKey;
-                    });
-                    if (conditions && conditions.length) {
-                        if (conditions[0].data.length) {
-                            if (conditions[0].data[0][1] === 'false') {
-                                key.settings.disabledOnCondition = true;
-                            } else {
-                                key.settings.disabledOnCondition = !conditions[0].data[0][1];
-                            }
-                        }
-                    }
-                }
-                dataIndex++;
-            }
-        }
-    }
-
-    function updateWidgetDisplaying() {
-        vm.changeAlignment = (vm.ctx.$container[0].offsetWidth < 620);
-        vm.smallWidthContainer = (vm.ctx.$container[0].offsetWidth < 420);
-    }
-
-    function getGroupTitle(datasource?: any) {
-        return utils.createLabelFromDatasource(datasource, vm.settings.groupTitle);
-    }
-}
+import { RootState } from '../../../root-state';
+import { AttributeService } from '../../api/services/attribute.service';
+import { UtilsService } from '../../common/services/utils.service';
+import { types } from '../../common/constants/types';
+import { ToastService } from '../../services/toast.service';
 
 /**
  * Ported from the AngularJS directive `tbMultipleInputWidget` (module `thingsboard.widgets.multipleInputWidget`) in src/app/widget/lib/multiple-input-widget.js:24.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
   selector: 'tb-multiple-input-widget',
   standalone: true,
-  imports: [TranslatePipe, MatSlideToggleModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule, CommonModule, FormsModule],
+  imports: [TranslatePipe, MatSlideToggleModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule, MatDatepickerModule, CommonModule, FormsModule],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './tb-multiple-input-widget.directive.html',
 })
 export class TbMultipleInputWidgetDirective {
   readonly formId = model<any>();
   readonly ctx = model<any>();
 
-  // TODO(port): elements not resolved to a component: mdp-date-picker, mdp-time-picker
-  // TODO(port): template: 6 × ng-message left in place
-  // TODO(port): template: 5 × ng-messages left in place
-
-  restrict: any = "E";
-  scope: any = true;
-  bindToController: any = {
-            formId: '=',
-            ctx: '='
-        };
-  controller: any = MultipleInputWidgetController;
-  controllerAs: any;
-  templateUrl: any = multipleInputWidgetTemplate;
-  key: any;
-
-  private readonly http = inject(HttpClient);
   private readonly translate = inject(TranslateService);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly attributeService = inject(AttributeService);
+  private readonly toast = inject(ToastService);
+  private readonly utils = inject(UtilsService);
+  private readonly rootScope = inject(RootState);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /** The legacy `name="multipleInputForm"` form controller. */
+  protected readonly multipleInputForm = viewChild<NgForm>('multipleInputForm');
 
   protected entityDetected = false;
   protected isAllParametersValid = true;
@@ -367,19 +48,16 @@ export class TbMultipleInputWidgetDirective {
   protected settings: any;
   protected isVerticalAlignment = false;
   protected changeAlignment = false;
-  protected inputWidthSettings = '100%';
+  protected inputWidthSettings: any;
   protected smallWidthContainer = false;
   protected isFocused = false;
-  protected multipleInputForm: any;
+  protected widgetTitle: any;
 
   private datasources: any = null;
   private widgetConfig: any;
   private subscription: any;
 
   constructor() {
-    let vm = this;
-    this.controllerAs = 'vm';
-
     effect(() => {
       const ctx = this.ctx();
       if (ctx && ctx.defaultSubscription) {
@@ -391,45 +69,104 @@ export class TbMultipleInputWidgetDirective {
         this.updateDatasources();
       }
     });
-  }
 
-  protected getGroupTitle(datasource?: any): string {
-    const pattern = this.settings?.groupTitle || '${entityName}';
-    if (!datasource) {
-      return pattern;
-    }
-    return pattern.replace(/\$\{entityName\}/g, datasource.entityName ?? '')
-                  .replace(/\$\{entityLabel\}/g, datasource.entityLabel ?? datasource.entityName ?? '');
+    const dataUpdated = this.rootScope.$on('multiple-input-data-updated', (event: any, formId: any) => {
+      if (this.formId() == formId) {
+        this.updateWidgetData(this.subscription.data);
+      }
+    });
+    const resize = this.rootScope.$on('multiple-input-resize', (event: any, formId: any) => {
+      if (this.formId() == formId) {
+        this.updateWidgetDisplaying();
+      }
+    });
+    this.destroyRef.onDestroy(() => {
+      dataUpdated();
+      resize();
+    });
   }
 
   protected discardAll(): void {
-    for (const source of this.sources) {
-      for (const key of source.keys) {
-        key.data.currentValue = key.data.originalValue;
+    for (let i = 0; i < this.sources.length; i++) {
+      for (let j = 0; j < this.sources[i].keys.length; j++) {
+        this.sources[i].keys[j].data.currentValue = this.sources[i].keys[j].data.originalValue;
       }
     }
-    this.multipleInputForm?.$setPristine?.();
+    this.multipleInputForm()?.form.markAsPristine();
   }
 
   protected inputChanged(source?: any, key?: any): void {
-    if (!this.settings?.showActionButtons) {
+    if (!this.settings.showActionButtons) {
       if (!key.settings.required || (key.settings.required && key.data && key.data.currentValue !== undefined)) {
-        this.save({ datasource: source.datasource, keys: [key] });
+        const dataToSave: any = {
+          datasource: source.datasource,
+          keys: [key]
+        };
+        this.save(dataToSave);
       }
     }
   }
 
-  protected async save(dataToSave?: any): Promise<void> {
-    const tasks: Promise<any>[] = [];
-    const config: any = { ignoreLoading: !this.settings?.showActionButtons };
-    const data: any[] = dataToSave ? [dataToSave] : this.sources;
-    for (const item of data) {
-      const serverAttributes: any[] = [];
-      const sharedAttributes: any[] = [];
-      const telemetry: any[] = [];
-      for (const key of item.keys) {
-        if ((key.data.currentValue !== key.data.originalValue) || this.settings?.updateAllValues) {
-          const attribute: any = { key: key.name };
+  /** `md-select-on-focus`: the input's text is selected when it takes focus. */
+  protected selectOnFocus(event: FocusEvent): void {
+    const target = event.target as HTMLInputElement | null;
+    target?.select();
+  }
+
+  /** The date part picked for a `date`/`dateTime` key; a `dateTime` key keeps its time of day. */
+  protected onDatePicked(source: any, key: any, date: Date | null): void {
+    if (date) {
+      const current: Date | undefined = key.data.currentValue instanceof Date ? key.data.currentValue : undefined;
+      const value = new Date(date.getTime());
+      if (current && key.settings.dataKeyValueType === 'dateTime') {
+        value.setHours(current.getHours(), current.getMinutes(), current.getSeconds(), current.getMilliseconds());
+      }
+      key.data.currentValue = value;
+    } else {
+      key.data.currentValue = date;
+    }
+    this.multipleInputForm()?.form.markAsDirty();
+    this.inputChanged(source, key);
+  }
+
+  /** The `HH:mm` shown by a time input for a key's value. */
+  protected timeText(value: any): string {
+    return value instanceof Date ? moment(value).format('HH:mm') : '';
+  }
+
+  /** The time of day picked for a `time`/`dateTime` key; the date part stays (today when there is none). */
+  protected onTimePicked(source: any, key: any, text: string): void {
+    if (text) {
+      const [hours, minutes] = text.split(':').map((part) => parseInt(part, 10));
+      const value = key.data.currentValue instanceof Date ? new Date(key.data.currentValue.getTime()) : moment().startOf('day').toDate();
+      value.setHours(hours, minutes, 0, 0);
+      key.data.currentValue = value;
+    } else {
+      key.data.currentValue = undefined;
+    }
+    this.multipleInputForm()?.form.markAsDirty();
+    this.inputChanged(source, key);
+  }
+
+  protected save(dataToSave?: any): void {
+    const tasks: any[] = [];
+    const config: any = {
+      ignoreLoading: !this.settings.showActionButtons
+    };
+    let data: any;
+    if (dataToSave) {
+      data = [dataToSave];
+    } else {
+      data = this.sources;
+    }
+    for (let i = 0; i < data.length; i++) {
+      const serverAttributes: any[] = [], sharedAttributes: any[] = [], telemetry: any[] = [];
+      for (let j = 0; j < data[i].keys.length; j++) {
+        const key: any = data[i].keys[j];
+        if ((key.data.currentValue !== key.data.originalValue) || this.settings.updateAllValues) {
+          const attribute: any = {
+            key: key.name
+          };
           if (key.data.currentValue) {
             switch (key.settings.dataKeyValueType) {
               case 'dateTime':
@@ -437,14 +174,19 @@ export class TbMultipleInputWidgetDirective {
                 attribute.value = key.data.currentValue.getTime();
                 break;
               case 'time':
-                attribute.value = key.data.currentValue.getTime() - (moment as any)().startOf('day').valueOf();//eslint-disable-line
+                attribute.value = key.data.currentValue.getTime() - moment().startOf('day').valueOf();
                 break;
               default:
                 attribute.value = key.data.currentValue;
             }
           } else {
-            attribute.value = key.data.currentValue === '' ? null : key.data.currentValue;
+            if (key.data.currentValue === '') {
+              attribute.value = null;
+            } else {
+              attribute.value = key.data.currentValue;
+            }
           }
+
           switch (key.settings.dataKeyType) {
             case 'shared':
               sharedAttributes.push(attribute);
@@ -458,48 +200,64 @@ export class TbMultipleInputWidgetDirective {
         }
       }
       if (serverAttributes.length) {
-        tasks.push(this.saveEntityAttributes(item.datasource.entityType, item.datasource.entityId, 'SERVER_SCOPE', serverAttributes, config));
+        tasks.push(this.attributeService.saveEntityAttributes(
+          data[i].datasource.entityType,
+          data[i].datasource.entityId,
+          types.attributesScope.server.value,
+          serverAttributes,
+          config));
       }
       if (sharedAttributes.length) {
-        tasks.push(this.saveEntityAttributes(item.datasource.entityType, item.datasource.entityId, 'SHARED_SCOPE', sharedAttributes, config));
+        tasks.push(this.attributeService.saveEntityAttributes(
+          data[i].datasource.entityType,
+          data[i].datasource.entityId,
+          types.attributesScope.shared.value,
+          sharedAttributes,
+          config));
       }
       if (telemetry.length) {
-        tasks.push(this.saveEntityTimeseries(item.datasource.entityType, item.datasource.entityId, telemetry, config));
+        tasks.push(this.attributeService.saveEntityTimeseries(
+          data[i].datasource.entityType,
+          data[i].datasource.entityId,
+          types.latestTelemetry.value,
+          telemetry,
+          config));
       }
     }
 
     if (tasks.length) {
-      try {
-        await Promise.all(tasks);
-        this.multipleInputForm?.$setPristine?.();
-        if (this.settings?.showResultMessage) {
-          this.snackBar.open(this.translate.instant('widgets.input-widgets.update-successful'), undefined, { duration: 1000 });
+      Promise.all(tasks).then(
+        () => {
+          this.multipleInputForm()?.form.markAsPristine();
+          if (this.settings.showResultMessage) {
+            this.toast.showSuccess(this.translate.instant('widgets.input-widgets.update-successful'), 1000, $(this.ctx().$container), 'bottom left');
+          }
+        },
+        () => {
+          if (this.settings.showResultMessage) {
+            this.toast.showError(this.translate.instant('widgets.input-widgets.update-failed'), $(this.ctx().$container), 'bottom left');
+          }
         }
-      } catch (e) {
-        if (this.settings?.showResultMessage) {
-          this.snackBar.open(this.translate.instant('widgets.input-widgets.update-failed'), undefined);
-        }
-      }
+      );
     } else {
-      this.multipleInputForm?.$setPristine?.();
+      this.multipleInputForm()?.form.markAsPristine();
     }
   }
 
-  private saveEntityAttributes(entityType: string, entityId: string, scope: string, attributes: any[], config: any): Promise<any> {
-    const body: any = {};
-    attributes.forEach(a => body[a.key] = a.value);
-    return firstValueFrom(this.http.post(`/api/plugins/telemetry/${entityType}/${entityId}/${scope}`, body, httpOptions(config)));
-  }
-
-  private saveEntityTimeseries(entityType: string, entityId: string, telemetry: any[], config: any): Promise<any> {
-    const body: any = {};
-    telemetry.forEach(a => body[a.key] = a.value);
-    return firstValueFrom(this.http.post(`/api/plugins/telemetry/${entityType}/${entityId}/timeseries/ANY`, body, httpOptions(config)));
-  }
-
   private initializeConfig(): void {
-    this.settings.groupTitle = this.settings.groupTitle || '${entityName}';
+    const ctx: any = this.ctx();
 
+    if (this.settings.widgetTitle && this.settings.widgetTitle.length) {
+      this.widgetTitle = this.utils.customTranslation(this.settings.widgetTitle, this.settings.widgetTitle);
+    } else {
+      this.widgetTitle = ctx.widgetConfig.title;
+    }
+
+    ctx.widgetTitle = this.widgetTitle;
+
+    this.settings.groupTitle = this.settings.groupTitle || "${entityName}";
+
+    //For backward compatibility
     if (this.settings.showActionButtons === undefined) {
       this.settings.showActionButtons = true;
     }
@@ -509,6 +267,7 @@ export class TbMultipleInputWidgetDirective {
     if (this.settings.fieldsInRow === undefined) {
       this.settings.fieldsInRow = 2;
     }
+    //For backward compatibility
 
     this.isVerticalAlignment = !(this.settings.fieldsAlignment === 'row');
 
@@ -519,17 +278,17 @@ export class TbMultipleInputWidgetDirective {
   }
 
   private updateDatasources(): void {
-    this.sources = [];
     if (this.datasources && this.datasources.length) {
       this.entityDetected = true;
-      for (const datasource of this.datasources) {
+      for (let i = 0; i < this.datasources.length; i++) {
+        const datasource: any = this.datasources[i];
         const source: any = {
-          datasource,
+          datasource: datasource,
           keys: []
         };
-        if (datasource.type === 'entity') {
+        if (datasource.type === types.datasourceType.entity) {
           for (let j = 0; j < datasource.dataKeys.length; j++) {
-            if ((datasource.entityType !== 'DEVICE') && (datasource.dataKeys[j].settings.dataKeyType === 'shared')) {
+            if ((datasource.entityType !== types.entityType.device) && (datasource.dataKeys[j].settings.dataKeyType == 'shared')) {
               this.isAllParametersValid = false;
             }
             source.keys.push(datasource.dataKeys[j]);
@@ -538,15 +297,32 @@ export class TbMultipleInputWidgetDirective {
             }
             source.keys[j].data = {};
 
+            //For backward compatibility
             if (source.keys[j].settings.dataKeyType === undefined) {
-              source.keys[j].settings.dataKeyType = this.settings.attributesShared ? 'shared' : 'server';
+              if (this.settings.attributesShared) {
+                source.keys[j].settings.dataKeyType = 'shared';
+              } else {
+                source.keys[j].settings.dataKeyType = 'server';
+              }
             }
+
             if (source.keys[j].settings.dataKeyValueType === undefined) {
-              source.keys[j].settings.dataKeyValueType = source.keys[j].settings.inputTypeNumber ? 'double' : 'string';
+              if (source.keys[j].settings.inputTypeNumber) {
+                source.keys[j].settings.dataKeyValueType = 'double';
+              } else {
+                source.keys[j].settings.dataKeyValueType = 'string';
+              }
             }
+
             if (source.keys[j].settings.isEditable === undefined) {
-              source.keys[j].settings.isEditable = source.keys[j].settings.readOnly ? 'readonly' : 'editable';
+              if (source.keys[j].settings.readOnly) {
+                source.keys[j].settings.isEditable = 'readonly';
+              } else {
+                source.keys[j].settings.isEditable = 'editable';
+              }
             }
+            //For backward compatibility
+
           }
         } else {
           this.entityDetected = false;
@@ -556,11 +332,63 @@ export class TbMultipleInputWidgetDirective {
     }
   }
 
-  private updateWidgetDisplaying(): void {
-    const container = this.ctx()?.$container;
-    if (container && container[0]) {
-      this.changeAlignment = container[0].offsetWidth < 620;
-      this.smallWidthContainer = container[0].offsetWidth < 420;
+  private updateWidgetData(data?: any): void {
+    let dataIndex = 0;
+    for (let i = 0; i < this.sources.length; i++) {
+      const source: any = this.sources[i];
+      for (let j = 0; j < source.keys.length; j++) {
+        const keyData: any = data[dataIndex].data;
+        const key: any = source.keys[j];
+        if (keyData && keyData.length) {
+          let value: any;
+          switch (key.settings.dataKeyValueType) {
+            case 'dateTime':
+            case 'date':
+              value = moment(keyData[0][1]).toDate();
+              break;
+            case 'time':
+              value = moment().startOf('day').add(keyData[0][1], 'ms').toDate();
+              break;
+            case 'booleanCheckbox':
+            case 'booleanSwitch':
+              value = (keyData[0][1] === 'true');
+              break;
+            default:
+              value = keyData[0][1];
+          }
+
+          key.data = {
+            currentValue: value,
+            originalValue: value
+          };
+        }
+
+        if (key.settings.isEditable === 'editable' && key.settings.disabledOnDataKey) {
+          const conditions: any = data.filter((item?: any) => {
+            return item.dataKey.name === key.settings.disabledOnDataKey;
+          });
+          if (conditions && conditions.length) {
+            if (conditions[0].data.length) {
+              if (conditions[0].data[0][1] === 'false') {
+                key.settings.disabledOnCondition = true;
+              } else {
+                key.settings.disabledOnCondition = !conditions[0].data[0][1];
+              }
+            }
+          }
+        }
+        dataIndex++;
+      }
     }
+  }
+
+  private updateWidgetDisplaying(): void {
+    const ctx: any = this.ctx();
+    this.changeAlignment = (ctx.$container[0].offsetWidth < 620);
+    this.smallWidthContainer = (ctx.$container[0].offsetWidth < 420);
+  }
+
+  protected getGroupTitle(datasource?: any): any {
+    return this.utils.createLabelFromDatasource(datasource, this.settings.groupTitle);
   }
 }

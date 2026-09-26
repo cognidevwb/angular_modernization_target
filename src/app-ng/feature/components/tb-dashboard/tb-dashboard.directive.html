@@ -1,4 +1,3 @@
-<!-- Scaffolded by the playbook from src/app/components/dashboard.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -16,117 +15,137 @@
     limitations under the License.
 
 -->
-<div flex layout="column" class="md-content tb-progress-cover" layout-align="center center" [ngStyle]="dashboardStyle()" [hidden]="!(((loading() || dashboardLoading) && !isEdit()) || isResizing)">
-	<mat-progress-spinner color="warn" mode="indeterminate" [style.visibility]="((!loading() && !dashboardLoading || isEdit()) && !isResizing) ? 'hidden' : 'visible'" diameter="100">
+<div flex layout="column" class="md-content tb-progress-cover" layout-align="center center"
+     [ngStyle]="dashboardStyle()"
+     [hidden]="!(((loading() || dashboardLoading) && !isEdit()) || isResizing)">
+	<mat-progress-spinner color="warn" mode="indeterminate" diameter="100"
+	                      [style.visibility]="((!loading() && !dashboardLoading || isEdit()) && !isResizing) ? 'hidden' : 'visible'">
 	</mat-progress-spinner>
 </div>
-
-	<div id="gridster-parent" class="md-content tb-dashboard-content" flex layout-wrap [ngStyle]="{'overflowY': isAutofillHeight() ? 'hidden' : 'auto'}" tb-contextmenu="vm.openDashboardContextMenu($event, $mdOpenMousepointMenu)" [matMenuTriggerFor]="menu1">
-		<div [ngClass]="dashboardClass()" id="gridster-background" style="height: auto; min-height: 100%; display: inline;">
-			<div id="gridster-child" gridster="vm.gridsterOpts">
-				<ul>
-					@for (widget of widgets(); track $index) {
-					  <li gridster-item="vm.widgetItemMap" class="tb-noselect">
-						
-							<!-- TODO(port): expression not parsed: `` -->
-							<div (tbExpandFullscreen)="" [(fullscreenBackgroundStyle)]="dashboardStyle" expand-button-id="expand-button" expand-button-size="20" (onFullscreenChanged)="onWidgetFullscreenChanged($event.expanded, widget)" layout="column" class="tb-widget" [ngClass]="{'tb-highlighted': isHighlighted(widget),
-										           'tb-not-highlighted': isNotHighlighted(widget),
-										           'md-whiteframe-4dp': dropWidgetShadow(widget),
-										           'tb-has-timewindow': hasTimewindow(widget)}" tb-mousedown="vm.widgetMouseDown($event, widget)" (click)="widgetClicked($event, widget)" tb-contextmenu="vm.openWidgetContextMenu($event, widget, $mdOpenMousepointMenu)" [ngStyle]="widgetStyle(widget)" [matMenuTriggerFor]="menu2">
-								<div layout="row" layout-align="space-between start">
-									<div class="tb-widget-title" layout="column" layout-align="center start" [hidden]="!(showWidgetTitlePanel(widget))">
-										<!-- TODO(port): ng-include has no one-to-one Angular form -->
-										@if (hasWidgetTitleTemplate(widget)) {
-										  <div ng-include="widgetTitleTemplate(widget)"></div>
-										}
-										<span [hidden]="!(showWidgetTitle(widget))" [ngStyle]="widgetTitleStyle(widget)" class="md-subhead title" matTooltip="" attr.matTooltipPosition="{{isWidgetExpanded ? 'bottom' : 'top'}}">
-											@if (showWidgetTitleIcon(widget)) {
-											  <mat-icon class="material-icons" [ngStyle]="widgetTitleIconStyle(widget)">
-												{{widgetTitleIcon(widget)}}
-											</mat-icon>
-											}
-											{{widgetTitle(widget)}}
-											<!-- TODO(port): the md-tooltip had its own AngularJS directives; bind matTooltipDisabled for them -->
-										</span>
-										@if (hasTimewindow(widget)) {
-										  <tb-timewindow aggregation="{{hasAggregation(widget)}}" (isEdit)="isEdit()" [(ngModel)]="widget.config.timewindow"></tb-timewindow>
-										}
-									</div>
-									<div class="tb-widget-actions" layout="row" layout-align="start center" [hidden]="!(showWidgetActions(widget))" tb-mousedown="$event.stopPropagation()" [ngClass]="{'tb-widget-actions-absolute': !(showWidgetTitlePanel(widget)&&(hasWidgetTitleTemplate(widget)||showWidgetTitle(widget)||hasAggregation(widget)))}">
-										@for (action of customWidgetHeaderActions(widget); track $index) {
-										  <button mat-icon-button attr.aria-label="{{action?.displayName}}" [hidden]="!(!isEdit())" (click)="action.onAction($event)" attr.matTooltip="{{action?.displayName}}" attr.matTooltipPosition="{{isWidgetExpanded ? 'bottom' : 'top'}}">
-											
-											<mat-icon>{{action?.icon}}</mat-icon>
-										</button>
-										}
-										@for (action of widgetActions(widget); track $index) {
-										  <button mat-icon-button attr.aria-label="{{ action?.name | translate }}" [hidden]="!(!isEdit() && action?.show)" (click)="action.onAction($event)" attr.matTooltip="{{ action?.name | translate }}" attr.matTooltipPosition="{{isWidgetExpanded ? 'bottom' : 'top'}}">
-											
-											<mat-icon>{{action?.icon}}</mat-icon>
-										</button>
-										}
-										<button mat-icon-button id="expand-button" [hidden]="!(!isEdit() && enableWidgetFullscreen(widget))" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}"></button>
-										<button mat-icon-button [hidden]="!(isEditActionEnabled() && !isWidgetExpanded)" [disabled]="loading()" (click)="editWidget($event, widget)" attr.aria-label="{{ 'widget.edit' | translate }}" attr.matTooltip="{{ 'widget.edit' | translate }}" matTooltipPosition="above">
-											
-											<mat-icon>edit</mat-icon>
-										</button>
-										<button mat-icon-button [hidden]="!(isExportActionEnabled() && !isWidgetExpanded)" [disabled]="loading()" (click)="exportWidget($event, widget)" attr.aria-label="{{ 'widget.export' | translate }}" attr.matTooltip="{{ 'widget.export' | translate }}" matTooltipPosition="above">
-											
-											<mat-icon>file_download</mat-icon>
-										</button>
-										<button mat-icon-button [hidden]="!(isRemoveActionEnabled() && !isWidgetExpanded)" [disabled]="loading()" (click)="removeWidget($event, widget)" attr.aria-label="{{ 'widget.remove' | translate }}" attr.matTooltip="{{ 'widget.remove' | translate }}" matTooltipPosition="above">
-											
-											<mat-icon>close</mat-icon>
-										</button>
-									</div>
-								</div>
-								<div flex layout="column" class="tb-widget-content">
-									<div flex tb-widget locals="{ visibleRect: vm.visibleRect,
-										 widget: widget,
-										 aliasController: vm.aliasController,
-										 stateController: vm.stateController,
-										 isEdit: vm.isEdit,
-										 isMobile: vm.isMobileSize,
-										 dashboardTimewindow: vm.dashboardTimewindow,
-										 dashboardTimewindowApi: vm.dashboardTimewindowApi,
-										 dashboard: vm }">
-									</div>
-								</div>
-							</div>
-							<mat-menu #menu2="matMenu">
-								@for (item of widgetContextMenuItems(); track $index) {
-								
-									<button mat-menu-item [disabled]="!item?.enabled" (click)="item.action(widgetContextMenuEvent, widget)">
-										@if (item?.shortcut) {
-										  <span class="tb-alt-text"> {{ item?.shortcut | keyboardShortcut }}</span>
-										}
-										@if (item?.icon) {
-										  <mat-icon md-menu-align-target attr.aria-label="{{ item?.value | translate }}" class="material-icons">{{item?.icon}}</mat-icon>
-										}
-										<span translate>{{item?.value}}</span>
-									</button>
-								
+<div #gridsterParent id="gridster-parent" class="md-content tb-dashboard-content" flex layout-wrap
+     [ngStyle]="{'overflowY': isAutofillHeight() ? 'hidden' : 'auto'}"
+     (contextmenu)="openDashboardContextMenu($event)">
+	<div [ngClass]="dashboardClass()" id="gridster-background" style="height: auto; min-height: 100%; display: inline;">
+		<div id="gridster-child" class="gridster" [class.gridster-mobile]="gridMetrics.isMobile"
+		     [style.position]="'relative'" [style.height]="gridContainerHeight()">
+			<ul style="margin: 0; padding: 0; list-style: none;">
+				@for (widget of widgets(); track widget) {
+				<li class="gridster-item tb-noselect" [ngStyle]="gridItemStyle(widget)">
+					<div tb-expand-fullscreen
+					     [fullscreenBackgroundStyle]="dashboardStyle()"
+					     expand-button-id="expand-button"
+					     expand-button-size="20"
+					     (onFullscreenChanged)="onWidgetFullscreenChanged($event?.expanded, widget)"
+					     layout="column"
+					     class="tb-widget"
+					     [ngClass]="{'tb-highlighted': isHighlighted(widget),
+					                 'tb-not-highlighted': isNotHighlighted(widget),
+					                 'md-whiteframe-4dp': dropWidgetShadow(widget),
+					                 'tb-has-timewindow': hasTimewindow(widget)}"
+					     (mousedown)="widgetMouseDown($event, widget)"
+					     (click)="widgetClicked($event, widget)"
+					     (contextmenu)="openWidgetContextMenu($event, widget)"
+					     [ngStyle]="widgetStyle(widget)">
+						<div layout="row" layout-align="space-between start">
+							<div class="tb-widget-title" layout="column" layout-align="center start" [hidden]="!showWidgetTitlePanel(widget)">
+								@if (hasWidgetTitleTemplate(widget)) {
+								<div [innerHTML]="widgetTitleTemplate(widget)"></div>
 								}
-							</mat-menu>
-						
-					</li>
+								<span [hidden]="!showWidgetTitle(widget)" [ngStyle]="widgetTitleStyle(widget)" class="md-subhead title"
+								      [matTooltip]="widgetTitleTooltip(widget) || ''"
+								      [matTooltipDisabled]="!widgetTitleTooltip(widget)"
+								      matTooltipClass="tb-tooltip-multiline"
+								      [matTooltipPosition]="isWidgetExpanded ? 'below' : 'above'">
+									@if (showWidgetTitleIcon(widget)) {
+									<mat-icon class="material-icons" [ngStyle]="widgetTitleIconStyle(widget)">
+										{{widgetTitleIcon(widget)}}
+									</mat-icon>
+									}
+									{{widgetTitle(widget)}}
+								</span>
+								@if (hasTimewindow(widget)) {
+								<tb-timewindow [attr.aggregation]="hasAggregation(widget)"
+								               [ngModel]="widget.config.timewindow"
+								               (ngModelChange)="widget.config.timewindow = $event"></tb-timewindow>
+								}
+							</div>
+							<div class="tb-widget-actions" layout="row" layout-align="start center" [hidden]="!showWidgetActions(widget)"
+							     (mousedown)="$event.stopPropagation()"
+							     [ngClass]="{'tb-widget-actions-absolute': !(showWidgetTitlePanel(widget)&&(hasWidgetTitleTemplate(widget)||showWidgetTitle(widget)||hasAggregation(widget)))}">
+								@for (action of customWidgetHeaderActions(widget); track $index) {
+								<button mat-icon-button type="button" attr.aria-label="{{action?.displayName}}" [hidden]="isEdit()"
+								        (click)="action.onAction($event)"
+								        [matTooltip]="action?.displayName" [matTooltipPosition]="isWidgetExpanded ? 'below' : 'above'">
+									<mat-icon style="font-size: 20px; width: 20px; height: 20px;">{{action?.icon}}</mat-icon>
+								</button>
+								}
+								@for (action of widgetActions(widget); track $index) {
+								<button mat-icon-button type="button" attr.aria-label="{{ action?.name | translate }}" [hidden]="!(!isEdit() && action?.show)"
+								        (click)="action.onAction($event)"
+								        [matTooltip]="action?.name | translate" [matTooltipPosition]="isWidgetExpanded ? 'below' : 'above'">
+									<mat-icon style="font-size: 20px; width: 20px; height: 20px;">{{action?.icon}}</mat-icon>
+								</button>
+								}
+								<button mat-icon-button type="button" id="expand-button" [hidden]="!(!isEdit() && enableWidgetFullscreen(widget))"
+								        attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}"></button>
+								<button mat-icon-button type="button" [hidden]="!(isEditActionEnabled() && !isWidgetExpanded)" [disabled]="loading()"
+								        (click)="editWidget($event, widget)" attr.aria-label="{{ 'widget.edit' | translate }}"
+								        [matTooltip]="'widget.edit' | translate" matTooltipPosition="above">
+									<mat-icon style="font-size: 20px; width: 20px; height: 20px;">edit</mat-icon>
+								</button>
+								<button mat-icon-button type="button" [hidden]="!(isExportActionEnabled() && !isWidgetExpanded)" [disabled]="loading()"
+								        (click)="exportWidget($event, widget)" attr.aria-label="{{ 'widget.export' | translate }}"
+								        [matTooltip]="'widget.export' | translate" matTooltipPosition="above">
+									<mat-icon style="font-size: 20px; width: 20px; height: 20px;">file_download</mat-icon>
+								</button>
+								<button mat-icon-button type="button" [hidden]="!(isRemoveActionEnabled() && !isWidgetExpanded)" [disabled]="loading()"
+								        (click)="removeWidget($event, widget)" attr.aria-label="{{ 'widget.remove' | translate }}"
+								        [matTooltip]="'widget.remove' | translate" matTooltipPosition="above">
+									<mat-icon style="font-size: 20px; width: 20px; height: 20px;">close</mat-icon>
+								</button>
+							</div>
+						</div>
+						<div flex layout="column" class="tb-widget-content">
+							<ng-container *ngComponentOutlet="widgetComponent; inputs: {locals: widgetLocals(widget)}"></ng-container>
+						</div>
+					</div>
+					@if (canEditLayout()) {
+					<span class="gridster-item-resizable-handler handle-se" (mousedown)="startResize($event, widget)"
+					      style="position: absolute; right: 0; bottom: 0; width: 14px; height: 14px; cursor: se-resize; z-index: 2;"></span>
 					}
-				</ul>
-			</div>
+				</li>
+				}
+			</ul>
 		</div>
 	</div>
-	<mat-menu #menu1="matMenu">
-		@for (item of contextMenuItems(); track $index) {
-		
-			<button mat-menu-item [disabled]="!item?.enabled" (click)="item.action(contextMenuEvent)">
-				@if (item?.shortcut) {
-				  <span class="tb-alt-text"> {{ item?.shortcut | keyboardShortcut }}</span>
-				}
-				@if (item?.icon) {
-				  <mat-icon md-menu-align-target attr.aria-label="{{ item?.value | translate }}" class="material-icons">{{item?.icon}}</mat-icon>
-				}
-				<span translate>{{item?.value}}</span>
-			</button>
-		
-	</mat-menu>
-
+</div>
+<div style="position: fixed; width: 0; height: 0;" [style.left.px]="menuPosition.x" [style.top.px]="menuPosition.y"
+     #dashboardMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="dashboardMenu"></div>
+<div style="position: fixed; width: 0; height: 0;" [style.left.px]="menuPosition.x" [style.top.px]="menuPosition.y"
+     #widgetMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="widgetMenu"></div>
+<mat-menu #widgetMenu="matMenu">
+	@for (item of widgetContextMenuItems; track $index) {
+	<button mat-menu-item [disabled]="!item?.enabled" (click)="item.action(widgetContextMenuEvent, widgetContextMenuWidget)">
+		@if (item?.shortcut) {
+		<span class="tb-alt-text"> {{ item?.shortcut | keyboardShortcut }}</span>
+		}
+		@if (item?.icon) {
+		<mat-icon attr.aria-label="{{ item?.value | translate }}" class="material-icons">{{item?.icon}}</mat-icon>
+		}
+		<span>{{ item?.value | translate }}</span>
+	</button>
+	}
+</mat-menu>
+<mat-menu #dashboardMenu="matMenu">
+	@for (item of contextMenuItems; track $index) {
+	<button mat-menu-item [disabled]="!item?.enabled" (click)="item.action(contextMenuEvent)">
+		@if (item?.shortcut) {
+		<span class="tb-alt-text"> {{ item?.shortcut | keyboardShortcut }}</span>
+		}
+		@if (item?.icon) {
+		<mat-icon attr.aria-label="{{ item?.value | translate }}" class="material-icons">{{item?.icon}}</mat-icon>
+		}
+		<span>{{ item?.value | translate }}</span>
+	</button>
+	}
+</mat-menu>

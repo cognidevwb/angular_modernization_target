@@ -1,11 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { helpLinks } from '../../help/constants/help-links';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { TbHelpDirective } from '../../help/tb-help/tb-help.directive';
 import { TbRuleNodeDirective } from '../tb-rule-node/tb-rule-node.directive';
-import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -25,15 +24,14 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './add-rule-node.component.html',
 })
 export class AddRuleNodeComponent {
-  protected readonly rootScope = injectRoot(RootState);
-  protected readonly dialog = inject(MatDialog);
+  protected readonly rootScope = inject(RootState);
+  protected readonly dialogRef = inject(MatDialogRef);
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
   protected readonly helpLinksRef: any = helpLinks;
 
   helpLinks: any;
   ruleNode: any;
   ruleChainId: any;
-  theForm: any;
 
   constructor() {
     this.helpLinks = this.helpLinksRef;
@@ -44,11 +42,11 @@ export class AddRuleNodeComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    (this.dialog as any).cancel();
+    this.dialogRef.close();
   };
 
-  add = (...rest: any[]): any => {
-    this.theForm.$setPristine();
-    (this.dialog as any).hide(this.ruleNode);
+  add = (theForm?: NgForm): any => {
+    theForm?.form.markAsPristine();
+    this.dialogRef.close(this.ruleNode);
   };
 }

@@ -1,424 +1,425 @@
-import { Component, input, model } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnChanges, SimpleChanges, inject, input, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-// @ts-ignore
-import extensionTableTemplate from '../../../../app/extension/extension-table.tpl.html';
+import $ from 'jquery';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { types } from '../../common/constants/types';
+import { AttributeService } from '../../api/services/attribute.service';
+import { TelemetryWebsocketService } from '../../api/services/telemetry-websocket.service';
+import { ImportExportService } from '../../import-export/services/import-export.service';
+import { RootState } from '../../../root-state';
 
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let scope: any;
-
-// Helpers at the legacy file's top level, beside the registration (as written).
-function ExtensionTableController(this: any, $scope?: any, $filter?: any, $document?: any, $translate?: any, $timeout?: any, $mdDialog?: any, types?: any, attributeService?: any, telemetryWebsocketService?: any, importExport?: any) {
-
-    let vm: any = this;
-
-    vm.extensions = [];
-    vm.allExtensions = [];
-    vm.selectedExtensions = [];
-    vm.extensionsCount = 0;
-
-    vm.query = {
-        order: 'id',
-        limit: 5,
-        page: 1,
-        search: null
-    };
-
-    vm.enterFilterMode = enterFilterMode;
-    vm.exitFilterMode = exitFilterMode;
-    vm.onReorder = onReorder;
-    vm.onPaginate = onPaginate;
-    vm.addExtension = addExtension;
-    vm.editExtension = editExtension;
-    vm.deleteExtension = deleteExtension;
-    vm.deleteExtensions = deleteExtensions;
-    vm.reloadExtensions = reloadExtensions;
-    vm.updateExtensions = updateExtensions;
-
-    $scope.$watch("vm.entityId", function(newVal?: any) {
-        if (newVal) {
-            if ($scope.subscriber) {
-                telemetryWebsocketService.unsubscribe($scope.subscriber);
-                $scope.subscriber = null;
-            }
-
-            vm.subscribed = false;
-            vm.syncLastTime = $translate.instant('extension.sync.not-available');
-
-            subscribeForClientAttributes();
-
-            reloadExtensions();
-        }
-    });
-
-    $scope.$on('$destroy', function() {
-        if ($scope.subscriber) {
-            telemetryWebsocketService.unsubscribe($scope.subscriber);
-            $scope.subscriber = null;
-        }
-    });
-
-    $scope.$watch("vm.query.search", function(newVal?: any, prevVal?: any) {
-        if (!(window as any).angular.equals(newVal, prevVal) && vm.query.search != null) {
-            updateExtensions();
-        }
-    });
-
-    $scope.$watch('vm.selectedExtensions.length', function (newLength?: any) {
-        var selectionMode: any = newLength ? true : false;
-        if (vm.ctx) {
-            if (selectionMode) {
-                vm.ctx.hideTitlePanel = true;
-                $scope.$emit("selectedExtensions", true);
-            } else if (vm.query.search == null) {
-                vm.ctx.hideTitlePanel = false;
-                $scope.$emit("selectedExtensions", false);
-            }
-        }
-    });
-
-    $scope.$on("showSearch", function($event?: any, source?: any) {
-        if(source.entityId == vm.entityId) {
-            enterFilterMode();
-            $scope.$emit("filterMode", true);
-        }
-    });
-    $scope.$on("refreshExtensions", function($event?: any, source?: any) {
-        if(source.entityId == vm.entityId) {
-            reloadExtensions();
-        }
-    });
-    $scope.$on("addExtension", function($event?: any, source?: any) {
-        if(source.entityId == vm.entityId) {
-            addExtension();
-        }
-    });
-    $scope.$on("exportExtensions", function($event?: any, source?: any) {
-        if(source.entityId == vm.entityId) {
-            vm.exportExtensions(source.entityName);
-        }
-    });
-    $scope.$on("importExtensions", function($event?: any, source?: any) {
-        if(source.entityId == vm.entityId) {
-            vm.importExtensions();
-        }
-    });
-
-    function enterFilterMode(event?: any) {
-        let $button: any = (window as any).angular.element(event.currentTarget);
-        let $toolbarsContainer: any = $button.closest('.toolbarsContainer');
-
-        vm.query.search = '';
-        if(vm.inWidget) {
-            vm.ctx.hideTitlePanel = true;
-        }
-        $timeout(()=>{
-            $toolbarsContainer.find('.searchInput').focus();
-        })
-    }
-
-    function exitFilterMode() {
-        vm.query.search = null;
-        updateExtensions();
-        if(vm.inWidget) {
-            vm.ctx.hideTitlePanel = false;
-            $scope.$emit("filterMode", false);
-        }
-    }
-
-    function onReorder() {
-        updateExtensions();
-    }
-
-    function onPaginate() {
-        updateExtensions();
-    }
-
-    function addExtension($event?: any) {
-        if ($event) {
-            $event.stopPropagation();
-        }
-        openExtensionDialog($event);
-    }
-
-    function editExtension($event?: any, extension?: any) {
-        if ($event) {
-            $event.stopPropagation();
-        }
-        openExtensionDialog($event, extension);
-    }
-
-    function openExtensionDialog($event?: any, extension?: any) {
-        if ($event) {
-            $event.stopPropagation();
-        }
-        var isAdd: any = false;
-        if(!extension) {
-            isAdd = true;
-        }
-        $mdDialog.show({
-            controller: (window as any).ExtensionDialogController,
-            controllerAs: 'vm',
-            templateUrl: (window as any).extensionDialogTemplate,
-            parent: (window as any).angular.element($document[0].body),
-            locals: {
-                isAdd: isAdd,
-                allExtensions: vm.allExtensions,
-                entityId: vm.entityId,
-                entityType: vm.entityType,
-                extension: extension
-            },
-            bindToController: true,
-            targetEvent: $event,
-            fullscreen: true,
-            multiple: true
-        }).then(function() {
-            reloadExtensions();
-        }, function () {
-        });
-    }
-
-    function deleteExtension($event?: any, extension?: any) {
-        if ($event) {
-            $event.stopPropagation();
-        }
-        if(extension) {
-            var title: any = $translate.instant('extension.delete-extension-title', {extensionId: extension.id});
-            var content: any = $translate.instant('extension.delete-extension-text');
-
-            var confirm: any = $mdDialog.confirm()
-                .targetEvent($event)
-                .title(title)
-                .htmlContent(content)
-                .ariaLabel(title)
-                .cancel($translate.instant('action.no'))
-                .ok($translate.instant('action.yes'));
-            $mdDialog.show(confirm).then(function() {
-                var editedExtensions: any = vm.allExtensions.filter(function(ext?: any) {
-                    return ext.id !== extension.id;
-                });
-                var editedValue: any = (window as any).angular.toJson(editedExtensions);
-                attributeService.saveEntityAttributes(vm.entityType, vm.entityId, types.attributesScope.shared.value, [{key:"configuration", value:editedValue}]).then(
-                    function success() {
-                        reloadExtensions();
-                    }
-                );
-            });
-        }
-    }
-
-    function deleteExtensions($event?: any) {
-        if ($event) {
-            $event.stopPropagation();
-        }
-        if (vm.selectedExtensions && vm.selectedExtensions.length > 0) {
-            var title: any = $translate.instant('extension.delete-extensions-title', {count: vm.selectedExtensions.length}, 'messageformat');
-            var content: any = $translate.instant('extension.delete-extensions-text');
-
-            var confirm: any = $mdDialog.confirm()
-                .targetEvent($event)
-                .title(title)
-                .htmlContent(content)
-                .ariaLabel(title)
-                .cancel($translate.instant('action.no'))
-                .ok($translate.instant('action.yes'));
-            $mdDialog.show(confirm).then(function () {
-                var editedExtensions: any = (window as any).angular.copy(vm.allExtensions);
-                for (var i: any = 0; i < vm.selectedExtensions.length; i++) {
-                    editedExtensions = editedExtensions.filter(function (ext?: any) {
-                        return ext.id !== vm.selectedExtensions[i].id;
-                    });
-                }
-                var editedValue: any = (window as any).angular.toJson(editedExtensions);
-                attributeService.saveEntityAttributes(vm.entityType, vm.entityId, types.attributesScope.shared.value, [{key:"configuration", value:editedValue}]).then(
-                    function success() {
-                        reloadExtensions();
-                    }
-                );
-            });
-        }
-    }
-
-    function reloadExtensions() {
-        vm.subscribed = false;
-        vm.allExtensions.length = 0;
-        vm.extensions.length = 0;
-        vm.extensionsPromise = attributeService.getEntityAttributesValues(vm.entityType, vm.entityId, types.attributesScope.shared.value, ["configuration"]);
-        vm.extensionsPromise.then(
-            function success(data?: any) {
-                if (data.length) {
-                    vm.allExtensions = (window as any).angular.fromJson(data[0].value);
-                } else {
-                    vm.allExtensions = [];
-                }
-
-                vm.selectedExtensions = [];
-                updateExtensions();
-                vm.extensionsPromise = null;
-            },
-            function fail() {
-                vm.extensions = [];
-                vm.selectedExtensions = [];
-                updateExtensions();
-                vm.extensionsPromise = null;
-            }
-        );
-    }
-
-    function updateExtensions() {
-        vm.selectedExtensions = [];
-        var result: any = $filter('orderBy')(vm.allExtensions, vm.query.order);
-        if (vm.query.search != null) {
-            result = $filter('filter')(result, function(extension?: any) {
-                if(!vm.query.search || (extension.id.indexOf(vm.query.search) != -1) || (extension.type.indexOf(vm.query.search) != -1)) {
-                    return true;
-                }
-                return false;
-            });
-        }
-        vm.extensionsCount = result.length;
-        var startIndex: any = vm.query.limit * (vm.query.page - 1);
-        vm.extensions = result.slice(startIndex, startIndex + vm.query.limit);
-
-        vm.extensionsJSON = (window as any).angular.toJson(vm.extensions);
-        checkForSync();
-    }
-
-    function subscribeForClientAttributes() {
-        if (!vm.subscribed) {
-            if (vm.entityId && vm.entityType) {
-                $scope.subscriber = {
-                    subscriptionCommands: [{
-                        entityType: vm.entityType,
-                        entityId: vm.entityId,
-                        scope: 'CLIENT_SCOPE'
-                    }],
-                    type: 'attribute',
-                    onData: function (data?: any) {
-                        if (data.data) {
-                            onSubscriptionData(data.data);
-                        }
-                        vm.subscribed = true;
-                    }
-                };
-                telemetryWebsocketService.subscribe($scope.subscriber);
-            }
-        }
-    }
-    function onSubscriptionData(data?: any) {
-
-        if ($.isEmptyObject(data)) {
-            vm.appliedConfiguration = undefined;
-        } else {
-            if (data.appliedConfiguration && data.appliedConfiguration[0] && data.appliedConfiguration[0][1]) {
-                vm.appliedConfiguration = data.appliedConfiguration[0][1];
-            }
-        }
-
-        updateExtensions();
-        $scope.$digest();
-    }
-
-
-    function checkForSync() {
-        if (vm.appliedConfiguration && vm.extensionsJSON && vm.appliedConfiguration === vm.extensionsJSON) {
-            vm.syncStatus = $translate.instant('extension.sync.sync');
-            vm.syncLastTime = formatDate();
-            $scope.isSync = true;
-        } else {
-            vm.syncStatus = $translate.instant('extension.sync.not-sync');
-
-            $scope.isSync = false;
-        }
-    }
-
-    function formatDate(date?: any) {
-        let d: any;
-        if (date) {
-            d = date;
-        } else {
-            d = new Date();
-        }
-
-        d = d.getFullYear() +'/'+ addZero(d.getMonth()+1) +'/'+ addZero(d.getDate()) + ' ' + addZero(d.getHours()) + ':' + addZero(d.getMinutes()) +':'+ addZero(d.getSeconds());
-        return d;
-
-        function addZero(num?: any) {
-        function addZero(num?: any) {
-            if (((window as any).angular.isNumber(num) && num < 10) || ((window as any).angular.isString(num) && num.length === 1)) {
-                num = '0' + num;
-            }
-            return num;
-        }
-            return num;
-        }
-        return undefined;
-    }
-
-    vm.importExtensions = function($event?: any) {
-        importExport.importExtension($event, {"entityType":vm.entityType, "entityId":vm.entityId, "successFunc":reloadExtensions});
-    };
-    vm.exportExtensions = function(widgetSourceEntityName?: any) {
-        if(vm.inWidget) {
-            importExport.exportToPc(vm.extensionsJSON,  widgetSourceEntityName + '_configuration.json');
-        } else {
-            importExport.exportToPc(vm.extensionsJSON,  vm.entityName + '_configuration.json');
-        }
-    };
-
-    /*change function for widget implementing, like vm.exportExtensions*/
-    vm.exportExtension = function($event?: any, extension?: any) {
-        if ($event) {
-            $event.stopPropagation();
-        }
-        importExport.exportToPc(extension,  vm.entityName +'_'+ extension.id +'_configuration.json');
-    };
+/** The `$mdDialog.confirm()` the legacy table showed before a delete: title, html content, no / yes. */
+@Component({
+  selector: 'tb-extension-confirm-dialog',
+  standalone: true,
+  imports: [MatDialogModule, MatButtonModule],
+  template: `
+    <h2 mat-dialog-title>{{ data.title }}</h2>
+    <mat-dialog-content><div [innerHTML]="data.content"></div></mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button [mat-dialog-close]="false">{{ data.cancel }}</button>
+      <button mat-button color="primary" [mat-dialog-close]="true">{{ data.ok }}</button>
+    </mat-dialog-actions>
+  `,
+})
+export class TbExtensionConfirmDialogComponent {
+  protected readonly data: { title: string; content: string; ok: string; cancel: string } = inject(MAT_DIALOG_DATA);
 }
 
 /**
- * Ported from the AngularJS directive `tbExtensionTable` (module `thingsboard.extension`) in src/app/extension/index.js:24.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Ported from the AngularJS directive `tbExtensionTable` (module `thingsboard.extension`) in src/app/extension/extension-table.directive.js.
+ * The md-data-table becomes a plain table with a row-select column, id/type ordering and a MatPaginator;
+ * the scope events (`showSearch`, `refreshExtensions`, `addExtension`, `exportExtensions`, `importExtensions`
+ * in; `selectedExtensions`, `filterMode` out) go over RootState.
  */
 @Component({
   selector: 'tb-extension-table',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, CommonModule, FormsModule],
+  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, MatCheckboxModule, MatPaginatorModule, MatDialogModule, CommonModule, FormsModule],
   templateUrl: './tb-extension-table.directive.html',
 })
-export class TbExtensionTableDirective {
+export class TbExtensionTableDirective implements OnChanges {
   readonly entityId = model<any>();
   readonly entityType = input<any>();
   readonly inWidget = input<any>();
   readonly ctx = model<any>();
   readonly entityName = model<any>();
 
-  // TODO(port): elements not resolved to a component: md-table-container, md-table-pagination
-  // TODO(port): template: 1 × md-table-container left in place
-  // TODO(port): template: 1 × md-table-pagination left in place
+  private readonly translate = inject(TranslateService);
+  private readonly dialog = inject(MatDialog);
+  private readonly attributeService = inject(AttributeService);
+  private readonly telemetryWebsocketService = inject(TelemetryWebsocketService);
+  private readonly importExport = inject(ImportExportService);
+  private readonly rootScope = inject(RootState);
+  private readonly element = inject(ElementRef);
 
-  restrict: any = "E";
-  scope: any = true;
-  bindToController: any = {
-            entityId: '=',
-            entityType: '@',
-            inWidget: '@?',
-            ctx: '=?',
-            entityName: '='
-        };
-  controller: any = ExtensionTableController;
-  controllerAs: any;
-  templateUrl: any = extensionTableTemplate;
+  protected extensions: any[] = [];
+  protected allExtensions: any[] = [];
+  protected selectedExtensions: any[] = [];
+  protected extensionsCount = 0;
+  protected query: { order: string; limit: number; page: number; search: string | null } = {
+    order: 'id',
+    limit: 5,
+    page: 1,
+    search: null
+  };
+  protected readonly limitOptions = [5, 10, 15];
+  protected syncStatus: any;
+  protected syncLastTime: any;
+  protected isSync = false;
+  protected extensionsPromise: any = null;
+
+  private subscribed = false;
+  private subscriber: any = null;
+  private appliedConfiguration: any;
+  private extensionsJSON: any;
 
   constructor() {
-    let vm = this;
-    this.controllerAs = 'vm';
+    const offs = [
+      this.rootScope.$on('showSearch', (_e: any, source: any) => {
+        if (source.entityId == this.entityId()) {
+          this.enterFilterMode();
+          this.rootScope.$emit('filterMode', true);
+        }
+      }),
+      this.rootScope.$on('refreshExtensions', (_e: any, source: any) => {
+        if (source.entityId == this.entityId()) {
+          this.reloadExtensions();
+        }
+      }),
+      this.rootScope.$on('addExtension', (_e: any, source: any) => {
+        if (source.entityId == this.entityId()) {
+          this.addExtension();
+        }
+      }),
+      this.rootScope.$on('exportExtensions', (_e: any, source: any) => {
+        if (source.entityId == this.entityId()) {
+          this.exportExtensions(source.entityName);
+        }
+      }),
+      this.rootScope.$on('importExtensions', (_e: any, source: any) => {
+        if (source.entityId == this.entityId()) {
+          this.importExtensions();
+        }
+      }),
+    ];
+    inject(DestroyRef).onDestroy(() => {
+      offs.forEach((off) => off());
+      this.unsubscribe();
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['entityId'] && this.entityId()) {
+      this.unsubscribe();
+      this.subscribed = false;
+      this.syncLastTime = this.translate.instant('extension.sync.not-available');
+      this.subscribeForClientAttributes();
+      this.reloadExtensions();
+    }
+  }
+
+  protected enterFilterMode(event?: any): void {
+    const $toolbarsContainer: any = event
+      ? $(event.currentTarget).closest('.toolbarsContainer')
+      : $(this.element.nativeElement).find('.toolbarsContainer');
+
+    this.query.search = '';
+    if (this.inWidget()) {
+      this.ctx().hideTitlePanel = true;
+    }
+    setTimeout(() => {
+      $toolbarsContainer.find('.searchInput').focus();
+    });
+  }
+
+  protected exitFilterMode(): void {
+    this.query.search = null;
+    this.updateExtensions();
+    if (this.inWidget()) {
+      this.ctx().hideTitlePanel = false;
+      this.rootScope.$emit('filterMode', false);
+    }
+  }
+
+  /** The legacy `$watch('vm.query.search')`: a changed search re-filters. */
+  protected onSearchChange(value: string | null): void {
+    if (value !== this.query.search) {
+      this.query.search = value;
+      if (this.query.search != null) {
+        this.updateExtensions();
+      }
+    }
+  }
+
+  /** md-order-by: a click on the ordered column flips it, a click on another orders by it ascending. */
+  protected reorder(field: string): void {
+    this.query.order = this.query.order === field ? '-' + field : field;
+    this.onReorder();
+  }
+
+  protected onReorder(): void {
+    this.updateExtensions();
+  }
+
+  protected onPaginate(event: PageEvent): void {
+    this.query.page = event.pageIndex + 1;
+    this.query.limit = event.pageSize;
+    this.updateExtensions();
+  }
+
+  protected isSelected(extension: any): boolean {
+    return this.selectedExtensions.indexOf(extension) > -1;
+  }
+
+  protected toggleSelection(extension: any): void {
+    const index = this.selectedExtensions.indexOf(extension);
+    if (index > -1) {
+      this.setSelection(this.selectedExtensions.filter((ext) => ext !== extension));
+    } else {
+      this.setSelection([...this.selectedExtensions, extension]);
+    }
+  }
+
+  protected allSelected(): boolean {
+    return this.extensions.length > 0 && this.selectedExtensions.length === this.extensions.length;
+  }
+
+  protected toggleAll(): void {
+    this.setSelection(this.allSelected() ? [] : [...this.extensions]);
+  }
+
+  protected addExtension($event?: any): void {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.openExtensionDialog($event);
+  }
+
+  protected editExtension($event?: any, extension?: any): void {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.openExtensionDialog($event, extension);
+  }
+
+  // TODO(port): the legacy ExtensionDialogController (src/app/extension/extension-dialog.controller.js) has no ported
+  // dialog component yet; once it has, open it here with MatDialog.open(ExtensionDialog, {data: {isAdd, allExtensions,
+  // entityId, entityType, extension}}) and reloadExtensions() when it closes with a result.
+  private openExtensionDialog($event?: any, extension?: any): void {
+    if ($event) {
+      $event.stopPropagation();
+    }
+  }
+
+  protected deleteExtension($event?: any, extension?: any): void {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    if (extension) {
+      const title = this.translate.instant('extension.delete-extension-title', {extensionId: extension.id});
+      const content = this.translate.instant('extension.delete-extension-text');
+      this.confirm(title, content).then((ok) => {
+        if (ok) {
+          const editedExtensions = this.allExtensions.filter((ext: any) => ext.id !== extension.id);
+          this.saveExtensions(editedExtensions);
+        }
+      });
+    }
+  }
+
+  protected deleteExtensions($event?: any): void {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    if (this.selectedExtensions && this.selectedExtensions.length > 0) {
+      const title = this.translate.instant('extension.delete-extensions-title', {count: this.selectedExtensions.length});
+      const content = this.translate.instant('extension.delete-extensions-text');
+      this.confirm(title, content).then((ok) => {
+        if (ok) {
+          const selectedIds = this.selectedExtensions.map((ext: any) => ext.id);
+          const editedExtensions = this.allExtensions.filter((ext: any) => selectedIds.indexOf(ext.id) === -1);
+          this.saveExtensions(editedExtensions);
+        }
+      });
+    }
+  }
+
+  protected reloadExtensions(): void {
+    this.subscribed = false;
+    this.allExtensions.length = 0;
+    this.extensions.length = 0;
+    this.extensionsPromise = this.attributeService.getEntityAttributesValues(this.entityType(), this.entityId(), types.attributesScope.shared.value, ["configuration"]);
+    this.extensionsPromise.then(
+      (data?: any) => {
+        if (data.length) {
+          this.allExtensions = JSON.parse(data[0].value);
+        } else {
+          this.allExtensions = [];
+        }
+        this.setSelection([]);
+        this.updateExtensions();
+        this.extensionsPromise = null;
+      },
+      () => {
+        this.extensions = [];
+        this.setSelection([]);
+        this.updateExtensions();
+        this.extensionsPromise = null;
+      }
+    );
+  }
+
+  protected updateExtensions(): void {
+    this.setSelection([]);
+    let result: any[] = this.orderBy(this.allExtensions, this.query.order);
+    if (this.query.search != null) {
+      const search = this.query.search;
+      result = result.filter((extension: any) =>
+        !search || (extension.id.indexOf(search) != -1) || (extension.type.indexOf(search) != -1));
+    }
+    this.extensionsCount = result.length;
+    const startIndex = this.query.limit * (this.query.page - 1);
+    this.extensions = result.slice(startIndex, startIndex + this.query.limit);
+
+    this.extensionsJSON = JSON.stringify(this.extensions);
+    this.checkForSync();
+  }
+
+  protected importExtensions($event?: any): void {
+    this.importExport.importExtension($event, {"entityType": this.entityType(), "entityId": this.entityId(), "successFunc": () => this.reloadExtensions()});
+  }
+
+  protected exportExtensions(widgetSourceEntityName?: any): void {
+    if (this.inWidget()) {
+      this.importExport.exportToPc(this.extensionsJSON, widgetSourceEntityName + '_configuration.json');
+    } else {
+      this.importExport.exportToPc(this.extensionsJSON, this.entityName() + '_configuration.json');
+    }
+  }
+
+  /* change function for widget implementing, like exportExtensions */
+  protected exportExtension($event?: any, extension?: any): void {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.importExport.exportToPc(extension, this.entityName() + '_' + extension.id + '_configuration.json');
+  }
+
+  /** The legacy `$watch('vm.selectedExtensions.length')`: selection mode hides the widget title and tells the widget. */
+  private setSelection(selection: any[]): void {
+    const hadSelection = this.selectedExtensions.length > 0;
+    this.selectedExtensions = selection;
+    const selectionMode = selection.length > 0;
+    if (selectionMode === hadSelection) {
+      return;
+    }
+    const ctx = this.ctx();
+    if (ctx) {
+      if (selectionMode) {
+        ctx.hideTitlePanel = true;
+        this.rootScope.$emit('selectedExtensions', true);
+      } else if (this.query.search == null) {
+        ctx.hideTitlePanel = false;
+        this.rootScope.$emit('selectedExtensions', false);
+      }
+    }
+  }
+
+  private saveExtensions(editedExtensions: any[]): void {
+    const editedValue = JSON.stringify(editedExtensions);
+    this.attributeService.saveEntityAttributes(this.entityType(), this.entityId(), types.attributesScope.shared.value, [{key: "configuration", value: editedValue}]).then(
+      () => {
+        this.reloadExtensions();
+      }
+    );
+  }
+
+  private confirm(title: string, content: string): Promise<boolean> {
+    const ref = this.dialog.open(TbExtensionConfirmDialogComponent, {
+      data: {title, content, cancel: this.translate.instant('action.no'), ok: this.translate.instant('action.yes')},
+      ariaLabel: title,
+    });
+    return new Promise((resolve) => ref.afterClosed().subscribe((result) => resolve(!!result)));
+  }
+
+  /** `$filter('orderBy')(list, 'field' | '-field')`. */
+  private orderBy(list: any[], order: string): any[] {
+    const desc = order.startsWith('-');
+    const field = desc ? order.substring(1) : order;
+    return [...list].sort((a: any, b: any) => {
+      const x = a?.[field];
+      const y = b?.[field];
+      const cmp = x < y ? -1 : x > y ? 1 : 0;
+      return desc ? -cmp : cmp;
+    });
+  }
+
+  private unsubscribe(): void {
+    if (this.subscriber) {
+      this.telemetryWebsocketService.unsubscribe(this.subscriber);
+      this.subscriber = null;
+    }
+  }
+
+  private subscribeForClientAttributes(): void {
+    if (!this.subscribed) {
+      if (this.entityId() && this.entityType()) {
+        this.subscriber = {
+          subscriptionCommands: [{
+            entityType: this.entityType(),
+            entityId: this.entityId(),
+            scope: 'CLIENT_SCOPE'
+          }],
+          type: 'attribute',
+          onData: (data?: any) => {
+            if (data.data) {
+              this.onSubscriptionData(data.data);
+            }
+            this.subscribed = true;
+          }
+        };
+        this.telemetryWebsocketService.subscribe(this.subscriber);
+      }
+    }
+  }
+
+  private onSubscriptionData(data?: any): void {
+    if ($.isEmptyObject(data)) {
+      this.appliedConfiguration = undefined;
+    } else {
+      if (data.appliedConfiguration && data.appliedConfiguration[0] && data.appliedConfiguration[0][1]) {
+        this.appliedConfiguration = data.appliedConfiguration[0][1];
+      }
+    }
+    this.updateExtensions();
+  }
+
+  private checkForSync(): void {
+    if (this.appliedConfiguration && this.extensionsJSON && this.appliedConfiguration === this.extensionsJSON) {
+      this.syncStatus = this.translate.instant('extension.sync.sync');
+      this.syncLastTime = this.formatDate();
+      this.isSync = true;
+    } else {
+      this.syncStatus = this.translate.instant('extension.sync.not-sync');
+      this.isSync = false;
+    }
+  }
+
+  private formatDate(date?: Date): string {
+    const d = date ? date : new Date();
+    const addZero = (num: number): string => (num < 10 ? '0' + num : '' + num);
+    return d.getFullYear() + '/' + addZero(d.getMonth() + 1) + '/' + addZero(d.getDate()) + ' ' + addZero(d.getHours()) + ':' + addZero(d.getMinutes()) + ':' + addZero(d.getSeconds());
   }
 }

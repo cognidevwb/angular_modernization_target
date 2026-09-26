@@ -1,4 +1,3 @@
-<!-- Scaffolded by the playbook from src/app/event/event-table.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -19,33 +18,33 @@
 <div flex class="md-content md-padding tb-absolute-fill" layout="column">
     <section layout="row">
         <mat-form-field class="md-block" style="width: 200px;">
-            <mat-label translate>event.event-type</mat-label>
-            <mat-select [(ngModel)]="eventType" [disabled]="rootScope?.loading">
-                @for (type of eventTypes; track $index) {
-                  <mat-option [value]="type?.value">
-                    {{type?.name | translate}}
+            <mat-label>{{ 'event.event-type' | translate }}</mat-label>
+            <mat-select [ngModel]="eventType" (ngModelChange)="onEventTypeChange($event)" [disabled]="rootScope.loading">
+                @for (type of eventTypeList(); track type.value) {
+                <mat-option [value]="type.value">
+                    {{type.name | translate}}
                 </mat-option>
                 }
             </mat-select>
         </mat-form-field>
-        <tb-timewindow flex [(ngModel)]="timewindow" history-only [asButton]="true"></tb-timewindow>
-        <button mat-icon-button [disabled]="rootScope?.loading" (click)="reload()" attr.matTooltip="{{ 'action.refresh' | translate }}" matTooltipPosition="above">
+        <tb-timewindow flex [ngModel]="timewindow" (ngModelChange)="onTimewindowChange($event)" history-only [asButton]="true"></tb-timewindow>
+        <button mat-icon-button type="button" [disabled]="rootScope.loading" (click)="reload()"
+                matTooltip="{{ 'action.refresh' | translate }}" matTooltipPosition="above">
             <mat-icon>refresh</mat-icon>
-            
         </button>
     </section>
-    <mat-list flex layout="column" class="md-whiteframe-z1 tb-event-table">
-           <mat-list class="tb-row tb-header" layout="row" layout-align="start center" tb-event-header attr.event-type="{{eventType}}">
-           </mat-list>
-        <mat-progress-bar style="max-height: 0px;" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
+    <div flex layout="column" class="md-whiteframe-z1 tb-event-table">
+        <div class="tb-row tb-header" layout="row" layout-align="start center" tb-event-header attr.event-type="{{eventType}}">
+        </div>
+        <mat-progress-bar style="max-height: 0px;" mode="indeterminate" [hidden]="!rootScope.loading"></mat-progress-bar>
         <mat-divider></mat-divider>
-        <span translate layout-align="center center" style="margin-top: 25px;" class="tb-prompt" [hidden]="!(noData())">event.no-events-prompt</span>
-        <cdk-virtual-scroll-viewport [hidden]="!(hasData())" flex tb-scope-element="repeatContainer">
-           <mat-list-item *cdkVirtualFor="let event of theEvents" flex [ngStyle]="hasScroll() ? {'margin-right':'-15px'} : {}">
-               <mat-list class="tb-row" flex layout="row" layout-align="start center" tb-event-row attr.event-type="{{eventType}}" attr.event="{{event}}">
-               </mat-list>
-               <mat-divider flex></mat-divider>
-           </mat-list-item>
-       </cdk-virtual-scroll-viewport>
-    </mat-list>
+        <span layout-align="center center" style="margin-top: 25px;" class="tb-prompt" [hidden]="!noData()">{{ 'event.no-events-prompt' | translate }}</span>
+        <cdk-virtual-scroll-viewport [hidden]="!hasData()" flex [itemSize]="rowHeight" (scrolledIndexChange)="onScrolledIndexChange($event)">
+            <div *cdkVirtualFor="let event of events.data; trackBy: trackByIndex" flex [ngStyle]="hasScroll() ? {'margin-right':'-15px'} : {}">
+                <div class="tb-row" flex layout="row" layout-align="start center" tb-event-row [eventType]="eventType" [event]="event">
+                </div>
+                <mat-divider></mat-divider>
+            </div>
+        </cdk-virtual-scroll-viewport>
+    </div>
 </div>

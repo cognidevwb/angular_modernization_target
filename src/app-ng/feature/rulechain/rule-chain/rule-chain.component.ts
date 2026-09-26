@@ -1,13 +1,15 @@
-import { Component, forwardRef, inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { ItembufferService } from '../../services/itembuffer.service';
+import { Component, DoCheck, ElementRef, HostListener, OnDestroy, forwardRef, inject, viewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { NgForm, FormsModule } from '@angular/forms';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
+import $ from 'jquery';
+import 'tooltipster';
+import { ItembufferService } from '../../services/itembuffer.service';
 import { RuleChainService } from '../../api/services/rule-chain.service';
-import { TranslateService } from '@ngx-translate/core';
 import { helpLinks } from '../../help/constants/help-links';
 import { types } from '../../common/constants/types';
-import { FormsModule } from '@angular/forms';
 import { TbExpandFullscreenDirective } from '../../components/tb-expand-fullscreen/tb-expand-fullscreen.directive';
 import { TbConfirmOnExitDirective } from '../../components/tb-confirm-on-exit/tb-confirm-on-exit.directive';
 import { TbDetailsSidenavDirective } from '../../components/tb-details-sidenav/tb-details-sidenav.directive';
@@ -15,88 +17,98 @@ import { TbHelpDirective } from '../../help/tb-help/tb-help.directive';
 import { TbRuleNodeDirective } from '../tb-rule-node/tb-rule-node.directive';
 import { TbEventTableDirective } from '../../event/tb-event-table/tb-event-table.directive';
 import { TbRuleNodeLinkDirective } from '../tb-rule-node-link/tb-rule-node-link.directive';
-
-import $ from 'jquery';
-// @ts-ignore
-import addRuleNodeTemplate from '../../../../app/rulechain/add-rulenode.tpl.html';
-// @ts-ignore
-import addRuleNodeLinkTemplate from '../../../../app/rulechain/add-link.tpl.html';
-import { inject as injectRoot } from '@angular/core';
+import { RuleChainCanvasComponent } from '../rule-chain-canvas/rule-chain-canvas.component';
+import { FlowchartModelService, flowchartConstants } from '../rule-chain-canvas/flowchart-model';
+import { AddRuleNodeComponent } from '../add-rule-node/add-rule-node.component';
+import { AddRuleNodeLinkComponent } from '../add-rule-node-link/add-rule-node-link.component';
 import { RootState } from '../../../root-state';
+import { goState } from '../../../state-paths';
 import { KeyboardShortcutPipe } from '../../components/pipes/keyboard-shortcut.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let angular: any;
-declare let componentType: any;
-declare let $compile: any;
-declare let $filter: any;
-declare let $mdExpansionPanel: any;
-declare let $mdUtil: any;
-declare let $q: any;
-declare let $scope: any;
-declare let $window: any;
-declare let Modelfactory: any;
-declare let flowchartConstants: any;
-declare let hotkeys: any;
-declare let ruleChain: any;
-declare let ruleChainMetaData: any;
-declare let ruleNodeComponents: any;
+
+/** AngularJS's `filter` filter with `{prop: text}`: a case-insensitive substring match; an empty text matches all. */
+function filterByProperty(list: any[], prop: string, text: any): any[] {
+  if (text === undefined || text === null || text === '') {
+    return list.slice();
+  }
+  const needle = String(text).toLowerCase();
+  return list.filter((item) => {
+    const value = item?.[prop];
+    return value !== undefined && value !== null && String(value).toLowerCase().indexOf(needle) !== -1;
+  });
+}
+
+/** `angular.copy`: a deep copy of plain objects and arrays; functions and other instances are kept by reference. */
+function deepCopy<T>(source: T): T {
+  if (Array.isArray(source)) {
+    return source.map((item) => deepCopy(item)) as unknown as T;
+  }
+  if (source && typeof source === 'object' && Object.getPrototypeOf(source) === Object.prototype) {
+    const result: any = {};
+    for (const key of Object.keys(source)) {
+      result[key] = deepCopy((source as any)[key]);
+    }
+    return result;
+  }
+  return source;
+}
+
+/** The fields of the canvas model the unsaved-changes check compares (the legacy deep `$watch`), without the component descriptors. */
+function modelSnapshot(model: any): string {
+  return JSON.stringify(model, (key, value) => {
+    if (key === 'component') {
+      return value?.clazz ?? value?.type;
+    }
+    if (key === 'highlighted') {
+      return undefined;
+    }
+    return value;
+  });
+}
 
 /**
- * Ported from the AngularJS controller `RuleChainController` (module `thingsboard.ruleChain`) in src/app/rulechain/index.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 7 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS controller `RuleChainController` (module `thingsboard.ruleChain`) in src/app/rulechain/rulechain.controller.js.
+ * The ngFlowchart canvas is `tb-rule-chain-canvas` (same model: nodes with x/y and connectors, edges between connector ids).
  */
 @Component({
   selector: 'rule-chain',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatTabsModule, MatMenuModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, KeyboardShortcutPipe, FormsModule, forwardRef(() => TbExpandFullscreenDirective), forwardRef(() => TbConfirmOnExitDirective), forwardRef(() => TbDetailsSidenavDirective), forwardRef(() => TbHelpDirective), forwardRef(() => TbRuleNodeDirective), forwardRef(() => TbEventTableDirective), forwardRef(() => TbRuleNodeLinkDirective)],
+  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatTabsModule, MatMenuModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, MatExpansionModule, KeyboardShortcutPipe, FormsModule, RuleChainCanvasComponent, forwardRef(() => TbExpandFullscreenDirective), forwardRef(() => TbConfirmOnExitDirective), forwardRef(() => TbDetailsSidenavDirective), forwardRef(() => TbHelpDirective), forwardRef(() => TbRuleNodeDirective), forwardRef(() => TbEventTableDirective), forwardRef(() => TbRuleNodeLinkDirective)],
   templateUrl: './rule-chain.component.html',
+  styles: [`
+    .tb-rulechain-library { display: flex; flex-direction: column; }
+    .tb-rulechain-library .tb-rulechain-library-panel-group { display: block; flex: 1; }
+    :host ::ng-deep .tb-rulechain-library .mat-expansion-panel-body { padding: 0; }
+    .tb-rulechain-graph-container { position: relative; flex: 1; }
+    .tb-context-menu-anchor { position: fixed; width: 0; height: 0; }
+  `],
 })
-export class RuleChainComponent {
-  protected readonly rootScope = injectRoot(RootState);
+export class RuleChainComponent implements DoCheck, OnDestroy {
+  protected readonly rootScope = inject(RootState);
   protected readonly router = inject(Router);
-  // TODO(port): '$scope' — component state: fields and signals on this class
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$q' — use Promise, or an Observable
-  // TODO(port): '$mdUtil' — AngularJS Material's internals: debounce/throttle → rxjs; nextTick → queueMicrotask
-  // TODO(port): '$mdExpansionPanel' — a mat-expansion-panel, reached with viewChild
-  // TODO(port): '$window' — use window directly, or inject(DOCUMENT).defaultView
-  protected readonly document = inject(DOCUMENT);
+  protected readonly route = inject(ActivatedRoute);
   protected readonly dialog = inject(MatDialog);
-  // TODO(port): '$filter' — inject the pipe class and call transform()
   protected readonly translate = inject(TranslateService);
-  // TODO(port): 'hotkeys' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
-  protected readonly typesRef: any = types;
   protected readonly ruleChainService = inject(RuleChainService);
   protected readonly itembuffer = inject(ItembufferService);
-  // TODO(port): 'Modelfactory' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
-  // TODO(port): 'flowchartConstants' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
-  // TODO(port): 'ruleChain' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
-  // TODO(port): 'ruleChainMetaData' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
-  // TODO(port): 'ruleNodeComponents' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
-  // TODO(port): elements not resolved to a component: md-sidenav, md-expansion-panel-group, md-expansion-panel, md-expansion-panel-collapsed, md-expansion-panel-icon, md-expansion-panel-expanded, md-expansion-panel-header, md-expansion-panel-content, fc-canvas, details-buttons
-  // TODO(port): template: 1 × md-expansion-panel left in place
-  // TODO(port): template: 1 × md-expansion-panel-collapsed left in place
-  // TODO(port): template: 1 × md-expansion-panel-content left in place
-  // TODO(port): template: 1 × md-expansion-panel-expanded left in place
-  // TODO(port): template: 1 × md-expansion-panel-group left in place
-  // TODO(port): template: 1 × md-expansion-panel-header left in place
-  // TODO(port): template: 2 × md-expansion-panel-icon left in place
-  // TODO(port): template: 1 × md-sidenav left in place
+  protected readonly typesRef: any = types;
 
-  $mdExpansionPanel: any = $mdExpansionPanel;
+  private readonly contextMenuTrigger = viewChild<MatMenuTrigger>('contextMenuTrigger');
+  private readonly contextMenuAnchor = viewChild<ElementRef<HTMLElement>>('contextMenuAnchor');
+  private readonly ruleNodeFormRef = viewChild<NgForm>('ruleNodeNgForm');
+  private readonly ruleNodeLinkFormRef = viewChild<NgForm>('ruleNodeLinkNgForm');
+
   types: any;
   isImport: any;
-  isConfirmOnExit: any = false;
   errorTooltips: any = {};
   isFullscreen: any = false;
   editingRuleNode: any = null;
@@ -106,8 +118,9 @@ export class RuleChainComponent {
   isLibraryOpen: any = true;
   enableHotKeys: any = true;
   ruleNodeSearch: any = '';
-  ruleChain: any = ruleChain;
-  ruleChainMetaData: any = ruleChainMetaData;
+  ruleChain: any = null;
+  ruleChainMetaData: any = null;
+  ruleNodeComponents: any[] = [];
   canvasControl: any = {};
   ruleChainModel: any = {
         nodes: [],
@@ -115,9 +128,11 @@ export class RuleChainComponent {
     };
   ruleNodeTypesModel: any = {};
   ruleNodeTypesCanvasControl: any = {};
+  libraryPanelExpanded: Record<string, boolean> = {};
   ruleChainLibraryLoaded: any = false;
   selectedObjects: any = [];
-  modelservice: any;
+  selectedRuleNodeTabIndex = 0;
+  modelservice: FlowchartModelService;
   nodeLibCallbacks: any;
   editCallbacks: any;
   contextInfo: any;
@@ -131,38 +146,29 @@ export class RuleChainComponent {
   isInvalid: any;
   nextConnectorID: any;
   nextNodeID: any;
-  ruleChainWatch: any;
-  ruleNodeForm: any;
-  ruleNodeLinkForm: any;
-  searchConfig: any;
   tooltipTimeout: any;
 
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): $scope.$broadcast — a scope event: call the service that listens
-  // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
-  // TODO(port): $state.current — $state.current: this.router.url, or the ActivatedRoute snapshot
-  // TODO(port): $state.go — $state.go: this.router.navigate([...])
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
+  /** The deep watch on the canvas model: its last seen state, or null while not watching. */
+  private watchedModel: string | null = null;
+  private lastEditing = false;
+  private readonly searchSub: () => void;
+
+  get isConfirmOnExit(): boolean {
+    return !!(this.isDirty || this.isImport);
+  }
+
+  get ruleNodeForm(): NgForm | undefined {
+    return this.ruleNodeFormRef();
+  }
+
+  get ruleNodeLinkForm(): NgForm | undefined {
+    return this.ruleNodeLinkFormRef();
+  }
 
   constructor() {
-    let vm = this;
     this.types = this.typesRef;
-    if ((this.router as any).current.data.import && !ruleChain) {
-        (this.router as any).go('home.ruleChains');
-        return;
-    }
-    this.isImport = (this.router as any).current.data.import;
-    $scope.$watch(() => {
-        return this.isDirty || this.isImport;
-    }, (val?: any) => {
-        this.isConfirmOnExit = val;
-    });
-    Object.defineProperty(this, 'isLibraryOpenReadonly', {
-        get: (...rest: any[]) => { return this.isLibraryOpen },
-        set: function(...rest: any[]) {}
-    });
-    for (var type in this.typesRef.ruleNodeType) {
+    this.isImport = this.route.snapshot.data['import'];
+    for (const type in this.typesRef.ruleNodeType) {
         if (!this.typesRef.ruleNodeType[type].special) {
             this.ruleNodeTypesModel[type] = {
                 model: {
@@ -174,133 +180,204 @@ export class RuleChainComponent {
             this.ruleNodeTypesCanvasControl[type] = {};
         }
     }
-    this.modelservice = Modelfactory(this.ruleChainModel, this.selectedObjects);
-    this.saveRuleChain = this.saveRuleChain;
-    this.revertRuleChain = this.revertRuleChain;
-    this.objectsSelected = this.objectsSelected;
-    this.deleteSelected = this.deleteSelected;
-    this.isDebugModeEnabled = this.isDebugModeEnabled;
-    this.resetDebugModeInAllNodes = this.resetDebugModeInAllNodes;
-    this.triggerResize = this.triggerResize;
-    this.openRuleChainContextMenu = this.openRuleChainContextMenu;
-    this.helpLinkIdForRuleNodeType = this.helpLinkIdForRuleNodeType;
-    this.initHotKeys();
+    this.modelservice = new FlowchartModelService(this.ruleChainModel, this.selectedObjects);
     this.nodeLibCallbacks = {
         nodeCallbacks: {
-            'mouseEnter': (event?: any, node?: any, ...rest: any[]) => {
+            'mouseEnter': (event?: any, node?: any) => {
                 this.displayLibNodeDescriptionTooltip(event, node);
             },
-            'mouseLeave': (...rest: any[]) => {
+            'mouseLeave': () => {
                 this.destroyTooltips();
             },
-            'mouseDown': (...rest: any[]) => {
+            'mouseDown': () => {
                 this.destroyTooltips();
             }
         }
     };
-    this.destroyTooltips = this.destroyTooltips;
-    $scope.$watch(() => {
-        return this.isEditingRuleNode || this.isEditingRuleNodeLink;
-    }, (val?: any) => {
-        this.enableHotKeys = !val;
-        this.updateErrorTooltips(val);
-    });
     this.editCallbacks = {
-        edgeDoubleClick: (event?: any, edge?: any, ...rest: any[]) => {
+        edgeDoubleClick: (event?: any, edge?: any) => {
             this.openLinkDetails(edge);
         },
-        edgeEdit: (event?: any, edge?: any, ...rest: any[]) => {
+        edgeEdit: (event?: any, edge?: any) => {
             this.openLinkDetails(edge);
         },
         nodeCallbacks: {
-            'doubleClick': (event?: any, node?: any, ...rest: any[]) => {
+            'doubleClick': (event?: any, node?: any) => {
                 this.openNodeDetails(node);
             },
-            'nodeEdit': (event?: any, node?: any, ...rest: any[]) => {
+            'nodeEdit': (event?: any, node?: any) => {
                 this.openNodeDetails(node);
             },
-            'mouseEnter': (event?: any, node?: any, ...rest: any[]) => {
+            'mouseEnter': (event?: any, node?: any) => {
                 this.displayNodeDescriptionTooltip(event, node);
             },
-            'mouseLeave': (...rest: any[]) => {
+            'mouseLeave': () => {
                 this.destroyTooltips();
             },
-            'mouseDown': (...rest: any[]) => {
+            'mouseDown': () => {
                 this.destroyTooltips();
             }
         },
-        isValidEdge: function (source?: any, destination?: any, ...rest: any[]) {
+        isValidEdge: (source?: any, destination?: any) => {
             return source.type === flowchartConstants.rightConnectorType && destination.type === flowchartConstants.leftConnectorType;
         },
-        createEdge: (event?: any, edge?: any, ...rest: any[]) => {
-            var deferred: any = $q.defer();
-            var sourceNode: any = this.modelservice.nodes.getNodeByConnectorId(edge.source);
+        createEdge: (event?: any, edge?: any): Promise<any> => {
+            const sourceNode: any = this.modelservice.nodes.getNodeByConnectorId(edge.source);
             if (sourceNode.component.type == this.typesRef.ruleNodeType.INPUT.value) {
-                var destNode: any = this.modelservice.nodes.getNodeByConnectorId(edge.destination);
+                const destNode: any = this.modelservice.nodes.getNodeByConnectorId(edge.destination);
                 if (destNode.component.type == this.typesRef.ruleNodeType.RULE_CHAIN.value) {
-                    deferred.reject();
-                } else {
-                    var res: any = $filter('filter')(this.ruleChainModel.edges, {source: this.inputConnectorId}, true);
-                    if (res && res.length) {
-                        this.modelservice.edges.delete(res[0]);
-                    }
-                    deferred.resolve(edge);
+                    return Promise.reject();
                 }
-            } else {
-                if (edge.label) {
-                    if (!edge.labels) {
-                        edge.labels = edge.label.split(' / ');
-                    }
-                    deferred.resolve(edge);
-                } else {
-                    var labels: any = this.ruleChainService.getRuleNodeSupportedLinks(sourceNode.component);
-                    var allowCustomLabels: any = this.ruleChainService.ruleNodeAllowCustomLinks(sourceNode.component);
-                    this.enableHotKeys = false;
-                    this.addRuleNodeLink(event, edge, labels, allowCustomLabels).then(
-                        (link?: any) => {
-                            deferred.resolve(link);
-                            this.enableHotKeys = true;
-                        },
-                        () => {
-                            deferred.reject();
-                            this.enableHotKeys = true;
-                        }
-                    );
+                const res: any[] = this.ruleChainModel.edges.filter((e: any) => e.source === this.inputConnectorId);
+                if (res.length) {
+                    this.modelservice.edges.delete(res[0]);
                 }
+                return Promise.resolve(edge);
             }
-            return deferred.promise;
+            if (edge.label) {
+                if (!edge.labels) {
+                    edge.labels = edge.label.split(' / ');
+                }
+                return Promise.resolve(edge);
+            }
+            const labels: any = this.ruleChainService.getRuleNodeSupportedLinks(sourceNode.component);
+            const allowCustomLabels: any = this.ruleChainService.ruleNodeAllowCustomLinks(sourceNode.component);
+            this.enableHotKeys = false;
+            return this.addRuleNodeLink(event, edge, labels, allowCustomLabels).then(
+                (link?: any) => {
+                    this.enableHotKeys = true;
+                    return link;
+                },
+                () => {
+                    this.enableHotKeys = true;
+                    return Promise.reject();
+                }
+            );
         },
-        dropNode: (event?: any, node?: any, ...rest: any[]) => {
+        dropNode: (event?: any, node?: any) => {
             this.addRuleNode(event, node);
         }
     };
-    this.loadRuleChainLibrary(ruleNodeComponents, true);
-    $scope.$watch('vm.ruleNodeSearch',
-        (newVal?: any, oldVal?: any) => {
-            if (!angular.equals(newVal, oldVal)) {
-                var res: any = $filter('filter')(ruleNodeComponents, {name: this.ruleNodeSearch});
-                this.loadRuleChainLibrary(res);
-            }
-        }
-    );
-    $scope.$on('searchTextUpdated', () => {
+    this.searchSub = this.rootScope.$on('searchTextUpdated', () => {
         this.updateRuleNodesHighlight();
     });
+    this.load();
   }
 
-  openRuleChainContextMenu = ($event?: any, $mdOpenMousepointMenu?: any, ...rest: any[]): any => {
-    if (this.canvasControl.modelservice && !$event.ctrlKey && !$event.metaKey) {
-        var x: any = $event.clientX;
-        var y: any = $event.clientY;
-        var item: any = this.canvasControl.modelservice.getItemInfoAtPoint(x, y);
-        this.contextInfo = this.prepareContextMenu(item);
-        if (this.contextInfo.items && this.contextInfo.items.length > 0) {
-            this.contextMenuEvent = $event;
-            $mdOpenMousepointMenu($event);
-            return false;
+  /** The legacy state's resolves: the rule chain, its metadata and the rule node components. */
+  private async load(): Promise<void> {
+    let ruleChain: any;
+    let ruleChainMetaData: any;
+    if (this.isImport) {
+        const ruleChainImport: any = history.state?.ruleChainImport;
+        ruleChain = ruleChainImport?.ruleChain;
+        ruleChainMetaData = ruleChainImport?.metadata;
+        if (!ruleChain) {
+            goState(this.router, 'home.ruleChains');
+            return;
+        }
+    } else {
+        const ruleChainId = this.route.snapshot.params['ruleChainId'];
+        [ruleChain, ruleChainMetaData] = await Promise.all([
+            this.ruleChainService.getRuleChain(ruleChainId),
+            this.ruleChainService.getRuleChainMetaData(ruleChainId)
+        ]);
+    }
+    const ruleNodeComponents: any = await this.ruleChainService.getRuleNodeComponents();
+    this.ruleChain = ruleChain;
+    this.ruleChainMetaData = ruleChainMetaData;
+    this.ruleNodeComponents = ruleNodeComponents;
+    this.loadRuleChainLibrary(ruleNodeComponents, true);
+  }
+
+  ngDoCheck(): void {
+    const editing = !!(this.isEditingRuleNode || this.isEditingRuleNodeLink);
+    if (editing !== this.lastEditing) {
+        this.lastEditing = editing;
+        this.enableHotKeys = !editing;
+        this.updateErrorTooltips(editing);
+    }
+    if (this.watchedModel !== null) {
+        const current = modelSnapshot(this.ruleChainModel);
+        if (current !== this.watchedModel) {
+            this.watchedModel = current;
+            this.validate();
+            if (!this.isDirty) {
+                this.isDirty = true;
+            }
         }
     }
-    return undefined;
+  }
+
+  ngOnDestroy(): void {
+    this.searchSub();
+    this.destroyTooltips();
+    for (const nodeId in this.errorTooltips) {
+        this.errorTooltips[nodeId].destroy();
+    }
+    this.errorTooltips = {};
+  }
+
+  setRuleNodeSearch(search: any): void {
+    if (search !== this.ruleNodeSearch) {
+        this.ruleNodeSearch = search;
+        const res: any = filterByProperty(this.ruleNodeComponents, 'name', this.ruleNodeSearch);
+        this.loadRuleChainLibrary(res);
+    }
+  }
+
+  /** The legacy hotkeys (angular-hotkeys, allowed in inputs too). */
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    if (!this.enableHotKeys) {
+        return;
+    }
+    const mod = event.ctrlKey || event.metaKey;
+    const key = (event.key || '').toLowerCase();
+    if (mod && key === 'a') {
+        event.preventDefault();
+        this.modelservice.selectAll();
+    } else if (mod && key === 'c') {
+        event.preventDefault();
+        this.copyRuleNodes();
+    } else if (mod && key === 'v') {
+        event.preventDefault();
+        if (this.itembuffer.hasRuleNodes()) {
+            this.pasteRuleNodes();
+        }
+    } else if (key === 'escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        this.modelservice.deselectAll();
+    } else if (mod && key === 's') {
+        event.preventDefault();
+        this.saveRuleChain();
+    } else if (mod && key === 'z') {
+        event.preventDefault();
+        this.revertRuleChain();
+    } else if (key === 'delete') {
+        event.preventDefault();
+        this.modelservice.deleteSelected();
+    }
+  }
+
+  openRuleChainContextMenu = ($event: MouseEvent): void => {
+    if (this.canvasControl.modelservice && !$event.ctrlKey && !$event.metaKey) {
+        const x: number = $event.clientX;
+        const y: number = $event.clientY;
+        const item: any = this.canvasControl.modelservice.getItemInfoAtPoint(x, y);
+        this.contextInfo = this.prepareContextMenu(item);
+        if (this.contextInfo.items && this.contextInfo.items.length > 0) {
+            $event.preventDefault();
+            this.contextMenuEvent = $event;
+            const anchor = this.contextMenuAnchor()?.nativeElement;
+            if (anchor) {
+                anchor.style.left = x + 'px';
+                anchor.style.top = y + 'px';
+            }
+            this.contextMenuTrigger()?.openMenu();
+        }
+    }
   };
 
   prepareContextMenu(item?: any, ...rest: any[]): any {
@@ -497,91 +574,6 @@ export class RuleChainComponent {
     return contextInfo;
   }
 
-  initHotKeys(...rest: any[]): any {
-    let ctrl = this;
-    hotkeys.bindTo(this)
-        .add({
-            combo: 'ctrl+a',
-            description: this.translate.instant('rulenode.select-all-objects'),
-            allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
-            callback: (event?: any, ...rest: any[]) => {
-                if (this.enableHotKeys) {
-                    event.preventDefault();
-                    this.modelservice.selectAll();
-                }
-            }
-        })
-        .add({
-            combo: 'ctrl+c',
-            description: this.translate.instant('rulenode.copy-selected'),
-            allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
-            callback: (event?: any, ...rest: any[]) => {
-                if (this.enableHotKeys) {
-                    event.preventDefault();
-                    this.copyRuleNodes();
-                }
-            }
-        })
-        .add({
-            combo: 'ctrl+v',
-            description: this.translate.instant('action.paste'),
-            allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
-            callback: (event?: any, ...rest: any[]) => {
-                if (this.enableHotKeys) {
-                    event.preventDefault();
-                    if (this.itembuffer.hasRuleNodes()) {
-                        this.pasteRuleNodes();
-                    }
-                }
-            }
-        })
-        .add({
-            combo: 'esc',
-            description: this.translate.instant('rulenode.deselect-all-objects'),
-            allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
-            callback: (event?: any, ...rest: any[]) => {
-                if (this.enableHotKeys) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    this.modelservice.deselectAll();
-                }
-            }
-        })
-        .add({
-            combo: 'ctrl+s',
-            description: this.translate.instant('action.apply'),
-            allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
-            callback: (event?: any, ...rest: any[]) => {
-                if (this.enableHotKeys) {
-                    event.preventDefault();
-                    this.saveRuleChain();
-                }
-            }
-        })
-        .add({
-            combo: 'ctrl+z',
-            description: this.translate.instant('action.decline-changes'),
-            allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
-            callback: (event?: any, ...rest: any[]) => {
-                if (this.enableHotKeys) {
-                    event.preventDefault();
-                    this.revertRuleChain();
-                }
-            }
-        })
-        .add({
-            combo: 'del',
-            description: this.translate.instant('rulenode.delete-selected-objects'),
-            allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
-            callback: (event?: any, ...rest: any[]) => {
-                if (this.enableHotKeys) {
-                    event.preventDefault();
-                    this.modelservice.deleteSelected();
-                }
-            }
-        })
-  }
-
   onEditRuleNodeClosed(...rest: any[]): any {
     this.editingRuleNode = null;
   }
@@ -590,35 +582,43 @@ export class RuleChainComponent {
     this.editingRuleNodeLink = null;
   }
 
+  private setPristine(theForm?: any): void {
+    if (theForm?.form?.markAsPristine) {
+        theForm.form.markAsPristine();
+    } else if (theForm?.markAsPristine) {
+        theForm.markAsPristine();
+    }
+  }
+
   saveRuleNode(theForm?: any, ...rest: any[]): any {
-    $scope.$broadcast('form-submit');
-    if (theForm.$valid) {
-        theForm.$setPristine();
+    this.rootScope.$broadcast('form-submit');
+    if (!theForm || theForm.valid !== false) {
+        this.setPristine(theForm);
         if (this.editingRuleNode.error) {
             delete this.editingRuleNode.error;
         }
         this.ruleChainModel.nodes[this.editingRuleNodeIndex] = this.editingRuleNode;
-        this.editingRuleNode = structuredClone(this.editingRuleNode);
+        this.editingRuleNode = deepCopy(this.editingRuleNode);
         this.updateRuleNodesHighlight();
     }
   }
 
   saveRuleNodeLink(theForm?: any, ...rest: any[]): any {
-    theForm.$setPristine();
+    this.setPristine(theForm);
     this.ruleChainModel.edges[this.editingRuleNodeLinkIndex] = this.editingRuleNodeLink;
-    this.editingRuleNodeLink = structuredClone(this.editingRuleNodeLink);
+    this.editingRuleNodeLink = deepCopy(this.editingRuleNodeLink);
   }
 
   onRevertRuleNodeEdit(theForm?: any, ...rest: any[]): any {
-    theForm.$setPristine();
+    this.setPristine(theForm);
     var node: any = this.ruleChainModel.nodes[this.editingRuleNodeIndex];
-    this.editingRuleNode = structuredClone(node);
+    this.editingRuleNode = deepCopy(node);
   }
 
   onRevertRuleNodeLinkEdit(theForm?: any, ...rest: any[]): any {
-    theForm.$setPristine();
+    this.setPristine(theForm);
     var edge: any = this.ruleChainModel.edges[this.editingRuleNodeLinkIndex];
-    this.editingRuleNodeLink = structuredClone(edge);
+    this.editingRuleNodeLink = deepCopy(edge);
   }
 
   typeHeaderMouseEnter(event?: any, typeId?: any, ...rest: any[]): any {
@@ -642,7 +642,7 @@ export class RuleChainComponent {
         clearTimeout(this.tooltipTimeout);
         this.tooltipTimeout = null;
     }
-    var instances: any = angular.element.tooltipster.instances();
+    const instances: any[] = ($ as any).tooltipster?.instances() ?? [];
     instances.forEach((instance?: any) => {
         if (!instance.isErrorTooltip) {
             instance.destroy();
@@ -691,7 +691,7 @@ export class RuleChainComponent {
   displayTooltip(event?: any, content?: any, ...rest: any[]): any {
     this.destroyTooltips();
     this.tooltipTimeout = setTimeout(() => {
-        var element: any = $(event.target);
+        const element: any = $(event.target);
         element.tooltipster(
             {
                 theme: 'tooltipster-shadow',
@@ -710,18 +710,17 @@ export class RuleChainComponent {
                 trackOrigin: true
             }
         );
-        var contentElement: any = $(content);
-        $compile(contentElement)(this);
-        var tooltip: any = element.tooltipster('instance');
+        const contentElement: any = $(content);
+        const tooltip: any = element.tooltipster('instance');
         tooltip.content(contentElement);
         tooltip.open();
     }, 500);
   }
 
   updateNodeErrorTooltip(node?: any, ...rest: any[]): any {
+    let tooltip: any = this.errorTooltips[node.id];
     if (node.error) {
-        var element: any = $('#' + node.id);
-        var tooltip: any = this.errorTooltips[node.id];
+        const element: any = $('#' + node.id);
         if (!tooltip || !element.hasClass("tooltipstered")) {
             element.tooltipster(
                 {
@@ -747,19 +746,17 @@ export class RuleChainComponent {
                 '<div class="tb-node-details">' + node.error + '</div>' +
                 '</div>' +
                 '</div>';
-            var contentElement: any = $(content);
-            $compile(contentElement)(this);
+            const contentElement: any = $(content);
             tooltip = element.tooltipster('instance');
             tooltip.isErrorTooltip = true;
             tooltip.content(contentElement);
             this.errorTooltips[node.id] = tooltip;
         }
-        $mdUtil.nextTick(() => {
+        setTimeout(() => {
             tooltip.open();
         });
     } else {
-        if (this.errorTooltips[node.id]) {
-            tooltip = this.errorTooltips[node.id];
+        if (tooltip) {
             tooltip.destroy();
             delete this.errorTooltips[node.id];
         }
@@ -783,11 +780,10 @@ export class RuleChainComponent {
         this.editingRuleNodeLink = null;
         this.isEditingRuleNode = true;
         this.editingRuleNodeIndex = this.ruleChainModel.nodes.indexOf(node);
-        this.editingRuleNode = structuredClone(node);
-        $mdUtil.nextTick(() => {
-            if (this.ruleNodeForm) {
-                this.ruleNodeForm.$setPristine();
-            }
+        this.editingRuleNode = deepCopy(node);
+        this.selectedRuleNodeTabIndex = 0;
+        setTimeout(() => {
+            this.setPristine(this.ruleNodeForm);
         });
     }
   }
@@ -801,11 +797,9 @@ export class RuleChainComponent {
         this.editingRuleNodeAllowCustomLabels = this.ruleChainService.ruleNodeAllowCustomLinks(sourceNode.component);
         this.isEditingRuleNodeLink = true;
         this.editingRuleNodeLinkIndex = this.ruleChainModel.edges.indexOf(edge);
-        this.editingRuleNodeLink = structuredClone(edge);
-        $mdUtil.nextTick(() => {
-            if (this.ruleNodeLinkForm) {
-                this.ruleNodeLinkForm.$setPristine();
-            }
+        this.editingRuleNodeLink = deepCopy(edge);
+        setTimeout(() => {
+            this.setPristine(this.ruleNodeLinkForm);
         });
     }
   }
@@ -840,18 +834,16 @@ export class RuleChainComponent {
   }
 
   pasteRuleNodes(event?: any, ...rest: any[]): any {
-    var canvas: any = $(this.canvasControl.modelservice.getCanvasHtmlElement());
-    var x: any,y: any;
-    if (event) {
-        var offset: any = canvas.offset();
+    const canvas: HTMLElement | null = this.canvasControl.modelservice?.getCanvasHtmlElement() ?? null;
+    let x: any = 0, y: any = 0;
+    if (canvas && event) {
+        const offset = canvas.getBoundingClientRect();
         x = Math.round(event.clientX - offset.left);
         y = Math.round(event.clientY - offset.top);
-    } else {
-        var scrollParent: any = canvas.parent();
-        var scrollTop: any = scrollParent.scrollTop();
-        var scrollLeft: any = scrollParent.scrollLeft();
-        x = scrollLeft + scrollParent.width()/2;
-        y = scrollTop + scrollParent.height()/2;
+    } else if (canvas?.parentElement) {
+        const scrollParent: HTMLElement = canvas.parentElement;
+        x = scrollParent.scrollLeft + scrollParent.clientWidth/2;
+        y = scrollParent.scrollTop + scrollParent.clientHeight/2;
     }
     var ruleNodes: any = this.itembuffer.pasteRuleNodes(x, y, event);
     if (ruleNodes) {
@@ -923,7 +915,8 @@ export class RuleChainComponent {
   }
 
   loadRuleChainLibrary(ruleNodeComponents?: any, loadRuleChain?: any, ...rest: any[]): any {
-    for (var componentType in this.ruleNodeTypesModel) {
+    let componentType: any;
+    for (componentType in this.ruleNodeTypesModel) {
         this.ruleNodeTypesModel[componentType].model.nodes.length = 0;
     }
     for (var i: any=0;i<ruleNodeComponents.length;i++) {
@@ -971,20 +964,13 @@ export class RuleChainComponent {
     if (loadRuleChain) {
         this.prepareRuleChain();
     }
-    $mdUtil.nextTick(() => {
-        for (componentType in this.ruleNodeTypesCanvasControl) {
+    for (const type in this.ruleNodeTypesModel) {
+        this.libraryPanelExpanded[type] = this.ruleNodeTypesModel[type].model.nodes.length > 0;
+    }
+    setTimeout(() => {
+        for (const componentType in this.ruleNodeTypesCanvasControl) {
             if (this.ruleNodeTypesCanvasControl[componentType].adjustCanvasSize) {
                 this.ruleNodeTypesCanvasControl[componentType].adjustCanvasSize(true);
-            }
-        }
-        for (componentType in this.ruleNodeTypesModel) {
-            var panel: any = this.$mdExpansionPanel(componentType);
-            if (panel) {
-                if (!this.ruleNodeTypesModel[componentType].model.nodes.length) {
-                    panel.collapse();
-                } else {
-                    panel.expand();
-                }
             }
         }
     });
@@ -992,10 +978,7 @@ export class RuleChainComponent {
 
   prepareRuleChain(...rest: any[]): any {
 
-    if (this.ruleChainWatch) {
-        this.ruleChainWatch();
-        this.ruleChainWatch = null;
-    }
+    this.watchedModel = null;
 
     this.nextNodeID = 1;
     this.nextConnectorID = 1;
@@ -1033,7 +1016,6 @@ export class RuleChainComponent {
   }
 
   createRuleChainModel(ruleChainsMap?: any, ...rest: any[]): any {
-    let vm = this;
     var nodes: any = [];
     for (var i: any=0;i<this.ruleChainMetaData.nodes.length;i++) {
         var ruleNode: any = this.ruleChainMetaData.nodes[i];
@@ -1201,17 +1183,8 @@ export class RuleChainComponent {
 
     this.validate();
 
-    $mdUtil.nextTick(() => {
-        this.ruleChainWatch = $scope.$watch('vm.ruleChainModel',
-            (newVal?: any, oldVal?: any) => {
-                if (!angular.equals(newVal, oldVal)) {
-                    this.validate();
-                    if (!this.isDirty) {
-                        this.isDirty = true;
-                    }
-                }
-            }, true
-        );
+    setTimeout(() => {
+        this.watchedModel = modelSnapshot(this.ruleChainModel);
     });
   }
 
@@ -1219,8 +1192,9 @@ export class RuleChainComponent {
     for (var i: any = 0; i < this.ruleChainModel.nodes.length; i++) {
         this.ruleChainModel.nodes[i].highlighted = false;
     }
-    if (this.searchConfig.searchText) {
-        var res: any = $filter('filter')(this.ruleChainModel.nodes, {name: this.searchConfig.searchText});
+    const searchText: any = this.rootScope['searchConfig']?.searchText;
+    if (searchText) {
+        var res: any = filterByProperty(this.ruleChainModel.nodes, 'name', searchText);
         if (res) {
             for (i = 0; i < res.length; i++) {
                 res[i].highlighted = true;
@@ -1230,7 +1204,7 @@ export class RuleChainComponent {
   }
 
   validate(...rest: any[]): any {
-    $mdUtil.nextTick(() => {
+    setTimeout(() => {
         this.isInvalid = false;
         for (var i: any = 0; i < this.ruleChainModel.nodes.length; i++) {
             if (this.ruleChainModel.nodes[i].error) {
@@ -1281,7 +1255,7 @@ export class RuleChainComponent {
                     nodes.push(node);
                 }
             }
-            var res: any = $filter('filter')(this.ruleChainModel.edges, {source: this.inputConnectorId}, true);
+            var res: any = this.ruleChainModel.edges.filter((e: any) => e.source === this.inputConnectorId);
             if (res && res.length) {
                 var firstNodeEdge: any = res[0];
                 var firstNode: any = this.modelservice.nodes.getNodeByConnectorId(firstNodeEdge.destination);
@@ -1306,7 +1280,7 @@ export class RuleChainComponent {
                         ruleChainConnection.additionalInfo.layoutY = Math.round(destNode.y);
                         ruleChainConnection.additionalInfo.ruleChainNodeId = destNode.id;
                         for (var rcIndex: any=0;rcIndex<edge.labels.length;rcIndex++) {
-                            var newRuleChainConnection: any = structuredClone(ruleChainConnection);
+                            var newRuleChainConnection: any = deepCopy(ruleChainConnection);
                             newRuleChainConnection.type = edge.labels[rcIndex];
                             ruleChainMetaData.ruleChainConnections.push(newRuleChainConnection);
                         }
@@ -1317,7 +1291,7 @@ export class RuleChainComponent {
                             toIndex: toIndex
                         };
                         for (var cIndex: any=0;cIndex<edge.labels.length;cIndex++) {
-                            var newNodeConnection: any = structuredClone(nodeConnection);
+                            var newNodeConnection: any = deepCopy(nodeConnection);
                             newNodeConnection.type = edge.labels[cIndex];
                             ruleChainMetaData.connections.push(newNodeConnection);
                         }
@@ -1330,8 +1304,8 @@ export class RuleChainComponent {
                     if (this.isImport) {
                         this.isDirty = false;
                         this.isImport = false;
-                        $mdUtil.nextTick(() => {
-                            (this.router as any).go('home.ruleChains.ruleChain', {ruleChainId: this.ruleChain.id.id});
+                        setTimeout(() => {
+                            goState(this.router, 'home.ruleChains.ruleChain', {ruleChainId: this.ruleChain.id.id});
                         });
                     } else {
                         this.prepareRuleChain();
@@ -1347,23 +1321,20 @@ export class RuleChainComponent {
   };
 
   addRuleNode($event?: any, ruleNode?: any, ...rest: any[]): any {
-    let vm = this;
-
-    ruleNode.configuration = structuredClone(ruleNode.component.configurationDescriptor.nodeDefinition.defaultConfiguration);
+    ruleNode.configuration = deepCopy(ruleNode.component.configurationDescriptor.nodeDefinition.defaultConfiguration);
 
     var ruleChainId: any = this.ruleChain.id ? this.ruleChain.id.id : null;
 
     this.enableHotKeys = false;
 
-    (this.dialog as any).show({
-        controller: 'AddRuleNodeController',
-        controllerAs: 'vm',
-        templateUrl: addRuleNodeTemplate,
-        parent: $(this.document.body),
-        locals: {ruleNode: ruleNode, ruleChainId: ruleChainId},
-        fullscreen: true,
-        targetEvent: $event
-    }).then((ruleNode?: any) => {
+    firstValueFrom(this.dialog.open(AddRuleNodeComponent, {
+        data: {ruleNode: ruleNode, ruleChainId: ruleChainId},
+        panelClass: 'tb-dialog'
+    }).afterClosed()).then((ruleNode?: any) => {
+        if (!ruleNode) {
+            this.enableHotKeys = true;
+            return;
+        }
         ruleNode.id = 'rule-chain-node-' + this.nextNodeID++;
         ruleNode.connectors = [];
         if (ruleNode.component.configurationDescriptor.nodeDefinition.inEnabled) {
@@ -1385,22 +1356,15 @@ export class RuleChainComponent {
         this.ruleChainModel.nodes.push(ruleNode);
         this.updateRuleNodesHighlight();
         this.enableHotKeys = true;
-    }, () => {
-        this.enableHotKeys = true;
     });
   }
 
-  addRuleNodeLink($event?: any, link?: any, labels?: any, allowCustomLabels?: any, ...rest: any[]): any {
-    let vm = this;
-    return (this.dialog as any).show({
-        controller: 'AddRuleNodeLinkController',
-        controllerAs: 'vm',
-        templateUrl: addRuleNodeLinkTemplate,
-        parent: $(this.document.body),
-        locals: {link: link, labels: labels, allowCustomLabels: allowCustomLabels},
-        fullscreen: true,
-        targetEvent: $event
-    });
+  /** Resolves with the link, rejects when the dialog is cancelled (as `$mdDialog.show` did). */
+  addRuleNodeLink($event?: any, link?: any, labels?: any, allowCustomLabels?: any, ...rest: any[]): Promise<any> {
+    return firstValueFrom(this.dialog.open(AddRuleNodeLinkComponent, {
+        data: {link: link, labels: labels, allowCustomLabels: allowCustomLabels},
+        panelClass: 'tb-dialog'
+    }).afterClosed()).then((result?: any) => result ? result : Promise.reject());
   }
 
   objectsSelected = (...rest: any[]): any => {
@@ -1413,8 +1377,7 @@ export class RuleChainComponent {
   };
 
   isDebugModeEnabled = (...rest: any[]): any => {
-    var res: any = $filter('filter')(this.ruleChainModel.nodes, {debugMode: true});
-    return (res && res.length);
+    return this.ruleChainModel.nodes.some((node: any) => node.debugMode === true);
   };
 
   resetDebugModeInAllNodes = (...rest: any[]): any => {
@@ -1426,8 +1389,7 @@ export class RuleChainComponent {
   };
 
   triggerResize = (...rest: any[]): any => {
-    var w: any = $($window);
-    w.triggerHandler('resize');
+    window.dispatchEvent(new Event('resize'));
   };
 
   /** The keys of a `(k, v) in obj` repeat, in the object's own order. */

@@ -24,10 +24,12 @@ import addRuleChainTemplate from '../../../../app/rulechain/add-rulechain.tpl.ht
 import ruleChainCard from '../../../../app/rulechain/rulechain-card.tpl.html';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
+import { goState, stateUrlTree } from '../../../state-paths';
+import { showConfirm } from '../confirm-dialog/confirm-dialog.component';
 
 /**
  * Ported from the AngularJS controller `RuleChainsController` (module `thingsboard.ruleChain`) in src/app/rulechain/index.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Scaffolded by the playbook: the shape and the body are ported by syntax tree.
  */
 @Component({
   selector: 'rule-chains',
@@ -44,7 +46,6 @@ export class RuleChainsComponent {
   protected readonly translate = inject(TranslateService);
   protected readonly dialog = inject(MatDialog);
   protected readonly typesRef: any = types;
-  // TODO(port): elements not resolved to a component: details-buttons
 
   protected ruleChainActionsList: any;
   protected ruleChainAddItemActionsList: any;
@@ -52,8 +53,6 @@ export class RuleChainsComponent {
   ruleChainGridConfig: any;
   grid: any;
 
-  // TODO(port): $state.go — $state.go: this.router.navigate([...])
-  // TODO(port): $stateParams — $stateParams: this.route.snapshot.params
 
   constructor() {
     this.ruleChainActionsList = [
@@ -105,7 +104,7 @@ export class RuleChainsComponent {
             onAction: ($event?: any, ...rest: any[]) => {
                 this.importExport.importRuleChain($event).then(
                     (ruleChainImport?: any) => {
-                        (this.router as any).go('home.ruleChains.importRuleChain', {ruleChainImport:ruleChainImport});
+                        this.router.navigateByUrl(stateUrlTree(this.router, 'home.ruleChains.importRuleChain'), {state: {ruleChainImport: ruleChainImport}});
                     }
                 );
             },
@@ -149,8 +148,8 @@ export class RuleChainsComponent {
     if ((this.route.snapshot.params['items'] !== undefined) && this.route.snapshot.params['items'] !== null) {
         this.ruleChainGridConfig.items = this.route.snapshot.params['items'];
     }
-    if ((this.route.snapshot.params['topIndex'] !== undefined) && this.route.snapshot.params['topIndex'] > 0) {
-        this.ruleChainGridConfig.topIndex = this.route.snapshot.params['topIndex'];
+    if ((this.route.snapshot.queryParams['topIndex'] !== undefined) && this.route.snapshot.queryParams['topIndex'] > 0) {
+        this.ruleChainGridConfig.topIndex = this.route.snapshot.queryParams['topIndex'];
     }
     this.isRootRuleChain = this.isRootRuleChain;
     this.isNonRootRuleChain = this.isNonRootRuleChain;
@@ -194,7 +193,7 @@ export class RuleChainsComponent {
     if ($event) {
         $event.stopPropagation();
     }
-    (this.router as any).go('home.ruleChains.ruleChain', {ruleChainId: ruleChain.id.id});
+    goState(this.router, 'home.ruleChains.ruleChain', {ruleChainId: ruleChain.id.id});
   };
 
   deleteRuleChain = (ruleChainId?: any, ...rest: any[]): any => {
@@ -224,20 +223,18 @@ export class RuleChainsComponent {
 
   setRootRuleChain = ($event?: any, ruleChain?: any, ...rest: any[]): any => {
     $event.stopPropagation();
-    var confirm: any = (this.dialog as any).confirm()
-        .targetEvent($event)
-        .title(this.translate.instant('rulechain.set-root-rulechain-title', {ruleChainName: ruleChain.name}))
-        .htmlContent(this.translate.instant('rulechain.set-root-rulechain-text'))
-        .ariaLabel(this.translate.instant('rulechain.set-root'))
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
+    showConfirm(this.dialog, {
+        title: this.translate.instant('rulechain.set-root-rulechain-title', {ruleChainName: ruleChain.name}),
+        htmlContent: this.translate.instant('rulechain.set-root-rulechain-text'),
+        cancel: this.translate.instant('action.no'),
+        ok: this.translate.instant('action.yes')
+    }).then(() => {
         this.ruleChainService.setRootRuleChain(ruleChain.id.id).then(
             () => {
                 this.grid.refreshList();
             }
         );
-    });
+    }, () => undefined);
 
   };
 }

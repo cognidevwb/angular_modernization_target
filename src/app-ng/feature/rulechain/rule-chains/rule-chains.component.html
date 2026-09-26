@@ -17,7 +17,8 @@
 
 -->
 <tb-grid (gridConfiguration)="ruleChainGridConfig">
-    <div [tbHelp]="'rulechains'" id="help-container">
+    <div details-buttons tb-help [tbHelp]="'rulechains'" help-container-id="help-container">
+        <div id="help-container"></div>
     </div>
     <mat-tab-group [ngClass]="{'tb-headless': (grid?.detailsConfig?.isDetailsEditMode || !isRuleChainEditable(grid?.operatingItem?.()))}" id="tabs" flex class="tb-absolute-fill">
         <mat-tab label="{{ 'rulechain.details' | translate }}">

@@ -1,10 +1,10 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, DestroyRef, Directive, DoCheck, ElementRef, HostListener, OnDestroy, OnInit, forwardRef, inject, input, output, effect } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
-import { ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { RootState } from '../../../root-state';
 import { Router } from '@angular/router';
+import { goState } from '../../../state-paths';
 import { ToastService } from '../../services/toast.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UserService } from '../../api/services/user.service';
@@ -12,13 +12,23 @@ import { WidgetService } from '../../api/services/widget.service';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 import { TbConfirmOnExitDirective } from '../../components/tb-confirm-on-exit/tb-confirm-on-exit.directive';
-import { TbExpandFullscreenDirective } from '../../components/tb-expand-fullscreen/tb-expand-fullscreen.directive';
-import { TbCircularProgressDirective } from '../../components/tb-circular-progress/tb-circular-progress.directive';
+import { SaveWidgetTypeAsComponent } from '../save-widget-type-as/save-widget-type-as.component';
 import $ from 'jquery';
 import ace from 'brace';
-// @ts-ignore
-import saveWidgetTypeAsTemplate from '../../../../app/widget/save-widget-type-as.tpl.html';
+import 'brace/ext/language_tools';
+import 'brace/ext/searchbox';
+import 'brace/mode/javascript';
+import 'brace/mode/html';
+import 'brace/mode/css';
+import 'brace/mode/json';
+import 'brace/snippets/javascript';
+import 'brace/snippets/text';
+import 'brace/snippets/html';
+import 'brace/snippets/css';
+import 'brace/snippets/json';
 import Split from 'split.js';
+import { firstValueFrom } from 'rxjs';
+import beautify from 'js-beautify';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,48 +41,115 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let angular: any;
-declare let $scope: any;
-declare let $window: any;
-declare let hotkeys: any;
-
 // Helpers at the legacy file's top level, beside the registration (as written).
-const js_beautify: any = (window as any).beautify.js;
+const js_beautify: any = (beautify as any).js;
 
-const html_beautify: any = (window as any).beautify.html;
+const html_beautify: any = (beautify as any).html;
 
-const css_beautify: any = (window as any).beautify.css;
+const css_beautify: any = (beautify as any).css;
+
+/**
+ * The `ui-ace` attribute of the legacy template: an Ace editor on the host element whose
+ * text is two-way bound (`value` in, `valueChange` out) and configured from the same
+ * options object (`mode`, `useWrapMode`, `advanced`, `onLoad`).
+ */
+@Directive({
+  selector: '[tbWidgetAce]',
+  standalone: true,
+})
+export class TbWidgetAceDirective implements OnInit, OnDestroy {
+  readonly options = input<any>(undefined, { alias: 'tbWidgetAce' });
+  readonly value = input<any>(undefined);
+  readonly valueChange = output<any>();
+
+  private readonly element = inject(ElementRef);
+  private editor: any;
+  private settingValue = false;
+
+  constructor() {
+    effect(() => {
+      const value: any = this.value();
+      this.applyValue(value);
+    });
+  }
+
+  ngOnInit(): void {
+    const options: any = this.options() || {};
+    this.editor = ace.edit(this.element.nativeElement);
+    this.editor.$blockScrolling = Infinity;
+    if (options.mode) {
+      this.editor.session.setMode('ace/mode/' + options.mode);
+    }
+    if (options.useWrapMode !== undefined) {
+      this.editor.session.setUseWrapMode(options.useWrapMode);
+    }
+    if (options.advanced) {
+      this.editor.setOptions(options.advanced);
+    }
+    this.applyValue(this.value());
+    this.editor.session.on('change', () => {
+      if (!this.settingValue) {
+        this.valueChange.emit(this.editor.getValue());
+      }
+    });
+    if (options.onLoad) {
+      options.onLoad(this.editor);
+    }
+  }
+
+  ngOnDestroy(): void {
+    const options: any = this.options() || {};
+    if (this.editor) {
+      if (options.onUnload) {
+        options.onUnload(this.editor);
+      }
+      this.editor.destroy();
+      this.editor = undefined;
+    }
+  }
+
+  private applyValue(value: any): void {
+    if (!this.editor) {
+      return;
+    }
+    const text: string = value === undefined || value === null ? '' : String(value);
+    if (this.editor.getValue() !== text) {
+      this.settingValue = true;
+      this.editor.setValue(text, -1);
+      this.settingValue = false;
+    }
+  }
+}
 
 /**
  * Ported from the AngularJS controller `WidgetEditorController` (module `thingsboard.widget-library`) in src/app/widget/index.js:40.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 6 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
   selector: 'widget-editor',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatTabsModule, MatSelectModule, MatProgressSpinnerModule, MatMenuModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, FormsModule, forwardRef(() => TbConfirmOnExitDirective), forwardRef(() => TbExpandFullscreenDirective), forwardRef(() => TbCircularProgressDirective)],
+  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatTabsModule, MatSelectModule, MatProgressSpinnerModule, MatMenuModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, FormsModule, forwardRef(() => TbConfirmOnExitDirective), TbWidgetAceDirective],
   templateUrl: './widget-editor.component.html',
 })
-export class WidgetEditorComponent {
+export class WidgetEditorComponent implements DoCheck {
   protected readonly widgetService = inject(WidgetService);
   protected readonly userService = inject(UserService);
   protected readonly toast = inject(ToastService);
-  // TODO(port): 'hotkeys' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
   protected readonly element = inject(ElementRef);
   protected readonly rootScope = inject(RootState);
-  // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly router = inject(Router);
   protected readonly route = inject(ActivatedRoute);
-  // TODO(port): '$window' — use window directly, or inject(DOCUMENT).defaultView
   protected readonly document = inject(DOCUMENT);
   protected readonly translate = inject(TranslateService);
   protected readonly dialog = inject(MatDialog);
+  protected readonly destroyRef = inject(DestroyRef);
 
   protected Range: any = ace.acequire("ace/range").Range;
   protected ace_editors: any = [];
   protected js_editor: any;
-  protected iframe: any;
+  /** The editor's preview iframe (looked up when used: the template is not rendered in the constructor). */
+  protected get iframe(): any {
+    return $('iframe', $(this.element.nativeElement));
+  }
   protected gotError: any = false;
   protected errorMarkers: any = [];
   protected errorAnnotationId: any = -1;
@@ -84,6 +161,8 @@ export class WidgetEditorComponent {
   widget: any = null;
   origWidget: any = null;
   widgetTypes: any = types.widgetType;
+  /** `ng-repeat="type in vm.widgetTypes"` iterated the map's values. */
+  widgetTypeList: any[] = Object.values(types.widgetType);
   iframeWidgetEditModeInited: any = false;
   layoutInited: any = false;
   htmlEditorOptions: any;
@@ -100,15 +179,20 @@ export class WidgetEditorComponent {
   widgetsBundle: any;
   resource: any;
 
-  // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
-  // TODO(port): $state.go — $state.go: this.router.navigate([...])
-  // TODO(port): $stateParams — $stateParams: this.route.snapshot.params
-  // TODO(port): `success` — a named function expression that calls itself; as an arrow it has no name: name it as a method
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
+  /** Which editor panel is expanded to fullscreen (the per-panel `tb-expand-fullscreen` buttons). */
+  expandedPanel: string | null = null;
+  /** The `$scope.$watch('vm.widget', …, true)` state: the last seen widget, or undefined when not watching. */
+  private widgetWatchSnapshot: string | undefined;
+  /** The `$scope.$watch('vm.widget.type')` state. */
+  private widgetTypeWatchInited = false;
+  private lastWidgetType: any;
+  /** The element-width `$watch` waiting for a non-zero width before the split layout. */
+  private splitWidthWatchPending = false;
+  /** The hotkeys bound in `initHotKeys` (the legacy `hotkeys.bindTo($scope)`). */
+  private hotkeysBound = false;
+  private readonly eventDeregistrations: Array<() => void> = [];
 
   constructor() {
-    this.iframe = $('iframe', $(this.element.nativeElement));
     this.elem = $($(this.element.nativeElement));
     this.widgetsBundleId = this.route.snapshot.params['widgetsBundleId'];
     this.widgetsBundle;
@@ -122,6 +206,9 @@ export class WidgetEditorComponent {
         },
         onLoad: (_ace?: any, ...rest: any[]) => {
             this.ace_editors.push(_ace);
+        },
+        onUnload: (_ace?: any) => {
+            this.removeAceEditor(_ace);
         }
     };
     this.cssEditorOptions = {
@@ -134,6 +221,9 @@ export class WidgetEditorComponent {
         },
         onLoad: (_ace?: any, ...rest: any[]) => {
             this.ace_editors.push(_ace);
+        },
+        onUnload: (_ace?: any) => {
+            this.removeAceEditor(_ace);
         }
     };
     this.jsonSettingsEditorOptions = {
@@ -146,6 +236,9 @@ export class WidgetEditorComponent {
         },
         onLoad: (_ace?: any, ...rest: any[]) => {
             this.ace_editors.push(_ace);
+        },
+        onUnload: (_ace?: any) => {
+            this.removeAceEditor(_ace);
         }
     };
     this.dataKeyJsonSettingsEditorOptions = {
@@ -158,6 +251,9 @@ export class WidgetEditorComponent {
         },
         onLoad: (_ace?: any, ...rest: any[]) => {
             this.ace_editors.push(_ace);
+        },
+        onUnload: (_ace?: any) => {
+            this.removeAceEditor(_ace);
         }
     };
     this.jsEditorOptions = {
@@ -174,6 +270,12 @@ export class WidgetEditorComponent {
             this.js_editor.session.on("change", () => {
                 this.cleanupJsErrors();
             });
+        },
+        onUnload: (_ace?: any) => {
+            this.removeAceEditor(_ace);
+            if (this.js_editor === _ace) {
+                this.js_editor = undefined;
+            }
         }
     };
     this.addResource = this.addResource;
@@ -192,7 +294,42 @@ export class WidgetEditorComponent {
     this.saveWidgetAs = this.saveWidgetAs;
     this.toggleFullscreen = this.toggleFullscreen;
     this.isReadOnly = this.isReadOnly;
+    this.destroyRef.onDestroy(() => {
+        this.eventDeregistrations.forEach((deregister) => deregister());
+    });
     this.initWidgetEditor();
+  }
+
+  private removeAceEditor(editor: any): void {
+    const index: number = this.ace_editors.indexOf(editor);
+    if (index > -1) {
+        this.ace_editors.splice(index, 1);
+    }
+  }
+
+  /** The legacy digest's watchers: the deep widget watch, the widget-type watch and the width watch. */
+  ngDoCheck(): void {
+    if (this.widgetTypeWatchInited && this.widget) {
+        const type: any = this.widget.type;
+        if (type !== this.lastWidgetType) {
+            this.lastWidgetType = type;
+            this.onWidgetTypeChanged();
+        }
+    }
+    if (this.widgetWatchSnapshot !== undefined) {
+        const current: string = JSON.stringify(this.widget);
+        if (current !== this.widgetWatchSnapshot) {
+            this.widgetWatchSnapshot = current;
+            this.isDirty = true;
+        }
+    }
+    if (this.splitWidthWatchPending) {
+        const newSize: any = this.elem[0].offsetWidth || parseInt(this.elem.css('width'), 10);
+        if (newSize > 0) {
+            this.splitWidthWatchPending = false;
+            this.initSplitLayout();
+        }
+    }
   }
 
   initWidgetEditor(...rest: any[]): any {
@@ -260,16 +397,7 @@ export class WidgetEditorComponent {
         if (w > 0) {
             this.initSplitLayout();
         } else {
-            $scope.$watch(
-                () => {
-                    return this.elem[0].offsetWidth || parseInt(this.elem.css('width'), 10);
-                },
-                (newSize?: any) => {
-                    if (newSize > 0) {
-                        this.initSplitLayout();
-                    }
-                }
-            );
+            this.splitWidthWatchPending = true;
         }
     });
 
@@ -302,138 +430,54 @@ export class WidgetEditorComponent {
   };
 
   initHotKeys(...rest: any[]): any {
-    let ctrl = this;
-    this.translate(['widget.undo', 'widget.save', 'widget.saveAs', 'widget.toggle-fullscreen', 'widget.run']).then((translations?: any) => {
-        hotkeys.bindTo(this)
-            .add({
-                combo: 'ctrl+q',
-                description: translations['widget.undo'],
-                allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
-                callback: (event?: any, ...rest: any[]) => {
-                    if (!this.undoDisabled()) {
-                        event.preventDefault();
-                        this.undoWidget();
-                    }
-                }
-            })
-            .add({
-                combo: 'ctrl+s',
-                description: translations['widget.save'],
-                allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
-                callback: (event?: any, ...rest: any[]) => {
-                    if (!this.saveDisabled()) {
-                        event.preventDefault();
-                        this.saveWidget();
-                    }
-                }
-            })
-            .add({
-                combo: 'shift+ctrl+s',
-                description: translations['widget.saveAs'],
-                allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
-                callback: (event?: any, ...rest: any[]) => {
-                    if (!this.saveAsDisabled()) {
-                        event.preventDefault();
-                        this.saveWidgetAs();
-                    }
-                }
-            })
-            .add({
-                combo: 'shift+ctrl+f',
-                description: translations['widget.toggle-fullscreen'],
-                allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
-                callback: (event?: any, ...rest: any[]) => {
-                    event.preventDefault();
-                    this.toggleFullscreen();
-                }
-            })
-            .add({
-                combo: 'ctrl+enter',
-                description: translations['widget.run'],
-                allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
-                callback: (event?: any, ...rest: any[]) => {
-                    event.preventDefault();
-                    this.applyWidgetScript();
-                }
-        });
-    });
+    this.hotkeysBound = true;
+  }
+
+  /** The hotkeys of `initHotKeys` (allowed in INPUT, SELECT and TEXTAREA, as the legacy bindings were). */
+  @HostListener('document:keydown', ['$event'])
+  onHotKey(event: KeyboardEvent): void {
+    if (!this.hotkeysBound || !event.ctrlKey || event.altKey || event.metaKey) {
+        return;
+    }
+    const key: string = event.key.toLowerCase();
+    if (!event.shiftKey && key === 'q') {
+        if (!this.undoDisabled()) {
+            event.preventDefault();
+            this.undoWidget();
+        }
+    } else if (!event.shiftKey && key === 's') {
+        if (!this.saveDisabled()) {
+            event.preventDefault();
+            this.saveWidget();
+        }
+    } else if (event.shiftKey && key === 's') {
+        if (!this.saveAsDisabled()) {
+            event.preventDefault();
+            this.saveWidgetAs();
+        }
+    } else if (event.shiftKey && key === 'f') {
+        event.preventDefault();
+        this.toggleFullscreen();
+    } else if (!event.shiftKey && key === 'enter') {
+        event.preventDefault();
+        this.applyWidgetScript();
+    }
   }
 
   initWatchWidget(...rest: any[]): any {
-    let vm = this;
-    this.widgetWatcher = $scope.$watch('vm.widget', (newVal?: any, oldVal?: any) => {
-        if (!angular.equals(newVal, oldVal)) {
-            this.isDirty = true;
-        }
-    }, true);
+    this.widgetWatchSnapshot = JSON.stringify(this.widget);
+    this.widgetWatcher = () => {
+        this.widgetWatchSnapshot = undefined;
+    };
   }
 
   initWatchers(...rest: any[]): any {
-    let vm = this;
     this.initWatchWidget();
 
-    $scope.$watch('vm.widget.type', (newVal?: any, oldVal?: any) => {
-        if (!angular.equals(newVal, oldVal)) {
-            var config: any = JSON.parse(this.widget.defaultConfig);
-            if (this.widget.type !== types.widgetType.rpc.value
-                && this.widget.type !== types.widgetType.alarm.value) {
-                if (config.targetDeviceAliases) {
-                    delete config.targetDeviceAliases;
-                }
-                if (config.alarmSource) {
-                    delete config.alarmSource;
-                }
-                if (!config.datasources) {
-                    config.datasources = [];
-                }
-                if (!config.timewindow) {
-                    config.timewindow = {
-                        realtime: {
-                            timewindowMs: 60000
-                        }
-                    };
-                }
-                for (var i: any = 0; i < config.datasources.length; i++) {
-                    var datasource: any = config.datasources[i];
-                    datasource.type = this.widget.type;
-                }
-            } else if (this.widget.type == types.widgetType.rpc.value) {
-                if (config.datasources) {
-                    delete config.datasources;
-                }
-                if (config.alarmSource) {
-                    delete config.alarmSource;
-                }
-                if (config.timewindow) {
-                    delete config.timewindow;
-                }
-                if (!config.targetDeviceAliases) {
-                    config.targetDeviceAliases = [];
-                }
-            } else { // alarm
-                if (config.datasources) {
-                    delete config.datasources;
-                }
-                if (config.targetDeviceAliases) {
-                    delete config.targetDeviceAliases;
-                }
-                if (!config.alarmSource) {
-                    config.alarmSource = {};
-                    config.alarmSource.type = this.widget.type
-                }
-                if (!config.timewindow) {
-                    config.timewindow = {
-                        realtime: {
-                            timewindowMs: 24 * 60 * 60 * 1000
-                        }
-                    };
-                }
-            }
-            this.widget.defaultConfig = JSON.stringify(config);
-        }
-    });
+    this.lastWidgetType = this.widget ? this.widget.type : undefined;
+    this.widgetTypeWatchInited = true;
 
-    $scope.$on('widgetEditModeInited', () => {
+    this.eventDeregistrations.push(this.rootScope.$on('widgetEditModeInited', () => {
         this.iframeWidgetEditModeInited = true;
         if (this.saveWidgetPending || this.saveWidgetAsPending) {
             if (!this.saveWidgetTimeout) {
@@ -454,16 +498,16 @@ export class WidgetEditorComponent {
                 }, 1500);
             }
         }
-    });
+    }));
 
-    $scope.$on('widgetEditUpdated', (event?: any, widget?: any) => {
+    this.eventDeregistrations.push(this.rootScope.$on('widgetEditUpdated', (event?: any, widget?: any) => {
         this.widget.sizeX = widget.sizeX / 2;
         this.widget.sizeY = widget.sizeY / 2;
         this.widget.defaultConfig = JSON.stringify(widget.config);
         this.iframe.attr('data-widget', JSON.stringify(this.widget));
-    });
+    }));
 
-    $scope.$on('widgetException', (event?: any, details?: any) => {
+    this.eventDeregistrations.push(this.rootScope.$on('widgetException', (event?: any, details?: any) => {
         if (!this.gotError) {
             this.gotError = true;
             var errorInfo: any = 'Error:';
@@ -503,7 +547,67 @@ export class WidgetEditorComponent {
                 this.js_editor.session.setAnnotations(annotations);
             }
         }
-    });
+    }));
+  }
+
+  /** The `$scope.$watch('vm.widget.type')` listener: reshapes the default config for the new type. */
+  private onWidgetTypeChanged(): void {
+    var config: any = JSON.parse(this.widget.defaultConfig);
+    if (this.widget.type !== types.widgetType.rpc.value
+        && this.widget.type !== types.widgetType.alarm.value) {
+        if (config.targetDeviceAliases) {
+            delete config.targetDeviceAliases;
+        }
+        if (config.alarmSource) {
+            delete config.alarmSource;
+        }
+        if (!config.datasources) {
+            config.datasources = [];
+        }
+        if (!config.timewindow) {
+            config.timewindow = {
+                realtime: {
+                    timewindowMs: 60000
+                }
+            };
+        }
+        for (var i: any = 0; i < config.datasources.length; i++) {
+            var datasource: any = config.datasources[i];
+            datasource.type = this.widget.type;
+        }
+    } else if (this.widget.type == types.widgetType.rpc.value) {
+        if (config.datasources) {
+            delete config.datasources;
+        }
+        if (config.alarmSource) {
+            delete config.alarmSource;
+        }
+        if (config.timewindow) {
+            delete config.timewindow;
+        }
+        if (!config.targetDeviceAliases) {
+            config.targetDeviceAliases = [];
+        }
+    } else { // alarm
+        if (config.datasources) {
+            delete config.datasources;
+        }
+        if (config.targetDeviceAliases) {
+            delete config.targetDeviceAliases;
+        }
+        if (!config.alarmSource) {
+            config.alarmSource = {};
+            config.alarmSource.type = this.widget.type
+        }
+        if (!config.timewindow) {
+            config.timewindow = {
+                realtime: {
+                    timewindowMs: 24 * 60 * 60 * 1000
+                }
+            };
+        }
+    }
+    this.widget.defaultConfig = JSON.stringify(config);
   }
 
   cleanupJsErrors(...rest: any[]): any {
@@ -563,7 +667,7 @@ export class WidgetEditorComponent {
         queueMicrotask(() => {
             this.layoutInited = true;
             this.rootScope.loading = false;
-            var w: any = $($window);
+            var w: any = $(window);
             setTimeout(function () {
                 w.triggerHandler('resize')
             });
@@ -592,6 +696,14 @@ export class WidgetEditorComponent {
     this.iframe.attr('data-widget', JSON.stringify(this.widget));
     this.iframe[0].contentWindow.location.reload(true);
   };
+
+  /** The per-panel `tb-expand-fullscreen` button: expands or restores that panel. */
+  toggleExpandedPanel(panel: string, $event?: Event): void {
+    if ($event) {
+        $event.stopPropagation();
+    }
+    this.expandedPanel = this.expandedPanel === panel ? null : panel;
+  }
 
   toggleFullscreen = (...rest: any[]): any => {
     this.fullscreen = !this.fullscreen;
@@ -649,15 +761,14 @@ export class WidgetEditorComponent {
   }
 
   commitSaveWidgetAs(...rest: any[]): any {
-    let vm = this;
-    this.dialog.show({
-        controller: 'SaveWidgetTypeAsController',
-        controllerAs: 'vm',
-        templateUrl: saveWidgetTypeAsTemplate,
-        parent: $(this.document.body),
-        fullscreen: true,
-        targetEvent: this.saveWidgetAsEvent
-    }).then((saveWidgetAsData?: any) => {
+    firstValueFrom(this.dialog.open(SaveWidgetTypeAsComponent, {
+        panelClass: 'tb-fullscreen-dialog'
+    }).afterClosed()).then((saveWidgetAsData?: any) => {
+        if (!saveWidgetAsData) {
+            this.saveWidgetAsPending = false;
+            this.initWatchWidget();
+            return;
+        }
         this.widget.widgetName = saveWidgetAsData.widgetName;
         this.widget.alias = undefined;
         var config: any = JSON.parse(this.widget.defaultConfig);
@@ -669,7 +780,7 @@ export class WidgetEditorComponent {
         this.initWatchWidget();
         this.widgetService.saveWidgetType(this.widget, undefined, saveWidgetAsData.bundleAlias).then(
             (widgetType?: any) => {
-                this.router.go('home.widgets-bundles.widget-types.widget-type',
+                goState(this.router, 'home.widgets-bundles.widget-types.widget-type',
                     {widgetsBundleId: saveWidgetAsData.bundleId, widgetTypeId: widgetType.id.id});
             },
             () => {

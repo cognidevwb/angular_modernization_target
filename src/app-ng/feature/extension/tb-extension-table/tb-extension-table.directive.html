@@ -19,105 +19,101 @@
 <div flex class="md-content md-padding tb-absolute-fill tb-data-table extension-table" layout="column">
     <div layout="column" class="md-whiteframe-z1 toolbarsContainer" [ngClass]="{'tb-absolute-fill' : inWidget()}">
         @if (!inWidget()) {
-          <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(!selectedExtensions?.length
-                                                                                      && query?.search === null)">
+          <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(!selectedExtensions.length && query.search === null)">
             <div class="md-toolbar-tools">
-                <span translate>{{ 'extension.extensions' }}</span>
+                <span>{{ 'extension.extensions' | translate }}</span>
                 <span flex></span>
 
-                <button mat-icon-button (click)="importExtensions($event)" attr.matTooltip="{{ 'extension.import-extensions-configuration' | translate }}" matTooltipPosition="above">
+                <button mat-icon-button (click)="importExtensions($event)" matTooltip="{{ 'extension.import-extensions-configuration' | translate }}" matTooltipPosition="above">
                     <mat-icon>file_upload</mat-icon>
-                    
                 </button>
-                <button mat-icon-button (click)="exportExtensions()" attr.matTooltip="{{ 'extension.export-extensions-configuration' | translate }}" matTooltipPosition="above">
+                <button mat-icon-button (click)="exportExtensions()" matTooltip="{{ 'extension.export-extensions-configuration' | translate }}" matTooltipPosition="above">
                     <mat-icon>file_download</mat-icon>
-                    
                 </button>
-                <button mat-icon-button (click)="addExtension($event)" attr.matTooltip="{{ 'action.add' | translate }}" matTooltipPosition="above">
+                <button mat-icon-button (click)="addExtension($event)" matTooltip="{{ 'action.add' | translate }}" matTooltipPosition="above">
                     <mat-icon>add</mat-icon>
-                    
                 </button>
-                <button mat-icon-button (click)="enterFilterMode($event)" attr.matTooltip="{{ 'action.search' | translate }}" matTooltipPosition="above">
+                <button mat-icon-button (click)="enterFilterMode($event)" matTooltip="{{ 'action.search' | translate }}" matTooltipPosition="above">
                     <mat-icon>search</mat-icon>
-                    
                 </button>
-                <button mat-icon-button (click)="reloadExtensions()" attr.matTooltip="{{ 'action.refresh' | translate }}" matTooltipPosition="above">
+                <button mat-icon-button (click)="reloadExtensions()" matTooltip="{{ 'action.refresh' | translate }}" matTooltipPosition="above">
                     <mat-icon>refresh</mat-icon>
-                    
                 </button>
             </div>
         </mat-toolbar>
         }
-        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(!selectedExtensions?.length
-                                                                 && query?.search != null)" [ngClass]="{'toolbar-widget' : inWidget()}">
+        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(!selectedExtensions.length && query.search != null)" [ngClass]="{'toolbar-widget' : inWidget()}">
             <div class="md-toolbar-tools">
-                <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{ 'action.search' | translate }}" matTooltipPosition="above">
+                <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" matTooltip="{{ 'action.search' | translate }}" matTooltipPosition="above">
                     <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
-                    
                 </button>
                 <mat-form-field flex>
                     <mat-label>&nbsp;</mat-label>
-                    <input matInput [(ngModel)]="query.search" class="searchInput" attr.placeholder="{{ 'common.enter-search' | translate }}">
+                    <input matInput [ngModel]="query.search" (ngModelChange)="onSearchChange($event)" class="searchInput" placeholder="{{ 'common.enter-search' | translate }}">
                 </mat-form-field>
-                <button mat-icon-button attr.aria-label="{{ 'action.back' | translate }}" (click)="exitFilterMode()" attr.matTooltip="{{ 'action.close' | translate }}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                <button mat-icon-button attr.aria-label="{{ 'action.back' | translate }}" (click)="exitFilterMode()" matTooltip="{{ 'action.close' | translate }}" [matTooltipPosition]="ctx()?.dashboard?.isWidgetExpanded ? 'below' : 'above'">
                     <mat-icon attr.aria-label="{{ 'action.close' | translate }}" class="material-icons">close</mat-icon>
-                    
                 </button>
             </div>
         </mat-toolbar>
-        <mat-toolbar class="md-table-toolbar alternate" [hidden]="!(selectedExtensions?.length)" [ngClass]="{'toolbar-widget' : inWidget()}">
+        <mat-toolbar class="md-table-toolbar alternate" [hidden]="!selectedExtensions.length" [ngClass]="{'toolbar-widget' : inWidget()}">
             <div class="md-toolbar-tools">
-                <span translate translate-values="{count: vm.selectedExtensions.length}" translate-interpolation="messageformat">extension.selected-extensions</span>
+                <span>{{ 'extension.selected-extensions' | translate: {count: selectedExtensions.length} }}</span>
                 <span flex></span>
-                <button mat-icon-button (click)="deleteExtensions($event)" attr.matTooltip="{{ 'action.delete' | translate }}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                <button mat-icon-button (click)="deleteExtensions($event)" matTooltip="{{ 'action.delete' | translate }}" [matTooltipPosition]="ctx()?.dashboard?.isWidgetExpanded ? 'below' : 'above'">
                     <mat-icon>delete</mat-icon>
-                    
                 </button>
             </div>
         </mat-toolbar>
 
         <div class="md-padding" flex layout="row" [ngClass]="{'sync-widget' : inWidget()}">
             <mat-form-field flex="50" class="md-block">
-                <mat-label translate>extension.sync.status</mat-label>
-                <input matInput [(ngModel)]="syncStatus" [ngClass]="{'extension__syncStatus--green':isSync, 'extension__syncStatus--red':!isSync}" disabled>
+                <mat-label>{{ 'extension.sync.status' | translate }}</mat-label>
+                <input matInput [value]="syncStatus ?? ''" [ngClass]="{'extension__syncStatus--green':isSync, 'extension__syncStatus--red':!isSync}" disabled>
             </mat-form-field>
 
             <mat-form-field flex="50" class="md-block">
-                <mat-label translate>extension.sync.last-sync-time</mat-label>
-                <input matInput [(ngModel)]="syncLastTime" class="extension__syncStatus--black" disabled>
+                <mat-label>{{ 'extension.sync.last-sync-time' | translate }}</mat-label>
+                <input matInput [value]="syncLastTime ?? ''" class="extension__syncStatus--black" disabled>
             </mat-form-field>
         </div>
 
-        <!-- TODO(port): md-table-container (angular-material-data-table): a mat-table with MatSort --><md-table-container flex>
-            <table md-table md-row-select multiple="" [(ngModel)]="selectedExtensions" md-progress="vm.extensionsDeferred.promise">
-                <thead fix-head md-head md-order="vm.query.order" md-on-reorder="vm.onReorder">
-                    <tr md-row>
-                        <th md-column md-order-by="id"><span translate>extension.id</span></th>
-                        <th md-column md-order-by="type"><span translate>extension.type</span></th>
-                        <th md-column><span>&nbsp</span></th>
+        <div class="md-table-container" flex>
+            <table class="md-table">
+                <thead class="md-head">
+                    <tr class="md-row">
+                        <th class="md-column md-checkbox-column">
+                            <mat-checkbox [checked]="allSelected()" [indeterminate]="selectedExtensions.length > 0 && !allSelected()" (change)="toggleAll()"></mat-checkbox>
+                        </th>
+                        <th class="md-column md-sort" (click)="reorder('id')">
+                            <span>{{ 'extension.id' | translate }}</span>
+                            @if (query.order === 'id' || query.order === '-id') {
+                              <mat-icon class="md-sort-icon">{{ query.order === 'id' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                            }
+                        </th>
+                        <th class="md-column md-sort" (click)="reorder('type')">
+                            <span>{{ 'extension.type' | translate }}</span>
+                            @if (query.order === 'type' || query.order === '-type') {
+                              <mat-icon class="md-sort-icon">{{ query.order === 'type' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                            }
+                        </th>
+                        <th class="md-column"><span>&nbsp;</span></th>
                     </tr>
                 </thead>
-                <tbody md-body>
+                <tbody class="md-body">
                 @for (extension of extensions; track $index) {
-                  <tr md-row md-select="extension" md-select-id="extension" md-auto-select>
-                    <td md-cell>{{ extension?.id }}</td>
-                    <td md-cell>{{ extension?.type }}</td>
-                    <td md-cell class="tb-action-cell">
-
-                        <!--<md-button class="md-icon-button" aria-label="{{ 'action.edit' | translate }}" ng-click="vm.exportExtension($event, extension)">
-                            <md-icon aria-label="{{ 'action.edit' | translate }}" class="material-icons">file_download</md-icon>
-                            <md-tooltip md-direction="top">
-                                {{ 'extension.export-extension' | translate }}
-                            </md-tooltip>
-                        </md-button>-->
-
-                        <button mat-icon-button attr.aria-label="{{ 'action.edit' | translate }}" (click)="editExtension($event, extension)" attr.matTooltip="{{ 'extension.edit' | translate }}" matTooltipPosition="above">
+                  <tr class="md-row" [class.md-selected]="isSelected(extension)" (click)="toggleSelection(extension)">
+                    <td class="md-cell md-checkbox-cell">
+                        <mat-checkbox [checked]="isSelected(extension)" (click)="$event.stopPropagation()" (change)="toggleSelection(extension)"></mat-checkbox>
+                    </td>
+                    <td class="md-cell">{{ extension?.id }}</td>
+                    <td class="md-cell">{{ extension?.type }}</td>
+                    <td class="md-cell tb-action-cell">
+                        <button mat-icon-button attr.aria-label="{{ 'action.edit' | translate }}" (click)="editExtension($event, extension)" matTooltip="{{ 'extension.edit' | translate }}" matTooltipPosition="above">
                             <mat-icon attr.aria-label="{{ 'action.edit' | translate }}" class="material-icons">edit</mat-icon>
-                            
                         </button>
-                        <button mat-icon-button attr.aria-label="{{ 'action.delete' | translate }}" (click)="deleteExtension($event, extension)" attr.matTooltip="{{ 'extension.delete' | translate }}" matTooltipPosition="above">
+                        <button mat-icon-button attr.aria-label="{{ 'action.delete' | translate }}" (click)="deleteExtension($event, extension)" matTooltip="{{ 'extension.delete' | translate }}" matTooltipPosition="above">
                             <mat-icon attr.aria-label="{{ 'action.delete' | translate }}" class="material-icons">delete</mat-icon>
-                            
                         </button>
                     </td>
                 </tr>
@@ -127,9 +123,9 @@
             @if (inWidget()) {
               <mat-divider></mat-divider>
             }
-        </md-table-container>
-        <!-- TODO(port): md-table-pagination: a mat-paginator --><md-table-pagination md-limit="vm.query.limit" md-limit-options="[5, 10, 15]" md-page="vm.query.page" attr.md-total="{{extensionsCount}}" md-on-paginate="vm.onPaginate" md-page-select>
-        </md-table-pagination>
+        </div>
+        <mat-paginator [length]="extensionsCount" [pageSize]="query.limit" [pageSizeOptions]="limitOptions" [pageIndex]="query.page - 1" (page)="onPaginate($event)">
+        </mat-paginator>
     </div>
 
 </div>

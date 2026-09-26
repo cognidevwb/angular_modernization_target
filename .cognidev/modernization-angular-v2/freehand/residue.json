@@ -1,0 +1,1828 @@
+{
+"summary": {
+"files": 148,
+"uses": 1064,
+"names": 125,
+"by_kind": {
+"angularjs": 851,
+"lost": 146,
+"legacy-import": 67
+}
+},
+"rows": [
+{
+"name": "$animate",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/layout/home/home.component.ts:122",
+"src/app-ng/feature/layout/home/home.component.ts:130",
+"src/app-ng/feature/layout/home/home.component.ts:133",
+"src/app-ng/feature/components/tb-no-animate/tb-no-animate.directive.ts:26",
+"src/app-ng/feature/components/tb-no-animate/tb-no-animate.directive.ts:28"
+]
+},
+{
+"name": "$compile",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/entity-view/tb-entity-view/tb-entity-view.directive.ts:161",
+"src/app-ng/feature/extension/tb-extension-form-opc/tb-extension-form-opc.directive.ts:112",
+"src/app-ng/feature/extension/tb-extension-form-http/tb-extension-form-http.directive.ts:78",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:110",
+"src/app-ng/feature/entity/tb-entity-select/tb-entity-select.directive.ts:78",
+"src/app-ng/feature/entity/tb-entity-autocomplete/tb-entity-autocomplete.directive.ts:108",
+"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:162",
+"src/app-ng/feature/entity/tb-aliases-entity-select/tb-aliases-entity-select.directive.ts:62",
+"src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:117",
+"src/app-ng/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.ts:78",
+"src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.ts:70",
+"src/app-ng/feature/entity/tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive.ts:76",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:104",
+"src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts:53",
+"src/app-ng/feature/dashboard/tb-dashboard-details/tb-dashboard-details.directive.ts:76",
+"src/app-ng/feature/dashboard/tb-states-component/tb-states-component.directive.ts:75",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:103",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:101",
+"src/app-ng/feature/components/tb-json-content/tb-json-content.directive.ts:131",
+"src/app-ng/feature/components/tb-legend-config/tb-legend-config.directive.ts:67",
+"src/app-ng/feature/components/widget/widget.component.ts:790",
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:121",
+"src/app-ng/feature/components/tb-material-icon-select/tb-material-icon-select.directive.ts:57",
+"src/app-ng/feature/components/tb-gateway-config-select/tb-gateway-config-select.directive.ts:57",
+"src/app-ng/feature/components/tb-json-form/tb-json-form.directive.ts:196",
+"src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts:933",
+"src/app-ng/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts:71",
+"src/app-ng/feature/components/tb-contact/tb-contact.directive.ts:48",
+"src/app-ng/feature/components/tb-grid-card-content/tb-grid-card-content.directive.ts:70",
+"src/app-ng/feature/components/tb-expand-fullscreen/tb-expand-fullscreen.directive.ts:81",
+"src/app-ng/feature/components/tb-expand-fullscreen/tb-expand-fullscreen.directive.ts:142",
+"src/app-ng/feature/components/tb-expand-fullscreen/tb-expand-fullscreen.directive.ts:152",
+"src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts:81",
+"src/app-ng/feature/components/tb-datetime-period/tb-datetime-period.directive.ts:82",
+"src/app-ng/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts:131",
+"src/app-ng/feature/components/tb-timeinterval/tb-timeinterval.directive.ts:133",
+"src/app-ng/feature/components/tb-queue-type-list/tb-queue-type-list.directive.ts:75",
+"src/app-ng/feature/components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive.ts:82",
+"src/app-ng/feature/components/tb-dashboard-select/tb-dashboard-select.directive.ts:76",
+"src/app-ng/feature/rulechain/tb-rule-node/tb-rule-node.directive.ts:71",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:95",
+"src/app-ng/feature/rulechain/tb-rule-node-defined-config/tb-rule-node-defined-config.directive.ts:62",
+"src/app-ng/feature/rulechain/tb-message-type-autocomplete/tb-message-type-autocomplete.directive.ts:82",
+"src/app-ng/feature/rulechain/tb-rule-node-config/tb-rule-node-config.directive.ts:61",
+"src/app-ng/feature/audit/tb-audit-log-row/tb-audit-log-row.directive.ts:53",
+"src/app-ng/feature/alarm/tb-alarm-row/tb-alarm-row.directive.ts:49",
+"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:62"
+]
+},
+{
+"name": "$controller",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/dashboard/tb-states-component/tb-states-component.directive.ts:70",
+"src/app-ng/feature/components/tb-grid-card-content/tb-grid-card-content.directive.ts:65"
+]
+},
+{
+"name": "$filter",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/widget/widget-library/widget-library.component.ts:79",
+"src/app-ng/feature/widget/widget-library/widget-library.component.ts:141",
+"src/app-ng/feature/entity/entity-alias-dialog/entity-alias-dialog.component.ts:87",
+"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:376",
+"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:427",
+"src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:158",
+"src/app-ng/feature/entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive.ts:100",
+"src/app-ng/feature/entity/aliases-entity-select-panel/aliases-entity-select-panel.component.ts:52",
+"src/app-ng/feature/entity/tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive.ts:81",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:117",
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:403",
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:444",
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:456",
+"src/app-ng/feature/dashboard/dashboard-state-dialog/dashboard-state-dialog.component.ts:87",
+"src/app-ng/feature/dashboard/manage-dashboard-states/manage-dashboard-states.component.ts:94",
+"src/app-ng/feature/dashboard/manage-dashboard-states/manage-dashboard-states.component.ts:96",
+"src/app-ng/feature/dashboard/manage-dashboard-states/manage-dashboard-states.component.ts:153",
+"src/app-ng/feature/components/widget/widget.component.ts:230",
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:228",
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:233",
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:235",
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:236",
+"src/app-ng/feature/components/tb-confirm-on-exit/tb-confirm-on-exit.directive.ts:43",
+"src/app-ng/feature/components/tb-confirm-on-exit/tb-confirm-on-exit.directive.ts:50",
+"src/app-ng/feature/components/widget-action-dialog/widget-action-dialog.component.ts:139",
+"src/app-ng/feature/components/tb-related-entity-autocomplete/tb-related-entity-autocomplete.directive.ts:104",
+"src/app-ng/feature/components/tb-queue-type-list/tb-queue-type-list.directive.ts:82",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:99",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:113",
+"src/app-ng/feature/rulechain/tb-message-type-autocomplete/tb-message-type-autocomplete.directive.ts:64",
+"src/app-ng/feature/rulechain/tb-message-type-autocomplete/tb-message-type-autocomplete.directive.ts:87",
+"src/app-ng/feature/api/services/dashboard.service.ts:91",
+"src/app-ng/feature/api/services/datasource.service.ts:13",
+"src/app-ng/feature/api/services/datasource.service.ts:216",
+"src/app-ng/feature/api/services/datasource.service.ts:384",
+"src/app-ng/feature/api/services/datasource.service.ts:420",
+"src/app-ng/feature/api/services/datasource.service.ts:718",
+"src/app-ng/feature/api/services/rule-chain.service.ts:215",
+"src/app-ng/feature/api/services/widget.service.ts:274",
+"src/app-ng/feature/api/services/attribute.service.ts:93",
+"src/app-ng/feature/api/services/attribute.service.ts:95",
+"src/app-ng/feature/alarm/alarm-details-dialog/alarm-details-dialog.component.ts:118",
+"src/app-ng/feature/alarm/alarm-details-dialog/alarm-details-dialog.component.ts:121",
+"src/app-ng/feature/alarm/alarm-details-dialog/alarm-details-dialog.component.ts:125",
+"src/app-ng/feature/alarm/alarm-details-dialog/alarm-details-dialog.component.ts:129",
+"src/app-ng/feature/alarm/alarm-details-dialog/alarm-details-dialog.component.ts:133"
+]
+},
+{
+"name": "$injector",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/components/widget/widget.component.ts:85",
+"src/app-ng/feature/rulechain/tb-rule-node-config/tb-rule-node-config.directive.ts:75",
+"src/app-ng/feature/root/services/global-interceptor.service.ts:33",
+"src/app-ng/feature/root/services/global-interceptor.service.ts:40",
+"src/app-ng/feature/root/services/global-interceptor.service.ts:47",
+"src/app-ng/feature/root/services/global-interceptor.service.ts:54",
+"src/app-ng/feature/root/services/global-interceptor.service.ts:61",
+"src/app-ng/feature/root/services/global-interceptor.service.ts:68"
+]
+},
+{
+"name": "$log",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/api/services/datasource.service.ts:13",
+"src/app-ng/feature/api/services/datasource.service.ts:718"
+]
+},
+{
+"name": "$mdColorPalette",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/common/services/utils.service.ts:78"
+]
+},
+{
+"name": "$mdColorPicker",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:150",
+"src/app-ng/feature/components/tb-json-form/tb-json-form.directive.ts:200",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:199"
+]
+},
+{
+"name": "$mdConstant",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/entity-view/tb-entity-view/tb-entity-view.directive.ts:109",
+"src/app-ng/feature/components/tb-gateway-config-select/tb-gateway-config-select.directive.ts:97",
+"src/app-ng/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts:102"
+]
+},
+{
+"name": "$mdEditDialog",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:260"
+]
+},
+{
+"name": "$mdExpansionPanel",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/entity-view/tb-entity-view/tb-entity-view.directive.ts:83",
+"src/app-ng/feature/admin/security-settings/security-settings.component.ts:44"
+]
+},
+{
+"name": "$mdStepper",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/import-export/import-dialog-csv/import-dialog-csv.component.ts:227",
+"src/app-ng/feature/import-export/import-dialog-csv/import-dialog-csv.component.ts:238",
+"src/app-ng/feature/import-export/import-dialog-csv/import-dialog-csv.component.ts:253",
+"src/app-ng/feature/import-export/import-dialog-csv/import-dialog-csv.component.ts:283"
+]
+},
+{
+"name": "$mdUtil",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:324",
+"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:332",
+"src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:118",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:105",
+"src/app-ng/feature/rulechain/node-script-test/node-script-test.component.ts:183"
+]
+},
+{
+"name": "$ocLazyLoad",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/components/widget/widget.component.ts:123",
+"src/app-ng/feature/components/widget/widget.component.ts:652",
+"src/app-ng/feature/api/services/widget.service.ts:67",
+"src/app-ng/feature/api/services/widget.service.ts:763"
+]
+},
+{
+"name": "$parse",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/components/tb-confirm-on-exit/tb-confirm-on-exit.directive.ts:54"
+]
+},
+{
+"name": "$q",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/entity-view/entity-view/entity-view.component.ts:332",
+"src/app-ng/feature/entity-view/tb-entity-view/tb-entity-view.directive.ts:165",
+"src/app-ng/feature/widget/widget-library/widget-library.component.ts:79",
+"src/app-ng/feature/widget/widget-library/widget-library.component.ts:95",
+"src/app-ng/feature/asset/asset/asset.component.ts:373",
+"src/app-ng/feature/entity/entity-alias-dialog/entity-alias-dialog.component.ts:104",
+"src/app-ng/feature/entity/tb-entity-autocomplete/tb-entity-autocomplete.directive.ts:112",
+"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:236",
+"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:376",
+"src/app-ng/feature/entity/add-widget-to-dashboard-dialog/add-widget-to-dashboard-dialog.component.ts:78",
+"src/app-ng/feature/entity/add-widget-to-dashboard-dialog/add-widget-to-dashboard-dialog.component.ts:110",
+"src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:157",
+"src/app-ng/feature/entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive.ts:97",
+"src/app-ng/feature/entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive.ts:132",
+"src/app-ng/feature/entity/tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive.ts:80",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:114",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:163",
+"src/app-ng/feature/user/add-user/add-user.component.ts:108",
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:444",
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:456",
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:968",
+"src/app-ng/feature/dashboard/dashboards/dashboards.component.ts:421",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:107",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:132",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:154",
+"src/app-ng/feature/dashboard/add-widget/add-widget.component.ts:138",
+"src/app-ng/feature/dashboard/add-widget/add-widget.component.ts:163",
+"src/app-ng/feature/dashboard/add-widget/add-widget.component.ts:185",
+"src/app-ng/feature/components/widget/widget.component.ts:84",
+"src/app-ng/feature/components/widget/widget.component.ts:229",
+"src/app-ng/feature/components/widget/widget.component.ts:286",
+"src/app-ng/feature/components/widget/widget.component.ts:328",
+"src/app-ng/feature/components/widget/widget.component.ts:405",
+"src/app-ng/feature/components/widget/widget.component.ts:629",
+"src/app-ng/feature/components/widget/widget.component.ts:854",
+"src/app-ng/feature/components/widget-action-dialog/widget-action-dialog.component.ts:159",
+"src/app-ng/feature/components/tb-related-entity-autocomplete/tb-related-entity-autocomplete.directive.ts:77",
+"src/app-ng/feature/components/tb-datakey-config/tb-datakey-config.directive.ts:138",
+"src/app-ng/feature/components/datakey-config-dialog/datakey-config-dialog.component.ts:65",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:259",
+"src/app-ng/feature/components/tb-queue-type-list/tb-queue-type-list.directive.ts:79",
+"src/app-ng/feature/components/tb-queue-type-list/tb-queue-type-list.directive.ts:108",
+"src/app-ng/feature/common/services/utils.service.ts:135",
+"src/app-ng/feature/common/services/utils.service.ts:541",
+"src/app-ng/feature/rulechain/tb-message-type-autocomplete/tb-message-type-autocomplete.directive.ts:86",
+"src/app-ng/feature/rulechain/node-script-test/node-script-test.component.ts:181",
+"src/app-ng/feature/import-export/services/import-export.service.ts:122",
+"src/app-ng/feature/import-export/services/import-export.service.ts:192",
+"src/app-ng/feature/import-export/services/import-export.service.ts:277",
+"src/app-ng/feature/import-export/services/import-export.service.ts:379",
+"src/app-ng/feature/import-export/services/import-export.service.ts:530",
+"src/app-ng/feature/import-export/services/import-export.service.ts:578",
+"src/app-ng/feature/import-export/services/import-export.service.ts:626",
+"src/app-ng/feature/import-export/services/import-export.service.ts:659",
+"src/app-ng/feature/import-export/services/import-export.service.ts:703",
+"src/app-ng/feature/import-export/services/import-export.service.ts:738",
+"src/app-ng/feature/import-export/services/import-export.service.ts:859",
+"src/app-ng/feature/import-export/services/import-export.service.ts:934",
+"src/app-ng/feature/import-export/services/import-export.service.ts:957",
+"src/app-ng/feature/api/services/entity-view.service.ts:30",
+"src/app-ng/feature/api/services/entity-view.service.ts:65",
+"src/app-ng/feature/api/services/entity-view.service.ts:101",
+"src/app-ng/feature/api/services/entity-view.service.ts:116",
+"src/app-ng/feature/api/services/entity-view.service.ts:128",
+"src/app-ng/feature/api/services/entity-view.service.ts:139",
+"src/app-ng/feature/api/services/entity-view.service.ts:150",
+"src/app-ng/feature/api/services/entity-view.service.ts:173",
+"src/app-ng/feature/api/services/entity-view.service.ts:188",
+"src/app-ng/feature/api/services/entity-view.service.ts:199",
+"src/app-ng/feature/api/services/login.service.ts:28",
+"src/app-ng/feature/api/services/login.service.ts:42",
+"src/app-ng/feature/api/services/login.service.ts:55",
+"src/app-ng/feature/api/services/login.service.ts:66",
+"src/app-ng/feature/api/services/login.service.ts:77",
+"src/app-ng/feature/api/services/login.service.ts:91",
+"src/app-ng/feature/api/services/login.service.ts:102",
+"src/app-ng/feature/api/services/queue.service.ts:22",
+"src/app-ng/feature/api/services/alarm.service.ts:47",
+"src/app-ng/feature/api/services/alarm.service.ts:62",
+"src/app-ng/feature/api/services/alarm.service.ts:77",
+"src/app-ng/feature/api/services/alarm.service.ts:92",
+"src/app-ng/feature/api/services/alarm.service.ts:107",
+"src/app-ng/feature/api/services/alarm.service.ts:122",
+"src/app-ng/feature/api/services/alarm.service.ts:137",
+"src/app-ng/feature/api/services/alarm.service.ts:171",
+"src/app-ng/feature/api/services/alarm.service.ts:222",
+"src/app-ng/feature/api/services/dashboard.service.ts:38",
+"src/app-ng/feature/api/services/dashboard.service.ts:60",
+"src/app-ng/feature/api/services/dashboard.service.ts:82",
+"src/app-ng/feature/api/services/dashboard.service.ts:105",
+"src/app-ng/feature/api/services/dashboard.service.ts:124",
+"src/app-ng/feature/api/services/dashboard.service.ts:137",
+"src/app-ng/feature/api/services/dashboard.service.ts:150",
+"src/app-ng/feature/api/services/dashboard.service.ts:163",
+"src/app-ng/feature/api/services/dashboard.service.ts:176",
+"src/app-ng/feature/api/services/dashboard.service.ts:189",
+"src/app-ng/feature/api/services/dashboard.service.ts:202",
+"src/app-ng/feature/api/services/dashboard.service.ts:215",
+"src/app-ng/feature/api/services/dashboard.service.ts:228",
+"src/app-ng/feature/api/services/dashboard.service.ts:241",
+"src/app-ng/feature/api/services/dashboard.service.ts:254",
+"src/app-ng/feature/api/services/device.service.ts:32",
+"src/app-ng/feature/api/services/device.service.ts:67",
+"src/app-ng/feature/api/services/device.service.ts:103",
+"src/app-ng/feature/api/services/device.service.ts:118",
+"src/app-ng/feature/api/services/device.service.ts:145",
+"src/app-ng/feature/api/services/device.service.ts:156",
+"src/app-ng/feature/api/services/device.service.ts:168",
+"src/app-ng/feature/api/services/entity.service.ts:87",
+"src/app-ng/feature/api/services/entity.service.ts:106",
+"src/app-ng/feature/api/services/entity.service.ts:169",
+"src/app-ng/feature/api/services/entity.service.ts:189",
+"src/app-ng/feature/api/services/entity.service.ts:213",
+"src/app-ng/feature/api/services/entity.service.ts:321",
+"src/app-ng/feature/api/services/entity.service.ts:362",
+"src/app-ng/feature/api/services/entity.service.ts:387",
+"src/app-ng/feature/api/services/entity.service.ts:411",
+"src/app-ng/feature/api/services/entity.service.ts:440",
+"src/app-ng/feature/api/services/entity.service.ts:506",
+"src/app-ng/feature/api/services/entity.service.ts:876",
+"src/app-ng/feature/api/services/entity.service.ts:941",
+"src/app-ng/feature/api/services/entity.service.ts:971",
+"src/app-ng/feature/api/services/entity.service.ts:978",
+"src/app-ng/feature/api/services/entity.service.ts:1122",
+"src/app-ng/feature/api/services/entity.service.ts:1160",
+"src/app-ng/feature/api/services/entity.service.ts:1173",
+"src/app-ng/feature/api/services/entity.service.ts:1218",
+"src/app-ng/feature/api/services/entity.service.ts:1311",
+"src/app-ng/feature/api/services/entity.service.ts:1342",
+"src/app-ng/feature/api/services/entity.service.ts:1383",
+"src/app-ng/feature/api/services/entity.service.ts:1409",
+"src/app-ng/feature/api/services/entity.service.ts:1585",
+"src/app-ng/feature/api/services/component-descriptor.service.ts:26",
+"src/app-ng/feature/api/services/component-descriptor.service.ts:47",
+"src/app-ng/feature/api/services/component-descriptor.service.ts:82",
+"src/app-ng/feature/api/services/component-descriptor.service.ts:98",
+"src/app-ng/feature/api/services/audit-log.service.ts:22",
+"src/app-ng/feature/api/services/audit-log.service.ts:43",
+"src/app-ng/feature/api/services/audit-log.service.ts:64",
+"src/app-ng/feature/api/services/audit-log.service.ts:85",
+"src/app-ng/feature/api/services/user.service.ts:151",
+"src/app-ng/feature/api/services/user.service.ts:188",
+"src/app-ng/feature/api/services/user.service.ts:262",
+"src/app-ng/feature/api/services/user.service.ts:422",
+"src/app-ng/feature/api/services/user.service.ts:470",
+"src/app-ng/feature/api/services/user.service.ts:490",
+"src/app-ng/feature/api/services/user.service.ts:510",
+"src/app-ng/feature/api/services/user.service.ts:524",
+"src/app-ng/feature/api/services/user.service.ts:538",
+"src/app-ng/feature/api/services/user.service.ts:553",
+"src/app-ng/feature/api/services/user.service.ts:564",
+"src/app-ng/feature/api/services/user.service.ts:575",
+"src/app-ng/feature/api/services/admin.service.ts:22",
+"src/app-ng/feature/api/services/admin.service.ts:33",
+"src/app-ng/feature/api/services/admin.service.ts:44",
+"src/app-ng/feature/api/services/admin.service.ts:55",
+"src/app-ng/feature/api/services/admin.service.ts:66",
+"src/app-ng/feature/api/services/admin.service.ts:77",
+"src/app-ng/feature/api/services/rule-chain.service.ts:33",
+"src/app-ng/feature/api/services/rule-chain.service.ts:53",
+"src/app-ng/feature/api/services/rule-chain.service.ts:64",
+"src/app-ng/feature/api/services/rule-chain.service.ts:75",
+"src/app-ng/feature/api/services/rule-chain.service.ts:86",
+"src/app-ng/feature/api/services/rule-chain.service.ts:97",
+"src/app-ng/feature/api/services/rule-chain.service.ts:108",
+"src/app-ng/feature/api/services/rule-chain.service.ts:136",
+"src/app-ng/feature/api/services/rule-chain.service.ts:173",
+"src/app-ng/feature/api/services/rule-chain.service.ts:191",
+"src/app-ng/feature/api/services/rule-chain.service.ts:226",
+"src/app-ng/feature/api/services/rule-chain.service.ts:251",
+"src/app-ng/feature/api/services/rule-chain.service.ts:270",
+"src/app-ng/feature/api/services/rule-chain.service.ts:281",
+"src/app-ng/feature/api/services/customer.service.ts:23",
+"src/app-ng/feature/api/services/customer.service.ts:43",
+"src/app-ng/feature/api/services/customer.service.ts:54",
+"src/app-ng/feature/api/services/customer.service.ts:95",
+"src/app-ng/feature/api/services/customer.service.ts:116",
+"src/app-ng/feature/api/services/customer.service.ts:137",
+"src/app-ng/feature/api/services/customer.service.ts:148",
+"src/app-ng/feature/api/services/tenant.service.ts:22",
+"src/app-ng/feature/api/services/tenant.service.ts:42",
+"src/app-ng/feature/api/services/tenant.service.ts:53",
+"src/app-ng/feature/api/services/tenant.service.ts:64",
+"src/app-ng/feature/api/services/widget.service.ts:197",
+"src/app-ng/feature/api/services/widget.service.ts:267",
+"src/app-ng/feature/api/services/widget.service.ts:294",
+"src/app-ng/feature/api/services/widget.service.ts:307",
+"src/app-ng/feature/api/services/widget.service.ts:320",
+"src/app-ng/feature/api/services/widget.service.ts:333",
+"src/app-ng/feature/api/services/widget.service.ts:346",
+"src/app-ng/feature/api/services/widget.service.ts:359",
+"src/app-ng/feature/api/services/widget.service.ts:372",
+"src/app-ng/feature/api/services/widget.service.ts:390",
+"src/app-ng/feature/api/services/widget.service.ts:402",
+"src/app-ng/feature/api/services/widget.service.ts:415",
+"src/app-ng/feature/api/services/widget.service.ts:439",
+"src/app-ng/feature/api/services/widget.service.ts:473",
+"src/app-ng/feature/api/services/widget.service.ts:668",
+"src/app-ng/feature/api/services/widget.service.ts:681",
+"src/app-ng/feature/api/services/widget.service.ts:693",
+"src/app-ng/feature/api/services/widget.service.ts:712",
+"src/app-ng/feature/api/services/widget.service.ts:726",
+"src/app-ng/feature/api/services/widget.service.ts:740",
+"src/app-ng/feature/api/services/entity-relation.service.ts:22",
+"src/app-ng/feature/api/services/entity-relation.service.ts:33",
+"src/app-ng/feature/api/services/entity-relation.service.ts:48",
+"src/app-ng/feature/api/services/entity-relation.service.ts:60",
+"src/app-ng/feature/api/services/entity-relation.service.ts:75",
+"src/app-ng/feature/api/services/entity-relation.service.ts:87",
+"src/app-ng/feature/api/services/entity-relation.service.ts:99",
+"src/app-ng/feature/api/services/entity-relation.service.ts:112",
+"src/app-ng/feature/api/services/entity-relation.service.ts:124",
+"src/app-ng/feature/api/services/entity-relation.service.ts:136",
+"src/app-ng/feature/api/services/entity-relation.service.ts:149",
+"src/app-ng/feature/api/services/entity-relation.service.ts:160",
+"src/app-ng/feature/api/services/attribute.service.ts:32",
+"src/app-ng/feature/api/services/attribute.service.ts:62",
+"src/app-ng/feature/api/services/attribute.service.ts:79",
+"src/app-ng/feature/api/services/attribute.service.ts:109",
+"src/app-ng/feature/api/services/attribute.service.ts:210",
+"src/app-ng/feature/api/services/attribute.service.ts:259",
+"src/app-ng/feature/api/services/attribute.service.ts:308",
+"src/app-ng/feature/api/services/attribute.service.ts:328",
+"src/app-ng/feature/api/services/asset.service.ts:27",
+"src/app-ng/feature/api/services/asset.service.ts:42",
+"src/app-ng/feature/api/services/asset.service.ts:68",
+"src/app-ng/feature/api/services/asset.service.ts:83",
+"src/app-ng/feature/api/services/asset.service.ts:98",
+"src/app-ng/feature/api/services/asset.service.ts:113",
+"src/app-ng/feature/api/services/asset.service.ts:128",
+"src/app-ng/feature/api/services/asset.service.ts:143",
+"src/app-ng/feature/api/services/asset.service.ts:178",
+"src/app-ng/feature/api/services/asset.service.ts:214",
+"src/app-ng/feature/api/services/asset.service.ts:229",
+"src/app-ng/feature/api/services/asset.service.ts:255",
+"src/app-ng/feature/api/services/asset.service.ts:267",
+"src/app-ng/feature/device/device/device.component.ts:408",
+"src/app-ng/feature/services/itembuffer.service.ts:238",
+"src/app-ng/feature/services/itembuffer.service.ts:268",
+"src/app-ng/feature/services/itembuffer.service.ts:296",
+"src/app-ng/feature/services/clipboard.service.ts:23"
+]
+},
+{
+"name": "$scope",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/home/home-links/home-links.component.ts:42",
+"src/app-ng/feature/home/home-links/home-links.component.ts:45",
+"src/app-ng/feature/entity/entity-alias-dialog/entity-alias-dialog.component.ts:84",
+"src/app-ng/feature/entity/entity-alias-dialog/entity-alias-dialog.component.ts:96",
+"src/app-ng/feature/entity/add-attribute-dialog/add-attribute-dialog.component.ts:56",
+"src/app-ng/feature/layout/home/home.component.ts:98",
+"src/app-ng/feature/layout/home/home.component.ts:124",
+"src/app-ng/feature/layout/home/home.component.ts:143",
+"src/app-ng/feature/layout/home/home.component.ts:145",
+"src/app-ng/feature/layout/home/home.component.ts:188",
+"src/app-ng/feature/jsonform/json-form/json-form.component.ts:82",
+"src/app-ng/feature/jsonform/json-form/json-form.component.ts:92",
+"src/app-ng/feature/dashboard/tb-states-component/tb-states-component.directive.ts:69",
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:193",
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:268",
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:273",
+"src/app-ng/feature/dashboard/dashboard-state-dialog/dashboard-state-dialog.component.ts:68",
+"src/app-ng/feature/dashboard/dashboard-state-dialog/dashboard-state-dialog.component.ts:73",
+"src/app-ng/feature/dashboard/manage-dashboard-states/manage-dashboard-states.component.ts:85",
+"src/app-ng/feature/components/material-icons-dialog/material-icons-dialog.component-2.ts:51",
+"src/app-ng/feature/components/material-icons-dialog/material-icons-dialog.component-2.ts:65",
+"src/app-ng/feature/components/material-icons-dialog/material-icons-dialog.component.ts:34",
+"src/app-ng/feature/components/material-icons-dialog/material-icons-dialog.component.ts:48",
+"src/app-ng/feature/components/widget/widget.component.ts:228",
+"src/app-ng/feature/components/widget/widget.component.ts:390",
+"src/app-ng/feature/components/widget/widget.component.ts:788",
+"src/app-ng/feature/components/widget/widget.component.ts:807",
+"src/app-ng/feature/components/widget/widget.component.ts:811",
+"src/app-ng/feature/components/widget/widget.component.ts:815",
+"src/app-ng/feature/components/widget/widget.component.ts:818",
+"src/app-ng/feature/components/widget/widget.component.ts:825",
+"src/app-ng/feature/components/widget/widget.component.ts:829",
+"src/app-ng/feature/components/widget/widget.component.ts:840",
+"src/app-ng/feature/components/widget/widget.component.ts:845",
+"src/app-ng/feature/components/tb-confirm-on-exit/tb-confirm-on-exit.directive.ts:40",
+"src/app-ng/feature/components/tb-confirm-on-exit/tb-confirm-on-exit.directive.ts:42",
+"src/app-ng/feature/components/tb-confirm-on-exit/tb-confirm-on-exit.directive.ts:47",
+"src/app-ng/feature/components/tb-confirm-on-exit/tb-confirm-on-exit.directive.ts:48",
+"src/app-ng/feature/components/widget-action-dialog/widget-action-dialog.component.ts:94",
+"src/app-ng/feature/components/widget-action-dialog/widget-action-dialog.component.ts:99",
+"src/app-ng/feature/components/widget-action-dialog/widget-action-dialog.component.ts:104",
+"src/app-ng/feature/components/widget-action-dialog/widget-action-dialog.component.ts:116",
+"src/app-ng/feature/components/tb-grid-card-content/tb-grid-card-content.directive.ts:64",
+"src/app-ng/feature/components/legend-config-panel/legend-config-panel.component.ts:54",
+"src/app-ng/feature/components/datakey-config-dialog/datakey-config-dialog.component.ts:90",
+"src/app-ng/feature/components/tb-widget/tb-widget.directive.ts:66",
+"src/app-ng/feature/components/timewindow-panel/timewindow-panel.component.ts:75",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:55",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:57",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:61",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:63",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:65",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:69",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:70",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:71",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:73",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:74",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:75",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:76",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:77",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:78",
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:79",
+"src/app-ng/feature/common/services/$mdp-date-picker.service.ts:9",
+"src/app-ng/feature/common/services/$mdp-date-picker.service.ts:57",
+"src/app-ng/feature/common/services/$mdp-date-picker.service.ts:58",
+"src/app-ng/feature/common/services/$mdp-date-picker.service.ts:62",
+"src/app-ng/feature/common/services/$mdp-time-picker.service.ts:10",
+"src/app-ng/feature/common/services/$mdp-time-picker.service.ts:21",
+"src/app-ng/feature/rulechain/node-script-test/node-script-test.component.ts:83",
+"src/app-ng/feature/rulechain/node-script-test/node-script-test.component.ts:94",
+"src/app-ng/feature/rulechain/node-script-test/node-script-test.component.ts:109",
+"src/app-ng/feature/rulechain/node-script-test/node-script-test.component.ts:165",
+"src/app-ng/feature/import-export/import-dialog-csv/import-dialog-csv.component.ts:220"
+]
+},
+{
+"name": "$templateCache",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:47",
+"src/app-ng/feature/entity/tb-entity-autocomplete/tb-entity-autocomplete.directive.ts:53",
+"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:84",
+"src/app-ng/feature/entity/tb-aliases-entity-select/tb-aliases-entity-select.directive.ts:45",
+"src/app-ng/feature/dashboard/tb-dashboard-details/tb-dashboard-details.directive.ts:59",
+"src/app-ng/feature/dashboard/tb-states-component/tb-states-component.directive.ts:61",
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:75",
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:79",
+"src/app-ng/feature/components/tb-json-form/tb-json-form.directive.ts:102",
+"src/app-ng/feature/components/tb-contact/tb-contact.directive.ts:42",
+"src/app-ng/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts:46",
+"src/app-ng/feature/components/tb-queue-type-list/tb-queue-type-list.directive.ts:51",
+"src/app-ng/feature/audit/tb-audit-log-row/tb-audit-log-row.directive.ts:41",
+"src/app-ng/feature/alarm/tb-alarm-row/tb-alarm-row.directive.ts:39",
+"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:57"
+]
+},
+{
+"name": "$timeout",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/components/widget/widget.component.ts:83",
+"src/app-ng/feature/components/widget/widget.component.ts:231",
+"src/app-ng/feature/api/services/datasource.service.ts:13",
+"src/app-ng/feature/api/services/datasource.service.ts:352",
+"src/app-ng/feature/api/services/datasource.service.ts:419",
+"src/app-ng/feature/api/services/datasource.service.ts:434",
+"src/app-ng/feature/api/services/datasource.service.ts:514",
+"src/app-ng/feature/api/services/datasource.service.ts:567",
+"src/app-ng/feature/api/services/datasource.service.ts:718"
+]
+},
+{
+"name": "$window",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/layout/home/home.component.ts:196",
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:446",
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:1050",
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:1154",
+"src/app-ng/feature/components/widget/widget.component.ts:123",
+"src/app-ng/feature/components/widget/widget.component.ts:124",
+"src/app-ng/feature/components/tb-confirm-on-exit/tb-confirm-on-exit.directive.ts:41",
+"src/app-ng/feature/rulechain/node-script-test/node-script-test.component.ts:146"
+]
+},
+{
+"name": "CanvasDigitalGauge",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/widget/tb-knob/tb-knob.directive.ts:73"
+]
+},
+{
+"name": "RightClickContextMenu",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/tb-mousepoint-menu/tb-mousepoint-menu.directive.ts:24",
+"src/app-ng/feature/components/tb-mousepoint-menu/tb-mousepoint-menu.directive.ts:40",
+"src/app-ng/feature/components/tb-mousepoint-menu/tb-mousepoint-menu.directive.ts:44"
+]
+},
+{
+"name": "SUPPORTED_LANGS",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/profile/profile/profile.component.ts:44"
+]
+},
+{
+"name": "THINGSBOARD_VERSION",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:124"
+]
+},
+{
+"name": "activation-link.dialog.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/user/add-user/add-user.component.ts:12",
+"src/app-ng/feature/user/user/user.component.ts:22"
+]
+},
+{
+"name": "add-asset.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/asset/asset/asset.component.ts:25"
+]
+},
+{
+"name": "add-assets-to-customer.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/asset/asset/asset.component.ts:31"
+]
+},
+{
+"name": "add-customer.tpl.html?raw",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/customer/customer/customer.component.ts:16"
+]
+},
+{
+"name": "add-dashboard.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/dashboards/dashboards.component.ts:20"
+]
+},
+{
+"name": "add-dashboards-to-customer.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/dashboards/dashboards.component.ts:24"
+]
+},
+{
+"name": "add-device.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/device/device/device.component.ts:26"
+]
+},
+{
+"name": "add-devices-to-customer.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/device/device/device.component.ts:32"
+]
+},
+{
+"name": "add-rulechain.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/rulechain/rule-chains/rule-chains.component.ts:21"
+]
+},
+{
+"name": "add-tenant.tpl.html?raw",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/tenant/tenant/tenant.component.ts:15"
+]
+},
+{
+"name": "add-user.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/user/user/user.component.ts:18"
+]
+},
+{
+"name": "add-widget.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:47"
+]
+},
+{
+"name": "add-widgets-bundle.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/widget/widgets-bundle/widgets-bundle.component.ts:12"
+]
+},
+{
+"name": "addEntityViewTemplate",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/entity-view/entity-view/entity-view.component.ts:98"
+]
+},
+{
+"name": "addEntityViewsToCustomerTemplate",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/entity-view/entity-view/entity-view.component.ts:420"
+]
+},
+{
+"name": "addResizeListener",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.ts:36",
+"src/app-ng/feature/components/widget/widget.component.ts:792"
+]
+},
+{
+"name": "aliasController",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/widget/widget.component.ts:207",
+"src/app-ng/feature/components/widget/widget.component.ts:242"
+]
+},
+{
+"name": "aliases-entity-select-button.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/entity/tb-aliases-entity-select/tb-aliases-entity-select.directive.ts:11"
+]
+},
+{
+"name": "aliases-entity-select-panel.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/entity/tb-aliases-entity-select/tb-aliases-entity-select.directive.ts:13"
+]
+},
+{
+"name": "angular",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/entity/tb-entity-select/tb-entity-select.directive.ts:100",
+"src/app-ng/feature/entity/tb-entity-select/tb-entity-select.directive.ts:106",
+"src/app-ng/feature/entity/tb-entity-select/tb-entity-select.directive.ts:112",
+"src/app-ng/feature/entity/tb-entity-autocomplete/tb-entity-autocomplete.directive.ts:99",
+"src/app-ng/feature/entity/tb-entity-autocomplete/tb-entity-autocomplete.directive.ts:104",
+"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:145",
+"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:153",
+"src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:112",
+"src/app-ng/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.ts:71",
+"src/app-ng/feature/entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive.ts:77",
+"src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.ts:65",
+"src/app-ng/feature/entity/tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive.ts:69",
+"src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:66",
+"src/app-ng/feature/layout/home/home.component.ts:144",
+"src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.ts:22",
+"src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.ts:26",
+"src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.ts:27",
+"src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.ts:63",
+"src/app-ng/feature/dashboard/dashboard-state-dialog/dashboard-state-dialog.component.ts:69",
+"src/app-ng/feature/dashboard/dashboard-state-dialog/dashboard-state-dialog.component.ts:74",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:145",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:147",
+"src/app-ng/feature/dashboard/manage-dashboard-states/manage-dashboard-states.component.ts:86",
+"src/app-ng/feature/dashboard/add-widget/add-widget.component.ts:176",
+"src/app-ng/feature/dashboard/add-widget/add-widget.component.ts:178",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:216",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:218",
+"src/app-ng/feature/components/widget/widget.component.ts:393",
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:117",
+"src/app-ng/feature/components/tb-gateway-config-select/tb-gateway-config-select.directive.ts:68",
+"src/app-ng/feature/components/widget-action-dialog/widget-action-dialog.component.ts:95",
+"src/app-ng/feature/components/widget-action-dialog/widget-action-dialog.component.ts:100",
+"src/app-ng/feature/components/widget-action-dialog/widget-action-dialog.component.ts:175",
+"src/app-ng/feature/components/widget-action-dialog/widget-action-dialog.component.ts:177",
+"src/app-ng/feature/components/tb-json-form/tb-json-form.directive.ts:39",
+"src/app-ng/feature/components/tb-json-form/tb-json-form.directive.ts:52",
+"src/app-ng/feature/components/tb-json-form/tb-json-form.directive.ts:65",
+"src/app-ng/feature/components/tb-json-form/tb-json-form.directive.ts:66",
+"src/app-ng/feature/components/tb-json-form/tb-json-form.directive.ts:71",
+"src/app-ng/feature/components/tb-json-form/tb-json-form.directive.ts:177",
+"src/app-ng/feature/components/tb-datakey-config/tb-datakey-config.directive.ts:159",
+"src/app-ng/feature/components/tb-datakey-config/tb-datakey-config.directive.ts:161",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:108",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:271",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:273",
+"src/app-ng/feature/components/tb-queue-type-list/tb-queue-type-list.directive.ts:68",
+"src/app-ng/feature/common/services/utils.service.ts:369",
+"src/app-ng/feature/common/services/$mdp-date-picker.service.ts:16",
+"src/app-ng/feature/common/services/$mdp-date-picker.service.ts:97",
+"src/app-ng/feature/common/services/$mdp-date-picker.service.ts:130",
+"src/app-ng/feature/common/services/fullscreen.service.ts:31",
+"src/app-ng/feature/common/services/$mdp-time-picker.service.ts:68",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:90",
+"src/app-ng/feature/rulechain/tb-rule-node-defined-config/tb-rule-node-defined-config.directive.ts:45",
+"src/app-ng/feature/rulechain/tb-message-type-autocomplete/tb-message-type-autocomplete.directive.ts:78",
+"src/app-ng/feature/rulechain/tb-rule-node-config/tb-rule-node-config.directive.ts:49",
+"src/app-ng/feature/import-export/services/import-export.service.ts:835",
+"src/app-ng/feature/import-export/services/import-export.service.ts:837",
+"src/app-ng/feature/import-export/services/import-export.service.ts:909",
+"src/app-ng/feature/services/itembuffer.service.ts:309",
+"src/app-ng/feature/services/itembuffer.service.ts:343"
+]
+},
+{
+"name": "asset-card.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/asset/asset/asset.component.ts:27"
+]
+},
+{
+"name": "assign-to-customer.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/asset/asset/asset.component.ts:29",
+"src/app-ng/feature/device/device/device.component.ts:30"
+]
+},
+{
+"name": "assignToCustomerTemplate",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/entity-view/entity-view/entity-view.component.ts:383"
+]
+},
+{
+"name": "audit-log-details-dialog.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/audit/tb-audit-log-row/tb-audit-log-row.directive.ts:11"
+]
+},
+{
+"name": "audit-log-row.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/audit/tb-audit-log-row/tb-audit-log-row.directive.ts:13"
+]
+},
+{
+"name": "beautify",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/rulechain/node-script-test/node-script-test.component.ts:33",
+"src/app-ng/feature/alarm/alarm-details-dialog/alarm-details-dialog.component.ts:26",
+"src/app-ng/feature/event/event-content-dialog/event-content-dialog.component.ts:20"
+]
+},
+{
+"name": "contact.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-contact/tb-contact.directive.ts:8"
+]
+},
+{
+"name": "countries",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/tb-contact/tb-contact.directive.ts:40"
+]
+},
+{
+"name": "custom-action-pretty-editor.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts:10"
+]
+},
+{
+"name": "customer-card.tpl.html?raw",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/customer/customer/customer.component.ts:17"
+]
+},
+{
+"name": "dashboard",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/widget/widget.component.ts:147"
+]
+},
+{
+"name": "dashboard-card.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/dashboards/dashboards.component.ts:22"
+]
+},
+{
+"name": "dashboard-fieldset.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/tb-dashboard-details/tb-dashboard-details.directive.ts:12"
+]
+},
+{
+"name": "dashboard-settings.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:41"
+]
+},
+{
+"name": "dashboard-state-dialog.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/manage-dashboard-states/manage-dashboard-states.component.ts:10"
+]
+},
+{
+"name": "dashboard-toolbar.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.ts:4"
+]
+},
+{
+"name": "dashboardTimewindow",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/widget/widget.component.ts:91",
+"src/app-ng/feature/components/widget/widget.component.ts:154"
+]
+},
+{
+"name": "dashboardTimewindowApi",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/widget/widget.component.ts:239"
+]
+},
+{
+"name": "datetime-period.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-datetime-period/tb-datetime-period.directive.ts:7"
+]
+},
+{
+"name": "device-card.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/device/device/device.component.ts:28"
+]
+},
+{
+"name": "device-credentials.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/device/device/device.component.ts:34"
+]
+},
+{
+"name": "element",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/tenant/tb-tenant/tb-tenant.directive.ts:44",
+"src/app-ng/feature/entity-view/tb-entity-view/tb-entity-view.directive.ts:67",
+"src/app-ng/feature/extension/tb-extension-form-opc/tb-extension-form-opc.directive.ts:39",
+"src/app-ng/feature/extension/tb-extension-form-http/tb-extension-form-http.directive.ts:39",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:42",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:234",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:235",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:236",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:237",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:240",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:243",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:244",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:245",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:248",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:251",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:254",
+"src/app-ng/feature/asset/tb-asset/tb-asset.directive.ts:52",
+"src/app-ng/feature/entity/tb-entity-filter/tb-entity-filter.directive.ts:48",
+"src/app-ng/feature/entity/tb-entity-select/tb-entity-select.directive.ts:37",
+"src/app-ng/feature/entity/tb-entity-autocomplete/tb-entity-autocomplete.directive.ts:45",
+"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:77",
+"src/app-ng/feature/entity/tb-aliases-entity-select/tb-aliases-entity-select.directive.ts:43",
+"src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:45",
+"src/app-ng/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.ts:45",
+"src/app-ng/feature/entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive.ts:47",
+"src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.ts:37",
+"src/app-ng/feature/entity/tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive.ts:42",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:46",
+"src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts:31",
+"src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:44",
+"src/app-ng/feature/dashboard/tb-dashboard-details/tb-dashboard-details.directive.ts:55",
+"src/app-ng/feature/dashboard/tb-states-component/tb-states-component.directive.ts:33",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:48",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:46",
+"src/app-ng/feature/components/tb-no-animate/tb-no-animate.directive.ts:19",
+"src/app-ng/feature/components/tb-json-content/tb-json-content.directive.ts:50",
+"src/app-ng/feature/components/tb-legend-config/tb-legend-config.directive.ts:34",
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:44",
+"src/app-ng/feature/components/tb-material-icon-select/tb-material-icon-select.directive.ts:35",
+"src/app-ng/feature/components/tb-gateway-config-select/tb-gateway-config-select.directive.ts:38",
+"src/app-ng/feature/components/tb-gateway-config-select/tb-gateway-config-select.directive.ts:99",
+"src/app-ng/feature/components/tb-json-form/tb-json-form.directive.ts:100",
+"src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts:51",
+"src/app-ng/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts:35",
+"src/app-ng/feature/components/tb-contact/tb-contact.directive.ts:36",
+"src/app-ng/feature/components/tb-grid-card-content/tb-grid-card-content.directive.ts:29",
+"src/app-ng/feature/components/tb-related-entity-autocomplete/tb-related-entity-autocomplete.directive.ts:40",
+"src/app-ng/feature/components/tb-datakey-config/tb-datakey-config.directive.ts:33",
+"src/app-ng/feature/components/tb-details-sidenav/tb-details-sidenav.directive.ts:47",
+"src/app-ng/feature/components/tb-expand-fullscreen/tb-expand-fullscreen.directive.ts:30",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:49",
+"src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts:45",
+"src/app-ng/feature/components/tb-datetime-period/tb-datetime-period.directive.ts:30",
+"src/app-ng/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts:42",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:51",
+"src/app-ng/feature/components/tb-dashboard-autocomplete/tb-dashboard-autocomplete.directive.ts:41",
+"src/app-ng/feature/components/tb-timeinterval/tb-timeinterval.directive.ts:40",
+"src/app-ng/feature/components/tb-queue-type-list/tb-queue-type-list.directive.ts:44",
+"src/app-ng/feature/components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive.ts:36",
+"src/app-ng/feature/components/tb-dashboard-select/tb-dashboard-select.directive.ts:39",
+"src/app-ng/feature/components/tb-led-light/tb-led-light.directive.ts:28",
+"src/app-ng/feature/components/tb-circular-progress/tb-circular-progress.directive.ts:21",
+"src/app-ng/feature/rulechain/tb-rule-node/tb-rule-node.directive.ts:45",
+"src/app-ng/feature/rulechain/tb-rule-chain/tb-rule-chain.directive.ts:48",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:43",
+"src/app-ng/feature/rulechain/tb-rule-node-defined-config/tb-rule-node-defined-config.directive.ts:30",
+"src/app-ng/feature/rulechain/tb-message-type-autocomplete/tb-message-type-autocomplete.directive.ts:38",
+"src/app-ng/feature/rulechain/tb-rule-node-config/tb-rule-node-config.directive.ts:38",
+"src/app-ng/feature/audit/tb-audit-log-row/tb-audit-log-row.directive.ts:38",
+"src/app-ng/feature/audit/tb-audit-log-row/tb-audit-log-row.directive.ts:73",
+"src/app-ng/feature/audit/tb-audit-log-row/tb-audit-log-row.directive.ts:74",
+"src/app-ng/feature/device/tb-device/tb-device.directive.ts:56",
+"src/app-ng/feature/alarm/tb-alarm-row/tb-alarm-row.directive.ts:36",
+"src/app-ng/feature/alarm/tb-alarm-row/tb-alarm-row.directive.ts:72",
+"src/app-ng/feature/alarm/tb-alarm-row/tb-alarm-row.directive.ts:73",
+"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:28",
+"src/app-ng/feature/help/tb-help/tb-help.directive.ts:25",
+"src/app-ng/feature/customer/tb-customer/tb-customer.directive.ts:46"
+]
+},
+{
+"name": "entities-table-widget.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:5"
+]
+},
+{
+"name": "entitiesHierarchyDataUpdatedService",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:85"
+]
+},
+{
+"name": "entity-alias-dialog.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/entity/entity-aliases/entity-aliases.component.ts:15",
+"src/app-ng/feature/dashboard/add-widget/add-widget.component.ts:14"
+]
+},
+{
+"name": "entity-aliases.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:39"
+]
+},
+{
+"name": "entity-autocomplete.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/entity/tb-entity-autocomplete/tb-entity-autocomplete.directive.ts:13"
+]
+},
+{
+"name": "entityViewCard",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/entity-view/entity-view/entity-view.component.ts:90"
+]
+},
+{
+"name": "event-header-debug-rulenode.tpl.html?raw",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:11"
+]
+},
+{
+"name": "event-header-error.tpl.html?raw",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:10"
+]
+},
+{
+"name": "event-header-lc-event.tpl.html?raw",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:8"
+]
+},
+{
+"name": "event-header-stats.tpl.html?raw",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:9"
+]
+},
+{
+"name": "extension-form-mqtt.tpl.html?raw",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:10"
+]
+},
+{
+"name": "extensions-table-widget.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/widget/tb-extensions-table-widget/tb-extensions-table-widget.directive.ts:5"
+]
+},
+{
+"name": "gateway-config-select.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-gateway-config-select/tb-gateway-config-select.directive.ts:8"
+]
+},
+{
+"name": "grid.tpl.html?raw",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:6"
+]
+},
+{
+"name": "icon",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/material-icons-dialog/material-icons-dialog.component.ts:24",
+"src/app-ng/feature/components/material-icons-dialog/material-icons-dialog.component.ts:59",
+"src/app-ng/feature/components/material-icons-dialog/material-icons-dialog.component.ts:60"
+]
+},
+{
+"name": "isEdit",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/widget/widget.component.ts:145",
+"src/app-ng/feature/components/widget/widget.component.ts:807",
+"src/app-ng/feature/components/widget/widget.component.ts:808",
+"src/app-ng/feature/components/widget/widget.component.ts:976",
+"src/app-ng/feature/components/widget/widget.component.ts:977",
+"src/app-ng/feature/components/widget/widget.component.ts:978"
+]
+},
+{
+"name": "isMobile",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/widget/widget.component.ts:146",
+"src/app-ng/feature/components/widget/widget.component.ts:997",
+"src/app-ng/feature/components/widget/widget.component.ts:998",
+"src/app-ng/feature/components/widget/widget.component.ts:999"
+]
+},
+{
+"name": "js-func.tpl.html?raw",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:14"
+]
+},
+{
+"name": "json-content.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-json-content/tb-json-content.directive.ts:14"
+]
+},
+{
+"name": "json-form.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-json-form/tb-json-form.directive.ts:10"
+]
+},
+{
+"name": "json-object-edit.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts:11"
+]
+},
+{
+"name": "jwtHelper",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/api/services/user.service.ts:71",
+"src/app-ng/feature/api/services/user.service.ts:248",
+"src/app-ng/feature/api/services/user.service.ts:295"
+]
+},
+{
+"name": "label",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:65",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:67",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:68",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:77",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:78",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:79",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:82",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:83",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:114"
+]
+},
+{
+"name": "led-indicator.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/widget/tb-led-indicator/tb-led-indicator.directive.ts:4"
+]
+},
+{
+"name": "legend-config-button.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-legend-config/tb-legend-config.directive.ts:8"
+]
+},
+{
+"name": "legend-config-panel.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-legend-config/tb-legend-config.directive.ts:10"
+]
+},
+{
+"name": "make-dashboard-public-dialog.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/dashboards/dashboards.component.ts:26"
+]
+},
+{
+"name": "manage-assigned-customers.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/dashboards/dashboards.component.ts:28"
+]
+},
+{
+"name": "manage-dashboard-layouts.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:43"
+]
+},
+{
+"name": "manage-dashboard-states.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:45"
+]
+},
+{
+"name": "material-icon-select.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-material-icon-select/tb-material-icon-select.directive.ts:10"
+]
+},
+{
+"name": "material-icons-dialog.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-material-icon-select/tb-material-icon-select.directive.ts:12",
+"src/app-ng/feature/components/tb-json-form/tb-json-form.directive.ts:13"
+]
+},
+{
+"name": "mdColorPickerHistory",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/common/services/$md-color-picker.service.ts:101"
+]
+},
+{
+"name": "ngModel",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/extension/parse-to-null/parse-to-null.directive.ts:21"
+]
+},
+{
+"name": "ngModelCtrl",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/entity/tb-entity-filter/tb-entity-filter.directive.ts:52",
+"src/app-ng/feature/entity/tb-entity-filter/tb-entity-filter.directive.ts:71",
+"src/app-ng/feature/entity/tb-entity-filter/tb-entity-filter.directive.ts:72",
+"src/app-ng/feature/entity/tb-entity-filter/tb-entity-filter.directive.ts:73",
+"src/app-ng/feature/entity/tb-entity-filter/tb-entity-filter.directive.ts:146",
+"src/app-ng/feature/entity/tb-entity-select/tb-entity-select.directive.ts:66",
+"src/app-ng/feature/entity/tb-entity-select/tb-entity-select.directive.ts:68",
+"src/app-ng/feature/entity/tb-entity-select/tb-entity-select.directive.ts:69",
+"src/app-ng/feature/entity/tb-entity-select/tb-entity-select.directive.ts:83",
+"src/app-ng/feature/entity/tb-entity-select/tb-entity-select.directive.ts:91",
+"src/app-ng/feature/entity/tb-entity-select/tb-entity-select.directive.ts:93",
+"src/app-ng/feature/entity/tb-entity-autocomplete/tb-entity-autocomplete.directive.ts:71",
+"src/app-ng/feature/entity/tb-entity-autocomplete/tb-entity-autocomplete.directive.ts:72",
+"src/app-ng/feature/entity/tb-entity-autocomplete/tb-entity-autocomplete.directive.ts:77",
+"src/app-ng/feature/entity/tb-entity-autocomplete/tb-entity-autocomplete.directive.ts:157",
+"src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:55",
+"src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:95",
+"src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:101",
+"src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:164",
+"src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:166",
+"src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:170",
+"src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:173",
+"src/app-ng/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.ts:49",
+"src/app-ng/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.ts:75",
+"src/app-ng/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.ts:76",
+"src/app-ng/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.ts:95",
+"src/app-ng/feature/entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive.ts:70",
+"src/app-ng/feature/entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive.ts:71",
+"src/app-ng/feature/entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive.ts:127",
+"src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.ts:52",
+"src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.ts:57",
+"src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.ts:58",
+"src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.ts:89",
+"src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.ts:92",
+"src/app-ng/feature/entity/tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive.ts:65",
+"src/app-ng/feature/entity/tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive.ts:66",
+"src/app-ng/feature/entity/tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive.ts:95",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:56",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:94",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:95",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:101",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:141",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:151",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:157",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:159",
+"src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts:33",
+"src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts:46",
+"src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts:47",
+"src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts:48",
+"src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:48",
+"src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:70",
+"src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:71",
+"src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:72",
+"src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:82",
+"src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:84",
+"src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:88",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:48",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:77",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:78",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:82",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:83",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:86",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:87",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:88",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:98",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:105",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:106",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:108",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:111",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:113",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:123",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:127",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:129",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:130",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:137",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:171",
+"src/app-ng/feature/components/tb-datasource-func/tb-datasource-func.directive.ts:199",
+"src/app-ng/feature/components/tb-legend-config/tb-legend-config.directive.ts:43",
+"src/app-ng/feature/components/tb-legend-config/tb-legend-config.directive.ts:44",
+"src/app-ng/feature/components/tb-legend-config/tb-legend-config.directive.ts:45",
+"src/app-ng/feature/components/tb-legend-config/tb-legend-config.directive.ts:128",
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:82",
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:84",
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:85",
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:219",
+"src/app-ng/feature/components/tb-material-icon-select/tb-material-icon-select.directive.ts:46",
+"src/app-ng/feature/components/tb-material-icon-select/tb-material-icon-select.directive.ts:47",
+"src/app-ng/feature/components/tb-material-icon-select/tb-material-icon-select.directive.ts:48",
+"src/app-ng/feature/components/tb-material-icon-select/tb-material-icon-select.directive.ts:61",
+"src/app-ng/feature/components/tb-gateway-config-select/tb-gateway-config-select.directive.ts:51",
+"src/app-ng/feature/components/tb-gateway-config-select/tb-gateway-config-select.directive.ts:52",
+"src/app-ng/feature/components/tb-gateway-config-select/tb-gateway-config-select.directive.ts:53",
+"src/app-ng/feature/components/tb-gateway-config-select/tb-gateway-config-select.directive.ts:61",
+"src/app-ng/feature/components/tb-gateway-config-select/tb-gateway-config-select.directive.ts:63",
+"src/app-ng/feature/components/tb-gateway-config-select/tb-gateway-config-select.directive.ts:87",
+"src/app-ng/feature/components/tb-json-to-string/tb-json-to-string.directive.ts:21",
+"src/app-ng/feature/components/tb-json-to-string/tb-json-to-string.directive.ts:22",
+"src/app-ng/feature/components/tb-json-to-string/tb-json-to-string.directive.ts:27",
+"src/app-ng/feature/components/tb-json-to-string/tb-json-to-string.directive.ts:30",
+"src/app-ng/feature/components/tb-json-to-string/tb-json-to-string.directive.ts:37",
+"src/app-ng/feature/components/tb-json-to-string/tb-json-to-string.directive.ts:40",
+"src/app-ng/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts:38",
+"src/app-ng/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts:66",
+"src/app-ng/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts:67",
+"src/app-ng/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts:68",
+"src/app-ng/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts:75",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:107",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:113",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:114",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:162",
+"src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts:74",
+"src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts:75",
+"src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts:76",
+"src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts:88",
+"src/app-ng/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts:108",
+"src/app-ng/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts:109",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:54",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:80",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:82",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:84",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:98",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:99",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:100",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:109",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:110",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:125",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:126",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:128",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:130",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:134",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:136",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:146",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:150",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:152",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:153",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:173",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:220",
+"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:246",
+"src/app-ng/feature/components/tb-timeinterval/tb-timeinterval.directive.ts:62",
+"src/app-ng/feature/components/tb-timeinterval/tb-timeinterval.directive.ts:63",
+"src/app-ng/feature/components/tb-timeinterval/tb-timeinterval.directive.ts:64",
+"src/app-ng/feature/components/tb-timeinterval/tb-timeinterval.directive.ts:181",
+"src/app-ng/feature/components/tb-timeinterval/tb-timeinterval.directive.ts:190",
+"src/app-ng/feature/components/tb-queue-type-list/tb-queue-type-list.directive.ts:64",
+"src/app-ng/feature/components/tb-queue-type-list/tb-queue-type-list.directive.ts:65",
+"src/app-ng/feature/components/tb-queue-type-list/tb-queue-type-list.directive.ts:103",
+"src/app-ng/feature/components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive.ts:69",
+"src/app-ng/feature/components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive.ts:70",
+"src/app-ng/feature/components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive.ts:71",
+"src/app-ng/feature/components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive.ts:102",
+"src/app-ng/feature/components/tb-dashboard-select/tb-dashboard-select.directive.ts:66",
+"src/app-ng/feature/components/tb-dashboard-select/tb-dashboard-select.directive.ts:67",
+"src/app-ng/feature/components/tb-dashboard-select/tb-dashboard-select.directive.ts:68",
+"src/app-ng/feature/components/tb-dashboard-select/tb-dashboard-select.directive.ts:80",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:54",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:63",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:73",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:155",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:160",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:161",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:167",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:168",
+"src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:169",
+"src/app-ng/feature/rulechain/tb-rule-node-defined-config/tb-rule-node-defined-config.directive.ts:46",
+"src/app-ng/feature/rulechain/tb-rule-node-defined-config/tb-rule-node-defined-config.directive.ts:49",
+"src/app-ng/feature/rulechain/tb-rule-node-defined-config/tb-rule-node-defined-config.directive.ts:50",
+"src/app-ng/feature/rulechain/tb-message-type-autocomplete/tb-message-type-autocomplete.directive.ts:61",
+"src/app-ng/feature/rulechain/tb-message-type-autocomplete/tb-message-type-autocomplete.directive.ts:62",
+"src/app-ng/feature/rulechain/tb-message-type-autocomplete/tb-message-type-autocomplete.directive.ts:110",
+"src/app-ng/feature/rulechain/tb-rule-node-config/tb-rule-node-config.directive.ts:50",
+"src/app-ng/feature/rulechain/tb-rule-node-config/tb-rule-node-config.directive.ts:53",
+"src/app-ng/feature/rulechain/tb-rule-node-config/tb-rule-node-config.directive.ts:54"
+]
+},
+{
+"name": "postalCodePatterns",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/tb-contact/tb-contact.directive.ts:41"
+]
+},
+{
+"name": "queue-type-list.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-queue-type-list/tb-queue-type-list.directive.ts:12"
+]
+},
+{
+"name": "removeResizeListener",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.ts:39",
+"src/app-ng/feature/components/widget/widget.component.ts:796"
+]
+},
+{
+"name": "require",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/widget/widget-library/widget-library.component.ts:20"
+]
+},
+{
+"name": "rulechain-card.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/rulechain/rule-chains/rule-chains.component.ts:24"
+]
+},
+{
+"name": "saveItemFunction",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/add-item/add-item.component.ts:37"
+]
+},
+{
+"name": "scope",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:545",
+"src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:638",
+"src/app-ng/feature/widget/trip-animation/trip-animation.directive.ts:966",
+"src/app-ng/feature/widget/tb-led-indicator/tb-led-indicator.directive.ts:282",
+"src/app-ng/feature/widget/tb-round-switch/tb-round-switch.directive.ts:283",
+"src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:459",
+"src/app-ng/feature/widget/tb-extensions-table-widget/tb-extensions-table-widget.directive.ts:132",
+"src/app-ng/feature/widget/tb-knob/tb-knob.directive.ts:377",
+"src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.ts:92",
+"src/app-ng/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.ts:145",
+"src/app-ng/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.ts:146",
+"src/app-ng/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.ts:339",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:69",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:70",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:71",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:72",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:76",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:77",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:78",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:80",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:82",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:85",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:87",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:90",
+"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:92",
+"src/app-ng/feature/components/tb-social-share-panel/tb-social-share-panel.directive.ts:46",
+"src/app-ng/feature/components/tb-nav-tree/tb-nav-tree.directive.ts:194",
+"src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:643",
+"src/app-ng/feature/components/tb-scope-element/tb-scope-element.directive.ts:17",
+"src/app-ng/feature/components/tb-scope-element/tb-scope-element.directive.ts:18",
+"src/app-ng/feature/import-export/services/import-export.service.ts:980",
+"src/app-ng/feature/audit/tb-audit-log-row/tb-audit-log-row.directive.ts:73",
+"src/app-ng/feature/audit/tb-audit-log-row/tb-audit-log-row.directive.ts:74",
+"src/app-ng/feature/audit/audit-log-details-dialog/audit-log-details-dialog.component.ts:46",
+"src/app-ng/feature/api/services/attribute.service.ts:175",
+"src/app-ng/feature/alarm/tb-alarm-row/tb-alarm-row.directive.ts:72",
+"src/app-ng/feature/alarm/tb-alarm-row/tb-alarm-row.directive.ts:73",
+"src/app-ng/feature/alarm/alarm-details-dialog/alarm-details-dialog.component.ts:71",
+"src/app-ng/feature/event/event-content-dialog/event-content-dialog.component.ts:44"
+]
+},
+{
+"name": "select-target-layout.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:49"
+]
+},
+{
+"name": "socialshare-panel.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/components/tb-social-share-panel/tb-social-share-panel.directive.ts:4"
+]
+},
+{
+"name": "stateController",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/widget/widget.component.ts:206"
+]
+},
+{
+"name": "store",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/api/services/user.service.ts:78",
+"src/app-ng/feature/api/services/user.service.ts:79",
+"src/app-ng/feature/api/services/user.service.ts:89",
+"src/app-ng/feature/api/services/user.service.ts:90",
+"src/app-ng/feature/api/services/user.service.ts:91",
+"src/app-ng/feature/api/services/user.service.ts:92",
+"src/app-ng/feature/api/services/user.service.ts:122",
+"src/app-ng/feature/api/services/user.service.ts:126",
+"src/app-ng/feature/api/services/user.service.ts:146",
+"src/app-ng/feature/api/services/user.service.ts:191",
+"src/app-ng/feature/api/services/user.service.ts:294",
+"src/app-ng/feature/api/services/user.service.ts:370",
+"src/app-ng/feature/api/services/user.service.ts:371",
+"src/app-ng/feature/api/services/user.service.ts:454",
+"src/app-ng/feature/api/services/user.service.ts:462"
+]
+},
+{
+"name": "tenant-card.tpl.html?raw",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/tenant/tenant/tenant.component.ts:16"
+]
+},
+{
+"name": "timeseries-table-widget.tpl.html?raw",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:4"
+]
+},
+{
+"name": "timewindowButtonTemplate",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:75"
+]
+},
+{
+"name": "timewindowPanelTemplate",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:166"
+]
+},
+{
+"name": "timewindowTemplate",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:79"
+]
+},
+{
+"name": "types",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:35",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:36",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:37",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:38",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:41",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:42",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:43",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:44",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:45",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:46",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:48",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:49",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:50",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:67",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:70",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:73",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:76",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:79",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:82",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:111",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:112",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:113",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:114",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:115",
+"src/app-ng/feature/import-export/tb-table-columns-assignment/tb-table-columns-assignment.directive.ts:116"
+]
+},
+{
+"name": "uniqueId",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/tb-expand-fullscreen/tb-expand-fullscreen.directive.ts:34",
+"src/app-ng/feature/components/tb-expand-fullscreen/tb-expand-fullscreen.directive.ts:54"
+]
+},
+{
+"name": "user-card.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/user/user/user.component.ts:20"
+]
+},
+{
+"name": "vm",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:175",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:177",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:178",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:183",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:185",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:195",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:196",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:198",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:203",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:204",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:211",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:226",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:227",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:234",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:235",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:236",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:243",
+"src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:244",
+"src/app-ng/feature/api/services/widget.service.ts:508",
+"src/app-ng/feature/api/services/widget.service.ts:612",
+"src/app-ng/feature/api/services/widget.service.ts:617"
+]
+},
+{
+"name": "widget",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/widget/widget.component.ts:126",
+"src/app-ng/feature/components/widget/widget.component.ts:127",
+"src/app-ng/feature/components/widget/widget.component.ts:128",
+"src/app-ng/feature/components/widget/widget.component.ts:148",
+"src/app-ng/feature/components/widget/widget.component.ts:149",
+"src/app-ng/feature/components/widget/widget.component.ts:150",
+"src/app-ng/feature/components/widget/widget.component.ts:151",
+"src/app-ng/feature/components/widget/widget.component.ts:244",
+"src/app-ng/feature/components/widget/widget.component.ts:347",
+"src/app-ng/feature/components/widget/widget.component.ts:348",
+"src/app-ng/feature/components/widget/widget.component.ts:350",
+"src/app-ng/feature/components/widget/widget.component.ts:351",
+"src/app-ng/feature/components/widget/widget.component.ts:353",
+"src/app-ng/feature/components/widget/widget.component.ts:382",
+"src/app-ng/feature/components/widget/widget.component.ts:391",
+"src/app-ng/feature/components/widget/widget.component.ts:394",
+"src/app-ng/feature/components/widget/widget.component.ts:406",
+"src/app-ng/feature/components/widget/widget.component.ts:408",
+"src/app-ng/feature/components/widget/widget.component.ts:413",
+"src/app-ng/feature/components/widget/widget.component.ts:414",
+"src/app-ng/feature/components/widget/widget.component.ts:415",
+"src/app-ng/feature/components/widget/widget.component.ts:416",
+"src/app-ng/feature/components/widget/widget.component.ts:417",
+"src/app-ng/feature/components/widget/widget.component.ts:418",
+"src/app-ng/feature/components/widget/widget.component.ts:419",
+"src/app-ng/feature/components/widget/widget.component.ts:420",
+"src/app-ng/feature/components/widget/widget.component.ts:421",
+"src/app-ng/feature/components/widget/widget.component.ts:422",
+"src/app-ng/feature/components/widget/widget.component.ts:424",
+"src/app-ng/feature/components/widget/widget.component.ts:447",
+"src/app-ng/feature/components/widget/widget.component.ts:450",
+"src/app-ng/feature/components/widget/widget.component.ts:451",
+"src/app-ng/feature/components/widget/widget.component.ts:482",
+"src/app-ng/feature/components/widget/widget.component.ts:701",
+"src/app-ng/feature/components/widget/widget.component.ts:702",
+"src/app-ng/feature/components/widget/widget.component.ts:705",
+"src/app-ng/feature/components/widget/widget.component.ts:710",
+"src/app-ng/feature/components/widget/widget.component.ts:812",
+"src/app-ng/feature/components/widget/widget.component.ts:815",
+"src/app-ng/feature/components/widget/widget.component.ts:820",
+"src/app-ng/feature/components/widget/widget.component.ts:821",
+"src/app-ng/feature/components/widget/widget.component.ts:1044"
+]
+},
+{
+"name": "widgetInfo",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/widget/widget.component.ts:102",
+"src/app-ng/feature/components/widget/widget.component.ts:726"
+]
+},
+{
+"name": "widgetType",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/widget/widget.component.ts:248"
+]
+},
+{
+"name": "widgets-bundle-card.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/widget/widgets-bundle/widgets-bundle.component.ts:14"
+]
+}
+]
+}

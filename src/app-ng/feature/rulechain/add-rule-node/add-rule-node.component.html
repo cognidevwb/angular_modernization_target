@@ -16,31 +16,31 @@
     limitations under the License.
 
 -->
-<div attr.aria-label="{{ 'rulenode.add' | translate }}" [tbHelp]="helpLinks?.getRuleNodeLink?.(ruleNode)" help-container-id="help-container" style="min-width: 650px;" class="md-dialog">
-    <form name="theForm" (ngSubmit)="add()">
+<div attr.aria-label="{{ 'rulenode.add' | translate }}" tb-help [tbHelp]="helpLinks?.getRuleNodeLink?.(ruleNode)" help-container-id="help-container" style="min-width: 650px;" class="md-dialog">
+    <form name="theForm" #theForm="ngForm" (ngSubmit)="add(theForm)">
         <mat-toolbar>
             <div class="md-toolbar-tools">
-                <h2 translate>rulenode.add</h2>
+                <h2>{{ 'rulenode.add' | translate }}</h2>
                 <span flex></span>
                 <div id="help-container"></div>
-                <button mat-icon-button (click)="cancel()">
+                <button mat-icon-button type="button" (click)="cancel()">
                     <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
                 </button>
             </div>
         </mat-toolbar>
-        <mat-progress-bar color="warn" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
-        <span style="min-height: 5px;" flex="" [hidden]="!(!rootScope?.loading)"></span>
+        <mat-progress-bar color="warn" mode="indeterminate" [style.visibility]="(!rootScope['loading']) ? 'hidden' : 'visible'" [hidden]="!(rootScope['loading'])"></mat-progress-bar>
+        <span style="min-height: 5px;" flex="" [hidden]="!(!rootScope['loading'])"></span>
         <mat-dialog-content>
             <div class="md-dialog-content">
-                <tb-rule-node [(ruleNode)]="ruleNode" [(ruleChainId)]="ruleChainId" [isEdit]="true" [(theForm)]="theForm"></tb-rule-node>
+                <tb-rule-node [(ruleNode)]="ruleNode" [ruleChainId]="ruleChainId" [isEdit]="true" [theForm]="theForm"></tb-rule-node>
             </div>
         </mat-dialog-content>
         <mat-dialog-actions layout="row">
             <span flex></span>
-            <button mat-raised-button color="primary" [disabled]="rootScope?.loading || theForm?.$invalid || !theForm?.$dirty" type="submit">
+            <button mat-raised-button color="primary" [disabled]="rootScope['loading'] || theForm.invalid || !theForm.dirty" type="submit">
                 {{ 'action.add' | translate }}
             </button>
-            <button mat-button [disabled]="rootScope?.loading" (click)="cancel()" style="margin-right:20px;">{{ 'action.cancel' |
+            <button mat-button type="button" [disabled]="rootScope['loading']" (click)="cancel()" style="margin-right:20px;">{{ 'action.cancel' |
                 translate }}
             </button>
         </mat-dialog-actions>

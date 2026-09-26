@@ -18,83 +18,92 @@
 -->
 <div class="tb-absolute-fill tb-alarms-table tb-data-table" layout="column">
     <div [hidden]="!(showData)" flex class="tb-absolute-fill" layout="column">
-        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(!selectedAlarms?.length &&
-                                                                  query?.search != null)">
+        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(!selectedAlarms.length &&
+                                                                  query.search != null)">
             <div class="md-toolbar-tools">
-                <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{'alarm.search' | translate}}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" matTooltip="{{'alarm.search' | translate}}" [matTooltipPosition]="ctx()?.dashboard?.isWidgetExpanded ? 'below' : 'above'">
                     <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
-                    
                 </button>
                 <mat-form-field flex>
                     <mat-label>&nbsp;</mat-label>
-                    <input matInput [(ngModel)]="query.search" class="searchInput" attr.placeholder="{{'alarm.search' | translate}}">
+                    <input matInput [(ngModel)]="query.search" (ngModelChange)="onSearchChanged()" class="searchInput" attr.placeholder="{{'alarm.search' | translate}}">
                 </mat-form-field>
-                <button mat-icon-button aria-label="Close" (click)="exitFilterMode()" attr.matTooltip="{{ 'action.close' | translate }}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                <button mat-icon-button aria-label="Close" (click)="exitFilterMode()" matTooltip="{{ 'action.close' | translate }}" [matTooltipPosition]="ctx()?.dashboard?.isWidgetExpanded ? 'below' : 'above'">
                     <mat-icon aria-label="Close" class="material-icons">close</mat-icon>
-                    
                 </button>
             </div>
         </mat-toolbar>
-        <mat-toolbar class="md-table-toolbar alternate" [hidden]="!(selectedAlarms?.length)">
+        <mat-toolbar class="md-table-toolbar alternate" [hidden]="!(selectedAlarms.length)">
             <div class="md-toolbar-tools">
-                <span translate="alarm.selected-alarms" translate-values="{count: vm.selectedAlarms.length}" translate-interpolation="messageformat"></span>
+                <span>{{ 'alarm.selected-alarms' | translate: {count: selectedAlarms.length} }}</span>
                 <span flex></span>
                 @if (allowAcknowledgment) {
-                  <button mat-icon-button (click)="ackAlarms($event)" attr.matTooltip="{{ 'alarm.acknowledge' | translate }}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                  <button mat-icon-button (click)="ackAlarms($event)" matTooltip="{{ 'alarm.acknowledge' | translate }}" [matTooltipPosition]="ctx()?.dashboard?.isWidgetExpanded ? 'below' : 'above'">
                     <mat-icon>done</mat-icon>
-                    
-                </button>
+                  </button>
                 }
                 @if (allowClear) {
-                  <button mat-icon-button (click)="clearAlarms($event)" attr.matTooltip="{{ 'alarm.clear' | translate }}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                  <button mat-icon-button (click)="clearAlarms($event)" matTooltip="{{ 'alarm.clear' | translate }}" [matTooltipPosition]="ctx()?.dashboard?.isWidgetExpanded ? 'below' : 'above'">
                     <mat-icon>clear</mat-icon>
-                    
-                </button>
+                  </button>
                 }
             </div>
         </mat-toolbar>
-        <!-- TODO(port): md-table-container (angular-material-data-table): a mat-table with MatSort --><md-table-container flex>
-            <table md-table md-row-select="vm.enableSelection" multiple="" [(ngModel)]="selectedAlarms">
-                <thead fix-head md-head md-order="vm.query.order" md-on-reorder="vm.onReorder">
-                <tr md-row>
+        <div class="md-table-container" flex>
+            <table class="md-table">
+                <thead class="md-head">
+                <tr class="md-row">
+                    @if (enableSelection) {
+                      <th class="md-column md-checkbox-column">
+                          <mat-checkbox [checked]="allSelected()" [indeterminate]="selectedAlarms.length > 0 && !allSelected()" (change)="toggleAll()"></mat-checkbox>
+                      </th>
+                    }
                     @for (key of alarmSource?.dataKeys; track $index) {
                       @if (key?.display) {
-                      <th md-column attr.md-order-by="{{ key?.name }}"><span>{{ key?.title }}</span></th>
+                        <th class="md-column md-sort" [class.md-active]="query.order === key.name || query.order === '-' + key.name" (click)="reorder(key.name)">
+                            <span>{{ key?.title }}</span>
+                            @if (query.order === key.name || query.order === '-' + key.name) {
+                              <mat-icon class="md-sort-icon">{{ query.order === key.name ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                            }
+                        </th>
+                      }
                     }
-                    }
-                    <th md-column class="tb-action-cell" layout="row" layout-align="end center"></th>
+                    <th class="md-column tb-action-cell" layout="row" layout-align="end center"></th>
                 </tr>
                 </thead>
-                <tbody md-body>
+                <tbody class="md-body">
                 @for (alarm of alarms; track $index) {
-                  <tr [hidden]="!(alarms?.length)" md-row md-select="alarm" md-select-id="id.id" md-auto-select="false" (click)="onRowClick($event, alarm)" [ngClass]="{'tb-current': isCurrent(alarm)}">
+                  <tr class="md-row" [class.md-selected]="isSelected(alarm)" (click)="onRowClick($event, alarm)" [ngClass]="{'tb-current': isCurrent(alarm)}">
+                    @if (enableSelection) {
+                      <td class="md-cell md-checkbox-cell">
+                          <mat-checkbox [checked]="isSelected(alarm)" (click)="$event.stopPropagation()" (change)="toggleSelection(alarm)"></mat-checkbox>
+                      </td>
+                    }
                     @for (key of alarmSource?.dataKeys; track $index) {
                       @if (key?.display) {
-                      <td md-cell flex [ngStyle]="cellStyle(alarm, key)" [innerHTML]="cellContent(alarm, key)">
-                    </td>
+                        <td class="md-cell" flex [ngStyle]="cellStyle(alarm, key)" [innerHTML]="cellContent(alarm, key)"></td>
+                      }
                     }
-                    }
-                    <td md-cell class="tb-action-cell" [ngStyle]="{minWidth: actionCellDescriptors?.length*36+'px',
-                                   maxWidth: actionCellDescriptors?.length*36+'px',
-                                   width: actionCellDescriptors?.length*36+'px'}">
+                    <td class="md-cell tb-action-cell" [ngStyle]="{minWidth: actionCellDescriptors.length*36+'px',
+                                   maxWidth: actionCellDescriptors.length*36+'px',
+                                   width: actionCellDescriptors.length*36+'px'}">
                         @for (actionDescriptor of actionCellDescriptors; track $index) {
-                          <button mat-icon-button [disabled]="!actionEnabled(alarm, actionDescriptor)" attr.aria-label="{{ actionDescriptor?.displayName }}" (click)="onActionButtonClick($event, alarm, actionDescriptor)" [disabled]="rootScope?.loading" attr.matTooltip="{{ actionDescriptor?.displayName }}" matTooltipPosition="above">
+                          <button mat-icon-button [disabled]="!actionEnabled(alarm, actionDescriptor)" attr.aria-label="{{ actionDescriptor?.displayName }}" (click)="onActionButtonClick($event, alarm, actionDescriptor)" matTooltip="{{ actionDescriptor?.displayName }}" matTooltipPosition="above">
                             <mat-icon attr.aria-label="{{ actionDescriptor?.displayName }}" class="material-icons">{{actionDescriptor?.icon}}</mat-icon>
-                            
-                        </button>
+                          </button>
                         }
                     </td>
-                </tr>
+                  </tr>
                 }
                 </tbody>
             </table>
             <mat-divider></mat-divider>
-            <span [hidden]="!(!alarms?.length)" layout-align="center center" class="no-data-found" translate>alarm.no-alarms-prompt</span>
-        </md-table-container>
-        <!-- TODO(port): md-table-pagination: a mat-paginator -->@if (displayPagination) {
-          <md-table-pagination md-boundary-links md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" attr.md-total="{{alarmsCount}}" md-on-paginate="vm.onPaginate" md-page-select="vm.isGtMd">
-        </md-table-pagination>
+            <span [hidden]="!(!alarms.length)" layout-align="center center" class="no-data-found">{{ 'alarm.no-alarms-prompt' | translate }}</span>
+        </div>
+        @if (displayPagination) {
+          <mat-paginator class="md-table-pagination" [length]="alarmsCount" [pageSize]="query.limit" [pageSizeOptions]="limitOptions || []" [hidePageSize]="!isGtMd" [showFirstLastButtons]="true" [pageIndex]="query.page - 1" (page)="onPaginate($event)">
+          </mat-paginator>
         }
     </div>
-    <span [hidden]="!(!showData)" layout-align="center center" style="text-transform: uppercase; display: flex;" class="tb-absolute-fill" translate>alarm.no-data</span>
+    <span [hidden]="!(!showData)" layout-align="center center" style="text-transform: uppercase; display: flex;" class="tb-absolute-fill">{{ 'alarm.no-data' | translate }}</span>
 </div>

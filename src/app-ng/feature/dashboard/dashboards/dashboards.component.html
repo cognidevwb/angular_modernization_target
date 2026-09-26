@@ -17,12 +17,12 @@
 
 -->
 <tb-grid (gridConfiguration)="dashboardGridConfig">
-	<details-buttons [tbHelp]="'dashboards'" help-container-id="help-container">
+	<div details-buttons tb-help [tbHelp]="'dashboards'" help-container-id="help-container">
 		<div id="help-container"></div>
-	</details-buttons>
+	</div>
 	<mat-tab-group [ngClass]="{'tb-headless': grid?.detailsConfig?.isDetailsEditMode}" id="tabs" flex class="tb-absolute-fill">
 		<mat-tab label="{{ 'dashboard.details' | translate }}">
-			<tb-dashboard-details [dashboard]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(dashboardScope)]="dashboardsScope" [(customerId)]="customerId" [(theForm)]="grid.detailsForm" (onMakePublic)="makePublic(event, grid.detailsConfig.currentItem)" (onMakePrivate)="makePrivate(event, grid.detailsConfig.currentItem)" (onManageAssignedCustomers)="manageAssignedCustomers(event, grid.detailsConfig.currentItem)" (onUnassignFromCustomer)="unassignFromCustomer(event, grid.detailsConfig.currentItem, customerId)" (onExportDashboard)="exportDashboard(event, grid.detailsConfig.currentItem)" (onDeleteDashboard)="grid.deleteItem(event, grid.detailsConfig.currentItem)"></tb-dashboard-details>
+			<tb-dashboard-details [dashboard]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(dashboardScope)]="dashboardsScope" [(customerId)]="customerId" [(theForm)]="grid.detailsForm" (onMakePublic)="makePublic($event?.event, grid.detailsConfig.currentItem)" (onMakePrivate)="makePrivate($event?.event, grid.detailsConfig.currentItem)" (onManageAssignedCustomers)="manageAssignedCustomers($event?.event, grid.detailsConfig.currentItem)" (onUnassignFromCustomer)="unassignFromCustomer($event?.event, grid.detailsConfig.currentItem, customerId)" (onExportDashboard)="exportDashboard($event?.event, grid.detailsConfig.currentItem)" (onDeleteDashboard)="grid.deleteItem($event?.event, grid.detailsConfig.currentItem)"></tb-dashboard-details>
 		</mat-tab>
 		@if (!grid?.detailsConfig?.isDetailsEditMode && grid?.isTenantAdmin?.()) {
 		  <mat-tab md-on-select="vm.grid.triggerResize()" label="{{ 'audit-log.audit-logs' | translate }}">
