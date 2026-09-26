@@ -17,12 +17,11 @@
 
 -->
 <tb-grid (gridConfiguration)="ruleChainGridConfig">
-    <details-buttons [tbHelp]="'rulechains'" help-container-id="help-container">
-        <div id="help-container"></div>
-    </details-buttons>
+    <div [tbHelp]="'rulechains'" id="help-container">
+    </div>
     <mat-tab-group [ngClass]="{'tb-headless': (grid?.detailsConfig?.isDetailsEditMode || !isRuleChainEditable(grid?.operatingItem?.()))}" id="tabs" flex class="tb-absolute-fill">
         <mat-tab label="{{ 'rulechain.details' | translate }}">
-            <tb-rule-chain [ruleChain]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [isReadOnly]="grid?.isDetailsReadOnly?.(grid?.operatingItem?.())" [(theForm)]="grid.detailsForm" (onSetRootRuleChain)="setRootRuleChain(event, grid.detailsConfig.currentItem)" (onExportRuleChain)="exportRuleChain(event, grid.detailsConfig.currentItem)" (onDeleteRuleChain)="grid.deleteItem(event, grid.detailsConfig.currentItem)">
+            <tb-rule-chain [ruleChain]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [isReadOnly]="grid?.isDetailsReadOnly?.(grid?.operatingItem?.())" [(theForm)]="grid.detailsForm" (onSetRootRuleChain)="setRootRuleChain($event, grid.detailsConfig.currentItem)" (onExportRuleChain)="exportRuleChain($event, grid.detailsConfig.currentItem)" (onDeleteRuleChain)="grid.deleteItem($event, grid.detailsConfig.currentItem)">
             </tb-rule-chain>
         </mat-tab>
         @if (!grid?.detailsConfig?.isDetailsEditMode && isRuleChainEditable(grid?.operatingItem?.())) {

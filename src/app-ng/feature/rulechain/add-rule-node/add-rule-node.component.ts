@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { helpLinks } from '../../help/constants/help-links';
@@ -21,7 +21,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'add-rule-node',
   standalone: true,
-  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, forwardRef(() => TbHelpDirective), forwardRef(() => TbRuleNodeDirective)],
+  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, TbHelpDirective, TbRuleNodeDirective],
   templateUrl: './add-rule-node.component.html',
 })
 export class AddRuleNodeComponent {

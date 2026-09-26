@@ -16,36 +16,36 @@
     limitations under the License.
 
 -->
-<div class="trip-animation-widget" layout="column" layout-align="center start" [ngStyle]="{'padding-top' : (!widgetConfig?.showTitle && ctx()?.settings?.showLabel) ? '5px' : '0px'}">
+<div class="trip-animation-widget" layout="column" layout-align="center start" [ngStyle]="{'padding-top' : (!$any(this).widgetConfig?.showTitle && ctx()?.settings?.showLabel) ? '5px' : '0px'}">
     <div class="trip-animation-label-container" [hidden]="!(ctx()?.settings?.showLabel)">
-        {{trips?.[activeTripIndex]?.settings?.labelText}}
+        {{$any(this).trips?.[$any(this).activeTripIndex]?.settings?.labelText}}
     </div>
     <div class="trip-animation-container" layout="column">
         <div flex id='trip-animation-map'></div>
         <div class="trip-animation-info-panel" layout="row">
-            <button mat-fab color="primary" aria-label="tooltip" [hidden]="!(staticSettings?.displayTooltip)" (click)="showHideTooltip()">
+            <button mat-fab color="primary" aria-label="tooltip" [hidden]="!(staticSettings?.displayTooltip)" (click)="$any(this).showHideTooltip()">
                 <mat-icon>info_outline</mat-icon>
             </button>
         </div>
-        <div class="trip-animation-tooltip md-whiteframe-z4" layout="column" [ngClass]="!staticSettings?.showTooltip ? 'trip-animation-tooltip-hidden':''" [innerHTML]="mainTooltip" [ngStyle]="{'background-color': staticSettings?.tooltipColor, 'opacity': staticSettings?.tooltipOpacity, 'color': staticSettings?.tooltipFontColor}">
+        <div class="trip-animation-tooltip md-whiteframe-z4" layout="column" [ngClass]="!staticSettings?.showTooltip ? 'trip-animation-tooltip-hidden':''" [innerHTML]="$any(this).mainTooltip" [ngStyle]="{'background-color': staticSettings?.tooltipColor, 'opacity': staticSettings?.tooltipOpacity, 'color': staticSettings?.tooltipFontColor}">
         </div>
     </div>
     <div class="trip-animation-control-panel">
-        <md-slider-container>
-            <button mat-icon-button aria-label="Start" (click)="moveStart()">
+        <div class="trip-animation-slider-container">
+            <button mat-icon-button aria-label="Start" (click)="$any(this).moveStart()">
                 <mat-icon class="material-icons" [ngStyle]="{'color': staticSettings?.buttonColor}">fast_rewind</mat-icon>
             </button>
-            <button mat-icon-button aria-label="Previous" (click)="movePrev()">
+            <button mat-icon-button aria-label="Previous" (click)="$any(this).movePrev()">
                 <mat-icon class="material-icons" [ngStyle]="{'color': staticSettings?.buttonColor}">skip_previous</mat-icon>
             </button>
-            <mat-slider [(ngModel)]="index" min="{{minTimeIndex}}" max="{{maxTimeIndex}}" (ngModelChange)="recalculateTrips()"></mat-slider>
-            <button mat-icon-button aria-label="Next" (click)="moveNext()">
+            <mat-slider [(ngModel)]="$any(this).index" min="{{$any(this).minTimeIndex}}" max="{{$any(this).maxTimeIndex}}" (ngModelChange)="$any(this).recalculateTrips()"></mat-slider>
+            <button mat-icon-button aria-label="Next" (click)="$any(this).moveNext()">
                 <mat-icon class="material-icons" [ngStyle]="{'color': staticSettings?.buttonColor}">skip_next</mat-icon>
             </button>
-            <button mat-icon-button aria-label="End" (click)="moveEnd()">
+            <button mat-icon-button aria-label="End" (click)="$any(this).moveEnd()">
                 <mat-icon class="material-icons" [ngStyle]="{'color': staticSettings?.buttonColor}">fast_forward</mat-icon>
             </button>
-            <button mat-icon-button aria-label="Play" (click)="playMove(true)" [disabled]="isPlaying">
+            <button mat-icon-button aria-label="Play" (click)="$any(this).playMove(true)" [disabled]="isPlaying">
                 <mat-icon class="material-icons" [ngStyle]="{'color': isPlaying ? staticSettings?.disabledButtonColor : staticSettings?.buttonColor}">
                     play_circle_outline
                 </mat-icon>
@@ -61,7 +61,7 @@
                     pause_circle_outline
                 </mat-icon>
             </button>
-        </md-slider-container>
+        </div>
         <div class="panel-timer">
             <span [hidden]="!(animationTime)">{{ animationTime | date:'medium'}}</span>
             <span [hidden]="animationTime">{{ "widget.no-data-found" | translate}}</span>

@@ -43,7 +43,7 @@ function DatasourceSubscription(this: any, datasourceSubscription?: any, telemet
 
     function initializeSubscription() {
         for (var i: any = 0; i < datasourceSubscription.dataKeys.length; i++) {
-            var dataKey: any = angular.copy(datasourceSubscription.dataKeys[i]);
+            var dataKey: any = structuredClone(datasourceSubscription.dataKeys[i]);
             dataKey.index = i;
             var key: any;
             if (datasourceType === types.datasourceType.function) {
@@ -77,7 +77,7 @@ function DatasourceSubscription(this: any, datasourceSubscription?: any, telemet
                 };
                 dataKeys[key] = dataKey;
             }
-            dataSourceOrigData = angular.copy(datasourceData);
+            dataSourceOrigData = structuredClone(datasourceData);
             dataKey.key = key;
         }
         if (datasourceType === types.datasourceType.function) {
@@ -395,7 +395,7 @@ function DatasourceSubscription(this: any, datasourceSubscription?: any, telemet
                 }
             }
             if (keyData.length) {
-                var lastTsKv: any = angular.copy(keyData[keyData.length-1]);
+                var lastTsKv: any = structuredClone(keyData[keyData.length-1]);
                 lastTsKv[0] = endTs;
                 keyData.push(lastTsKv);
             }
@@ -404,7 +404,7 @@ function DatasourceSubscription(this: any, datasourceSubscription?: any, telemet
     }
 
     function createRealtimeDataAggregator(subsTw?: any, tsKeyNames?: any, dataKeyType?: any) {
-        return new DataAggregator(
+        return new dataAggregator(
             function(data?: any, apply?: any) {
                 onData(data, dataKeyType, apply);
             },
@@ -715,7 +715,7 @@ export class DatasourceService {
         subscription = this.subscriptions[listener.datasourceSubscriptionKey];
         subscription.syncListener(listener);
     } else {
-        subscription = new DatasourceSubscription(datasourceSubscription, this.telemetryWebsocketService, $timeout, $filter, $log, types, this.utils);
+        subscription = new (DatasourceSubscription as any)(datasourceSubscription, this.telemetryWebsocketService, $timeout, $filter, $log, types, this.utils);
         this.subscriptions[listener.datasourceSubscriptionKey] = subscription;
         subscription.start();
     }

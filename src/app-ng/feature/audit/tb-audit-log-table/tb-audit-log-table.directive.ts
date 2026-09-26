@@ -70,6 +70,7 @@ export class TbAuditLogTableDirective {
   theAuditLogs: any;
   $watch: any;
   auditLogs: any;
+  auditLog: any;
   repeatContainer: any;
   searchTextWatchHandle: any;
   timewindowWatchHandle: any;

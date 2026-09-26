@@ -114,9 +114,10 @@
             }
         </div>
         <tb-details-sidenav class="tb-widget-details-sidenav" headerTitle="{{editingWidget?.config?.title}}" headerSubtitle="{{editingWidgetSubtitle}}" [isReadOnly]="false" [(isOpen)]="isEditingWidget" [isAlwaysEdit]="true" (onCloseDetails)="onEditWidgetClosed()" (onToggleDetailsEditMode)="onRevertWidgetEdit($any(this).widgetForm)" (onApplyDetails)="saveWidget($any(this).widgetForm)" [(theForm)]="$any(this).widgetForm">
-            <tb-details-buttons [tbHelp]="helpLinkIdForWidgetType()" help-container-id="help-container">
+            <!-- TODO(port): tb-details-buttons: a details header help/action buttons bar -->
+            <div class="tb-details-buttons" [attr.tb-help]="helpLinkIdForWidgetType()" help-container-id="help-container">
                 <div id="help-container"></div>
-            </tb-details-buttons>
+            </div>
             @if (isEditingWidget) {
               <form name="vm.widgetForm">
                 <tb-edit-widget [(dashboard)]="dashboard" [(aliasController)]="dashboardCtx.aliasController" [(widgetEditMode)]="widgetEditMode" [(widget)]="editingWidget" [(widgetLayout)]="editingWidgetLayout" [(theForm)]="$any(this).widgetForm">
@@ -127,13 +128,14 @@
         @if (!widgetEditMode) {
           <tb-details-sidenav class="tb-select-widget-sidenav" headerTitle="{{'dashboard.select-widget-title' | translate}}" headerHeightPx="120" [isReadOnly]="true" [(isOpen)]="isAddingWidget" [isEdit]="false" (onCloseDetails)="onAddWidgetClosed()">
             @if (isAddingWidget) {
-              <tb-header-pane>
+              <!-- TODO(port): tb-header-pane: a simple header container -->
+              <div class="tb-header-pane">
                 <div layout="row">
                     <span class="tb-details-subtitle">{{ 'widgets-bundle.current' | translate }}</span>
                     <tb-widgets-bundle-select flex-offset="5" flex [(ngModel)]="widgetsBundle" [tbRequired]="true" [selectFirstBundle]="false">
                     </tb-widgets-bundle-select>
                 </div>
-            </tb-header-pane>
+            </div>
             }
             @if (isAddingWidget) {
               <div>

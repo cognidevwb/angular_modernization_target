@@ -17,12 +17,11 @@
 
 -->
 <tb-grid (gridConfiguration)="deviceGridConfig">
-    <details-buttons [tbHelp]="'devices'" help-container-id="help-container">
-        <div id="help-container"></div>
-    </details-buttons>
+    <!-- TODO(port): 'details-buttons' directive (tb-help="'devices'") has no Angular equivalent yet -->
+    <div id="help-container"></div>
     <mat-tab-group [ngClass]="{'tb-headless': grid?.detailsConfig?.isDetailsEditMode}" id="tabs" flex class="tb-absolute-fill">
         <mat-tab label="{{ 'device.details' | translate }}">
-            <tb-device [device]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(deviceScope)]="devicesScope" [(theForm)]="grid.detailsForm" (onAssignToCustomer)="assignToCustomer(event, [ grid.detailsConfig.currentItem.id.id ])" (onMakePublic)="makePublic(event, grid.detailsConfig.currentItem)" (onUnassignFromCustomer)="unassignFromCustomer(event, grid.detailsConfig.currentItem, isPublic)" (onManageCredentials)="manageCredentials(event, grid.detailsConfig.currentItem)" (onDeleteDevice)="grid.deleteItem(event, grid.detailsConfig.currentItem)"></tb-device>
+            <tb-device [device]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(deviceScope)]="devicesScope" [(theForm)]="grid.detailsForm" (onAssignToCustomer)="assignToCustomer($event, [ grid.detailsConfig.currentItem.id.id ])" (onMakePublic)="makePublic($event, grid.detailsConfig.currentItem)" (onUnassignFromCustomer)="unassignFromCustomer($event.event, grid.detailsConfig.currentItem, $event.isPublic)" (onManageCredentials)="manageCredentials($event, grid.detailsConfig.currentItem)" (onDeleteDevice)="grid.deleteItem($event, grid.detailsConfig.currentItem)"></tb-device>
         </mat-tab>
         @if (!grid?.detailsConfig?.isDetailsEditMode) {
           <mat-tab md-on-select="vm.grid.triggerResize()" label="{{ 'attribute.attributes' | translate }}">

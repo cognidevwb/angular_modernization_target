@@ -58,4 +58,17 @@ export class TbSocialSharePanelDirective {
     let vm = this;
     this.controllerAs = 'vm';
   }
+
+  protected isShareLinkLocal(): boolean {
+    const link = this.shareLink();
+    if (link && link.length > 0) {
+      try {
+        const url = new URL(link, window.location.href);
+        return url.origin === window.location.origin;
+      } catch {
+        return true;
+      }
+    }
+    return true;
+  }
 }

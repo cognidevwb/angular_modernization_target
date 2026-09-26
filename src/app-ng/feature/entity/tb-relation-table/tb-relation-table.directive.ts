@@ -7,10 +7,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
+import { isEqual } from 'lodash-es';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
@@ -48,19 +50,19 @@ function RelationTableController(this: any, $scope?: any, $q?: any, $mdDialog?: 
     vm.updateRelations = updateRelations;
 
     $scope.$watch("vm.entityId", function(newVal?: any, prevVal?: any) {
-        if (newVal && !angular.equals(newVal, prevVal)) {
+        if (newVal && !isEqual(newVal, prevVal)) {
             reloadRelations();
         }
     });
 
     $scope.$watch("vm.direction", function(newVal?: any, prevVal?: any) {
-        if (newVal && !angular.equals(newVal, prevVal)) {
+        if (newVal && !isEqual(newVal, prevVal)) {
             reloadRelations();
         }
     });
 
     $scope.$watch("vm.query.search", function(newVal?: any, prevVal?: any) {
-        if (!angular.equals(newVal, prevVal) && vm.query.search != null) {
+        if (!isEqual(newVal, prevVal) && vm.query.search != null) {
             updateRelations();
         }
     });
@@ -127,7 +129,7 @@ function RelationTableController(this: any, $scope?: any, $q?: any, $mdDialog?: 
         $mdDialog.show({
             controller: (window as any).RelationController,
             controllerAs: 'vm',
-            templateUrl: (relationTemplate as any),
+            templateUrl: (relationTableTemplate as any),
             parent: (window as any).angular.element($document[0].body),
             locals: { isAdd: isAdd,
                       direction: vm.direction,
@@ -274,13 +276,44 @@ function RelationTableController(this: any, $scope?: any, $q?: any, $mdDialog?: 
 @Component({
   selector: 'tb-relation-table',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatSelectModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, FormsModule],
+  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatSelectModule, MatInputModule, MatPaginatorModule, MatIconModule, MatFormFieldModule, MatButtonModule, FormsModule],
   templateUrl: './tb-relation-table.directive.html',
 })
 export class TbRelationTableDirective {
   protected readonly rootScope = injectRoot(RootState);
   readonly entityId = model<any>();
   readonly entityType = input<any>();
+
+  protected readonly types: any = { entitySearchDirection: { from: 'FROM', to: 'TO' } };
+  protected direction: any = this.types.entitySearchDirection.from;
+  protected relationsCount = 0;
+  protected query: any = {
+    order: 'type',
+    limit: 5,
+    page: 1,
+    search: null
+  };
+
+  protected editRelation(event?: any, relation?: any): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    // TODO(port): open the ported relation dialog to edit `relation`, then reload on close.
+  }
+
+  protected deleteRelation(event?: any, relation?: any): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    // TODO(port): confirm, call entityRelationService.deleteRelation, then reload.
+  }
+
+  protected onPaginate(event?: any): void {
+    if (event) {
+      this.query.page = (event.pageIndex ?? 0) + 1;
+      this.query.limit = event.pageSize ?? this.query.limit;
+    }
+  }
 
   // TODO(port): elements not resolved to a component: md-table-container, md-table-pagination
   // TODO(port): template: 1 × md-table-container left in place

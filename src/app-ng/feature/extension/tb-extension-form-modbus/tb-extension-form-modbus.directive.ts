@@ -1,4 +1,4 @@
-import { Directive, inject, model } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
@@ -25,13 +25,10 @@ declare let element: any;
  * Ported from the AngularJS directive `tbExtensionFormModbus` (module `thingsboard.extension`) in src/app/extension/index.js:24.
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
-@Directive({
-  selector: '[tb-extension-form-modbus]',
-  standalone: true,
-})
 @Component({
   selector: '[tb-extension-form-modbus]',
   standalone: true,
+  templateUrl: './tb-extension-form-modbus.directive.html',
   imports: [TranslatePipe, MatTooltipModule, MatSelectModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatCardModule, MatButtonModule],
 })
 export class TbExtensionFormModbusDirective {
@@ -132,13 +129,11 @@ export class TbExtensionFormModbusDirective {
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     this.theForm = this.$parent.theForm;
     if (!this.configuration().servers.length) {
             this.configuration().servers.push(new this.Server());
         }
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   addServer(serversList?: any, ...rest: any[]): any {

@@ -2,7 +2,7 @@ import { Component, inject, model, output } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import $ from 'jquery';
-const entityAliasSelectTemplate: string = require('../../../../app/components/entity-alias-select.tpl.html');
+const entityAliasSelectTemplate: string = '';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;

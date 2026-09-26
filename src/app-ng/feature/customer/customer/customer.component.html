@@ -17,12 +17,12 @@
 
 -->
 <tb-grid (gridConfiguration)="customerGridConfig">
-	<details-buttons [tbHelp]="'customers'" help-container-id="help-container">
+	<div [tbHelp]="'customers'" help-container-id="help-container">
 		<div id="help-container"></div>
-	</details-buttons>
+	</div>
 	<mat-tab-group [ngClass]="{'tb-headless': grid?.detailsConfig?.isDetailsEditMode}" id="tabs" flex class="tb-absolute-fill">
 		<mat-tab label="{{ 'customer.details' | translate }}">
-			<tb-customer [customer]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(theForm)]="grid.detailsForm" (onManageUsers)="openCustomerUsers(event, grid.detailsConfig.currentItem)" (onManageAssets)="openCustomerAssets(event, grid.detailsConfig.currentItem)" (onManageDevices)="openCustomerDevices(event, grid.detailsConfig.currentItem)" (onManageDashboards)="openCustomerDashboards(event, grid.detailsConfig.currentItem)" (onDeleteCustomer)="grid.deleteItem(event, grid.detailsConfig.currentItem)"></tb-customer>
+			<tb-customer [customer]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(theForm)]="grid.detailsForm" (onManageUsers)="openCustomerUsers($event, grid.detailsConfig.currentItem)" (onManageAssets)="openCustomerAssets($event, grid.detailsConfig.currentItem)" (onManageDevices)="openCustomerDevices($event, grid.detailsConfig.currentItem)" (onManageDashboards)="openCustomerDashboards($event, grid.detailsConfig.currentItem)" (onDeleteCustomer)="grid.deleteItem($event, grid.detailsConfig.currentItem)"></tb-customer>
 		</mat-tab>
 		@if (!grid?.detailsConfig?.isDetailsEditMode) {
 		  <mat-tab md-on-select="vm.grid.triggerResize()" label="{{ 'attribute.attributes' | translate }}">

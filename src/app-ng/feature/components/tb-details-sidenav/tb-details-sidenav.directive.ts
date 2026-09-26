@@ -13,7 +13,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AnimationBuilder, animate, style } from '@angular/animations';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $animate: any;
 declare let $mdUtil: any;
@@ -47,7 +46,6 @@ export class TbDetailsSidenavDirective {
   // TODO(port): '$mdUtil' — AngularJS Material's internals: debounce/throttle → rxjs; nextTick → queueMicrotask
   protected readonly element = inject(ElementRef);
   protected readonly destroyRef = inject(DestroyRef);
-  protected readonly animationBuilder = inject(AnimationBuilder);
   // TODO(port): elements not resolved to a component: md-sidenav
   // TODO(port): template: 1 × md-sidenav left in place
   // TODO(port): template: 2 × ng-transclude left in place

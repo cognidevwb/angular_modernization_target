@@ -17,12 +17,12 @@
 
 -->
 <tb-grid (gridConfiguration)="userGridConfig">
-	<details-buttons [tbHelp]="'users'" help-container-id="help-container">
+	<div [tbHelp]="'users'" help-container-id="help-container">
 		<div id="help-container"></div>
-	</details-buttons>
+	</div>
 	<mat-tab-group [ngClass]="{'tb-headless': grid?.detailsConfig?.isDetailsEditMode}" id="tabs" flex class="tb-absolute-fill">
 		<mat-tab label="{{ 'user.details' | translate }}">
-			<tb-user [user]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(theForm)]="grid.detailsForm" (onDisplayActivationLink)="displayActivationLink(event, grid.detailsConfig.currentItem)" (onResendActivation)="resendActivation(grid.detailsConfig.currentItem)" (onLoginAsUser)="loginAsUser(grid.detailsConfig.currentItem)" (onDeleteUser)="grid.deleteItem(event, grid.detailsConfig.currentItem)" (onSetUserCredentialsEnabled)="setUserCredentialsEnabled(grid.detailsConfig.currentItem, userCredentialsEnabled)"></tb-user>
+			<tb-user [user]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(theForm)]="grid.detailsForm" (onDisplayActivationLink)="displayActivationLink($event, grid.detailsConfig.currentItem)" (onResendActivation)="resendActivation(grid.detailsConfig.currentItem)" (onLoginAsUser)="loginAsUser(grid.detailsConfig.currentItem)" (onDeleteUser)="grid.deleteItem($event, grid.detailsConfig.currentItem)" (onSetUserCredentialsEnabled)="setUserCredentialsEnabled(grid.detailsConfig.currentItem, $event)"></tb-user>
 		</mat-tab>
 		@if (!grid?.detailsConfig?.isDetailsEditMode && grid?.isTenantAdmin?.()) {
 		  <mat-tab md-on-select="vm.grid.triggerResize()" label="{{ 'audit-log.audit-logs' | translate }}">

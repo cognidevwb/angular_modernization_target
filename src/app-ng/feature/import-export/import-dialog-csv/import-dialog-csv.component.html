@@ -71,8 +71,7 @@
                 </div>
             </mat-step>
 
-            <!-- TODO(port): md-step: a mat-step --><md-step attr.md-label="{{ 'import.stepper-text.configuration' | translate }}">
-                <!-- TODO(port): md-step-body: the mat-step's content --><md-step-body>
+            <mat-step [label]="'import.stepper-text.configuration' | translate">
                     <div layout="column">
                         <mat-form-field>
                             <mat-label translate>import.csv-delimiter</mat-label>
@@ -91,9 +90,7 @@
                             {{ 'import.csv-update-data' | translate }}
                         </mat-checkbox>
                     </div>
-                </md-step-body>
-
-                <!-- TODO(port): md-step-actions: the buttons calling stepper.next()/previous() --><md-step-actions layout="row">
+                <div layout="row">
                     <button mat-button [disabled]="rootScope?.loading" (click)="previousStep(1)">Back
                     </button>
                     <span flex></span>
@@ -103,8 +100,8 @@
                     <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="nextStep(3)">
                         {{ 'action.continue' | translate }}
                     </button>
-                </md-step-actions>
-            </md-step>
+                </div>
+            </mat-step>
 
             <mat-step [label]="'import.stepper-text.column-type' | translate">
                     <form name="vm.theFormStep3">

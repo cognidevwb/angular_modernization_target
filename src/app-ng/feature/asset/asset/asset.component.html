@@ -17,12 +17,13 @@
 
 -->
 <tb-grid (gridConfiguration)="assetGridConfig">
-    <details-buttons [tbHelp]="'assets'" help-container-id="help-container">
+    <!-- TODO(port): tb-help-popup (contextual help, helpId 'assets') not yet ported -->
+    <div class="details-buttons">
         <div id="help-container"></div>
-    </details-buttons>
+    </div>
     <mat-tab-group [ngClass]="{'tb-headless': grid?.detailsConfig?.isDetailsEditMode}" id="tabs" flex class="tb-absolute-fill">
         <mat-tab label="{{ 'asset.details' | translate }}">
-            <tb-asset [asset]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(assetScope)]="assetsScope" [(theForm)]="grid.detailsForm" (onAssignToCustomer)="assignToCustomer(event, [ grid.detailsConfig.currentItem.id.id ])" (onMakePublic)="makePublic(event, grid.detailsConfig.currentItem)" (onUnassignFromCustomer)="unassignFromCustomer(event, grid.detailsConfig.currentItem, isPublic)" (onDeleteAsset)="grid.deleteItem(event, grid.detailsConfig.currentItem)"></tb-asset>
+            <tb-asset [asset]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(assetScope)]="assetsScope" [(theForm)]="grid.detailsForm" (onAssignToCustomer)="assignToCustomer($event, [ grid.detailsConfig.currentItem.id.id ])" (onMakePublic)="makePublic($event, grid.detailsConfig.currentItem)" (onUnassignFromCustomer)="unassignFromCustomer($event, grid.detailsConfig.currentItem, $event.isPublic)" (onDeleteAsset)="grid.deleteItem($event, grid.detailsConfig.currentItem)"></tb-asset>
         </mat-tab>
         @if (!grid?.detailsConfig?.isDetailsEditMode) {
           <mat-tab md-on-select="vm.grid.triggerResize()" label="{{ 'attribute.attributes' | translate }}">

@@ -213,6 +213,10 @@ export class RuleChainsComponent {
     return ruleChain && !ruleChain.root;
   };
 
+  isRuleChainEditable = (ruleChain?: any, ...rest: any[]): any => {
+    return ruleChain && !ruleChain.root;
+  };
+
   exportRuleChain = ($event?: any, ruleChain?: any, ...rest: any[]): any => {
     $event.stopPropagation();
     this.importExport.exportRuleChain(ruleChain.id.id);

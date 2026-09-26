@@ -16,7 +16,7 @@
     limitations under the License.
 
 -->
-<div attr.aria-label="{{ 'widget.add' | translate }}" style="width: 900px;" [tb-help]="helpLinkIdForWidgetType()" help-container-id="help-container" class="md-dialog">
+<div attr.aria-label="{{ 'widget.add' | translate }}" style="width: 900px;" attr.tb-help="{{ helpLinkIdForWidgetType() }}" help-container-id="help-container" class="md-dialog">
     <form name="theForm" (ngSubmit)="add()">
         <mat-toolbar>
             <div class="md-toolbar-tools">
