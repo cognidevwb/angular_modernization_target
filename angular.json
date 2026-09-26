@@ -31,7 +31,7 @@
               },
               {
                 "glob": "**/*",
-                "input": "src/app/locale",
+                "input": "src/app-ng/legacy-lib/locale",
                 "output": "locale",
                 "ignore": [
                   "**/*.js"

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { bindMethods } from '../../../bind-methods';
-import DefaultStateController from '../../../../app/dashboard/states/default-state-controller';
-import EntityStateController from '../../../../app/dashboard/states/entity-state-controller';
+import DefaultStateController from '../../../legacy-lib/dashboard/states/default-state-controller';
+import EntityStateController from '../../../legacy-lib/dashboard/states/entity-state-controller';
 
 /**
  * Ported from the AngularJS factory `statesControllerService` (module `thingsboard.dashboard.states`) in src/app/dashboard/states/index.js:22.

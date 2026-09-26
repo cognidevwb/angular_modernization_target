@@ -15,7 +15,7 @@ import { types } from '../../common/constants/types';
 import { TbDashboardDirective } from '../../components/tb-dashboard/tb-dashboard.directive';
 
 import $ from 'jquery';
-import AliasController from '../../../../app/api/alias-controller';
+import AliasController from '../../../legacy-lib/api/alias-controller';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';

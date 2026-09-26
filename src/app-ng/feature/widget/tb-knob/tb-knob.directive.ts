@@ -4,9 +4,9 @@ import { ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import $ from 'jquery';
-import CanvasDigitalGauge from '../../../../app/widget/lib/CanvasDigitalGauge';
+import CanvasDigitalGauge from '../../../legacy-lib/widget/lib/CanvasDigitalGauge';
 import tinycolor from 'tinycolor2';
-import { isNumber } from '../../../../app/widget/lib/widget-utils';
+import { isNumber } from '../../../legacy-lib/widget/lib/widget-utils';
 import { RootState } from '../../../root-state';
 
 /**

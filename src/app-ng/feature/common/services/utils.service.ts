@@ -8,7 +8,7 @@ import materialIconsCodepoints from 'raw-loader!material-design-icons/iconfont/c
 import tinycolor from 'tinycolor2';
 import jsonSchemaDefaults from 'json-schema-defaults';
 import base64js from 'base64-js';
-import {utf8Encode, utf8Decode} from '../../../../app/common/utf8-support';
+import {utf8Encode, utf8Decode} from '../../../legacy-lib/common/utf8-support';
 
 import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.

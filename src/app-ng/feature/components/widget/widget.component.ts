@@ -42,7 +42,7 @@ import { createLegacyFilter, legacyCopy, legacyEquals } from './legacy-helpers';
 import { createLegacyInjector } from './legacy-injector';
 import { WidgetScope } from './widget-scope';
 import { attrToInputName, WIDGET_DIRECTIVES } from './widget-directives';
-import Subscription from '../../../../app/api/subscription';
+import Subscription from '../../../legacy-lib/api/subscription';
 import cssjs from '../../../../vendor/css.js/css';
 
 /** The app events a widget reacts to, as the dashboard broadcast them down its scope. */

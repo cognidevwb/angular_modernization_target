@@ -43,7 +43,7 @@ import { ManageDashboardStatesComponent } from '../manage-dashboard-states/manag
 import { AddWidgetComponent } from '../add-widget/add-widget.component';
 import { SelectTargetLayoutComponent } from '../select-target-layout/select-target-layout.component';
 import { showConfirm } from '../../rulechain/confirm-dialog/confirm-dialog.component';
-import AliasController from '../../../../app/api/alias-controller';
+import AliasController from '../../../legacy-lib/api/alias-controller';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
