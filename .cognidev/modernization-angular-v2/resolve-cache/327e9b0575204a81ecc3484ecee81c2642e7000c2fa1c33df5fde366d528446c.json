@@ -1,0 +1,1 @@
+{"answers":{"fits_lodash":{"noul":0.51,"type":"noul"},"fits_strict":{"noul":0.13,"type":"noul"},"pick":{"choice":"lodash","confidence":0.8,"probabilities":{"lodash":0.87,"none":0.11,"strict":0.02},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":891,"output_tokens":75}}

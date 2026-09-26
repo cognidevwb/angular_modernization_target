@@ -1,0 +1,1 @@
+{"answers":{"fits_input":{"noul":0.39,"type":"noul"},"fits_shared_service":{"noul":0.3,"type":"noul"},"pick":{"choice":"none","confidence":0.62,"probabilities":{"input":0.23,"none":0.75,"shared_service":0.02},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":805,"output_tokens":74}}

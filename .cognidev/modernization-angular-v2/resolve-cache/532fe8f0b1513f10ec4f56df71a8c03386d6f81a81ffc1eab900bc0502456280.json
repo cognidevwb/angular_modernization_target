@@ -1,0 +1,1 @@
+{"answers":{"fits_host_attribute":{"noul":0.28,"type":"noul"},"fits_input":{"noul":0.2,"type":"noul"},"pick":{"choice":"input","confidence":0.46,"probabilities":{"host_attribute":0.22,"input":0.64,"none":0.14},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":915,"output_tokens":74}}

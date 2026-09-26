@@ -1,0 +1,1 @@
+{"answers":{"fits_new_promise":{"noul":0.26,"type":"noul"},"fits_subject":{"noul":0.17,"type":"noul"},"pick":{"choice":"new_promise","confidence":0.64,"probabilities":{"new_promise":0.77,"none":0.19,"subject":0.04},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":831,"output_tokens":78}}

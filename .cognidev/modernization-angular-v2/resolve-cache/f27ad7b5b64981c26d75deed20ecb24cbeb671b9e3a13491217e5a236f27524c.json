@@ -1,0 +1,1 @@
+{"answers":{"fits_child_component":{"noul":0.11,"type":"noul"},"fits_embedded_view_context":{"noul":0.19,"type":"noul"},"pick":{"choice":"embedded_view_context","confidence":0.31,"probabilities":{"child_component":0.09,"embedded_view_context":0.55,"none":0.36},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":755,"output_tokens":82}}

@@ -1,0 +1,1 @@
+{"answers":{"fits_router_events":{"noul":0.21,"type":"noul"},"fits_service_subject":{"noul":0.16,"type":"noul"},"pick":{"choice":"router_events","confidence":0.26,"probabilities":{"none":0.37,"router_events":0.5,"service_subject":0.13},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":865,"output_tokens":77}}
