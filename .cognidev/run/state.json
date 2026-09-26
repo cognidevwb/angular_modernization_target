@@ -2,9 +2,9 @@
   "playbook_id": "modernization-angular-v2",
   "playbook_name": "Modernize Angular V2 — AngularJS / old Angular → Angular 22",
   "status": "running",
-  "phase_id": "order",
-  "phase_label": "Order the migration",
-  "phase_index": 4,
+  "phase_id": "idioms",
+  "phase_label": "Find every AngularJS idiom",
+  "phase_index": 5,
   "phase_total": 15,
-  "updated_at": 1790440477
+  "updated_at": 1790440478
 }
