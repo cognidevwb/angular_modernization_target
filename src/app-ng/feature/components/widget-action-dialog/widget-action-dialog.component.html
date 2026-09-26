@@ -88,11 +88,10 @@
                                                 action?.type == types?.widgetActionTypes?.updateDashboardState?.value ||
                                                 action?.type == types?.widgetActionTypes?.openDashboard?.value) {
                           <md-autocomplete [required]="action?.type == types?.widgetActionTypes?.openDashboardState?.value" md-no-cache="true" md-input-name="targetDashboardState" [(ngModel)]="action.targetDashboardStateId" md-selected-item="vm.action.targetDashboardStateId" md-search-text="vm.targetDashboardStateSearchText" md-search-text-change="vm.targetDashboardStateSearchTextChanged()" md-items="item in vm.dashboardStateSearch(vm.targetDashboardStateSearchText)" md-item-text="item" md-min-length="0" attr.md-floating-label="{{ 'widget-action.target-dashboard-state' | translate }}" md-select-on-match="true">
-                            <!-- TODO(port): md-item-template: the content of each mat-option in the autocomplete --><md-item-template>
+                            <!-- TODO(port): md-item-template: the content of each mat-option in the autocomplete -->
                                 <div>
                                     <span md-highlight-text="vm.targetDashboardStateSearchText" md-highlight-flags="^i">{{item}}</span>
                                 </div>
-                            </md-item-template>
                             <!-- TODO(port): ng-messages has no one-to-one Angular form -->
                             <div ng-messages="theForm?.targetDashboardState?.$error">
                                 <!-- TODO(port): ng-message has no one-to-one Angular form -->

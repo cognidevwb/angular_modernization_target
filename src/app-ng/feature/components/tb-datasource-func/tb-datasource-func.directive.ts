@@ -6,8 +6,8 @@ import { UtilsService } from '../../common/services/utils.service';
 import { types } from '../../common/constants/types';
 import tinycolor from 'tinycolor2';
 import $ from 'jquery';
-import datasourceFuncTemplate from '../../../../app/components/datasource-func.tpl.html';
-import datakeyConfigDialogTemplate from '../../../../app/components/datakey-config-dialog.tpl.html';
+import { firstValueFrom } from 'rxjs';
+import { DatakeyConfigDialogComponent } from '../datakey-config-dialog/datakey-config-dialog.component';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
@@ -45,7 +45,6 @@ export class TbDatasourceFuncDirective {
   protected readonly utils = inject(UtilsService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = datasourceFuncTemplate;
   ngModelCtrl: any = ngModelCtrl;
   types: any;
   functionTypes: any;
@@ -63,7 +62,6 @@ export class TbDatasourceFuncDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     this.functionTypes = this.utils.getPredefinedFunctionsList();
     for (var alarmField in this.typesRef.alarmFields) {
@@ -177,24 +175,19 @@ export class TbDatasourceFuncDirective {
   editDataKey(event?: any, dataKey?: any, ...rest: any[]): any {
     let vm = this;
 
-    this.dialog.show({
-        controller: 'DatakeyConfigDialogController',
-        controllerAs: 'vm',
-        templateUrl: datakeyConfigDialogTemplate,
-        locals: {
+    firstValueFrom(this.dialog.open(DatakeyConfigDialogComponent, {
+        data: {
             dataKey: structuredClone(dataKey),
             dataKeySettingsSchema: this.datakeySettingsSchema(),
             entityAlias: null,
             aliasController: null
         },
-        parent: $(this.document.body),
-        fullscreen: true,
-        targetEvent: event,
-        multiple: true,
-        onComplete: (...rest: any[]) => {
-            var w: any = $($window);
-            w.triggerHandler('resize');
+        panelClass: 'tb-dialog'
+    }).afterClosed()).then((newDataKey?: any) => {
+        if (newDataKey === undefined) {
+            return Promise.reject();
         }
+        return newDataKey;
     }).then((newDataKey?: any) => {
         if (newDataKey.type === this.typesRef.dataKeyType.function) {
             let index: any = this.funcDataKeys.indexOf(dataKey);

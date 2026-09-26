@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { types } from '../../common/constants/types';
 import { TbAuditLogTableDirective } from '../tb-audit-log-table/tb-audit-log-table.directive';
 
@@ -9,7 +9,7 @@ import { TbAuditLogTableDirective } from '../tb-audit-log-table/tb-audit-log-tab
 @Component({
   selector: 'audit-logs',
   standalone: true,
-  imports: [forwardRef(() => TbAuditLogTableDirective)],
+  imports: [TbAuditLogTableDirective],
   templateUrl: './audit-logs.component.html',
 })
 export class AuditLogsComponent {

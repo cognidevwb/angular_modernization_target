@@ -4,9 +4,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import $ from 'jquery';
 import { bindMethods } from '../../bind-methods';
-import infoToast from '../../../app/services/info-toast.tpl.html?raw';
-import successToast from '../../../app/services/success-toast.tpl.html?raw';
-import errorToast from '../../../app/services/error-toast.tpl.html?raw';
+const infoToast = 'app/services/info-toast.tpl.html';
+const successToast = 'app/services/success-toast.tpl.html';
+const errorToast = 'app/services/error-toast.tpl.html';
 
 /**
  * Ported from the AngularJS factory `toast` (module `thingsboard.toast`) in src/app/services/toast.js:21.

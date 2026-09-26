@@ -1,7 +1,7 @@
 import { Component, forwardRef, inject } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { TbDatakeyConfigDirective } from '../tb-datakey-config/tb-datakey-config.directive';
 import { inject as injectRoot } from '@angular/core';
@@ -30,6 +30,7 @@ declare let $scope: any;
 export class DatakeyConfigDialogComponent {
   protected readonly rootScope = injectRoot(RootState);
   protected readonly dialog = inject(MatDialog);
+  private readonly dialogRef = inject(MatDialogRef);
   // TODO(port): '$q' — use Promise, or an Observable
   // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
@@ -53,11 +54,11 @@ export class DatakeyConfigDialogComponent {
   }
 
   hide(...rest: any[]): any {
-    this.dialog.hide();
+    this.dialogRef.close();
   }
 
   cancel(...rest: any[]): any {
-    this.dialog.cancel();
+    this.dialogRef.close();
   }
 
   fetchEntityKeys(entityAliasId?: any, query?: any, type?: any, ...rest: any[]): any {
@@ -89,7 +90,7 @@ export class DatakeyConfigDialogComponent {
     $scope.$broadcast('form-submit');
     if (this.theForm.$valid) {
         this.theForm.$setPristine();
-        this.dialog.hide(this.dataKey);
+        this.dialogRef.close(this.dataKey);
     }
   }
 }

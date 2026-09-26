@@ -274,6 +274,10 @@ function LedIndicatorController(this: any, $element?: any, $scope?: any, $timeou
 export class TbLedIndicatorDirective {
   readonly ctx = model<any>();
 
+  showTitle: any;
+  title: any;
+  error: any;
+
   restrict: any = "E";
   scope: any = true;
   bindToController: any = {

@@ -1,5 +1,5 @@
 import { Component, input, model, output } from '@angular/core';
-import navTreeTemplate from '../../../../app/components/nav-tree.tpl.html?raw';
+import $ from 'jquery';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
@@ -44,7 +44,7 @@ function NavTreeController(this: any, $scope?: any, $element?: any, types?: any)
             }
         }
 
-        vm.treeElement = angular.element('.tb-nav-tree-container', $element)
+        vm.treeElement = $('.tb-nav-tree-container', $element)
             .jstree(config);
 
         vm.treeElement.on("changed.jstree", function (e?: any, data?: any) {
@@ -202,7 +202,6 @@ export class TbNavTreeDirective {
         };
   controller: any = NavTreeController;
   controllerAs: any;
-  templateUrl: any = navTreeTemplate;
 
   constructor() {
     let vm = this;

@@ -17,5 +17,5 @@
 
 -->
 <fieldset [disabled]="rootScope?.loading">
-	<tb-widget-config [widgetType]="widget().type" (widgetTypeChange)="widget().type = $event" [(typeParameters)]="typeParameters" [(actionSources)]="actionSources" [(ngModel)]="widgetConfig" [(isDataEnabled)]="isDataEnabled" [(widgetSettingsSchema)]="settingsSchema" [(datakeySettingsSchema)]="dataKeySettingsSchema" [(aliasController)]="aliasController" [(functionsOnly)]="widgetEditMode" (fetchEntityKeys)="fetchEntityKeys(entityAliasId, query, type)" (fetchDashboardStates)="fetchDashboardStates(query)" (onCreateEntityAlias)="createEntityAlias(event, alias, allowedEntityTypes)" [(theForm)]="theForm"></tb-widget-config>
+	<tb-widget-config [widgetType]="widget().type" (widgetTypeChange)="widget().type = $event" [(typeParameters)]="typeParameters" [(actionSources)]="actionSources" [(ngModel)]="widgetConfig" [(isDataEnabled)]="isDataEnabled" [(widgetSettingsSchema)]="settingsSchema" [(datakeySettingsSchema)]="dataKeySettingsSchema" [(aliasController)]="aliasController" [(functionsOnly)]="widgetEditMode" (fetchEntityKeys)="fetchEntityKeys($event.entityAliasId, $event.query, $event.type)" (fetchDashboardStates)="fetchDashboardStates($event.query)" (onCreateEntityAlias)="createEntityAlias($event.event, $event.alias, $event.allowedEntityTypes)" [(theForm)]="theForm"></tb-widget-config>
 </fieldset>

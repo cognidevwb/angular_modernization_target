@@ -17,21 +17,36 @@
 
 -->
 <section flex layout='column' class="tb-entity-subtype-list">
-    <!-- TODO(port): md-chips: a mat-chip-grid with an input bound by matChipInputFor --><md-chips flex readonly="disabled" id="entity_subtype_list_chips" [required]="tbRequired()" [(ngModel)]="entitySubtypesList" placeholder="{{placeholder}}" attr.secondary-placeholder="{{secondaryPlaceholder}}" md-autocomplete-snap md-require-match="false">
-        <!-- TODO(port): md-autocomplete: an input with [matAutocomplete] and a mat-autocomplete panel --><md-autocomplete md-no-cache="true" id="entitySubtype" md-selected-item="selectedEntitySubtype" md-search-text="entitySubtypeSearchText" md-items="item in fetchEntitySubtypes(entitySubtypeSearchText)" md-item-text="item" md-min-length="0" placeholder="{{ (!entitySubtypesList || !entitySubtypesList?.length) ? placeholder : secondaryPlaceholder }}">
-            <!-- TODO(port): md-item-template: the content of each mat-option in the autocomplete --><md-item-template>
-                <span md-highlight-text="entitySubtypeSearchText" md-highlight-flags="^i">{{item}}</span>
-            </md-item-template>
-            <!-- TODO(port): md-not-found: a mat-option shown when the filtered list is empty --><md-not-found>
-                <span translate translate-values='{ entitySubtype: entitySubtypeSearchText }'>{{noSubtypesMathingText}}</span>
-            </md-not-found>
-        </md-autocomplete>
-        <!-- TODO(port): md-chip-template: the content of each mat-chip-row --><md-chip-template>
-            <span>
-                <strong>{{$chip}}</strong>
-            </span>
-        </md-chip-template>
-    </md-chips>
+    <mat-chip-grid #entitySubtypeChipGrid id="entity_subtype_list_chips" [disabled]="disabled()" [required]="tbRequired()">
+        @for (subtype of entitySubtypesList; track subtype) {
+            <mat-chip-row (removed)="removeSubtype(subtype)">
+                <span>
+                    <strong>{{subtype}}</strong>
+                </span>
+                <button matChipRemove type="button">
+                    <mat-icon>cancel</mat-icon>
+                </button>
+            </mat-chip-row>
+        }
+        <input
+            id="entitySubtype"
+            [placeholder]="(!entitySubtypesList || !entitySubtypesList?.length) ? placeholder : secondaryPlaceholder"
+            [matChipInputFor]="entitySubtypeChipGrid"
+            [matAutocomplete]="entitySubtypeAuto"
+            [(ngModel)]="entitySubtypeSearchText"
+            (ngModelChange)="onSearchTextChanged()"
+            (focus)="onSearchTextChanged()"
+            (blur)="inputTouched = true" />
+    </mat-chip-grid>
+    <mat-autocomplete #entitySubtypeAuto="matAutocomplete" (optionSelected)="onSubtypeSelected($event)">
+        @for (item of filteredSubtypes; track item) {
+            <mat-option [value]="item">{{item}}</mat-option>
+        } @empty {
+            <mat-option disabled>
+                <span>{{ noSubtypesMathingText | translate: { entitySubtype: entitySubtypeSearchText } }}</span>
+            </mat-option>
+        }
+    </mat-autocomplete>
     <!-- TODO(port): ng-messages has no one-to-one Angular form -->
     @if (inputTouched && tbRequired()) {
       <div class="tb-error-messages" ng-messages="ngModelCtrl?.$error" role="alert">

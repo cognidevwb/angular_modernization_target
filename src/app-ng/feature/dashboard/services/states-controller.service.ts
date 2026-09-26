@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { bindMethods } from '../../../bind-methods';
-import defaultStateControllerTemplate from '../../../../app/dashboard/states/default-state-controller.tpl.html?raw';
-import entityStateControllerTemplate from '../../../../app/dashboard/states/entity-state-controller.tpl.html?raw';
 import DefaultStateController from '../../../../app/dashboard/states/default-state-controller';
 import EntityStateController from '../../../../app/dashboard/states/entity-state-controller';
 
@@ -17,12 +15,10 @@ export class StatesControllerService {
 
   constructor() {
     this.statesControllers['default'] = {
-        controller: DefaultStateController,
-        templateUrl: defaultStateControllerTemplate
+        controller: DefaultStateController
     };
     this.statesControllers['entity'] = {
-        controller: EntityStateController,
-        templateUrl: entityStateControllerTemplate
+        controller: EntityStateController
     };
   }
 

@@ -49,18 +49,18 @@ export class TimeService {
   }
 
   loadMaxDatapointsLimit(...rest: any[]): any {
-    var deferred: any = $q.defer();
     var url: any = '/api/dashboard/maxDatapointsLimit';
-    this.http.get(url, {ignoreLoading: true} as any).then((response?: any) => {
-        this.maxDatapointsLimit = response.data;
-        if (!this.maxDatapointsLimit || this.maxDatapointsLimit <= MIN_LIMIT) {
-            this.maxDatapointsLimit = MIN_LIMIT + 1;
-        }
-        resolve();
-    }, function fail() {
-        reject();
+    return new Promise((resolve, reject) => {
+      firstValueFrom(this.http.get(url, {ignoreLoading: true} as any)).then((response: any) => {
+          this.maxDatapointsLimit = response;
+          if (!this.maxDatapointsLimit || this.maxDatapointsLimit <= MIN_LIMIT) {
+              this.maxDatapointsLimit = MIN_LIMIT + 1;
+          }
+          resolve(this.maxDatapointsLimit);
+      }, () => {
+          reject();
+      });
     });
-    return deferred.promise;
   }
 
   minIntervalLimit(timewindow?: any, ...rest: any[]): any {

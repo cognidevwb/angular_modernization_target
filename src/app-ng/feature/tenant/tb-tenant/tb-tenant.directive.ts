@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { TbContactDirective } from '../../components/tb-contact/tb-contact.directive';
 
 import $ from 'jquery';
-import tenantFieldsetTemplate from '../../../../app/tenant/tenant-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -46,14 +45,7 @@ export class TbTenantDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(tenantFieldsetTemplate);
-
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
-  constructor() {
-    $(this.element.nativeElement).html(this.template);
-    $compile($(this.element.nativeElement).contents())(this);
-  }
 
   onTenantIdCopied(...rest: any[]): any {
     this.toast.showSuccess(this.translate.instant('tenant.idCopiedMessage'), 750, $($(this.element.nativeElement)).parent().parent(), 'bottom left');

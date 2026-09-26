@@ -28,7 +28,6 @@ declare let element: any;
 @Directive({
   selector: '[tb-audit-log-row]',
   standalone: true,
-  standalone: true,
 })
 export class TbAuditLogRowDirective {
   // TODO(port): '$compile' — not in Angular: compose with components instead
@@ -58,7 +57,7 @@ export class TbAuditLogRowDirective {
     let vm = this;
     var onShowingCallback: any = {
         onShowing: function(...rest: any[]){}
-    }
+    };
     (this.dialog as any).show({
         controller: 'AuditLogDetailsDialogController',
         controllerAs: 'vm',

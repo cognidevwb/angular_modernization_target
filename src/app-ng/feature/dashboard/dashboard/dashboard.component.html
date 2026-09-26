@@ -143,31 +143,31 @@
                   <mat-tab-group flex class="tb-absolute-fill">
                     @if (timeseriesWidgetTypes?.length > 0) {
                       <mat-tab style="height: 100%;" label="{{ 'widget.timeseries' | translate }}">
-                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="timeseriesWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType(event, widget)">
+                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="timeseriesWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
                         </tb-dashboard>
                     </mat-tab>
                     }
                     @if (latestWidgetTypes?.length > 0) {
                       <mat-tab style="height: 100%;" label="{{ 'widget.latest-values' | translate }}">
-                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="latestWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType(event, widget)">
+                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="latestWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
                         </tb-dashboard>
                     </mat-tab>
                     }
                     @if (rpcWidgetTypes?.length > 0) {
                       <mat-tab style="height: 100%;" label="{{ 'widget.rpc' | translate }}">
-                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="rpcWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType(event, widget)">
+                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="rpcWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
                         </tb-dashboard>
                     </mat-tab>
                     }
                     @if (alarmWidgetTypes?.length > 0) {
                       <mat-tab style="height: 100%;" label="{{ 'widget.alarm' | translate }}">
-                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="alarmWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType(event, widget)">
+                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="alarmWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
                         </tb-dashboard>
                     </mat-tab>
                     }
                     @if (staticWidgetTypes?.length > 0) {
                       <mat-tab style="height: 100%;" label="{{ 'widget.static' | translate }}">
-                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="staticWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType(event, widget)">
+                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="staticWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
                         </tb-dashboard>
                     </mat-tab>
                     }
@@ -186,14 +186,14 @@
         </tb-details-sidenav>
         }
         <section layout="row" layout-wrap class="tb-footer-buttons md-fab" layout-align="start end">
-            <!-- TODO(port): md-fab-speed-dial: a mat-fab that toggles a list of mat-mini-fab buttons --><md-fab-speed-dial [disabled]="rootScope?.loading" [hidden]="!(!isAddingWidget && isEdit && !widgetEditMode)" md-open="vm.addItemActionsOpen" class="md-scale" md-direction="up">
-                <!-- TODO(port): md-fab-trigger: the mat-fab that opens the speed dial --><md-fab-trigger>
+            <div [hidden]="!(!isAddingWidget && isEdit && !widgetEditMode)" class="md-scale tb-fab-speed-dial">
+                <div class="tb-fab-trigger">
                     <button mat-fab color="accent" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'dashboard.add-widget' | translate }}" attr.matTooltip="{{ 'dashboard.add-widget' | translate }}" matTooltipPosition="above">
                         
                         <mat-icon>add</mat-icon>
                     </button>
-                </md-fab-trigger>
-                <!-- TODO(port): md-fab-actions: the buttons the speed dial shows --><md-fab-actions>
+                </div>
+                <div class="tb-fab-actions">
                     <button mat-fab [disabled]="rootScope?.loading" class="tmd-accent md-hue-2" (click)="addWidget($event)" attr.aria-label="{{ 'action.create' | translate }}" attr.matTooltip="{{ 'dashboard.create-new-widget' | translate }}" matTooltipPosition="above">
                         
                         <mat-icon>insert_drive_file</mat-icon>
@@ -202,15 +202,15 @@
                         
                         <mat-icon>file_upload</mat-icon>
                     </button>
-                </md-fab-actions>
-            </md-fab-speed-dial>
-            @if ((isTenantAdmin() || isSystemAdmin()) && !forceFullscreen) {
+                </div>
+            </div>
+            @if ((isTenantAdmin() || isSystemAdmin()) && !$any(this).forceFullscreen) {
               <button mat-fab color="accent" [hidden]="!(isEdit && !isAddingWidget && !rootScope?.loading)" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'action.apply' | translate }}" (click)="saveDashboard()" attr.matTooltip="{{ 'action.apply-changes' | translate }}" matTooltipPosition="above">
                 
                 <mat-icon>done</mat-icon>
             </button>
             }
-            @if ((isTenantAdmin() || isSystemAdmin()) && !forceFullscreen) {
+            @if ((isTenantAdmin() || isSystemAdmin()) && !$any(this).forceFullscreen) {
               <button mat-fab color="accent" [hidden]="!(!isAddingWidget && !rootScope?.loading)" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'action.edit-mode' | translate }}" (click)="toggleDashboardEditMode()" attr.matTooltip="{{ (isEdit ? 'action.decline-changes' : 'action.enter-edit-mode') | translate }}" matTooltipPosition="above">
                 
                 <mat-icon options='{"easing": "circ-in-out", "duration": 375, "rotation": "none"}'>{{isEdit ? 'close' : 'edit'}}</mat-icon>

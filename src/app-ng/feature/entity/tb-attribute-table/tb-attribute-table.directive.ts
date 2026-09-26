@@ -18,6 +18,7 @@ import { TbDashboardDirective } from '../../components/tb-dashboard/tb-dashboard
 
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
+declare function require(id: string): any;
 const attributeTableTemplate = require('../../../../app/entity/attribute/attribute-table.tpl.html') as any;
 const addAttributeDialogTemplate = require('../../../../app/entity/attribute/add-attribute-dialog.tpl.html') as any;
 const addWidgetToDashboardDialogTemplate = require('../../../../app/entity/attribute/add-widget-to-dashboard-dialog.tpl.html') as any;

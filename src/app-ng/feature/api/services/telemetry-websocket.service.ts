@@ -51,6 +51,8 @@ export class TelemetryWebsocketService {
   private socketCloseTimer: any;
   private reconnectTimer: any;
   private port: any;
+  private telemetryWsLogoutSub: any;
+  private telemetryWsLoginSub: any;
 
   // TODO(port): $rootScope.$broadcast — a root scope event: call the service that listens
   // TODO(port): $rootScope.$on — a root scope event: subscribe to the service that raises it
@@ -70,12 +72,12 @@ export class TelemetryWebsocketService {
     }
     this.telemetryUri += "//" + this.location.hostname + ":" + this.port;
     this.telemetryUri += "/api/ws/plugins/telemetry";
-    this.telemetryWsLogoutSub = this.userService.unauthenticated$.subscribe((doLogout?: any) => {
+    this.telemetryWsLogoutSub = this.rootScope.$on('unauthenticated', (doLogout?: any) => {
         if (doLogout) {
             this.reset(true);
         }
     });
-    this.telemetryWsLoginSub = this.userService.authenticated$.subscribe(() => {
+    this.telemetryWsLoginSub = this.rootScope.$on('authenticated', () => {
         this.reset(true);
     });
   }
@@ -319,7 +321,7 @@ export class TelemetryWebsocketService {
                     this.openSocket(this.userService.getJwtToken());
                 }, () => {
                     this.isOpening = false;
-                    this.userService.unauthenticated$.next();
+                    this.rootScope.$broadcast('unauthenticated');
                 });
             }
         }

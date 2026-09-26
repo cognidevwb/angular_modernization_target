@@ -8,8 +8,6 @@ import { UserService } from '../../api/services/user.service';
 import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
-import dashboardSelectTemplate from '../../../../app/components/dashboard-select.tpl.html?raw';
-import dashboardSelectPanelTemplate from '../../../../app/components/dashboard-select-panel.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;
@@ -36,10 +34,6 @@ export class TbDashboardSelectDirective {
   protected readonly breakpoints = inject(BreakpointObserver);
   protected readonly overlay = inject(Overlay);
   // TODO(port): '$templateCache' — templateUrl on the component
-  protected readonly dashboardService = inject(DashboardService);
-  protected readonly userService = inject(UserService);
-  protected readonly element = inject(ElementRef);
-
   protected readonly dashboardService = inject(DashboardService);
   protected readonly userService = inject(UserService);
   protected readonly element = inject(ElementRef);
@@ -102,14 +96,14 @@ export class TbDashboardSelectDirective {
     var yPosition: any;
     var xPosition: any;
     if (bottomY + panelHeight > $( window ).height()) { //eslint-disable-line
-        yPosition = this.overlay.yPosition.ABOVE;
+        yPosition = (this.overlay as any).yPosition.ABOVE;
     } else {
-        yPosition = this.overlay.yPosition.BELOW;
+        yPosition = (this.overlay as any).yPosition.BELOW;
     }
     if (leftX + panelWidth > $( window ).width()) { //eslint-disable-line
-        xPosition = this.overlay.xPosition.CENTER;
+        xPosition = (this.overlay as any).xPosition.CENTER;
     } else {
-        xPosition = this.overlay.xPosition.ALIGN_START;
+        xPosition = (this.overlay as any).xPosition.ALIGN_START;
     }
     position = (this.overlay as any).newPanelPosition()
         .relativeTo($(this.element.nativeElement))
@@ -118,7 +112,7 @@ export class TbDashboardSelectDirective {
         attachTo: $(this.document.body),
         controller: 'DashboardSelectPanelController',
         controllerAs: 'vm',
-        templateUrl: dashboardSelectPanelTemplate,
+        templateUrl: '',
         panelClass: 'tb-dashboard-select-panel',
         position: position,
         fullscreen: false,

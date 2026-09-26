@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,7 +30,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'user',
   standalone: true,
-  imports: [TranslatePipe, MatTabsModule, CommonModule, forwardRef(() => TbGridDirective), forwardRef(() => TbHelpDirective), forwardRef(() => TbUserDirective), forwardRef(() => TbAuditLogTableDirective)],
+  imports: [TranslatePipe, MatTabsModule, CommonModule, TbGridDirective, TbHelpDirective, TbUserDirective, TbAuditLogTableDirective],
   templateUrl: './user.component.html',
 })
 export class UserComponent {

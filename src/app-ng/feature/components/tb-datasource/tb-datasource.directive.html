@@ -27,10 +27,10 @@
         </mat-select>
     </mat-form-field>
     <section flex class="datasource" on="model.type">
-        <tb-datasource-func flex [(ngModel)]="model" [(maxDataKeys)]="maxDataKeys" [(optDataKeys)]="optDataKeys" [(datakeySettingsSchema)]="datakeySettingsSchema" [required]="model?.type === types?.datasourceType?.function" [(widgetType)]="widgetType" (generateDataKey)="generateDataKey.emit({$event.chip: $event.chip, $event.type: $event.type})">
+        <tb-datasource-func flex [(ngModel)]="model" [(maxDataKeys)]="maxDataKeys" [(optDataKeys)]="optDataKeys" [(datakeySettingsSchema)]="datakeySettingsSchema" [required]="model?.type === types?.datasourceType?.function" [(widgetType)]="widgetType" (generateDataKey)="generateDataKey.emit($event)">
         </tb-datasource-func>
         <!-- TODO(port): ng-switch-when has no one-to-one Angular form -->
-        <tb-datasource-entity flex [(ngModel)]="model" [(maxDataKeys)]="maxDataKeys" [(optDataKeys)]="optDataKeys" [(datakeySettingsSchema)]="datakeySettingsSchema" ng-switch-when="entity" [required]="model?.type === types?.datasourceType?.entity" [(widgetType)]="widgetType" [(aliasController)]="aliasController" (generateDataKey)="generateDataKey.emit({$event.chip: $event.chip, $event.type: $event.type})" (fetchEntityKeys)="fetchEntityKeys.emit({$event.entityAliasId: $event.entityAliasId, $event.query: $event.query, $event.type: $event.type})" (onCreateEntityAlias)="onCreateEntityAlias.emit({event: event, alias: alias})">
+        <tb-datasource-entity flex [(ngModel)]="model" [(maxDataKeys)]="maxDataKeys" [(optDataKeys)]="optDataKeys" [(datakeySettingsSchema)]="datakeySettingsSchema" ng-switch-when="entity" [required]="model?.type === types?.datasourceType?.entity" [(widgetType)]="widgetType" [(aliasController)]="aliasController" (generateDataKey)="generateDataKey.emit($event)" (fetchEntityKeys)="fetchEntityKeys.emit($event)" (onCreateEntityAlias)="onCreateEntityAlias.emit($event)">
         </tb-datasource-entity>
     </section>
 </section>

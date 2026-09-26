@@ -16,8 +16,8 @@
     limitations under the License.
 
 -->
-<!-- TODO(port): ui-sref-active-eq has no one-to-one Angular form; ui-sref has no one-to-one Angular form -->
-<a mat-button ui-sref-active-eq="tb-active" ui-sref="{{section()?.state}}" class="md-button-toggle" attr.aria-controls="docs-menu-{{section()?.name | nospace}}" layout="row" attr.aria-expanded="{{sectionActive()}}">
+<!-- TODO(port): ui-sref-active-eq has no one-to-one Angular form -->
+<a mat-button ui-sref-active-eq="tb-active" [routerLink]="stateHref(router, section()?.state)" class="md-button-toggle" attr.aria-controls="docs-menu-{{section()?.name | nospace}}" layout="row" attr.aria-expanded="{{sectionActive()}}">
 	<mat-icon [hidden]="!(section()?.icon != null)" attr.aria-label="{{section()?.icon}}" class="material-icons">{{section()?.icon}}</mat-icon>
 	<span flex>{{section()?.name | translate}}</span>
 	<span aria-hidden="true" class=" pull-right fa fa-chevron-down md-toggle-icon" [ngClass]="{'tb-toggled' : sectionActive()}"></span>

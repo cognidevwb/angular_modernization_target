@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ImportExportService } from '../services/import-export.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -32,7 +33,7 @@ declare let $scope: any;
 @Component({
   selector: 'import-dialog-csv',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatSelectModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, forwardRef(() => TbHelpDirective), forwardRef(() => TbTableColumnsAssignmentDirective)],
+  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatStepperModule, MatSelectModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, TbHelpDirective, TbTableColumnsAssignmentDirective],
   templateUrl: './import-dialog-csv.component.html',
 })
 export class ImportDialogCsvComponent {
@@ -82,6 +83,7 @@ export class ImportDialogCsvComponent {
   importData: any;
   statistical: any;
   theFormStep1: any;
+  theFormStep3: any;
 
   // TODO(port): $scope.$apply — $apply is not needed: Angular detects the change
   // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it

@@ -126,6 +126,8 @@ function ExtensionsTableWidgetController(this: any, utils?: any) {
 export class TbExtensionsTableWidgetDirective {
   readonly ctx = model<any>();
 
+  datasources: any = null;
+  tabsHidden: any = false;
   restrict: any = "E";
   scope: any = true;
   bindToController: any = {

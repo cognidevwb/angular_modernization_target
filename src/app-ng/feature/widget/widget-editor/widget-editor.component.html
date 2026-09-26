@@ -45,14 +45,18 @@
                     <span translate>action.undo</span>
                 </button>
                 @if (!isReadOnly()) {
-                  <button mat-raised-button hide-xs hide-sm [disabled]="saveDisabled()" attr.aria-label="{{ 'widget.save' | translate }}" (click)="saveWidget()" [(tbCircularProgress)]="saveWidgetPending" attr.matTooltip="{{ 'widget.save' | translate }} (CTRL + S)" matTooltipPosition="below">
-                    
+                  <button mat-raised-button hide-xs hide-sm [disabled]="saveDisabled()" attr.aria-label="{{ 'widget.save' | translate }}" (click)="saveWidget()" attr.matTooltip="{{ 'widget.save' | translate }} (CTRL + S)" matTooltipPosition="below">
+                    @if (saveWidgetPending) {
+                      <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
+                    }
                     <mat-icon attr.aria-label="{{ 'action.save' | translate }}">save</mat-icon>
                     <span translate>action.save</span>
                 </button>
                 }
-                <button mat-raised-button hide-xs hide-sm [disabled]="saveAsDisabled()" attr.aria-label="{{ 'widget.saveAs' | translate }}" (click)="saveWidgetAs($event)" [(tbCircularProgress)]="saveWidgetAsPending" attr.matTooltip="{{ 'widget.saveAs' | translate }} (Shift + CTRL + S)" matTooltipPosition="below">
-                    
+                <button mat-raised-button hide-xs hide-sm [disabled]="saveAsDisabled()" attr.aria-label="{{ 'widget.saveAs' | translate }}" (click)="saveWidgetAs($event)" attr.matTooltip="{{ 'widget.saveAs' | translate }} (Shift + CTRL + S)" matTooltipPosition="below">
+                    @if (saveWidgetAsPending) {
+                      <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
+                    }
                     <mat-icon attr.aria-label="{{ 'action.saveAs' | translate }}">save</mat-icon>
                     <span translate>action.saveAs</span>
                 </button>
@@ -130,8 +134,7 @@
                                 </div>
                             </mat-tab>
                             <mat-tab label="{{ 'widget.html' | translate }}">
-                                <!-- TODO(port): expression not parsed: `` -->
-                                <div class="tb-resize-container" (tbExpandFullscreen)="" expand-button-id="expand-button">
+                                <div class="tb-resize-container" expand-button-id="expand-button">
                                     <div class="tb-editor-area-title-panel">
                                         <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyHtml()">{{ 'widget.tidy' | translate }}
                                         </button>
@@ -141,8 +144,7 @@
                                 </div>
                             </mat-tab>
                             <mat-tab label="{{ 'widget.css' | translate }}">
-                                <!-- TODO(port): expression not parsed: `` -->
-                                <div class="tb-resize-container" (tbExpandFullscreen)="" expand-button-id="expand-button">
+                                <div class="tb-resize-container" expand-button-id="expand-button">
                                     <div class="tb-editor-area-title-panel">
                                         <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyCss()">{{ 'widget.tidy' | translate }}
                                         </button>
@@ -156,8 +158,7 @@
                     <div id="top_right_panel" class="tb-split tb-content">
                         <mat-tab-group class="container">
                             <mat-tab label="{{ 'widget.settings-schema' | translate }}">
-                                <!-- TODO(port): expression not parsed: `` -->
-                                <div class="tb-resize-container" (tbExpandFullscreen)="" expand-button-id="expand-button">
+                                <div class="tb-resize-container" expand-button-id="expand-button">
                                     <div class="tb-editor-area-title-panel">
                                         <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyJson()">{{ 'widget.tidy' | translate }}
                                         </button>
@@ -167,8 +168,7 @@
                                 </div>
                             </mat-tab>
                             <mat-tab label="{{ 'widget.datakey-settings-schema' | translate }}">
-                                <!-- TODO(port): expression not parsed: `` -->
-                                <div class="tb-resize-container" (tbExpandFullscreen)="" expand-button-id="expand-button">
+                                <div class="tb-resize-container" expand-button-id="expand-button">
                                     <div class="tb-editor-area-title-panel">
                                         <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyDataKeyJson()">{{ 'widget.tidy' | translate }}
                                         </button>
@@ -182,8 +182,7 @@
                 </div>
                 <div id="bottom_panel" class="tb-split tb-split-vertical">
                     <div id="javascript_panel" class="tb-split tb-content">
-                        <!-- TODO(port): expression not parsed: `` -->
-                        <div class="tb-resize-container" (tbExpandFullscreen)="" expand-button-id="expand-button">
+                        <div class="tb-resize-container" expand-button-id="expand-button">
                             <div class="tb-editor-area-title-panel">
                                 <label translate for="javascript_input">widget.javascript</label>
                                 <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyJs()">{{
@@ -198,8 +197,7 @@
                         <div flex layout="column" class="md-content tb-progress-cover" layout-align="center center" [hidden]="!(!iframeWidgetEditModeInited)">
                             <mat-progress-spinner color="warn" [style.visibility]="(iframeWidgetEditModeInited) ? 'hidden' : 'visible'" mode="indeterminate" diameter="100"></mat-progress-spinner>
                         </div>
-                        <!-- TODO(port): expression not parsed: `` -->
-                        <div (tbExpandFullscreen)="" expand-button-id="expand-button" class="container">
+                        <div expand-button-id="expand-button" class="container">
                             <iframe frameborder="0" height="100%" width="100%"></iframe>
                             <button mat-icon-button id="expand-button" aria-label="Fullscreen" class="tb-fullscreen-button-style" style="position: absolute; top: 10px; left: 10px; bottom: initial;"></button>
                         </div>

@@ -7,8 +7,8 @@ import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
-import relationTypeAutocompleteTemplate from '../../../../app/entity/relation/relation-type-autocomplete.tpl.html?raw';
 import { TranslatePipe } from '@ngx-translate/core';
+import { NgFor } from '@angular/common';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $filter: any;
@@ -25,7 +25,7 @@ declare let ngModelCtrl: any;
 @Component({
   selector: 'tb-relation-type-autocomplete',
   standalone: true,
-  imports: [TranslatePipe, FormsModule],
+  imports: [TranslatePipe, FormsModule, NgFor],
   templateUrl: './tb-relation-type-autocomplete.directive.html',
 })
 export class TbRelationTypeAutocompleteDirective {
@@ -46,7 +46,6 @@ export class TbRelationTypeAutocompleteDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(relationTypeAutocompleteTemplate);
   hideLabel: any;
   relationType: any = null;
   relationTypeSearchText: any = '';
@@ -58,7 +57,6 @@ export class TbRelationTypeAutocompleteDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
     this.hideLabel = (this.attrs.hideLabel !== undefined) ? true : false;
     for (var type in types.entityRelationType) {

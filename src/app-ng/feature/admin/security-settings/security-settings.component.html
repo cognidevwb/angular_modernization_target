@@ -16,7 +16,7 @@
     limitations under the License.
 
 -->
-<div [tbHelp]="'securitySettings'" help-container-id="help-container">
+<div tbHelp="securitySettings" help-container-id="help-container">
     <mat-card class="settings-card">
         <mat-card-header>
             <mat-card-title layout="row">
@@ -30,18 +30,13 @@
         <mat-card-content>
             <form name="vm.settingsForm" (ngSubmit)="save()" tb-confirm-on-exit confirm-form="vm.settingsForm">
                 <fieldset [disabled]="rootScope?.loading">
-                    <!-- TODO(port): md-expansion-panel-group (angular-material-expansion-panel): a mat-accordion --><md-expansion-panel-group md-component-id="securitySettingsPanelGroup" auto-expand="true" multiple>
-                        <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><md-expansion-panel md-component-id="generalPolicyPanel" id="generalPolicyPanel">
-                            <!-- TODO(port): md-expansion-panel-collapsed: the mat-expansion-panel-header --><md-expansion-panel-collapsed>
-                                <div class="tb-panel-title" translate>admin.general-policy</div>
-                                <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                            </md-expansion-panel-collapsed>
-                            <!-- TODO(port): md-expansion-panel-expanded: the panel's content --><md-expansion-panel-expanded>
-                                <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><md-expansion-panel-header (click)="$mdExpansionPanel('generalPolicyPanel').collapse()">
+                    <!-- TODO(port): md-expansion-panel-group (angular-material-expansion-panel): a mat-accordion --><mat-accordion multi>
+                        <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><mat-expansion-panel id="generalPolicyPanel" [expanded]="true">
+                            <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><mat-expansion-panel-header>
+                                <mat-panel-title>
                                     <div class="tb-panel-title" translate>admin.general-policy</div>
-                                    <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                                </md-expansion-panel-header>
-                                <!-- TODO(port): md-expansion-panel-content: the panel's content --><md-expansion-panel-content>
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
                                     <mat-form-field class="md-block">
                                         <mat-label translate>admin.max-failed-login-attempts</mat-label>
                                         <input matInput type="number" step="1" min="0" name="maxFailedLoginAttempts" [(ngModel)]="securitySettings.maxFailedLoginAttempts">
@@ -55,20 +50,13 @@
                                         <mat-label translate>admin.user-lockout-notification-email</mat-label>
                                         <input matInput type="email" name="userLockoutNotificationEmail" [(ngModel)]="securitySettings.userLockoutNotificationEmail">
                                     </mat-form-field>
-                                </md-expansion-panel-content>
-                            </md-expansion-panel-expanded>
-                        </md-expansion-panel>
-                        <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><md-expansion-panel md-component-id="passwordPolicyPanel" id="passwordPolicyPanel">
-                            <!-- TODO(port): md-expansion-panel-collapsed: the mat-expansion-panel-header --><md-expansion-panel-collapsed>
-                                <div class="tb-panel-title" translate>admin.password-policy</div>
-                                <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                            </md-expansion-panel-collapsed>
-                            <!-- TODO(port): md-expansion-panel-expanded: the panel's content --><md-expansion-panel-expanded>
-                                <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><md-expansion-panel-header (click)="$mdExpansionPanel('passwordPolicyPanel').collapse()">
+                        </mat-expansion-panel>
+                        <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><mat-expansion-panel id="passwordPolicyPanel" [expanded]="true">
+                            <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><mat-expansion-panel-header>
+                                <mat-panel-title>
                                     <div class="tb-panel-title" translate>admin.password-policy</div>
-                                    <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                                </md-expansion-panel-header>
-                                <!-- TODO(port): md-expansion-panel-content: the panel's content --><md-expansion-panel-content>
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
                                     <mat-form-field class="md-block">
                                         <mat-label translate>admin.minimum-password-length</mat-label>
                                         <input matInput type="number" step="1" min="5" max="50" required name="minimumPasswordLength" [(ngModel)]="securitySettings.passwordPolicy.minimumLength">
@@ -136,10 +124,8 @@
                                             <div translate ng-message="min">admin.password-reuse-frequency-days-range</div>
                                         </div>
                                     </mat-form-field>
-                                </md-expansion-panel-content>
-                            </md-expansion-panel-expanded>
-                        </md-expansion-panel>
-                    </md-expansion-panel-group>
+                        </mat-expansion-panel>
+                    </mat-accordion>
                     <div layout="row" layout-align="end center" width="100%" layout-wrap>
                         <button mat-raised-button color="primary" [disabled]="rootScope?.loading || settingsForm?.$invalid || !settingsForm?.$dirty" type="submit">{{'action.save' | translate}}</button>
                     </div>

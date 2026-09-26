@@ -16,20 +16,31 @@
     limitations under the License.
 
 -->
-<!-- TODO(port): md-autocomplete: an input with [matAutocomplete] and a mat-autocomplete panel --><md-autocomplete [required]="tbRequired()" [disabled]="disabled()" md-no-cache="true" md-input-name="entity" [(ngModel)]="entity" md-selected-item="entity" md-search-text="entitySearchText" md-search-text-change="entitySearchTextChanged()" md-items="item in fetchEntities(entitySearchText)" md-item-text="item.name" md-min-length="0" attr.md-floating-label="{{ entityText | translate }}" md-select-on-match="true" md-menu-class="tb-entity-autocomplete">
-    <!-- TODO(port): md-item-template: the content of each mat-option in the autocomplete --><md-item-template>
-        <div class="tb-entity-item">
-            <span md-highlight-text="entitySearchText" md-highlight-flags="^i">{{item?.name}}</span>
-        </div>
-    </md-item-template>
-    <!-- TODO(port): md-not-found: a mat-option shown when the filtered list is empty --><md-not-found>
-        <div class="tb-not-found">
-            <span translate translate-values='{ entity: entitySearchText }'>{{ noEntitiesMatchingText }}</span>
-        </div>
-    </md-not-found>
+<mat-form-field class="tb-entity-autocomplete">
+    <mat-label>{{ entityText | translate }}</mat-label>
+    <input matInput
+           type="text"
+           name="entity"
+           [required]="tbRequired()"
+           [disabled]="disabled()"
+           [(ngModel)]="entitySearchText"
+           (ngModelChange)="entitySearchTextChanged()"
+           [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayEntityFn" (optionSelected)="onEntitySelected($event)" class="tb-entity-autocomplete">
+        <mat-option *ngFor="let item of filteredEntities" [value]="item">
+            <div class="tb-entity-item">
+                <span>{{item?.name}}</span>
+            </div>
+        </mat-option>
+        <mat-option *ngIf="!filteredEntities?.length" disabled>
+            <div class="tb-not-found">
+                <span translate translate-values='{ entity: entitySearchText }'>{{ noEntitiesMatchingText | translate:{ entity: entitySearchText } }}</span>
+            </div>
+        </mat-option>
+    </mat-autocomplete>
     <!-- TODO(port): ng-messages has no one-to-one Angular form -->
     <div ng-messages="theForm()?.entity?.$error">
         <!-- TODO(port): ng-message has no one-to-one Angular form -->
         <div translate ng-message="required">{{ entityRequiredText }}</div>
     </div>
-</md-autocomplete>
+</mat-form-field>

@@ -7,9 +7,9 @@ import { TimeService } from '../../api/services/time.service';
 import { TranslateService } from '@ngx-translate/core';
 import { linkAttrs } from '../../../legacy-link';
 import $ from 'jquery';
-import timewindowButtonTemplate from '../../../../app/components/timewindow-button.tpl.html' with { loader: 'text' };
-import timewindowTemplate from '../../../../app/components/timewindow.tpl.html' with { loader: 'text' };
-import timewindowPanelTemplate from '../../../../app/components/timewindow-panel.tpl.html' with { loader: 'text' };
+declare const timewindowButtonTemplate: any;
+declare const timewindowTemplate: any;
+declare const timewindowPanelTemplate: any;
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
@@ -131,7 +131,7 @@ export class TbTimewindowDirective {
         return;
     }
     var position: any;
-    var isGtSm: any = this.breakpoints('gt-sm');
+    var isGtSm: any = (this.breakpoints as any)('gt-sm');
     if (isGtSm) {
         var panelHeight: any = 375;
         var panelWidth: any = 417;
@@ -141,20 +141,20 @@ export class TbTimewindowDirective {
         var yPosition: any;
         var xPosition: any;
         if (bottomY + panelHeight > $( window ).height()) { //eslint-disable-line
-            yPosition = this.overlay.yPosition.ABOVE;
+            yPosition = (this.overlay as any).yPosition.ABOVE;
         } else {
-            yPosition = this.overlay.yPosition.BELOW;
+            yPosition = (this.overlay as any).yPosition.BELOW;
         }
         if (leftX + panelWidth > $( window ).width()) { //eslint-disable-line
-            xPosition = this.overlay.xPosition.ALIGN_END;
+            xPosition = (this.overlay as any).xPosition.ALIGN_END;
         } else {
-            xPosition = this.overlay.xPosition.ALIGN_START;
+            xPosition = (this.overlay as any).xPosition.ALIGN_START;
         }
-        position = this.overlay.newPanelPosition()
+        position = (this.overlay as any).newPanelPosition()
             .relativeTo($(this.element.nativeElement))
             .addPanelPosition(xPosition, yPosition);
     } else {
-        position = this.overlay.newPanelPosition()
+        position = (this.overlay as any).newPanelPosition()
             .absolute()
             .top('0%')
             .left('0%');
@@ -182,7 +182,7 @@ export class TbTimewindowDirective {
         escapeToClose: true,
         focusOnOpen: false
     };
-    this.overlay.open(config);
+    (this.overlay as any).open(config);
   }
 
   updateView(...rest: any[]): any {

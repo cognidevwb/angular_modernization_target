@@ -3,17 +3,12 @@ import { ElementRef } from '@angular/core';
 import { MenuService } from '../../services/menu.service';
 import { CommonModule } from '@angular/common';
 
-import $ from 'jquery';
-import menulinkTemplate from '../../../../app/components/menu-link.tpl.html?raw';
-import menutoggleTemplate from '../../../../app/components/menu-toggle.tpl.html?raw';
+import { Router, RouterLink } from '@angular/router';
+import { stateHref } from '../../../state-paths';
 import { NospacePipe } from '../pipes/nospace.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let element: any;
 
 /**
  * Ported from the AngularJS directive `tbMenuLink` (module `thingsboard.directives.menuLink`) in src/app/components/menu-link.directive.js:27.
@@ -22,34 +17,26 @@ declare let element: any;
 @Component({
   selector: 'tb-menu-link',
   standalone: true,
-  imports: [TranslatePipe, MatIconModule, MatButtonModule, NospacePipe, CommonModule],
+  imports: [TranslatePipe, MatIconModule, MatButtonModule, NospacePipe, CommonModule, RouterLink],
   templateUrl: './tb-menu-link.directive.html',
 })
 export class TbMenuLinkDirective {
   readonly section = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly menu = inject(MenuService);
   protected readonly element = inject(ElementRef);
-  // TODO(port): template: 1 × ui-sref left in place
+  protected readonly router = inject(Router);
+  protected readonly stateHref = stateHref;
   // TODO(port): template: 1 × ui-sref-active-eq left in place
 
-  protected template: any;
   sectionActive: any;
   sectionHeight: any;
 
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
   constructor() {
-    if (this.section().type === 'link') {
-            this.template = $templateCache.get(menulinkTemplate);
-        } else {
-            this.template = $templateCache.get(menutoggleTemplate);
-
-            var parentNode: any = this.element.nativeElement.parentNode.parentNode.parentNode;
+    if (this.section().type !== 'link') {
+            const parentNode: any = this.element.nativeElement.parentNode.parentNode.parentNode;
             if (parentNode.classList.contains('parent-list-item')) {
-                var heading: any = parentNode.querySelector('h2');
+                const heading: any = parentNode.querySelector('h2');
                 this.element.nativeElement.firstChild.setAttribute('aria-describedby', heading.id);
             }
 
@@ -61,7 +48,5 @@ export class TbMenuLinkDirective {
                 return this.menu.sectionHeight(this.section());
             };
         }
-    $(this.element.nativeElement).html(this.template);
-    $compile($(this.element.nativeElement).contents())(this);
   }
 }

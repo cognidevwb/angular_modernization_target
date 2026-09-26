@@ -15,8 +15,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { isEqual } from 'lodash-es';
+import $ from 'jquery';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
+declare let dashboardEventService: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 function DashboardController(this: any, $scope?: any, $rootScope?: any, $element?: any, $timeout?: any, $mdMedia?: any, $mdUtil?: any, $q?: any, timeService?: any, types?: any, utils?: any) {
@@ -25,14 +27,14 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
     var highlightedWidget: any = null;
     var selectedWidget: any = null;
 
-    var gridsterParent: any = angular.element('#gridster-parent', $element);
-    var gridsterElement: any = angular.element('#gridster-child', gridsterParent);
+    var gridsterParent: any = $('#gridster-parent', $element);
+    var gridsterElement: any = $('#gridster-child', gridsterParent);
 
     var vm: any = this;
 
     vm.gridster = null;
 
-    vm.isMobileDisabled = angular.isDefined(vm.isMobileDisabled) ? vm.isMobileDisabled : false;
+    vm.isMobileDisabled = vm.isMobileDisabled !== undefined ? vm.isMobileDisabled : false;
 
     vm.isMobileSize = false;
 
@@ -150,14 +152,14 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
         onResetTimewindow: function() {
             $timeout(function() {
                 if (vm.originalDashboardTimewindow) {
-                    vm.dashboardTimewindow = angular.copy(vm.originalDashboardTimewindow);
+                    vm.dashboardTimewindow = structuredClone(vm.originalDashboardTimewindow);
                     vm.originalDashboardTimewindow = null;
                 }
             }, 0);
         },
         onUpdateTimewindow: function(startTimeMs?: any, endTimeMs?: any, interval?: any) {
             if (!vm.originalDashboardTimewindow) {
-                vm.originalDashboardTimewindow = angular.copy(vm.dashboardTimewindow);
+                vm.originalDashboardTimewindow = structuredClone(vm.dashboardTimewindow);
             }
             $timeout(function() {
                 vm.dashboardTimewindow = timeService.toHistoryTimewindow(vm.dashboardTimewindow, startTimeMs, endTimeMs, interval);
@@ -370,9 +372,9 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
 
     function autofillHeight() {
         if (vm.gridsterOpts.isMobile) {
-            return angular.isDefined(vm.mobileAutofillHeight) ? vm.mobileAutofillHeight : false;
+            return vm.mobileAutofillHeight !== undefined ? vm.mobileAutofillHeight : false;
         } else {
-            return angular.isDefined(vm.autofillHeight) ? vm.autofillHeight : false;
+            return vm.autofillHeight !== undefined ? vm.autofillHeight : false;
         }
         return undefined;
     }
@@ -418,7 +420,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
                 }
             );
         } else if (isMobile) {
-            rowHeight = angular.isDefined(vm.mobileRowHeight) ? vm.mobileRowHeight : 70;
+            rowHeight = vm.mobileRowHeight !== undefined ? vm.mobileRowHeight : 70;
             deferred.resolve(rowHeight);
         } else {
             rowHeight = 'match';
@@ -430,10 +432,10 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
     function widgetOrder(widget?: any) {
         var order: any;
         var hasLayout: any = vm.widgetLayouts && vm.widgetLayouts[widget.id];
-        if (hasLayout && angular.isDefined(vm.widgetLayouts[widget.id].mobileOrder)
+        if (hasLayout && vm.widgetLayouts[widget.id].mobileOrder !== undefined
                 && vm.widgetLayouts[widget.id].mobileOrder >= 0) {
             order = vm.widgetLayouts[widget.id].mobileOrder;
-        } else if (angular.isDefined(widget.config.mobileOrder) && widget.config.mobileOrder >= 0) {
+        } else if (widget.config.mobileOrder !== undefined && widget.config.mobileOrder >= 0) {
             order = widget.config.mobileOrder;
         } else if (hasLayout) {
             order = vm.widgetLayouts[widget.id].row;
@@ -648,9 +650,9 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
 
     function scrollToWidget(widget?: any, delay?: any) {
         if (vm.gridster) {
-            var item: any = angular.element('.gridster-item', vm.gridster.$element)[vm.widgets.indexOf(widget)];
+            var item: any = $('.gridster-item', vm.gridster.$element)[vm.widgets.indexOf(widget)];
             if (item) {
-                var height: any = angular.element(item).outerHeight(true);
+                var height: any = $(item).outerHeight(true);
                 var rectHeight: any = gridsterParent.height();
                 var offset: any = (rectHeight - height) / 2;
                 var scrollTop: any = item.offsetTop;
@@ -779,7 +781,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
                      backgroundColor: widgetBackgroundColor(widget),
                      padding: widgetPadding(widget),
                      margin: widgetMargin(widget)};
-        if (angular.isDefined(widget.config.widgetStyle)) {
+        if (widget.config.widgetStyle !== undefined) {
             Object.assign(style, widget.config.widgetStyle);
         }
         return style;
@@ -822,7 +824,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
     }
 
     function showWidgetTitle(widget?: any) {
-        if (angular.isDefined(widget.config.showTitle)) {
+        if (widget.config.showTitle !== undefined) {
             return widget.config.showTitle;
         } else {
             return true;
@@ -831,7 +833,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
     }
 
     function showWidgetTitleIcon(widget?: any) {
-        if (angular.isDefined(widget.config.showTitleIcon)) {
+        if (widget.config.showTitleIcon !== undefined) {
             return widget.config.showTitleIcon;
         } else {
             return false;
@@ -880,7 +882,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
     }
 
     function widgetTitleStyle(widget?: any) {
-        if (angular.isDefined(widget.config.titleStyle)) {
+        if (widget.config.titleStyle !== undefined) {
             return widget.config.titleStyle;
         } else {
             return {};
@@ -900,7 +902,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
     }
 
     function widgetTitleIcon(widget?: any) {
-        if (angular.isDefined(widget.config.titleIcon)) {
+        if (widget.config.titleIcon !== undefined) {
             return widget.config.titleIcon;
         } else {
             return '';
@@ -910,10 +912,10 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
 
     function widgetTitleIconStyle(widget?: any) {
         var style: any = {};
-        if (angular.isDefined(widget.config.iconColor)) {
+        if (widget.config.iconColor !== undefined) {
             style.color = widget.config.iconColor;
         }
-        if (angular.isDefined(widget.config.iconSize)) {
+        if (widget.config.iconSize !== undefined) {
             style.fontSize = widget.config.iconSize;
         }
         return style;
@@ -959,7 +961,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
     }
 
     function dropWidgetShadow(widget?: any) {
-        if (angular.isDefined(widget.config.dropShadow)) {
+        if (widget.config.dropShadow !== undefined) {
             return widget.config.dropShadow;
         } else {
             return true;
@@ -968,7 +970,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
     }
 
     function enableWidgetFullscreen(widget?: any) {
-        if (angular.isDefined(widget.config.enableFullscreen)) {
+        if (widget.config.enableFullscreen !== undefined) {
             return widget.config.enableFullscreen;
         } else {
             return true;
@@ -978,7 +980,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
 
     function hasTimewindow(widget?: any) {
         if (widget.type === types.widgetType.timeseries.value || widget.type === types.widgetType.alarm.value) {
-            return angular.isDefined(widget.config.useDashboardTimewindow) ?
+            return widget.config.useDashboardTimewindow !== undefined ?
                 (!widget.config.useDashboardTimewindow && (widget.config.displayTimewindow === undefined || widget.config.displayTimewindow)) : false;
         } else {
             return false;

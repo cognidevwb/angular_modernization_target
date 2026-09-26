@@ -16,7 +16,7 @@
     limitations under the License.
 
 -->
-<div attr.aria-label="{{ 'widget.add' | translate }}" style="width: 900px;" [tbHelp]="helpLinkIdForWidgetType()" help-container-id="help-container" class="md-dialog">
+<div attr.aria-label="{{ 'widget.add' | translate }}" style="width: 900px;" [tb-help]="helpLinkIdForWidgetType()" help-container-id="help-container" class="md-dialog">
     <form name="theForm" (ngSubmit)="add()">
         <mat-toolbar>
             <div class="md-toolbar-tools">
@@ -33,7 +33,7 @@
         <mat-dialog-content>
             <div class="md-dialog-content" style="padding-top: 0px;">
                 <fieldset [disabled]="rootScope?.loading" style="position: relative; height: 600px;">
-                    <tb-widget-config [(widgetType)]="widget.type" [(typeParameters)]="widgetInfo.typeParameters" [(actionSources)]="widgetInfo.actionSources" [forceExpandDatasources]="true" [(ngModel)]="widgetConfig" [(widgetSettingsSchema)]="settingsSchema" [(datakeySettingsSchema)]="dataKeySettingsSchema" [(aliasController)]="aliasController" [(functionsOnly)]="functionsOnly" (fetchEntityKeys)="fetchEntityKeys(entityAliasId, query, type)" (fetchDashboardStates)="fetchDashboardStates(query)" (onCreateEntityAlias)="createEntityAlias(event, alias, allowedEntityTypes)" [(theForm)]="theForm"></tb-widget-config>
+                    <tb-widget-config [(widgetType)]="widget.type" [(typeParameters)]="widgetInfo.typeParameters" [(actionSources)]="widgetInfo.actionSources" [forceExpandDatasources]="true" [(ngModel)]="widgetConfig" [(widgetSettingsSchema)]="settingsSchema" [(datakeySettingsSchema)]="dataKeySettingsSchema" [(aliasController)]="aliasController" [(functionsOnly)]="functionsOnly" (fetchEntityKeys)="fetchEntityKeys($event.entityAliasId, $event.query, $event.type)" (fetchDashboardStates)="fetchDashboardStates($event.query)" (onCreateEntityAlias)="createEntityAlias($event.event, $event.alias, $event.allowedEntityTypes)" [(theForm)]="theForm"></tb-widget-config>
                 </fieldset>
             </div>
         </mat-dialog-content>

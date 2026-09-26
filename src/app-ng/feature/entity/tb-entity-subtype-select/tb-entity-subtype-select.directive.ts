@@ -9,7 +9,6 @@ import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
-import entitySubtypeSelectTemplate from '../../../../app/entity/entity-subtype-select.tpl.html?raw';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -47,7 +46,6 @@ export class TbEntitySubtypeSelectDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(entitySubtypeSelectTemplate);
   ngModelCtrl: any = ngModelCtrl;
   entitySubtypes: any = [];
   $on: any;
@@ -61,7 +59,6 @@ export class TbEntitySubtypeSelectDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     if ((this.attrs.hideLabel !== undefined)) {
             this.showLabel = false;
         } else {

@@ -1,7 +1,6 @@
 import { Component, forwardRef, model, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TbNavTreeDirective } from '../../components/tb-nav-tree/tb-nav-tree.directive';
-import entitiesHierarchyWidgetTemplate from '../../../../app/widget/lib/entities-hierarchy-widget.tpl.html?raw';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,9 +8,29 @@ import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
+import $ from 'jquery';
+import { isEqual } from 'lodash-es';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
+declare let entitiesHierarchyDataUpdatedService: any;
+
+// Type-only augmentation exposing the legacy vm properties/methods the template binds to.
+interface TbEntitiesHierarchyWidgetDirective {
+    showData: any;
+    query: any;
+    loadNodes: any;
+    nodeEditCallbacks: any;
+    exitFilterMode: (...args: any[]) => any;
+    onNodeSelected: (...args: any[]) => any;
+    onNodesInserted: (...args: any[]) => any;
+    searchCallback: (...args: any[]) => any;
+    node: any;
+    event: any;
+    nodes: any;
+    parent: any;
+    searchText: any;
+}
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 function EntitiesHierarchyWidgetController(this: any, $element?: any, $scope?: any, $q?: any, $timeout?: any, toast?: any, types?: any, entityService?: any, entityRelationService?: any /*$filter, $mdMedia, $mdPanel, $document, $translate, $timeout, utils, types*/) {
@@ -56,7 +75,7 @@ function EntitiesHierarchyWidgetController(this: any, $element?: any, $scope?: a
         }
     });
 
-    searchEffect = effect(() => {
+    const searchEffect = effect(() => {
         const newVal = vm.query.search;
         if (vm.query.search != null) {
             updateSearchNodes();
@@ -136,7 +155,7 @@ function EntitiesHierarchyWidgetController(this: any, $element?: any, $scope?: a
         vm.query.search = '';
         vm.ctx.hideTitlePanel = true;
         $timeout(()=>{
-            angular.element(vm.ctx.$container).find('.searchInput').focus();
+            $(vm.ctx.$container).find('.searchInput').focus();
         })
     }
 
@@ -232,12 +251,12 @@ function EntitiesHierarchyWidgetController(this: any, $element?: any, $scope?: a
 
     function updateNodeStyle(node?: any) {
         var newText: any = prepareNodeText(node);
-        if (!angular.equals(node.text, newText)) {
+        if (!isEqual(node.text, newText)) {
             node.text = newText;
             vm.nodeEditCallbacks.updateNode(node.id, node.text);
         }
         var newDisabled: any = vm.nodeDisabledFunction(node.data.nodeCtx);
-        if (!angular.equals(node.state.disabled, newDisabled)) {
+        if (!isEqual(node.state.disabled, newDisabled)) {
             node.state.disabled = newDisabled;
             if (node.state.disabled) {
                 vm.nodeEditCallbacks.disableNode(node.id);
@@ -246,7 +265,7 @@ function EntitiesHierarchyWidgetController(this: any, $element?: any, $scope?: a
             }
         }
         var newHasChildren: any = vm.nodeHasChildrenFunction(node.data.nodeCtx);
-        if (!angular.equals(node.children, newHasChildren)) {
+        if (!isEqual(node.children, newHasChildren)) {
             node.children = newHasChildren;
             vm.nodeEditCallbacks.setNodeHasChildren(node.id, node.children);
         }
@@ -300,7 +319,7 @@ function EntitiesHierarchyWidgetController(this: any, $element?: any, $scope?: a
     }
 
     function showError(errorText?: any) {
-        var toastParent: any = angular.element('.tb-entities-hierarchy', $element);
+        var toastParent: any = $('.tb-entities-hierarchy', $element);
         toast.showError(errorText, toastParent, 'bottom left');
     }
 

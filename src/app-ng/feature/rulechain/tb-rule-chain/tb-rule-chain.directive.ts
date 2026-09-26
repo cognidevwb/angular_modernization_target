@@ -8,7 +8,6 @@ import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import ruleChainFieldsetTemplate from '../../../../app/rulechain/rulechain-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -42,8 +41,6 @@ export class TbRuleChainDirective {
   readonly onExportRuleChain = output<any>();
   readonly onDeleteRuleChain = output<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly dialog = inject(MatDialog);
   protected readonly document = inject(DOCUMENT);
   protected readonly translate = inject(TranslateService);
@@ -51,15 +48,6 @@ export class TbRuleChainDirective {
   protected readonly element = inject(ElementRef);
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
-
-  protected template: any = $templateCache.get(ruleChainFieldsetTemplate);
-
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
-  constructor() {
-    $(this.element.nativeElement).html(this.template);
-    $compile($(this.element.nativeElement).contents())(this);
-  }
 
   onRuleChainIdCopied(...rest: any[]): any {
     this.toast.showSuccess(this.translate.instant('rulechain.idCopiedMessage'), 750, $($(this.element.nativeElement)).parent().parent(), 'bottom left');

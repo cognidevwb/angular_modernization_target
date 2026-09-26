@@ -17,6 +17,6 @@
 
 -->
 <tb-grid (gridConfiguration)="widgetsBundleGridConfig">
-    <tb-widgets-bundle [widgetsBundle]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [isReadOnly]="grid?.isDetailsReadOnly?.(grid?.operatingItem?.())" [(theForm)]="grid.detailsForm" (onExportWidgetsBundle)="exportWidgetsBundle(event, grid.detailsConfig.currentItem)" (onDeleteWidgetsBundle)="grid.deleteItem(event, grid.detailsConfig.currentItem)">
+    <tb-widgets-bundle [widgetsBundle]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [isReadOnly]="grid?.isDetailsReadOnly?.(grid?.operatingItem?.())" [(theForm)]="grid.detailsForm" (onExportWidgetsBundle)="exportWidgetsBundle($event, grid.detailsConfig.currentItem)" (onDeleteWidgetsBundle)="grid.deleteItem($event, grid.detailsConfig.currentItem)">
     </tb-widgets-bundle>
 </tb-grid>

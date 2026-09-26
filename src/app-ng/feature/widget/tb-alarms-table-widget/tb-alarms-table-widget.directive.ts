@@ -160,9 +160,9 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
 
         vm.ctx.widgetActions = [ vm.searchAction, statusFilterAction, columnDisplayAction ];
 
-        vm.displayDetails = angular.isDefined(vm.settings.displayDetails) ? vm.settings.displayDetails : true;
-        vm.allowAcknowledgment = angular.isDefined(vm.settings.allowAcknowledgment) ? vm.settings.allowAcknowledgment : true;
-        vm.allowClear = angular.isDefined(vm.settings.allowClear) ? vm.settings.allowClear : true;
+        vm.displayDetails = vm.settings.displayDetails !== undefined ? vm.settings.displayDetails : true;
+        vm.allowAcknowledgment = vm.settings.allowAcknowledgment !== undefined ? vm.settings.allowAcknowledgment : true;
+        vm.allowClear = vm.settings.allowClear !== undefined ? vm.settings.allowClear : true;
 
         if (vm.displayDetails) {
             vm.actionCellDescriptors.push(
@@ -204,18 +204,18 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
 
         vm.ctx.widgetTitle = vm.alarmsTitle;
 
-        vm.enableSelection = angular.isDefined(vm.settings.enableSelection) ? vm.settings.enableSelection : true;
-        vm.searchAction.show = angular.isDefined(vm.settings.enableSearch) ? vm.settings.enableSearch : true;
-        columnDisplayAction.show = angular.isDefined(vm.settings.enableSelectColumnDisplay) ? vm.settings.enableSelectColumnDisplay : true;
-        statusFilterAction.show = angular.isDefined(vm.settings.enableStatusFilter) ? vm.settings.enableStatusFilter : true;
+        vm.enableSelection = vm.settings.enableSelection !== undefined ? vm.settings.enableSelection : true;
+        vm.searchAction.show = vm.settings.enableSearch !== undefined ? vm.settings.enableSearch : true;
+        columnDisplayAction.show = vm.settings.enableSelectColumnDisplay !== undefined ? vm.settings.enableSelectColumnDisplay : true;
+        statusFilterAction.show = vm.settings.enableStatusFilter !== undefined ? vm.settings.enableStatusFilter : true;
         if (!vm.allowAcknowledgment && !vm.allowClear) {
             vm.enableSelection = false;
         }
 
-        vm.displayPagination = angular.isDefined(vm.settings.displayPagination) ? vm.settings.displayPagination : true;
+        vm.displayPagination = vm.settings.displayPagination !== undefined ? vm.settings.displayPagination : true;
 
         var pageSize: any = vm.settings.defaultPageSize;
-        if (angular.isDefined(pageSize) && angular.isNumber(pageSize) && pageSize > 0) {
+        if (pageSize !== undefined && typeof pageSize === 'number' && pageSize > 0) {
             vm.defaultPageSize = pageSize;
         }
 
@@ -283,7 +283,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
         var namespace: any = 'ts-table-' + hashCode(cssString);
         cssParser.cssPreviewNamespace = namespace;
         cssParser.createStyleElement(namespace, cssString);
-        el.classList.add(namespace);
+        (vm.ctx.$container as any).classList.add(namespace);
 
         function hashCode(str?: any) {
             var hash: any = 0;
@@ -302,7 +302,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
         vm.query.search = '';
         vm.ctx.hideTitlePanel = true;
         $timeout(()=>{
-            angular.element(vm.ctx.$container).find('.searchInput').focus();
+            $(vm.ctx.$container).find('.searchInput').focus();
         })
     }
 
@@ -387,7 +387,6 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
             $mdDialog.show({
                 controller: 'AlarmDetailsDialogController',
                 controllerAs: 'vm',
-                templateUrl: (alarmDetailsDialogTemplate as any),
                 locals: {
                     alarmId: alarm.id.id,
                     allowAcknowledgment: vm.allowAcknowledgment,
@@ -395,7 +394,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
                     displayDetails: true,
                     showingCallback: onShowingCallback
                 },
-                parent: angular.element($document[0].body),
+                parent: $($document[0].body),
                 targetEvent: $event,
                 fullscreen: true,
                 multiple: true,
@@ -578,7 +577,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
             var contentInfo: any = vm.contentsInfo[key.label];
             var value: any = getAlarmValue(alarm, key);
             if (contentInfo.useCellContentFunction && contentInfo.cellContentFunction) {
-                if (angular.isDefined(value)) {
+                if (value !== undefined) {
                     strContent = '' + value;
                 }
                 var content: any = strContent;
@@ -598,7 +597,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
     }
 
     function defaultContent(key?: any, value?: any) {
-        if (angular.isDefined(value)) {
+        if (value !== undefined) {
             var alarmField: any = types.alarmFields[key.name];
             if (alarmField) {
                 if (alarmField.time) {
@@ -622,7 +621,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
         return undefined;
     }
     function defaultStyle(key?: any, value?: any) {
-        if (angular.isDefined(value)) {
+        if (value !== undefined) {
             var alarmField: any = types.alarmFields[key.name];
             if (alarmField) {
                 if (alarmField.value == types.alarmFields.severity.value) {
@@ -657,15 +656,14 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
     }
 
     function editAlarmStatusFilter($event?: any) {
-        var element: any = angular.element($event.target);
+        var element: any = $($event.target);
         var position: any = $mdPanel.newPanelPosition()
             .relativeTo(element)
             .addPanelPosition($mdPanel.xPosition.ALIGN_END, $mdPanel.yPosition.BELOW);
         var config: any = {
-            attachTo: angular.element($document[0].body),
+            attachTo: $($document[0].body),
             controller: AlarmStatusFilterPanelController,
             controllerAs: 'vm',
-            templateUrl: (alarmStatusFilterPanelTemplate as any),
             panelClass: 'tb-alarm-status-filter-panel',
             position: position,
             fullscreen: false,
@@ -681,15 +679,14 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
     }
 
     function editColumnsToDisplay($event?: any) {
-        var element: any = angular.element($event.target);
+        var element: any = $($event.target);
         var position: any = $mdPanel.newPanelPosition()
             .relativeTo(element)
             .addPanelPosition($mdPanel.xPosition.ALIGN_END, $mdPanel.yPosition.BELOW);
         var config: any = {
-            attachTo: angular.element($document[0].body),
+            attachTo: $($document[0].body),
             controller: DisplayColumnsPanelController,
             controllerAs: 'vm',
-            templateUrl: (displayColumnsPanelTemplate as any),
             panelClass: 'tb-display-columns-panel',
             position: position,
             fullscreen: false,
@@ -724,7 +721,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
             var useCellStyleFunction: any = false;
 
             if (keySettings.useCellStyleFunction === true) {
-                if (angular.isDefined(keySettings.cellStyleFunction) && keySettings.cellStyleFunction.length > 0) {
+                if (keySettings.cellStyleFunction !== undefined && keySettings.cellStyleFunction.length > 0) {
                     try {
                         cellStyleFunction = new Function('value', keySettings.cellStyleFunction);
                         useCellStyleFunction = true;
@@ -744,7 +741,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
             var useCellContentFunction: any = false;
 
             if (keySettings.useCellContentFunction === true) {
-                if (angular.isDefined(keySettings.cellContentFunction) && keySettings.cellContentFunction.length > 0) {
+                if (keySettings.cellContentFunction !== undefined && keySettings.cellContentFunction.length > 0) {
                     try {
                         cellContentFunction = new Function('value, alarm, filter', keySettings.cellContentFunction);
                         useCellContentFunction = true;
@@ -760,12 +757,14 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
                 cellContentFunction: cellContentFunction
             };
 
-            var columnWidth: any = angular.isDefined(keySettings.columnWidth) ? keySettings.columnWidth : '0px';
+            var columnWidth: any = keySettings.columnWidth !== undefined ? keySettings.columnWidth : '0px';
             vm.columnWidth[dataKey.label] = columnWidth;
         }
     }
 
 }
+
+import cssjs from 'cssjs';
 
 function AlarmStatusFilterPanelController(this: any, subscription?: any, types?: any) {  //eslint-disable-line
 

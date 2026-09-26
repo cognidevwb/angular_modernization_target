@@ -4,6 +4,9 @@ import { MenuService } from '../../services/menu.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { Router, RouterLink } from '@angular/router';
+import { stateHref } from '../../../state-paths';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $scope: any;
@@ -15,13 +18,15 @@ declare let $scope: any;
 @Component({
   selector: 'home-links',
   standalone: true,
-  imports: [MatIconModule, MatCardModule, MatButtonModule],
+  imports: [MatIconModule, MatCardModule, MatButtonModule, MatGridListModule, RouterLink],
   templateUrl: './home-links.component.html',
 })
 export class HomeLinksComponent {
   // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly breakpoints = inject(BreakpointObserver);
   protected readonly menu = inject(MenuService);
+  protected readonly router = inject(Router);
+  protected readonly stateHref = stateHref;
   // TODO(port): elements not resolved to a component: md-grid-list, md-grid-tile
   // TODO(port): template: 2 × md-grid-list left in place
   // TODO(port): template: 2 × md-grid-tile left in place

@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { bindMethods } from '../../../bind-methods';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
@@ -19,7 +20,6 @@ export class EventService {
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
 
   getEvents(entityType?: any, entityId?: any, eventType?: any, tenantId?: any, pageLink?: any, ...rest: any[]): any {
-    var deferred: any = $q.defer();
     var url: any = '/api/events/'+entityType+'/'+entityId+'/'+eventType+'?tenantId=' + tenantId + '&limit=' + pageLink.limit;
 
     if ((pageLink.startTime !== undefined) && pageLink.startTime != null) {
@@ -31,11 +31,12 @@ export class EventService {
     if ((pageLink.idOffset !== undefined) && pageLink.idOffset != null) {
         url += '&offset=' + pageLink.idOffset;
     }
-    this.http.get(url, null).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      firstValueFrom(this.http.get(url)).then(function success(response?: any) {
+          resolve(response);
+      }, function fail() {
+          reject();
+      });
     });
-    return deferred.promise;
   }
 }

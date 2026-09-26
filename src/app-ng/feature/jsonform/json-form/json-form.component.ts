@@ -69,6 +69,7 @@ export class JsonFormComponent {
   form: any;
   model: any = { name: '#ccc' };
   ngform: any;
+  isFormReadonly: any = 'false';
 
   // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
 

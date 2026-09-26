@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TbExpandFullscreenDirective } from '../tb-expand-fullscreen/tb-expand-fullscreen.directive';
 import { linkAttrs } from '../../../legacy-link';
+import { RootState } from '../../../root-state';
 import ace from 'brace';
 import $ from 'jquery';
 import fixAceEditor from '../../../../app/components/ace-editor-fix';
@@ -69,7 +70,6 @@ protected template: any = jsFuncTemplate;
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.functionName = this.attrs.functionName;
 this.functionArgs = this.attrs.functionArgs;
 this.validationArgs = this.attrs.validationArgs;
@@ -111,7 +111,7 @@ this.validationArgs = this.attrs.validationArgs;
     ngModelCtrl.$render = function () {
             this.functionBody = ngModelCtrl.$viewValue;
         };
-this.formSubmitSub = this.formSubmitService.on('form-submit', (args?: any) => {
+this.formSubmitSub = this.rootScope.$on('form-submit', (args?: any) => {
       if (!args || this.validationTriggerArg && this.validationTriggerArg == args) {
             this.validationArgs = this.attrs.validationArgs;
             this.cleanupJsErrors();
@@ -121,10 +121,9 @@ this.formSubmitSub = this.formSubmitService.on('form-submit', (args?: any) => {
             this.updateValidity();
         }
     });
-this.updateAceEditorSizeSub = this.formSubmitService.on('update-ace-editor-size', () => {
+this.updateAceEditorSizeSub = this.rootScope.$on('update-ace-editor-size', () => {
       this.updateEditorSize();
     });
-this.viewContainerRef.createEmbeddedView(this.templateRef);
   }
 
   onFullscreenChanged(...rest: any[]): any {
@@ -132,7 +131,7 @@ this.viewContainerRef.createEmbeddedView(this.templateRef);
   }
 
   beautifyJs(...rest: any[]): any {
-    var res: any = js_beautify(this.functionBody, {indent_size: 4, wrap_line_length: 60});
+    var res: any = beautify(this.functionBody, {indent_size: 4, wrap_line_length: 60});
     this.functionBody = res;
   }
 

@@ -94,6 +94,7 @@
 								</div>
 							</div>
 							<mat-menu #menu2="matMenu">
+								@for (item of widgetContextMenuItems(); track $index) {
 								
 									<button mat-menu-item [disabled]="!item?.enabled" (click)="item.action(widgetContextMenuEvent, widget)">
 										@if (item?.shortcut) {
@@ -105,6 +106,7 @@
 										<span translate>{{item?.value}}</span>
 									</button>
 								
+								}
 							</mat-menu>
 						
 					</li>
@@ -114,6 +116,7 @@
 		</div>
 	</div>
 	<mat-menu #menu1="matMenu">
+		@for (item of contextMenuItems(); track $index) {
 		
 			<button mat-menu-item [disabled]="!item?.enabled" (click)="item.action(contextMenuEvent)">
 				@if (item?.shortcut) {

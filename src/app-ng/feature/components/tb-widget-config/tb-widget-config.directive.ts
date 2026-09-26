@@ -149,12 +149,12 @@ export class TbWidgetConfigDirective {
                     this.padding = config.padding;
                     this.margin = config.margin;
                     this.widgetStyle =
-                        JSON.stringify((config.widgetStyle !== undefined) ? config.widgetStyle : {}, true);
+                        JSON.stringify((config.widgetStyle !== undefined) ? config.widgetStyle : {}, null, 2);
                     this.titleStyle =
                         JSON.stringify((config.titleStyle !== undefined) ? config.titleStyle : {
                             fontSize: '16px',
                             fontWeight: 400
-                        }, true);
+                        }, null, 2);
                     this.units = config.units;
                     this.decimals = config.decimals;
                     this.useDashboardTimewindow = (config.useDashboardTimewindow !== undefined) ?

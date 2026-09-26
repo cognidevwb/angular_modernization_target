@@ -17,7 +17,7 @@
 
 -->
 <form class="tb-multiple-input" name="multipleInputForm" (ngSubmit)="save()" novalidate autocomplete="off">
-    @if (entityDetected && isAllParametersValid) {
+    @if ($any(this).entityDetected && $any(this).isAllParametersValid) {
       <div style="padding: 0 8px;">
         @for (source of sources; track $index) {
           <fieldset [ngClass]="{'fields-group': settings?.showGroupTitle}">
@@ -133,7 +133,7 @@
             </div>
         </fieldset>
         }
-        @if (entityDetected && settings?.showActionButtons) {
+        @if ($any(this).entityDetected && settings?.showActionButtons) {
           <div class="md-padding" layout="row" layout-align="end center">
             <button mat-button color="primary" (click)="discardAll()" style="max-height: 50px; margin-right:20px;" [disabled]="!multipleInputForm?.$dirty">
                 {{ 'action.undo' | translate }}
@@ -145,12 +145,12 @@
         }
     </div>
     }
-    @if (!entityDetected || !isAllParametersValid) {
+    @if (!$any(this).entityDetected || !$any(this).isAllParametersValid) {
       <div class="tb-multiple-input__errors" layout="column" layout-align="center center" style="height: 100%;">
-        <div style="text-align: center; font-size: 18px; color: #a0a0a0;" [hidden]="entityDetected">
+        <div style="text-align: center; font-size: 18px; color: #a0a0a0;" [hidden]="$any(this).entityDetected">
             {{ 'widgets.input-widgets.no-entity-selected' | translate }}
         </div>
-        <div style="text-align: center; font-size: 18px; color: #a0a0a0;" [hidden]="!(entityDetected && !isAllParametersValid)">
+        <div style="text-align: center; font-size: 18px; color: #a0a0a0;" [hidden]="!($any(this).entityDetected && !$any(this).isAllParametersValid)">
             {{ 'widgets.input-widgets.not-allowed-entity' | translate }}
         </div>
     </div>

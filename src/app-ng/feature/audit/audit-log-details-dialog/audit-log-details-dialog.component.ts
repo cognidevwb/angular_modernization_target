@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 import $ from 'jquery';
@@ -28,6 +28,7 @@ declare let scope: any;
 export class AuditLogDetailsDialogComponent {
   protected readonly rootScope = injectRoot(RootState);
   protected readonly dialog = inject(MatDialog);
+  private readonly dialogRef = inject(MatDialogRef);
   protected readonly typesRef: any = types;
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
 

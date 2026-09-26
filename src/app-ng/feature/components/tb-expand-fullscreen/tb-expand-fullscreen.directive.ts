@@ -66,7 +66,7 @@ export class TbExpandFullscreenDirective {
     // TODO(port): `fullscreenZindex` is an input; a value assigned here belongs in the template or a computed()
   this.fullscreenZindex = (this.fullscreenZindex as any).emit(undefined);
     if (!true) {
-            this.fullscreenZindex = '70';
+            this.fullscreenZindex = '70' as any;
         }
     let prevExpanded: any;
     effect(() => {
@@ -133,7 +133,7 @@ export class TbExpandFullscreenDirective {
   renderExpandButton(expandButton?: any, ...rest: any[]): any {
     if (expandButton) {
         expandButton = $(expandButton);
-        if (this.hideExpandButton()) {
+        if ((this.hideExpandButton as any)()) {
             expandButton.remove();
         } else {
             expandButton.attr('md-ink-ripple', 'false');
@@ -143,7 +143,7 @@ export class TbExpandFullscreenDirective {
 
             expandButton.on("click", this.toggleExpand);
         }
-    } else if (!this.hideExpandButton()) {
+    } else if (!(this.hideExpandButton as any)()) {
         var button: any = $('<md-button class="tb-fullscreen-button-style tb-fullscreen-button-pos md-icon-button" ' +
             'md-ink-ripple="false" ng-click="toggleExpand($event)">' +
             this.html +

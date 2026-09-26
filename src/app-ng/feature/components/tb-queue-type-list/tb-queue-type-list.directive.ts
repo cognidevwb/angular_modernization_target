@@ -2,6 +2,10 @@ import { Component, inject, model } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { QueueService } from '../../api/services/queue.service';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import $ from 'jquery';
 // @ts-ignore
@@ -23,7 +27,7 @@ declare let ngModelCtrl: any;
 @Component({
   selector: 'tb-queue-type-list',
   standalone: true,
-  imports: [TranslatePipe, FormsModule],
+  imports: [TranslatePipe, FormsModule, CommonModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule],
   templateUrl: './tb-queue-type-list.directive.html',
 })
 export class TbQueueTypeListDirective {

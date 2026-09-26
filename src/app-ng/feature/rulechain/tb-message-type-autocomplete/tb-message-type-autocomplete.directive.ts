@@ -2,15 +2,16 @@ import { Component, inject, model } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 import $ from 'jquery';
-import messageTypeAutocompleteTemplate from '../../../../app/rulechain/message-type-autocomplete.tpl.html?raw';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $filter: any;
 declare let $q: any;
-declare let $templateCache: any;
 declare let angular: any;
 declare let element: any;
 declare let ngModelCtrl: any;
@@ -22,7 +23,7 @@ declare let ngModelCtrl: any;
 @Component({
   selector: 'tb-message-type-autocomplete',
   standalone: true,
-  imports: [TranslatePipe, FormsModule],
+  imports: [TranslatePipe, FormsModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule],
   templateUrl: './tb-message-type-autocomplete.directive.html',
 })
 export class TbMessageTypeAutocompleteDirective {
@@ -41,8 +42,9 @@ export class TbMessageTypeAutocompleteDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(messageTypeAutocompleteTemplate);
   protected messageTypeList: any = [];
+  protected messageTypeOptions: any[] = this.messageTypeList;
+  protected readonly messageTypeDisplayFn = (item: any): string => item?.name ?? '';
   messageType: any = null;
   messageTypeSearchText: any = '';
   $watch: any;
@@ -52,7 +54,6 @@ export class TbMessageTypeAutocompleteDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     for (var t in types.messageType) {
             var type: any = types.messageType[t];
             this.messageTypeList.push(type);
@@ -94,6 +95,11 @@ export class TbMessageTypeAutocompleteDirective {
 
   messageTypeSearchTextChanged(...rest: any[]): any {
           }
+
+  onMessageTypeSelected(item: any): void {
+    this.messageType = item;
+    this.updateView();
+  }
 
   updateView(...rest: any[]): any {
     if (!this.disabled()) {

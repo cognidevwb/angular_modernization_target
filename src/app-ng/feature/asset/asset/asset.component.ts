@@ -41,7 +41,7 @@ declare let $q: any;
 @Component({
   selector: 'asset',
   standalone: true,
-  imports: [TranslatePipe, MatTabsModule, CommonModule, forwardRef(() => TbGridDirective), forwardRef(() => TbHelpDirective), forwardRef(() => TbAssetDirective), forwardRef(() => TbAttributeTableDirective), forwardRef(() => TbAlarmTableDirective), forwardRef(() => TbEventTableDirective), forwardRef(() => TbRelationTableDirective), forwardRef(() => TbAuditLogTableDirective)],
+  imports: [TranslatePipe, MatTabsModule, CommonModule, TbGridDirective, TbHelpDirective, TbAssetDirective, TbAttributeTableDirective, TbAlarmTableDirective, TbEventTableDirective, TbRelationTableDirective, TbAuditLogTableDirective],
   templateUrl: './asset.component.html',
 })
 export class AssetComponent {
@@ -496,29 +496,17 @@ export class AssetComponent {
         content = this.translate.instant('asset.unassign-asset-text');
         label = this.translate.instant('asset.unassign-asset');
     }
-    var confirm: any = this.dialog.confirm()
-        .targetEvent($event)
-        .title(title)
-        .htmlContent(content)
-        .ariaLabel(label)
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
+    if (window.confirm(title + '\n' + content)) {
         this.assetService.unassignAssetFromCustomer(asset.id.id).then(() => {
             this.grid.refreshList();
         });
-    });
+    }
   };
 
   unassignAssetsFromCustomer($event?: any, items?: any, ...rest: any[]): any {
-    var confirm: any = this.dialog.confirm()
-        .targetEvent($event)
-        .title(this.translate.instant('asset.unassign-assets-title', {count: items.selectedCount}, 'messageformat'))
-        .htmlContent(this.translate.instant('asset.unassign-assets-text'))
-        .ariaLabel(this.translate.instant('asset.unassign-asset'))
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
+    const title: any = this.translate.instant('asset.unassign-assets-title', {count: items.selectedCount}, 'messageformat');
+    const content: any = this.translate.instant('asset.unassign-assets-text');
+    if (window.confirm(title + '\n' + content)) {
         var tasks: any = [];
         for (var id in items.selections) {
             tasks.push(this.assetService.unassignAssetFromCustomer(id));
@@ -526,24 +514,19 @@ export class AssetComponent {
         Promise.all(tasks).then(() => {
             this.grid.refreshList();
         });
-    });
+    }
   }
 
   makePublic = ($event?: any, asset?: any, ...rest: any[]): any => {
     if ($event) {
         $event.stopPropagation();
     }
-    var confirm: any = this.dialog.confirm()
-        .targetEvent($event)
-        .title(this.translate.instant('asset.make-public-asset-title', {assetName: asset.name}))
-        .htmlContent(this.translate.instant('asset.make-public-asset-text'))
-        .ariaLabel(this.translate.instant('asset.make-public'))
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
+    const title: any = this.translate.instant('asset.make-public-asset-title', {assetName: asset.name});
+    const content: any = this.translate.instant('asset.make-public-asset-text');
+    if (window.confirm(title + '\n' + content)) {
         this.assetService.makeAssetPublic(asset.id.id).then(() => {
             this.grid.refreshList();
         });
-    });
+    }
   };
 }

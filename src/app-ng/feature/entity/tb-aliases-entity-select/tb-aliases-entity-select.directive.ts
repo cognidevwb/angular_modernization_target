@@ -76,14 +76,14 @@ export class TbAliasesEntitySelectDirective {
     var yPosition: any;
     var xPosition: any;
     if (bottomY + panelHeight > $( window ).height()) { //eslint-disable-line
-        yPosition = this.overlay.yPosition.ABOVE;
+        yPosition = (this.overlay as any).yPosition.ABOVE;
     } else {
-        yPosition = this.overlay.yPosition.BELOW;
+        yPosition = (this.overlay as any).yPosition.BELOW;
     }
     if (leftX + panelWidth > $( window ).width()) { //eslint-disable-line
-        xPosition = this.overlay.xPosition.CENTER;
+        xPosition = (this.overlay as any).xPosition.CENTER;
     } else {
-        xPosition = this.overlay.xPosition.ALIGN_START;
+        xPosition = (this.overlay as any).xPosition.ALIGN_START;
     }
     position = (this.overlay as any).newPanelPosition()
         .relativeTo($(this.element.nativeElement))

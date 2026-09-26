@@ -117,6 +117,14 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
         }
     });
 
+    function mdMediaSignal(query: string) {
+        const mq = query === 'gt-xs' ? '(min-width: 600px)' :
+            query === 'gt-sm' ? '(min-width: 960px)' :
+            query === 'gt-md' ? '(min-width: 1280px)' :
+            query === 'gt-lg' ? '(min-width: 1920px)' : query;
+        return signal(window.matchMedia(mq).matches);
+    }
+
     effect(() => {
         vm.isGtXs = mdMediaSignal('gt-xs')();
     });
@@ -144,10 +152,10 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
 
         vm.ctx.widgetTitle = vm.entitiesTitle;
 
-        vm.searchAction.show = angular.isDefined(vm.settings.enableSearch) ? vm.settings.enableSearch : true;
-        vm.displayEntityName = angular.isDefined(vm.settings.displayEntityName) ? vm.settings.displayEntityName : true;
-        vm.displayEntityLabel = angular.isDefined(vm.settings.displayEntityLabel) ? vm.settings.displayEntityLabel : false;
-        columnDisplayAction.show = angular.isDefined(vm.settings.enableSelectColumnDisplay) ? vm.settings.enableSelectColumnDisplay : true;
+        vm.searchAction.show = vm.settings.enableSearch !== undefined ? vm.settings.enableSearch : true;
+        vm.displayEntityName = vm.settings.displayEntityName !== undefined ? vm.settings.displayEntityName : true;
+        vm.displayEntityLabel = vm.settings.displayEntityLabel !== undefined ? vm.settings.displayEntityLabel : false;
+        columnDisplayAction.show = vm.settings.enableSelectColumnDisplay !== undefined ? vm.settings.enableSelectColumnDisplay : true;
 
         if (vm.settings.entityNameColumnTitle && vm.settings.entityNameColumnTitle.length) {
             vm.entityNameColumnTitle = utils.customTranslation(vm.settings.entityNameColumnTitle, vm.settings.entityNameColumnTitle);
@@ -161,11 +169,11 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
             vm.entityLabelColumnTitle = $translate.instant('entity.entity-label');
         }
 
-        vm.displayEntityType = angular.isDefined(vm.settings.displayEntityType) ? vm.settings.displayEntityType : true;
-        vm.displayPagination = angular.isDefined(vm.settings.displayPagination) ? vm.settings.displayPagination : true;
+        vm.displayEntityType = vm.settings.displayEntityType !== undefined ? vm.settings.displayEntityType : true;
+        vm.displayPagination = vm.settings.displayPagination !== undefined ? vm.settings.displayPagination : true;
 
         var pageSize: any = vm.settings.defaultPageSize;
-        if (angular.isDefined(pageSize) && angular.isNumber(pageSize) && pageSize > 0) {
+        if (pageSize !== undefined && typeof pageSize === 'number' && pageSize > 0) {
             vm.defaultPageSize = pageSize;
         }
 
@@ -235,12 +243,12 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
             'color: ' + mdDarkSecondary + ';\n'+
             '}';
 
-        var cssParser: any = new (cssjs as any)();
+        var cssParser: any = new ((window as any).cssjs)();
         cssParser.testMode = false;
         var namespace: any = 'entities-table-' + hashCode(cssString);
         cssParser.cssPreviewNamespace = namespace;
         cssParser.createStyleElement(namespace, cssString);
-        el.classList.add(namespace);
+        vm.ctx.$container[0].classList.add(namespace);
 
         function hashCode(str?: any) {
             var hash: any = 0;
@@ -259,7 +267,7 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
         vm.query.search = '';
         vm.ctx.hideTitlePanel = true;
         $timeout(()=>{
-            angular.element(vm.ctx.$container).find('.searchInput').focus();
+            $(vm.ctx.$container).find('.searchInput').focus();
         })
     }
 
@@ -318,7 +326,7 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
     function updateEntities() {
         var result: any = $filter('orderBy')(vm.allEntities, vm.query.order);
         if (vm.query.search != null) {
-            result = filterPipe.transform(result, {$: vm.query.search});
+            result = ($filter('filter') as any)(result, {$: vm.query.search});
         }
         vm.entitiesCount = result.length;
 
@@ -342,7 +350,7 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
                     style = {};
                 }
             } else {
-                style = defaultStyle(key, value);
+                style = (defaultStyle as any)(key, value);
             }
         }
         if (!style.width) {
@@ -362,7 +370,7 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
             var contentInfo: any = vm.contentsInfo[key.label];
             var value: any = getEntityValue(entity, key);
             if (contentInfo.useCellContentFunction && contentInfo.cellContentFunction) {
-                if (angular.isDefined(value)) {
+                if (value !== undefined) {
                     strContent = '' + value;
                 }
                 var content: any = strContent;
@@ -415,15 +423,14 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
     }
 
     function editColumnsToDisplay($event?: any) {
-        var element: any = angular.element($event.target);
+        var element: any = $($event.target);
         var position: any = $mdPanel.newPanelPosition()
             .relativeTo(element)
             .addPanelPosition($mdPanel.xPosition.ALIGN_END, $mdPanel.yPosition.BELOW);
         var config: any = {
-            attachTo: angular.element($document[0].body),
+            attachTo: $($document[0].body),
             controller: DisplayColumnsPanelController,
             controllerAs: 'vm',
-            templateUrl: (displayColumnsPanelTemplate as any),
             panelClass: 'tb-display-columns-panel',
             position: position,
             fullscreen: false,
@@ -523,7 +530,7 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
             var useCellStyleFunction: any = false;
 
             if (keySettings.useCellStyleFunction === true) {
-                if (angular.isDefined(keySettings.cellStyleFunction) && keySettings.cellStyleFunction.length > 0) {
+                if (keySettings.cellStyleFunction !== undefined && keySettings.cellStyleFunction.length > 0) {
                     try {
                         cellStyleFunction = new Function('value', keySettings.cellStyleFunction);
                         useCellStyleFunction = true;
@@ -543,7 +550,7 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
             var useCellContentFunction: any = false;
 
             if (keySettings.useCellContentFunction === true) {
-                if (angular.isDefined(keySettings.cellContentFunction) && keySettings.cellContentFunction.length > 0) {
+                if (keySettings.cellContentFunction !== undefined && keySettings.cellContentFunction.length > 0) {
                     try {
                         cellContentFunction = new Function('value, entity, filter', keySettings.cellContentFunction);
                         useCellContentFunction = true;
@@ -561,7 +568,7 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
                 decimals: dataKey.decimals
             };
 
-            var columnWidth: any = angular.isDefined(keySettings.columnWidth) ? keySettings.columnWidth : '0px';
+            var columnWidth: any = keySettings.columnWidth !== undefined ? keySettings.columnWidth : '0px';
             vm.columnWidth[dataKey.label] = columnWidth;
 
             dataKey.display = true;

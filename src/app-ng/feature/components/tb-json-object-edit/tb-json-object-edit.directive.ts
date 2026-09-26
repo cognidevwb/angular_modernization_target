@@ -1,4 +1,4 @@
-import { Component, inject, model, effect } from '@angular/core';
+import { Component, inject, model, effect, DestroyRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ElementRef } from '@angular/core';
 import { ToastService } from '../../services/toast.service';
@@ -10,7 +10,9 @@ import fixAceEditor from '../../../../app/components/ace-editor-fix';
 // @ts-ignore
 import jsonObjectEditTemplate from '../../../../app/components/json-object-edit.tpl.html';
 import { isEqual } from 'lodash-es';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { RootState } from '../../../root-state';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;
@@ -38,6 +40,8 @@ export class TbJsonObjectEditDirective {
   protected readonly toast = inject(ToastService);
   protected readonly utils = inject(UtilsService);
   protected readonly element = inject(ElementRef);
+  protected readonly rootScope = inject(RootState);
+  protected readonly destroy$ = new Subject<void>();
 
   protected template: any = $templateCache.get(jsonObjectEditTemplate);
   label: any;
@@ -47,13 +51,17 @@ export class TbJsonObjectEditDirective {
   $on: any;
   $watch: any;
   contentBody: any;
+  _prevContentBody: any;
   json_editor: any;
   object: any;
+  onChange: (value: any) => void = () => {};
+  onValidatorChange: () => void = () => {};
 
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    inject(DestroyRef).onDestroy(() => this.destroy$.next());
     $(this.element.nativeElement).html(this.template);
     this.label = this.attrs.label;
     this.json_editor;
@@ -102,14 +110,14 @@ export class TbJsonObjectEditDirective {
             var content: any = '';
             try {
                 if (this.object) {
-                    content = JSON.stringify(this.object, true);
+                    content = JSON.stringify(this.object, null, 2);
                 }
             } catch (e: any) {
                 //
             }
             this.contentBody = content;
         };
-    this.formSubmit$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    this.rootScope.formSubmit$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             if (!this.readonly()) {
                 this.cleanupJsonErrors();
                 if (!this.objectValid) {
@@ -117,7 +125,7 @@ export class TbJsonObjectEditDirective {
                 }
             }
         });
-    this.updateAceEditorSize$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    this.rootScope.updateAceEditorSize$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.updateEditorSize();
         });
     $compile($(this.element.nativeElement).contents())(this);

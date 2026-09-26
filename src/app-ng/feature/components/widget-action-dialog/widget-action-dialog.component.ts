@@ -67,6 +67,7 @@ export class WidgetActionDialogComponent {
   selectedDashboardStateIds: any = [];
   action: any;
   theForm: any;
+  item: any;
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
   // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()

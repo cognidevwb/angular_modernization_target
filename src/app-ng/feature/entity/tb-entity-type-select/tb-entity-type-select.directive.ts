@@ -8,7 +8,6 @@ import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
-import entityTypeSelectTemplate from '../../../../app/entity/entity-type-select.tpl.html?raw';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -46,7 +45,6 @@ export class TbEntityTypeSelectDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(entityTypeSelectTemplate);
   ngModelCtrl: any = ngModelCtrl;
   entityTypes: any;
   $watch: any;
@@ -57,7 +55,6 @@ export class TbEntityTypeSelectDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
     if ((this.attrs.hideLabel !== undefined)) {
             this.showLabel = false;
@@ -75,7 +72,6 @@ export class TbEntityTypeSelectDirective {
                 this.entityType = ngModelCtrl.$viewValue;
             }
         };
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   typeName(type?: any, ...rest: any[]): any {

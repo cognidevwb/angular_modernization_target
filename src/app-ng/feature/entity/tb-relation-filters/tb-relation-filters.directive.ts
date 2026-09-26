@@ -5,7 +5,6 @@ import { TbRelationTypeAutocompleteDirective } from '../tb-relation-type-autocom
 import { TbEntityTypeListDirective } from '../tb-entity-type-list/tb-entity-type-list.directive';
 
 import $ from 'jquery';
-import relationFiltersTemplate from '../../../../app/entity/relation/relation-filters.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -38,17 +37,16 @@ export class TbRelationFiltersDirective {
   protected readonly element = inject(ElementRef);
   // TODO(port): template: 1 × ng-form left in place
 
-  protected template: any = $templateCache.get(relationFiltersTemplate);
   relationFilters: any = [];
   $watch: any;
   relationFiltersWatch: any;
   filter: any;
+  relationFilterForm: any;
 
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.addFilter = this.addFilter;
     this.removeFilter = this.removeFilter;
     ngModelCtrl.$render = function () {

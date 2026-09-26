@@ -1,4 +1,5 @@
-import { Component, forwardRef, model } from '@angular/core';
+import { Component, forwardRef, model, Inject, Injector } from '@angular/core';
+import $ from 'jquery';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TbGatewayConfigSelectDirective } from '../tb-gateway-config-select/tb-gateway-config-select.directive';
@@ -16,10 +17,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 declare let scope: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
-import { Component, forwardRef, model, Inject, Injector } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
-function GatewayFormController(this: any, injector?: Injector, document?: Document, $mdExpansionPanel?: any, toast?: any, importExport?: any, attributeService?: any, deviceService?: any, userService?: any, types?: any, $window?: any, entityService?: any, utils?: any, $translate?: any) {
+function GatewayFormController(this: any, injector?: Injector, document?: Document, $mdExpansionPanel?: any, toast?: any, importExport?: any, attributeService?: any, deviceService?: any, userService?: any, types?: any, $window?: any, entityService?: any, utils?: any, $translate?: any, gatewayFormResizeService?: any) {
     let vm: any = this;
     const currentConfigurationAttribute: any = "current_configuration";
     const configurationDraftsAttribute: any = "configuration_drafts";
@@ -34,12 +34,6 @@ function GatewayFormController(this: any, injector?: Injector, document?: Docume
     vm.configurations = {
         gateway: '',
         host: document.domain,
-        port: 1883,
-        remoteConfiguration: true,
-        accessToken: '',
-        storageType: "memoryStorage",
-        readRecordsCount: 100,
-        maxRecordsCount: 10000,
         port: 1883,
         remoteConfiguration: true,
         accessToken: '',
@@ -158,7 +152,7 @@ function GatewayFormController(this: any, injector?: Injector, document?: Docume
         deviceService.findByName(deviceObj.name, {ignoreErrors: true})
             .then(
                 function () {
-                    toast.showError(gatewayNameExists, angular.element('.gateway-form'), 'top left');
+                    toast.showError(gatewayNameExists, $('.gateway-form'), 'top left');
                 },
                 function () {
                     if (vm.settings.gatewayType && vm.settings.gatewayType.length) {
@@ -175,12 +169,12 @@ function GatewayFormController(this: any, injector?: Injector, document?: Docume
     };
 
     vm.saveAttributeConfig = () => {
-        $q.all([
-            saveAttribute(configurationAttribute, $window.btoa(angular.toJson(getGatewayConfigJSON())), types.attributesScope.shared.value),
-            saveAttribute(configurationDraftsAttribute, $window.btoa(angular.toJson(getDraftConnectorJSON())), types.attributesScope.server.value),
+        Promise.all([
+            saveAttribute(configurationAttribute, $window.btoa(JSON.stringify(getGatewayConfigJSON())), types.attributesScope.shared.value),
+            saveAttribute(configurationDraftsAttribute, $window.btoa(JSON.stringify(getDraftConnectorJSON())), types.attributesScope.server.value),
             saveAttribute(remoteLoggingLevelAttribute, vm.configurations.remoteLoggingLevel.toUpperCase(), types.attributesScope.shared.value)
         ]).then(() => {
-            toast.showSuccess(successfulSaved, 2000, angular.element('.gateway-form'), 'top left');
+            toast.showSuccess(successfulSaved, 2000, $('.gateway-form'), 'top left');
         })
     };
 
@@ -189,7 +183,7 @@ function GatewayFormController(this: any, injector?: Injector, document?: Docume
         promises.push(getAttribute(currentConfigurationAttribute, types.attributesScope.client.value));
         promises.push(getAttribute(configurationDraftsAttribute, types.attributesScope.server.value));
         promises.push(getAttribute(remoteLoggingLevelAttribute, types.attributesScope.shared.value));
-        $q.all(promises).then((response?: any) => {
+        Promise.all(promises).then((response?: any) => {
             processCurrentConfiguration(response[0]);
             processConfigurationDrafts(response[1]);
             processLoggingLevel(response[2]);
@@ -258,7 +252,7 @@ function GatewayFormController(this: any, injector?: Injector, document?: Docume
     function generateConfigConnectorFiles(fileZipAdd?: any) {
         for (let i: any = 0; i < vm.configurations.connectors.length; i++) {
             if (vm.configurations.connectors[i].enabled) {
-                fileZipAdd[generateFileName(vm.configurations.connectors[i].name)] = angular.toJson(vm.configurations.connectors[i].config);
+                fileZipAdd[generateFileName(vm.configurations.connectors[i].name)] = JSON.stringify(vm.configurations.connectors[i].config);
             }
         }
     }
@@ -334,7 +328,7 @@ function GatewayFormController(this: any, injector?: Injector, document?: Docume
         for (let i: any = 0; i < vm.configurations.connectors.length; i++) {
             if (vm.configurations.connectors[i].enabled) {
                 let typeConnector: any = vm.configurations.connectors[i].configType;
-                if (!angular.isArray(gatewayConfiguration[typeConnector])) {
+                if (!Array.isArray(gatewayConfiguration[typeConnector])) {
                     gatewayConfiguration[typeConnector] = [];
                 }
 
@@ -383,7 +377,7 @@ function GatewayFormController(this: any, injector?: Injector, document?: Docume
     function processCurrentConfiguration(response?: any) {
         if (response.length > 0) {
             vm.configurations.connectors = [];
-            let attribute: any = angular.fromJson($window.atob(response[0].value));
+            let attribute: any = JSON.parse($window.atob(response[0].value));
             for (var attributeKey in attribute) {
                 let keyValue: any = attribute[attributeKey];
                 if (attributeKey === "thingsboard") {
@@ -411,7 +405,7 @@ function GatewayFormController(this: any, injector?: Injector, document?: Docume
 
     function processConfigurationDrafts(response?: any) {
         if (response.length > 0) {
-            let attribute: any = angular.fromJson($window.atob(response[0].value));
+            let attribute: any = JSON.parse($window.atob(response[0].value));
             for (let key in attribute) {
                 let connector: any = {
                     enabled: false,

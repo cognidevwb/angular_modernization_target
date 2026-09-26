@@ -9,8 +9,6 @@ import { FormsModule } from '@angular/forms';
 import { TbWidgetConfigDirective } from '../../components/tb-widget-config/tb-widget-config.directive';
 
 import $ from 'jquery';
-import entityAliasDialogTemplate from '../../../../app/entity/alias/entity-alias-dialog.tpl.html?raw';
-import editWidgetTemplate from '../../../../app/dashboard/edit-widget.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
@@ -49,16 +47,19 @@ export class TbEditWidgetDirective {
   protected readonly dialog = inject(MatDialog);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(editWidgetTemplate);
   $watch: any;
   widgetConfig: any;
+  typeParameters: any;
+  actionSources: any;
+  isDataEnabled: any;
+  settingsSchema: any;
+  dataKeySettingsSchema: any;
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
   // TODO(port): `success` — a named function expression that calls itself; as an arrow it has no name: name it as a method
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.$watch('widget', () => {
             if (this.widget()) {
                 this.widgetService.getWidgetInfo(this.widget().bundleAlias,
@@ -156,7 +157,6 @@ export class TbEditWidgetDirective {
     (this.dialog as any).show({
         controller: 'EntityAliasDialogController',
         controllerAs: 'vm',
-        templateUrl: entityAliasDialogTemplate,
         locals: {
             isAdd: true,
             allowedEntityTypes: allowedEntityTypes,

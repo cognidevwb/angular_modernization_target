@@ -16,7 +16,7 @@
     limitations under the License.
 
 -->
-  <!-- TODO(port): md-sidenav: a mat-sidenav inside a mat-sidenav-container --><md-sidenav class="tb-site-sidenav md-sidenav-left md-whiteframe-z2" [hidden]="!(!forceFullscreen)" hide-print="" md-component-id="left" aria-label="Toggle Nav" (click)="sidenavClicked()" md-is-open="vm.isShowSidenav" md-is-locked-open="vm.isLockSidenav" layout="column">
+  <mat-sidenav-container class="tb-site-sidenav-container"><mat-sidenav class="tb-site-sidenav md-sidenav-left md-whiteframe-z2" [hidden]="!(!forceFullscreen)" hide-print="" md-component-id="left" aria-label="Toggle Nav" (click)="sidenavClicked()" md-is-open="vm.isShowSidenav" md-is-locked-open="vm.isLockSidenav" layout="column">
       <header class="tb-nav-header">
           <mat-toolbar class="tb-nav-header-toolbar">
           	 <div flex layout="row" class="md-toolbar-tools inset">
@@ -27,7 +27,7 @@
 	  <mat-toolbar flex class="tb-side-menu-toolbar" role="navigation">
 		  <tb-side-menu></tb-side-menu>
 	  </mat-toolbar>
-  </md-sidenav>
+  </mat-sidenav><mat-sidenav-content>
 
   <div flex layout="column" tabIndex="-1" role="main">
     <mat-toolbar class="md-whiteframe-z1 tb-primary-toolbar">
@@ -73,4 +73,4 @@
     	<!-- TODO(port): ng-cloak has no one-to-one Angular form -->
     	<div ng-cloak flex layout="column" class="md-content page-content" ui-view name="content"></div>
     </div>
-  </div>
+  </div></mat-sidenav-content></mat-sidenav-container>

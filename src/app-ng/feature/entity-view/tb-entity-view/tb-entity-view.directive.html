@@ -50,66 +50,100 @@
             <tb-entity-select flex [ngDisabled]="!isEdit()" [(theForm)]="theForm" [tbRequired]="true" [(allowedEntityTypes)]="allowedEntityTypes" [ngModel]="entityView().entityId" (ngModelChange)="entityView().entityId = $event">
             </tb-entity-select>
         </section>
-        <!-- TODO(port): md-expansion-panel-group (angular-material-expansion-panel): a mat-accordion --><md-expansion-panel-group class="tb-entity-view-panel-group" [ngClass]="{'disabled': rootScope?.loading || !isEdit()}" auto-expand="true" multiple="true" md-component-id="attributesPanelGroup">
-            <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><md-expansion-panel attr.md-component-id="{{attributesPanelId}}">
-                <!-- TODO(port): md-expansion-panel-collapsed: the mat-expansion-panel-header --><md-expansion-panel-collapsed>
-                    <div class="tb-panel-title">{{ 'entity-view.attributes-propagation' | translate }}</div>
-                    <span flex></span>
-                    <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                </md-expansion-panel-collapsed>
-                <!-- TODO(port): md-expansion-panel-expanded: the panel's content --><md-expansion-panel-expanded>
-                    <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><md-expansion-panel-header (click)="$mdExpansionPanel(attributesPanelId).collapse()">
-                        <div class="tb-panel-title">{{ 'entity-view.attributes-propagation' | translate }}</div>
-                        <span flex></span>
-                        <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                    </md-expansion-panel-header>
-                    <!-- TODO(port): md-expansion-panel-content: the panel's content --><md-expansion-panel-content>
-                        <div translate class="tb-hint">entity-view.attributes-propagation-hint</div>
-                        <label translate class="tb-title no-padding">entity-view.client-attributes</label>
-                        <!-- TODO(port): md-chips: a mat-chip-grid with an input bound by matChipInputFor --><md-chips style="padding-bottom: 15px;" [required]="false" readonly="!isEdit" [ngModel]="entityView().keys.attributes.cs" (ngModelChange)="entityView().keys.attributes.cs = $event" placeholder="{{'entity-view.client-attributes-placeholder' | translate}}" md-separator-keys="separatorKeys">
-                            <!-- TODO(port): md-autocomplete: an input with [matAutocomplete] and a mat-autocomplete panel --><md-autocomplete md-no-cache="true" id="ca_datakey" md-selected-item="selectedAttributeDataKey" md-search-text="attributeDataKeySearchText" md-items="item in dataKeysSearch(attributeDataKeySearchText, types.dataKeyType.attribute)" md-item-text="item.name" md-min-length="0" placeholder="{{'entity-view.client-attributes-placeholder' | translate }}" md-menu-class="tb-attribute-datakey-autocomplete">
-                                <span md-highlight-text="attributeDataKeySearchText" md-highlight-flags="^i">{{item}}</span>
-                            </md-autocomplete>
-                        </md-chips>
-                        <label translate class="tb-title no-padding">entity-view.shared-attributes</label>
-                        <!-- TODO(port): md-chips: a mat-chip-grid with an input bound by matChipInputFor --><md-chips style="padding-bottom: 15px;" [required]="false" readonly="!isEdit" [ngModel]="entityView().keys.attributes.sh" (ngModelChange)="entityView().keys.attributes.sh = $event" placeholder="{{'entity-view.shared-attributes-placeholder' | translate}}" md-separator-keys="separatorKeys">
-                            <!-- TODO(port): md-autocomplete: an input with [matAutocomplete] and a mat-autocomplete panel --><md-autocomplete md-no-cache="true" id="sh_datakey" md-selected-item="selectedAttributeDataKey" md-search-text="attributeDataKeySearchText" md-items="item in dataKeysSearch(attributeDataKeySearchText, types.dataKeyType.attribute)" md-item-text="item.name" md-min-length="0" placeholder="{{'entity-view.shared-attributes-placeholder' | translate }}" md-menu-class="tb-attribute-datakey-autocomplete">
-                                <span md-highlight-text="attributeDataKeySearchText" md-highlight-flags="^i">{{item}}</span>
-                            </md-autocomplete>
-                        </md-chips>
-                        <label translate class="tb-title no-padding">entity-view.server-attributes</label>
-                        <!-- TODO(port): md-chips: a mat-chip-grid with an input bound by matChipInputFor --><md-chips style="padding-bottom: 15px;" [required]="false" readonly="!isEdit" [ngModel]="entityView().keys.attributes.ss" (ngModelChange)="entityView().keys.attributes.ss = $event" placeholder="{{'entity-view.server-attributes-placeholder' | translate}}" md-separator-keys="separatorKeys">
-                            <!-- TODO(port): md-autocomplete: an input with [matAutocomplete] and a mat-autocomplete panel --><md-autocomplete md-no-cache="true" id="ss_datakey" md-selected-item="selectedAttributeDataKey" md-search-text="attributeDataKeySearchText" md-items="item in dataKeysSearch(attributeDataKeySearchText, types.dataKeyType.attribute)" md-item-text="item.name" md-min-length="0" placeholder="{{'entity-view.server-attributes-placeholder' | translate }}" md-menu-class="tb-attribute-datakey-autocomplete">
-                                <span md-highlight-text="attributeDataKeySearchText" md-highlight-flags="^i">{{item}}</span>
-                            </md-autocomplete>
-                        </md-chips>
-                    </md-expansion-panel-content>
-                </md-expansion-panel-expanded>
-            </md-expansion-panel>
-            <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><md-expansion-panel attr.md-component-id="{{timeseriesPanelId}}">
-                <!-- TODO(port): md-expansion-panel-collapsed: the mat-expansion-panel-header --><md-expansion-panel-collapsed>
-                    <div class="tb-panel-title">{{ 'entity-view.timeseries-data' | translate }}</div>
-                    <span flex></span>
-                    <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                </md-expansion-panel-collapsed>
-                <!-- TODO(port): md-expansion-panel-expanded: the panel's content --><md-expansion-panel-expanded>
-                    <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><md-expansion-panel-header (click)="$mdExpansionPanel(timeseriesPanelId).collapse()">
-                        <div class="tb-panel-title">{{ 'entity-view.timeseries-data' | translate }}</div>
-                        <span flex></span>
-                        <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                    </md-expansion-panel-header>
-                    <!-- TODO(port): md-expansion-panel-content: the panel's content --><md-expansion-panel-content>
-                        <div translate class="tb-hint">entity-view.timeseries-data-hint</div>
-                        <label translate class="tb-title no-padding">entity-view.timeseries</label>
-                        <!-- TODO(port): md-chips: a mat-chip-grid with an input bound by matChipInputFor --><md-chips [required]="false" readonly="!isEdit" [ngModel]="entityView().keys.timeseries" (ngModelChange)="entityView().keys.timeseries = $event" placeholder="{{'entity-view.timeseries-placeholder' | translate}}" md-separator-keys="separatorKeys">
-                            <!-- TODO(port): md-autocomplete: an input with [matAutocomplete] and a mat-autocomplete panel --><md-autocomplete md-no-cache="true" id="timeseries_datakey" md-selected-item="selectedTimeseriesDataKey" md-search-text="timeseriesDataKeySearchText" md-items="item in dataKeysSearch(timeseriesDataKeySearchText, types.dataKeyType.timeseries)" md-item-text="item.name" md-min-length="0" placeholder="{{'entity-view.timeseries-placeholder' | translate }}" md-menu-class="tb-timeseries-datakey-autocomplete">
-                                <span md-highlight-text="timeseriesDataKeySearchText" md-highlight-flags="^i">{{item}}</span>
-                            </md-autocomplete>
-                        </md-chips>
-                    </md-expansion-panel-content>
-                </md-expansion-panel-expanded>
-            </md-expansion-panel>
-        </md-expansion-panel-group>
+        <mat-accordion class="tb-entity-view-panel-group" [ngClass]="{'disabled': rootScope?.loading || !isEdit()}" multi>
+            <mat-expansion-panel [expanded]="true" [disabled]="rootScope?.loading || !isEdit()">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>{{ 'entity-view.attributes-propagation' | translate }}</mat-panel-title>
+                </mat-expansion-panel-header>
+                <div translate class="tb-hint">entity-view.attributes-propagation-hint</div>
+                <label translate class="tb-title no-padding">entity-view.client-attributes</label>
+                <mat-form-field class="md-block" style="padding-bottom: 15px;">
+                    <mat-chip-grid #csChipGrid [disabled]="!isEdit()">
+                        @for (item of entityView().keys.attributes.cs; track item) {
+                            <mat-chip-row (removed)="removeAttributeKey('cs', item)">{{item}}</mat-chip-row>
+                        }
+                        <input [placeholder]="'entity-view.client-attributes-placeholder' | translate"
+                               [matChipInputFor]="csChipGrid"
+                               [matChipInputSeparatorKeyCodes]="separatorKeys"
+                               [matAutocomplete]="csAuto"
+                               (matChipInputTokenEnd)="addAttributeKeyFromInput('cs', $event)"
+                               [ngModel]="attributeDataKeySearchText"
+                               (ngModelChange)="searchAttributeDataKeys($event)">
+                    </mat-chip-grid>
+                    <mat-autocomplete #csAuto="matAutocomplete" (optionSelected)="addAttributeKey('cs', $event.option.value)">
+                        @for (item of attributeDataKeys; track item) {
+                            <mat-option [value]="item">{{item.name}}</mat-option>
+                        }
+                    </mat-autocomplete>
+                </mat-form-field>
+                <label translate class="tb-title no-padding">entity-view.shared-attributes</label>
+                <mat-form-field class="md-block" style="padding-bottom: 15px;">
+                    <mat-chip-grid #shChipGrid [disabled]="!isEdit()">
+                        @for (item of entityView().keys.attributes.sh; track item) {
+                            <mat-chip-row (removed)="removeAttributeKey('sh', item)">{{item}}</mat-chip-row>
+                        }
+                        <input [placeholder]="'entity-view.shared-attributes-placeholder' | translate"
+                               [matChipInputFor]="shChipGrid"
+                               [matChipInputSeparatorKeyCodes]="separatorKeys"
+                               [matAutocomplete]="shAuto"
+                               (matChipInputTokenEnd)="addAttributeKeyFromInput('sh', $event)"
+                               [ngModel]="attributeDataKeySearchText"
+                               (ngModelChange)="searchAttributeDataKeys($event)">
+                    </mat-chip-grid>
+                    <mat-autocomplete #shAuto="matAutocomplete" (optionSelected)="addAttributeKey('sh', $event.option.value)">
+                        @for (item of attributeDataKeys; track item) {
+                            <mat-option [value]="item">{{item.name}}</mat-option>
+                        }
+                    </mat-autocomplete>
+                </mat-form-field>
+                <label translate class="tb-title no-padding">entity-view.server-attributes</label>
+                <mat-form-field class="md-block" style="padding-bottom: 15px;">
+                    <mat-chip-grid #ssChipGrid [disabled]="!isEdit()">
+                        @for (item of entityView().keys.attributes.ss; track item) {
+                            <mat-chip-row (removed)="removeAttributeKey('ss', item)">{{item}}</mat-chip-row>
+                        }
+                        <input [placeholder]="'entity-view.server-attributes-placeholder' | translate"
+                               [matChipInputFor]="ssChipGrid"
+                               [matChipInputSeparatorKeyCodes]="separatorKeys"
+                               [matAutocomplete]="ssAuto"
+                               (matChipInputTokenEnd)="addAttributeKeyFromInput('ss', $event)"
+                               [ngModel]="attributeDataKeySearchText"
+                               (ngModelChange)="searchAttributeDataKeys($event)">
+                    </mat-chip-grid>
+                    <mat-autocomplete #ssAuto="matAutocomplete" (optionSelected)="addAttributeKey('ss', $event.option.value)">
+                        @for (item of attributeDataKeys; track item) {
+                            <mat-option [value]="item">{{item.name}}</mat-option>
+                        }
+                    </mat-autocomplete>
+                </mat-form-field>
+            </mat-expansion-panel>
+            <mat-expansion-panel [expanded]="true" [disabled]="rootScope?.loading || !isEdit()">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>{{ 'entity-view.timeseries-data' | translate }}</mat-panel-title>
+                </mat-expansion-panel-header>
+                <div translate class="tb-hint">entity-view.timeseries-data-hint</div>
+                <label translate class="tb-title no-padding">entity-view.timeseries</label>
+                <mat-form-field class="md-block">
+                    <mat-chip-grid #tsChipGrid [disabled]="!isEdit()">
+                        @for (item of entityView().keys.timeseries; track item) {
+                            <mat-chip-row (removed)="removeTimeseriesKey(item)">{{item}}</mat-chip-row>
+                        }
+                        <input [placeholder]="'entity-view.timeseries-placeholder' | translate"
+                               [matChipInputFor]="tsChipGrid"
+                               [matChipInputSeparatorKeyCodes]="separatorKeys"
+                               [matAutocomplete]="tsAuto"
+                               (matChipInputTokenEnd)="addTimeseriesKeyFromInput($event)"
+                               [ngModel]="timeseriesDataKeySearchText"
+                               (ngModelChange)="searchTimeseriesDataKeys($event)">
+                    </mat-chip-grid>
+                    <mat-autocomplete #tsAuto="matAutocomplete" (optionSelected)="addTimeseriesKey($event.option.value)">
+                        @for (item of timeseriesDataKeys; track item) {
+                            <mat-option [value]="item">{{item.name}}</mat-option>
+                        }
+                    </mat-autocomplete>
+                </mat-form-field>
+            </mat-expansion-panel>
+        </mat-accordion>
         <section layout="row" layout-align="start start">
             <mdp-date-picker [(ngModel)]="startTimeMs" mdp-max-date="maxStartTimeMs" attr.mdp-placeholder="{{ 'entity-view.start-date' | translate }}"></mdp-date-picker>
             <mdp-time-picker [(ngModel)]="startTimeMs" mdp-max-date="maxStartTimeMs" attr.mdp-placeholder="{{ 'entity-view.start-ts' | translate }}" mdp-auto-switch="true"></mdp-time-picker>

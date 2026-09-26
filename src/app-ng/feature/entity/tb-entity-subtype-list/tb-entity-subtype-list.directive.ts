@@ -3,18 +3,19 @@ import { AssetService } from '../../api/services/asset.service';
 import { DeviceService } from '../../api/services/device.service';
 import { ElementRef } from '@angular/core';
 import { EntityViewService } from '../../api/services/entity-view.service';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatIconModule } from '@angular/material/icon';
 
 import $ from 'jquery';
-import entitySubtypeListTemplate from '../../../../app/entity/entity-subtype-list.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $filter: any;
 declare let $mdUtil: any;
 declare let $q: any;
-declare let $templateCache: any;
 declare let element: any;
 declare let ngModelCtrl: any;
 
@@ -25,7 +26,7 @@ declare let ngModelCtrl: any;
 @Component({
   selector: 'tb-entity-subtype-list',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, MatChipsModule, MatAutocompleteModule, MatIconModule, TranslatePipe],
   templateUrl: './tb-entity-subtype-list.directive.html',
 })
 export class TbEntitySubtypeListDirective {
@@ -52,10 +53,11 @@ export class TbEntitySubtypeListDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(entitySubtypeListTemplate);
   ngModelCtrl: any = ngModelCtrl;
   entitySubtypesList: any = [];
   entitySubtypes: any = null;
+  entitySubtypeSearchText: any = '';
+  filteredSubtypes: any = [];
   $watch: any;
   inputTouched: any;
   noSubtypesMathingText: any;
@@ -67,7 +69,6 @@ export class TbEntitySubtypeListDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     if (this.entityType() == types.entityType.asset) {
             this.placeholder = this.tbRequired() ? this.translate.instant('asset.enter-asset-type')
                 : this.translate.instant('asset.any-asset');
@@ -125,6 +126,31 @@ export class TbEntitySubtypeListDirective {
         }
     );
     return deferred.promise;
+  }
+
+  onSearchTextChanged(): void {
+    this.fetchEntitySubtypes(this.entitySubtypeSearchText).then((result: any) => {
+      this.filteredSubtypes = result;
+    });
+  }
+
+  onSubtypeSelected(event: MatAutocompleteSelectedEvent): void {
+    const value = event.option.value;
+    if (value) {
+      this.entitySubtypesList.push(value);
+      ngModelCtrl.$setViewValue(this.entitySubtypesList);
+      this.updateValidity();
+    }
+    this.entitySubtypeSearchText = '';
+  }
+
+  removeSubtype(subtype: any): void {
+    const index = this.entitySubtypesList.indexOf(subtype);
+    if (index >= 0) {
+      this.entitySubtypesList.splice(index, 1);
+      ngModelCtrl.$setViewValue(this.entitySubtypesList);
+      this.updateValidity();
+    }
   }
 
   updateValidity(...rest: any[]): any {

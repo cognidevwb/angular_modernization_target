@@ -18,35 +18,39 @@
 -->
 <div class="md-content md-padding tb-link" layout="column">
     <fieldset [disabled]="rootScope?.loading || !isEdit() || isReadOnly()">
-        <label translate class="tb-title no-padding" [ngClass]="{'tb-required': required}">rulenode.link-labels</label>
-        <!-- TODO(port): md-chips: a mat-chip-grid with an input bound by matChipInputFor --><md-chips id="link_label_chips" [required]="true" readonly="$root.loading || !isEdit || isReadOnly" [(ngModel)]="labels" md-autocomplete-snap md-transform-chip="transformLinkLabelChip($chip)" md-require-match="!allowCustom">
-            <!-- TODO(port): md-autocomplete: an input with [matAutocomplete] and a mat-autocomplete panel --><md-autocomplete id="link_label" md-no-cache="true" md-selected-item="selectedLabel" md-search-text="labelSearchText" md-items="item in labelsSearch(labelSearchText)" md-item-text="item.name" md-min-length="0" placeholder="{{'rulenode.link-label' | translate }}" md-menu-class="tb-link-label-autocomplete">
-                <span md-highlight-text="labelSearchText" md-highlight-flags="^i">{{item}}</span>
-                <!-- TODO(port): md-not-found: a mat-option shown when the filtered list is empty --><md-not-found>
-                    <div class="tb-not-found">
-                        @if (!labelSearchText || !labelSearchText?.length) {
-                          <div class="tb-no-entries">
-                            <span translate>rulenode.no-link-labels-found</span>
-                        </div>
-                        }
-                        @if (labelSearchText && labelSearchText?.length) {
-                          <div>
-                            <!-- TODO(port): expression not parsed: `labelSearchText | truncate:true:6:&apos;...&apos` -->
-                            <span translate attr.translate-values='{ label: "{{labelSearchText | truncate:true:6:&apos;...&apos;}}" }'>rulenode.no-link-label-matching</span>
-                            @if (allowCustom()) {
-                              <span>
-                                <a translate (click)="createLinkLabel($event, '#link_label_chips')">rulenode.create-new-link-label</a>
-                            </span>
-                            }
-                        </div>
+        <label translate class="tb-title no-padding" [ngClass]="{'tb-required': required()}">rulenode.link-labels</label>
+        <mat-chip-grid #chipGrid id="link_label_chips" [required]="true" [disabled]="rootScope?.loading || !isEdit() || isReadOnly()">
+            @for (chip of labels; track chip) {
+              <mat-chip-row (removed)="removeLabel(chip)">
+                {{chip?.name}}
+              </mat-chip-row>
+            }
+            <input id="link_label" placeholder="{{'rulenode.link-label' | translate }}" class="tb-link-label-input" [matChipInputFor]="chipGrid" [matAutocomplete]="auto" [(ngModel)]="labelSearchText" />
+        </mat-chip-grid>
+        <mat-autocomplete #auto="matAutocomplete" class="tb-link-label-autocomplete" (optionSelected)="onLabelSelected($event)">
+            @for (item of labelsSearch(labelSearchText); track item) {
+              <mat-option [value]="item">{{item}}</mat-option>
+            }
+            @if (!labelsSearch(labelSearchText)?.length) {
+                <div class="tb-not-found">
+                    @if (!labelSearchText || !labelSearchText?.length) {
+                      <div class="tb-no-entries">
+                        <span translate>rulenode.no-link-labels-found</span>
+                    </div>
+                    }
+                    @if (labelSearchText && labelSearchText?.length) {
+                      <div>
+                        <span>{{ 'rulenode.no-link-label-matching' | translate:{ label: truncateLabel(labelSearchText) } }}</span>
+                        @if (allowCustom()) {
+                          <span>
+                            <a translate (click)="createLinkLabel($event, '#link_label_chips')">rulenode.create-new-link-label</a>
+                        </span>
                         }
                     </div>
-                </md-not-found>
-            </md-autocomplete>
-            <!-- TODO(port): md-chip-template: the content of each mat-chip-row --><md-chip-template>
-                <span>{{$chip?.name}}</span>
-            </md-chip-template>
-        </md-chips>
+                    }
+                </div>
+            }
+        </mat-autocomplete>
         <!-- TODO(port): ng-messages has no one-to-one Angular form -->
         <div class="tb-error-messages" ng-messages="ngModelCtrl?.$error" role="alert">
             <!-- TODO(port): ng-message has no one-to-one Angular form -->

@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /**
@@ -24,7 +25,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'add-dashboards-to-customer',
   standalone: true,
-  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, forwardRef(() => TbScopeElementDirective)],
+  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, ScrollingModule, forwardRef(() => TbScopeElementDirective)],
   templateUrl: './add-dashboards-to-customer.component.html',
 })
 export class AddDashboardsToCustomerComponent {

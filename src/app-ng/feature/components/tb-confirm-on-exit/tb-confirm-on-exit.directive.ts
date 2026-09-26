@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UserService } from '../../api/services/user.service';
 import { linkAttrs } from '../../../legacy-link';
+import { goState } from '../../../state-paths';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $filter: any;
@@ -46,13 +47,7 @@ export class TbConfirmOnExitDirective {
     $scope.$on('$stateChangeStart', (event?: any, next?: any, current?: any, params?: any) => {
                 if (this.userService.isAuthenticated() && ((this.confirmForm && this.confirmForm.$dirty) || $scope.$eval(this.attrs.isDirty))) {
                     event.preventDefault();
-                    var confirm: any = this.dialog.confirm()
-                        .title($filter('translate')('confirm-on-exit.title'))
-                        .htmlContent($filter('translate')('confirm-on-exit.html-message'))
-                        .ariaLabel($filter('translate')('confirm-on-exit.title'))
-                        .cancel($filter('translate')('action.cancel'))
-                        .ok($filter('translate')('action.ok'));
-                    this.dialog.show(confirm).then(() => {
+                    if (window.confirm($filter('translate')('confirm-on-exit.html-message'))) {
                         if (this.confirmForm) {
                             this.confirmForm.$setPristine();
                         } else {
@@ -60,9 +55,8 @@ export class TbConfirmOnExitDirective {
                             remoteSetter(this, false);
                             //$scope.isDirty = false;
                         }
-                        this.router.go(next.name, params);
-                    }, function () {
-                    });
+                        goState(this.router, next.name, params);
+                    }
                 }
             });
   }

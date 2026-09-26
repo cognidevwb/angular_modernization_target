@@ -30,9 +30,8 @@
 
     <span style="max-height: 5px; height: 5px;" flex></span>
     <mat-dialog-content>
-        <md-stepper id="import-stepper" md-mobile-step-text="vm.isMobileStepText" md-vertical="vm.isVertical" md-linear="vm.isLinear" md-alternative="vm.isAlternative">
-            <!-- TODO(port): md-step: a mat-step --><md-step attr.md-label="{{ 'import.stepper-text.select-file' | translate }}">
-                <!-- TODO(port): md-step-body: the mat-step's content --><md-step-body>
+        <mat-stepper id="import-stepper" md-mobile-step-text="vm.isMobileStepText" md-vertical="vm.isVertical" md-linear="vm.isLinear" md-alternative="vm.isAlternative">
+            <mat-step [label]="'import.stepper-text.select-file' | translate">
                     <form name="vm.theFormStep1">
                         <fieldset [disabled]="rootScope?.loading">
                             <div layout="column" layout-padding>
@@ -60,9 +59,8 @@
                             </div>
                         </fieldset>
                     </form>
-                </md-step-body>
 
-                <!-- TODO(port): md-step-actions: the buttons calling stepper.next()/previous() --><md-step-actions layout="row">
+                <div layout="row">
                     <span flex></span>
                     <button mat-button [disabled]="rootScope?.loading" (click)="cancel()">
                         {{ 'action.cancel' | translate }}
@@ -70,8 +68,8 @@
                     <button mat-raised-button color="primary" [disabled]="rootScope?.loading || !theFormStep1?.$dirty || !theFormStep1?.$valid || !importData" (click)="nextStep(2)">
                         {{ 'action.continue' | translate }}
                     </button>
-                </md-step-actions>
-            </md-step>
+                </div>
+            </mat-step>
 
             <!-- TODO(port): md-step: a mat-step --><md-step attr.md-label="{{ 'import.stepper-text.configuration' | translate }}">
                 <!-- TODO(port): md-step-body: the mat-step's content --><md-step-body>
@@ -108,14 +106,12 @@
                 </md-step-actions>
             </md-step>
 
-            <!-- TODO(port): md-step: a mat-step --><md-step attr.md-label="{{ 'import.stepper-text.column-type' | translate }}">
-                <!-- TODO(port): md-step-body: the mat-step's content --><md-step-body>
+            <mat-step [label]="'import.stepper-text.column-type' | translate">
                     <form name="vm.theFormStep3">
                         <tb-table-columns-assignment [(columns)]="columnsParam" [(theForm)]="theFormStep3" [(entityType)]="entityType"></tb-table-columns-assignment>
                     </form>
-                </md-step-body>
 
-                <!-- TODO(port): md-step-actions: the buttons calling stepper.next()/previous() --><md-step-actions layout="row">
+                <div layout="row">
                     <button mat-button [disabled]="rootScope?.loading" (click)="previousStep()">Back
                     </button>
                     <span flex></span>
@@ -125,16 +121,14 @@
                     <button mat-raised-button color="primary" [disabled]="rootScope?.loading || !theFormStep3?.$dirty || !theFormStep3?.$valid" (click)="nextStep(4)">
                         {{ 'action.continue' | translate }}
                     </button>
-                </md-step-actions>
-            </md-step>
+                </div>
+            </mat-step>
 
-            <!-- TODO(port): md-step: a mat-step --><md-step attr.md-label="{{ 'import.stepper-text.creat-entities' | translate }}">
-                <!-- TODO(port): md-step-body: the mat-step's content --><md-step-body>
+            <mat-step [label]="'import.stepper-text.creat-entities' | translate">
                     <mat-progress-bar color="warn" class="tb-import-progress" mode="determinate" value="{{progressCreate}}"></mat-progress-bar>
-                </md-step-body>
-            </md-step>
-            <!-- TODO(port): md-step: a mat-step --><md-step attr.md-label="{{ 'import.stepper-text.done' | translate }}">
-                <!-- TODO(port): md-step-body: the mat-step's content --><md-step-body layout="column">
+            </mat-step>
+            <mat-step [label]="'import.stepper-text.done' | translate">
+                <div layout="column">
                     <div>
                         @if (statistical?.create && statistical?.create?.entity) {
                           <p class="md-body-1" translate translate-values="{count: vm.statistical.create.entity}">import.message.create-entities</p>
@@ -146,15 +140,15 @@
                           <p class="md-body-1" translate translate-values="{count: vm.statistical.error.entity}">import.message.error-entities</p>
                         }
                     </div>
-                </md-step-body>
-                <!-- TODO(port): md-step-actions: the buttons calling stepper.next()/previous() --><md-step-actions layout="row">
+                </div>
+                <div layout="row">
                     <span flex></span>
                     <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="nextStep(6)">
                         {{ 'action.ok' | translate }}
                     </button>
-                </md-step-actions>
-            </md-step>
+                </div>
+            </mat-step>
 
-        </md-stepper>
+        </mat-stepper>
     </mat-dialog-content>
 </div>

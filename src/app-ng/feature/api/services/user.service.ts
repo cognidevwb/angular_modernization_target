@@ -352,15 +352,15 @@ export class UserService {
                 this.updateAndValidateToken(refreshToken, 'refresh_token', false);
                 procceedJwtTokenValidate();
             }, () => {
-                this.router.search('publicId', null);
+                (this.router as any).search('publicId', null);
                 deferred.reject();
             });
         } else if (locationSearch.accessToken) {
             var token: any = locationSearch.accessToken;
             var refreshToken: any = locationSearch.refreshToken;
-            this.router.search('accessToken', null);
+            (this.router as any).search('accessToken', null);
             if (refreshToken) {
-                this.router.search('refreshToken', null);
+                (this.router as any).search('refreshToken', null);
             }
             try {
                 this.updateAndValidateToken(token, 'jwt_token', false);
@@ -378,8 +378,8 @@ export class UserService {
             var user: any = {};
             user.name = locationSearch.username;
             user.password = locationSearch.password;
-            this.router.search('username', null);
-            this.router.search('password', null);
+            (this.router as any).search('username', null);
+            (this.router as any).search('password', null);
 
             this.loginService.login(user).then((response?: any) => {
                 var token: any = response.data.token;
@@ -396,7 +396,7 @@ export class UserService {
             });
         } else if (locationSearch.loginError) {
             this.showLoginErrorDialog(locationSearch.loginError);
-            this.router.search('loginError', null);
+            (this.router as any).search('loginError', null);
             deferred.reject();
         } else {
             procceedJwtTokenValidate();
@@ -573,7 +573,7 @@ export class UserService {
 
   getActivationLink(userId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
-    var url: any = `/api/user/${userId}/activationLink`
+    var url: any = `/api/user/${userId}/activationLink`;
     (this.http.get(url) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
@@ -632,7 +632,7 @@ export class UserService {
         }
         (this.router as any).go(place, params, {reload: true});
     } else {
-        this.router.go('login', params);
+        this.router.navigate(['/login'], { queryParams: params });
     }
   }
 
@@ -665,7 +665,7 @@ export class UserService {
 
   loginAsUser(userId?: any, ...rest: any[]): any {
     var url: any = '/api/user/' + userId + '/token';
-    this.http.get(url).then((response?: any) => {
+    (this.http.get(url) as any).then((response?: any) => {
         var token: any = response.data.token;
         var refreshToken: any = response.data.refreshToken;
         this.setUserFromJwtToken(token, refreshToken, true);

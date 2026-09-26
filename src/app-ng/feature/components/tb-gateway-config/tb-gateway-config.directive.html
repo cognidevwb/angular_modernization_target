@@ -17,12 +17,10 @@
 
 -->
 <section name="gatewayConfig" layout="column" class="gateway-config">
-    <!-- TODO(port): ng-form has no one-to-one Angular form -->
     @for (connector of gatewayConfig(); track $index) {
-      <section layout="row" ng-form="gatewayConfig_{{$index}}">
+      <section layout="row">
         <div layout="column" layout-align="center start" class="gateway-config-row">
-            <!-- TODO(port): ng-disabled holds an interpolation (`{{ }}`) where Angular binds an expression: write it as an expression -->
-            <mat-slide-toggle [disabled]="isReadOnly()" [(ngModel)]="connector.enabled" [disabled]="gatewayConfig_{{$index}}.$invalid || vm.validateJSON(connector.config)" attr.aria-label="{{ 'gateway.connector-enabled' | translate }}">
+            <mat-slide-toggle [disabled]="isReadOnly() || validateJSON(connector.config)" [(ngModel)]="connector.enabled" attr.aria-label="{{ 'gateway.connector-enabled' | translate }}">
             </mat-slide-toggle>
         </div>
         <div layout="row" flex class="gateway-config-row" [ngClass]="{'gateway-config-row-vertical': changeAlignment()}">

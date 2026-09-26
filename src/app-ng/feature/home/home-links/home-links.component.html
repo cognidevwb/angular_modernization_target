@@ -16,9 +16,9 @@
     limitations under the License.
 
 -->
-<!-- TODO(port): md-grid-list: a mat-grid-list --><md-grid-list class="tb-home-links" attr.md-cols="{{cols}}" md-row-height="280px">
-	<!-- TODO(port): md-grid-tile: a mat-grid-tile -->@for (section of model; track $index) {
-	  <md-grid-tile md-colspan="2" attr.md-colspan-gt-sm="{{sectionColspan(section)}}">
+<mat-grid-list class="tb-home-links" [cols]="cols" rowHeight="280px">
+	@for (section of model; track $index) {
+	  <mat-grid-tile [colspan]="sectionColspan(section)">
 		<mat-card style='width: 100%;'>
 			<mat-card-header>
 				<mat-card-title>
@@ -26,19 +26,18 @@
 				</mat-card-title>
 			</mat-card-header>
 			<mat-card-content>
-				<!-- TODO(port): md-grid-list: a mat-grid-list --><md-grid-list md-row-height="170px" attr.md-cols="{{section?.places?.length}}" attr.md-cols-gt-md="{{section?.places?.length}}">
-					<!-- TODO(port): md-grid-tile: a mat-grid-tile -->@for (place of section?.places; track $index) {
-					  <md-grid-tile class="card-tile">
-						<!-- TODO(port): ui-sref has no one-to-one Angular form -->
-						<a mat-raised-button color="primary" class="tb-card-button" layout="column" ui-sref="{{place?.state}}">
+				<mat-grid-list rowHeight="170px" [cols]="section?.places?.length">
+					@for (place of section?.places; track $index) {
+					  <mat-grid-tile class="card-tile">
+						<a mat-raised-button color="primary" class="tb-card-button" layout="column" [routerLink]="stateHref(router, place?.state)">
 							<mat-icon class="material-icons tb-md-96" attr.aria-label="{{place?.icon}}">{{place?.icon}}</mat-icon>
 							<span translate>{{place?.name}}</span>
 						</a>
-					</md-grid-tile>
+					</mat-grid-tile>
 					}
-				</md-grid-list>
+				</mat-grid-list>
 			</mat-card-content>
 		</mat-card>
-	</md-grid-tile>
+	</mat-grid-tile>
 	}
-</md-grid-list>
+</mat-grid-list>

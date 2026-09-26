@@ -1,6 +1,6 @@
 import { Component, inject, model } from '@angular/core';
 import { ElementRef } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgControl } from '@angular/forms';
 
 import $ from 'jquery';
 // @ts-ignore - html template imported as raw string via bundler loader
@@ -28,6 +28,7 @@ export class TbDatetimePeriodDirective {
   // TODO(port): '$compile' — not in Angular: compose with components instead
   // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly element = inject(ElementRef);
+  protected readonly ngControl = inject(NgControl, { optional: true, self: true });
   // TODO(port): elements not resolved to a component: mdp-date-picker, mdp-time-picker
 
   protected template: any = datetimePeriodTemplate;
@@ -37,6 +38,9 @@ export class TbDatetimePeriodDirective {
   maxStartDate: any;
   minEndDate: any;
   startDate: any;
+  writeValue: (value: any) => void = () => {};
+  ngOnChanges: (changes: any) => void = () => {};
+  onChange?: (value: any) => void;
 
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 

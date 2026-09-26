@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { ParseToNullDirective } from '../parse-to-null/parse-to-null.directive';
 
 import $ from 'jquery';
-import extensionFormHttpTemplate from '../../../../app/extension/extensions-forms/extension-form-http.tpl.html?raw';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -42,7 +41,6 @@ export class TbExtensionFormHttpDirective {
   // TODO(port): template: 13 × ng-message left in place
   // TODO(port): template: 11 × ng-messages left in place
 
-  protected template: any = $templateCache.get(extensionFormHttpTemplate);
   types: any;
   theForm: any;
   extensionCustomTransformerOptions: any = {
@@ -69,7 +67,6 @@ export class TbExtensionFormHttpDirective {
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     this.theForm = this.$parent.theForm;
     if(this.isAdd()) {

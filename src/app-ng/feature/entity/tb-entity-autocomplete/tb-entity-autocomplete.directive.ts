@@ -3,6 +3,10 @@ import { ElementRef } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import $ from 'jquery';
 // @ts-ignore
@@ -23,7 +27,7 @@ declare let ngModelCtrl: any;
 @Component({
   selector: 'tb-entity-autocomplete',
   standalone: true,
-  imports: [TranslatePipe, FormsModule],
+  imports: [TranslatePipe, FormsModule, CommonModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule],
   templateUrl: './tb-entity-autocomplete.directive.html',
 })
 export class TbEntityAutocompleteDirective {
@@ -54,6 +58,8 @@ export class TbEntityAutocompleteDirective {
   entityText: any;
   noEntitiesMatchingText: any;
   selectEntityText: any;
+  filteredEntities: any[] = [];
+  displayEntityFn = (entity: any) => entity ? entity.name : '';
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
@@ -136,7 +142,15 @@ export class TbEntityAutocompleteDirective {
   }
 
   entitySearchTextChanged(...rest: any[]): any {
-          }
+    this.fetchEntities(this.entitySearchText).then((entities: any[]) => {
+        this.filteredEntities = entities || [];
+    });
+  }
+
+  onEntitySelected(event: any): void {
+    this.entity = event.option.value;
+    this.updateView();
+  }
 
   updateView(...rest: any[]): any {
     if (!this.disabled()) {

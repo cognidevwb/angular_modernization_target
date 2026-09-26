@@ -5,6 +5,7 @@ import { UserService } from '../../api/services/user.service';
 
 import $ from 'jquery';
 import { isEqual } from 'lodash-es';
+declare function require(id: string): any;
 const dashboardAutocompleteTemplate: string = require('../../../../app/components/dashboard-autocomplete.tpl.html');
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
@@ -44,6 +45,8 @@ export class TbDashboardAutocompleteDirective {
   dashboardSearchText: any = '';
   $watch: any;
   dashboardFetchFunction: any;
+  writeValue: any;
+  onChange: any;
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library

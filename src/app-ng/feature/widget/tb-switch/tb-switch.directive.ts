@@ -1,290 +1,11 @@
-import { Component, model, effect } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, model, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import switchTemplate from '../../../../app/widget/lib/rpc/switch.tpl.html?raw';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let scope: any;
-
-// Helpers at the legacy file's top level, beside the registration (as written).
-function SwitchController(this: any, $element?: any, $scope?: any, types?: any, utils?: any) {
-    let vm: any = this;
-
-    vm.showTitle = false;
-    vm.value = false;
-    vm.error = '';
-
-    var switchElement: any = angular.element('.switch', $element),
-        switchContainer: any = angular.element('#switch-container', $element),
-        mdSwitch: any = angular.element('md-switch', switchElement),
-        onoffContainer: any = angular.element('.onoff-container', $element),
-        onLabel: any = angular.element('.on-label', $element),
-        offLabel: any = angular.element('.off-label', $element),
-        switchTitleContainer: any = angular.element('.title-container', $element),
-        switchTitle: any = angular.element('.switch-title', $element),
-        textMeasure: any = angular.element('#text-measure', $element),
-        switchErrorContainer: any = angular.element('.error-container', $element),
-        switchError: any = angular.element('.switch-error', $element);
-
-
-    vm.onValue = onValue;
-
-    vm.valueSubscription = null;
-
-    effect(() => {
-        if (vm.ctx()) {
-            init();
-        }
-    });
-
-    $scope.$on('$destroy', () => {
-        if (vm.valueSubscription) {
-            vm.ctx.subscriptionApi.removeSubscription(vm.valueSubscription.id);
-        }
-    });
-
-    function init() {
-
-        vm.title = angular.isDefined(vm.ctx.settings.title) ? vm.ctx.settings.title : '';
-        vm.showTitle = vm.title && vm.title.length ? true : false;
-        vm.showOnOffLabels = angular.isDefined(vm.ctx.settings.showOnOffLabels) ? vm.ctx.settings.showOnOffLabels : true;
-        vm.ctx.resize = resize;
-        $scope.$applyAsync(() => {
-            resize();
-        });
-        var initialValue: any = angular.isDefined(vm.ctx.settings.initialValue) ? vm.ctx.settings.initialValue : false;
-        setValue(initialValue);
-
-        var subscription: any = vm.ctx.defaultSubscription;
-        var rpcEnabled: any = subscription.rpcEnabled;
-
-        vm.isSimulated = $scope.widgetEditMode;
-
-        vm.requestTimeout = 500;
-        if (vm.ctx.settings.requestTimeout) {
-            vm.requestTimeout = vm.ctx.settings.requestTimeout;
-        }
-
-        vm.retrieveValueMethod = 'rpc';
-        if (vm.ctx.settings.retrieveValueMethod && vm.ctx.settings.retrieveValueMethod.length) {
-            vm.retrieveValueMethod = vm.ctx.settings.retrieveValueMethod;
-        }
-
-        vm.valueKey = 'value';
-        if (vm.ctx.settings.valueKey && vm.ctx.settings.valueKey.length) {
-            vm.valueKey = vm.ctx.settings.valueKey;
-        }
-
-        vm.parseValueFunction = (data?: any) => data ? true : false;
-        if (vm.ctx.settings.parseValueFunction && vm.ctx.settings.parseValueFunction.length) {
-            try {
-                vm.parseValueFunction = new Function('data', vm.ctx.settings.parseValueFunction);
-            } catch (e) {
-                vm.parseValueFunction = (data?: any) => data ? true : false;
-            }
-        }
-
-        vm.convertValueFunction = (value?: any) => value;
-        if (vm.ctx.settings.convertValueFunction && vm.ctx.settings.convertValueFunction.length) {
-            try {
-                vm.convertValueFunction = new Function('value', vm.ctx.settings.convertValueFunction);
-            } catch (e) {
-                vm.convertValueFunction = (value?: any) => value;
-            }
-        }
-
-        vm.getValueMethod = 'getValue';
-        if (vm.ctx.settings.getValueMethod && vm.ctx.settings.getValueMethod.length) {
-            vm.getValueMethod = vm.ctx.settings.getValueMethod;
-        }
-        vm.setValueMethod = 'setValue';
-        if (vm.ctx.settings.setValueMethod && vm.ctx.settings.setValueMethod.length) {
-            vm.setValueMethod = vm.ctx.settings.setValueMethod;
-        }
-        if (!rpcEnabled) {
-            onError('Target device is not set!');
-        } else {
-            if (!vm.isSimulated) {
-                if (vm.retrieveValueMethod == 'rpc') {
-                    rpcRequestValue();
-                } else if (vm.retrieveValueMethod == 'attribute' || vm.retrieveValueMethod == 'timeseries') {
-                    subscribeForValue();
-                }
-            }
-        }
-    }
-
-    const switchAspectRation: any = 2.7893;
-
-    function resize() {
-        var width: any = switchContainer.width();
-        var height: any;
-        if (vm.showOnOffLabels) {
-            height = switchContainer.height()*2/3;
-        } else {
-            height = switchContainer.height();
-        }
-        var ratio: any = width/height;
-        if (ratio > switchAspectRation) {
-            width = height*switchAspectRation;
-        } else {
-            height = width/switchAspectRation;
-        }
-        switchElement.css({width: width, height: height});
-        mdSwitch.css('height', height+'px');
-        mdSwitch.css('width', width+'px');
-        mdSwitch.css('min-width', width+'px');
-        angular.element('.md-container', mdSwitch).css('height', height+'px');
-        angular.element('.md-container', mdSwitch).css('width', width+'px');
-
-
-        if (vm.showTitle) {
-            setFontSize(switchTitle, vm.title, switchTitleContainer.height() * 2 / 3, switchTitleContainer.width());
-        }
-
-        if (vm.showOnOffLabels) {
-            onoffContainer.css({width: width, height: switchContainer.height() / 3});
-            setFontSize(onLabel, 'OFF', onoffContainer.height(), onoffContainer.width() / 2);
-            setFontSize(offLabel, 'OFF', onoffContainer.height(), onoffContainer.width() / 2);
-        }
-
-        setFontSize(switchError, vm.error, switchErrorContainer.height(), switchErrorContainer.width());
-    }
-
-    function subscribeForValue() {
-        var valueSubscriptionInfo: any = [{
-            type: types.datasourceType.entity,
-            entityType: types.entityType.device,
-            entityId: vm.ctx.defaultSubscription.targetDeviceId
-        }];
-        if (vm.retrieveValueMethod == 'attribute') {
-            valueSubscriptionInfo[0].attributes = [
-                {name: vm.valueKey}
-            ];
-        } else {
-            valueSubscriptionInfo[0].timeseries = [
-                {name: vm.valueKey}
-            ];
-        }
-        var subscriptionOptions: any = {
-            callbacks: {
-                onDataUpdated: onDataUpdated,
-                onDataUpdateError: onDataUpdateError
-            }
-        };
-        vm.ctx.subscriptionApi.createSubscriptionFromInfo (
-            types.widgetType.latest.value, valueSubscriptionInfo, subscriptionOptions, false, true).then(
-            (subscription?: any) => {
-                vm.valueSubscription = subscription;
-            }
-        );
-    }
-
-    function onDataUpdated(subscription?: any, apply?: any) {
-        var value: any = false;
-        var data: any = subscription.data;
-        if (data.length) {
-            var keyData: any = data[0];
-            if (keyData && keyData.data && keyData.data[0]) {
-                var attrValue: any = keyData.data[0][1];
-                if (attrValue) {
-                    var parsed: any = null;
-                    try {
-                        parsed = vm.parseValueFunction(JSON.parse(attrValue));
-                    } catch (e){/**/}
-                    value = parsed ? true : false;
-                }
-            }
-        }
-        setValue(value);
-        if (apply) {
-        if (apply) {
-        }
-        }
-    }
-
-    function onDataUpdateError(subscription?: any, e?: any) {
-        var exceptionData: any = utils.parseException(e);
-        var errorText: any = exceptionData.name;
-        if (exceptionData.message) {
-            errorText += ': ' + exceptionData.message;
-        }
-        onError(errorText);
-    }
-
-    function setValue(value?: any) {
-        vm.value = value ? true : false;
-    }
-
-    function onValue() {
-        rpcUpdateValue(vm.value);
-    }
-
-    function onError(error?: any) {
-    function onError(error?: any) {
-        vm.error = error;
-        setFontSize(switchError, vm.error, switchErrorContainer.height(), switchErrorContainer.width());
-    }
-    }
-
-    function setFontSize(element?: any, text?: any, fontSize?: any, maxWidth?: any) {
-        var textWidth: any = measureTextWidth(text, fontSize);
-        while (textWidth > maxWidth) {
-            fontSize--;
-            textWidth = measureTextWidth(text, fontSize);
-        }
-        element.css({'fontSize': fontSize+'px', 'lineHeight': fontSize+'px'});
-    }
-
-    function measureTextWidth(text?: any, fontSize?: any) {
-        textMeasure.css({'fontSize': fontSize+'px', 'lineHeight': fontSize+'px'});
-        textMeasure.text(text);
-        return textMeasure.width();
-    }
-
-    function rpcRequestValue() {
-        vm.error = '';
-        vm.ctx.controlApi.sendTwoWayCommand(vm.getValueMethod, null, vm.requestTimeout).then(
-            (responseBody?: any) => {
-                setValue(vm.parseValueFunction(responseBody));
-            },
-            () => {
-                var errorText: any = vm.ctx.defaultSubscription.rpcErrorText;
-                onError(errorText);
-            }
-        );
-    }
-
-    function rpcUpdateValue(value?: any) {
-        if (vm.executingUpdateValue) {
-            vm.scheduledValue = value;
-            return;
-        } else {
-            vm.scheduledValue = null;
-            vm.rpcValue = value;
-            vm.executingUpdateValue = true;
-        }
-        vm.error = '';
-        vm.ctx.controlApi.sendOneWayCommand(vm.setValueMethod, vm.convertValueFunction(value), vm.requestTimeout).then(
-            () => {
-                vm.executingUpdateValue = false;
-                if (vm.scheduledValue != null && vm.scheduledValue != vm.rpcValue) {
-                    rpcUpdateValue(vm.scheduledValue);
-                }
-            },
-            () => {
-                vm.executingUpdateValue = false;
-                var errorText: any = vm.ctx.defaultSubscription.rpcErrorText;
-                onError(errorText);
-            }
-        );
-    }
-}
+import $ from 'jquery';
 
 /**
  * Ported from the AngularJS directive `tbSwitch` (module `thingsboard.widgets.rpc.switch`) in src/app/widget/lib/rpc/switch.directive.js:24.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
   selector: 'tb-switch',
@@ -295,17 +16,292 @@ function SwitchController(this: any, $element?: any, $scope?: any, types?: any, 
 export class TbSwitchDirective {
   readonly ctx = model<any>();
 
-  restrict: any = "E";
-  scope: any = true;
-  bindToController: any = {
-            ctx: '='
-        };
-  controller: any = SwitchController;
-  controllerAs: any;
-  templateUrl: any = switchTemplate;
+  protected error = '';
+  protected showTitle = false;
+  protected title = '';
+  protected value = false;
+  protected showOnOffLabels = true;
+
+  private isSimulated = false;
+  private requestTimeout = 500;
+  private retrieveValueMethod = 'rpc';
+  private valueKey = 'value';
+  private parseValueFunction: (data?: any) => any = (data?: any) => data ? true : false;
+  private convertValueFunction: (value?: any) => any = (value?: any) => value;
+  private getValueMethod = 'getValue';
+  private setValueMethod = 'setValue';
+  private valueSubscription: any = null;
+  private executingUpdateValue = false;
+  private scheduledValue: any = null;
+  private rpcValue: any = null;
+
+  private readonly switchAspectRation = 2.7893;
+
+  private readonly elementRef = inject(ElementRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
-    let vm = this;
-    this.controllerAs = 'vm';
+    effect(() => {
+      if (this.ctx()) {
+        this.init();
+      }
+    });
+
+    this.destroyRef.onDestroy(() => {
+      if (this.valueSubscription) {
+        this.ctx().subscriptionApi.removeSubscription(this.valueSubscription.id);
+      }
+    });
+  }
+
+  protected onValue(): void {
+    this.rpcUpdateValue(this.value);
+  }
+
+  private init(): void {
+    const ctx: any = this.ctx();
+    this.title = ctx.settings.title !== undefined ? ctx.settings.title : '';
+    this.showTitle = this.title && this.title.length ? true : false;
+    this.showOnOffLabels = ctx.settings.showOnOffLabels !== undefined ? ctx.settings.showOnOffLabels : true;
+    ctx.resize = () => this.resize();
+    setTimeout(() => {
+      this.resize();
+    });
+    const initialValue: any = ctx.settings.initialValue !== undefined ? ctx.settings.initialValue : false;
+    this.setValue(initialValue);
+
+    const subscription: any = ctx.defaultSubscription;
+    const rpcEnabled: any = subscription.rpcEnabled;
+
+    this.isSimulated = ctx.$scope?.widgetEditMode;
+
+    this.requestTimeout = 500;
+    if (ctx.settings.requestTimeout) {
+      this.requestTimeout = ctx.settings.requestTimeout;
+    }
+
+    this.retrieveValueMethod = 'rpc';
+    if (ctx.settings.retrieveValueMethod && ctx.settings.retrieveValueMethod.length) {
+      this.retrieveValueMethod = ctx.settings.retrieveValueMethod;
+    }
+
+    this.valueKey = 'value';
+    if (ctx.settings.valueKey && ctx.settings.valueKey.length) {
+      this.valueKey = ctx.settings.valueKey;
+    }
+
+    this.parseValueFunction = (data?: any) => data ? true : false;
+    if (ctx.settings.parseValueFunction && ctx.settings.parseValueFunction.length) {
+      try {
+        this.parseValueFunction = new Function('data', ctx.settings.parseValueFunction) as any;
+      } catch (e) {
+        this.parseValueFunction = (data?: any) => data ? true : false;
+      }
+    }
+
+    this.convertValueFunction = (value?: any) => value;
+    if (ctx.settings.convertValueFunction && ctx.settings.convertValueFunction.length) {
+      try {
+        this.convertValueFunction = new Function('value', ctx.settings.convertValueFunction) as any;
+      } catch (e) {
+        this.convertValueFunction = (value?: any) => value;
+      }
+    }
+
+    this.getValueMethod = 'getValue';
+    if (ctx.settings.getValueMethod && ctx.settings.getValueMethod.length) {
+      this.getValueMethod = ctx.settings.getValueMethod;
+    }
+    this.setValueMethod = 'setValue';
+    if (ctx.settings.setValueMethod && ctx.settings.setValueMethod.length) {
+      this.setValueMethod = ctx.settings.setValueMethod;
+    }
+    if (!rpcEnabled) {
+      this.onError('Target device is not set!');
+    } else {
+      if (!this.isSimulated) {
+        if (this.retrieveValueMethod === 'rpc') {
+          this.rpcRequestValue();
+        } else if (this.retrieveValueMethod === 'attribute' || this.retrieveValueMethod === 'timeseries') {
+          this.subscribeForValue();
+        }
+      }
+    }
+  }
+
+  private resize(): void {
+    const nativeElement = this.elementRef.nativeElement;
+    const switchElement: any = $('.switch', nativeElement);
+    const switchContainer: any = $('#switch-container', nativeElement);
+    const mdSwitch: any = $('mat-slide-toggle', switchElement);
+    const onoffContainer: any = $('.onoff-container', nativeElement);
+    const onLabel: any = $('.on-label', nativeElement);
+    const offLabel: any = $('.off-label', nativeElement);
+    const switchTitleContainer: any = $('.title-container', nativeElement);
+    const switchTitle: any = $('.switch-title', nativeElement);
+    const textMeasure: any = $('#text-measure', nativeElement);
+    const switchErrorContainer: any = $('.error-container', nativeElement);
+    const switchError: any = $('.switch-error', nativeElement);
+
+    let width: any = switchContainer.width();
+    let height: any;
+    if (this.showOnOffLabels) {
+      height = switchContainer.height() * 2 / 3;
+    } else {
+      height = switchContainer.height();
+    }
+    const ratio: any = width / height;
+    if (ratio > this.switchAspectRation) {
+      width = height * this.switchAspectRation;
+    } else {
+      height = width / this.switchAspectRation;
+    }
+    switchElement.css({ width: width, height: height });
+    mdSwitch.css('height', height + 'px');
+    mdSwitch.css('width', width + 'px');
+    mdSwitch.css('min-width', width + 'px');
+    $('.md-container', mdSwitch).css('height', height + 'px');
+    $('.md-container', mdSwitch).css('width', width + 'px');
+
+    if (this.showTitle) {
+      this.setFontSize(switchTitle, this.title, switchTitleContainer.height() * 2 / 3, switchTitleContainer.width(), textMeasure);
+    }
+
+    if (this.showOnOffLabels) {
+      onoffContainer.css({ width: width, height: switchContainer.height() / 3 });
+      this.setFontSize(onLabel, 'OFF', onoffContainer.height(), onoffContainer.width() / 2, textMeasure);
+      this.setFontSize(offLabel, 'OFF', onoffContainer.height(), onoffContainer.width() / 2, textMeasure);
+    }
+
+    this.setFontSize(switchError, this.error, switchErrorContainer.height(), switchErrorContainer.width(), textMeasure);
+  }
+
+  private subscribeForValue(): void {
+    const ctx: any = this.ctx();
+    const types: any = ctx.types;
+    const valueSubscriptionInfo: any = [{
+      type: types.datasourceType.entity,
+      entityType: types.entityType.device,
+      entityId: ctx.defaultSubscription.targetDeviceId
+    }];
+    if (this.retrieveValueMethod === 'attribute') {
+      valueSubscriptionInfo[0].attributes = [
+        { name: this.valueKey }
+      ];
+    } else {
+      valueSubscriptionInfo[0].timeseries = [
+        { name: this.valueKey }
+      ];
+    }
+    const subscriptionOptions: any = {
+      callbacks: {
+        onDataUpdated: (subscription?: any, apply?: any) => this.onDataUpdated(subscription, apply),
+        onDataUpdateError: (subscription?: any, e?: any) => this.onDataUpdateError(subscription, e)
+      }
+    };
+    ctx.subscriptionApi.createSubscriptionFromInfo(
+      types.widgetType.latest.value, valueSubscriptionInfo, subscriptionOptions, false, true).then(
+      (subscription?: any) => {
+        this.valueSubscription = subscription;
+      }
+    );
+  }
+
+  private onDataUpdated(subscription?: any, apply?: any): void {
+    let value: any = false;
+    const data: any = subscription.data;
+    if (data.length) {
+      const keyData: any = data[0];
+      if (keyData && keyData.data && keyData.data[0]) {
+        const attrValue: any = keyData.data[0][1];
+        if (attrValue) {
+          let parsed: any = null;
+          try {
+            parsed = this.parseValueFunction(JSON.parse(attrValue));
+          } catch (e) {/**/}
+          value = parsed ? true : false;
+        }
+      }
+    }
+    this.setValue(value);
+  }
+
+  private onDataUpdateError(subscription?: any, e?: any): void {
+    const ctx: any = this.ctx();
+    const utils: any = ctx.utils;
+    const exceptionData: any = utils.parseException(e);
+    let errorText: any = exceptionData.name;
+    if (exceptionData.message) {
+      errorText += ': ' + exceptionData.message;
+    }
+    this.onError(errorText);
+  }
+
+  private setValue(value?: any): void {
+    this.value = value ? true : false;
+  }
+
+  private onError(error?: any): void {
+    this.error = error;
+    const nativeElement = this.elementRef.nativeElement;
+    const switchErrorContainer: any = $('.error-container', nativeElement);
+    const switchError: any = $('.switch-error', nativeElement);
+    const textMeasure: any = $('#text-measure', nativeElement);
+    this.setFontSize(switchError, this.error, switchErrorContainer.height(), switchErrorContainer.width(), textMeasure);
+  }
+
+  private setFontSize(element: any, text: any, fontSize: any, maxWidth: any, textMeasure: any): void {
+    let textWidth: any = this.measureTextWidth(text, fontSize, textMeasure);
+    while (textWidth > maxWidth) {
+      fontSize--;
+      textWidth = this.measureTextWidth(text, fontSize, textMeasure);
+    }
+    element.css({ 'fontSize': fontSize + 'px', 'lineHeight': fontSize + 'px' });
+  }
+
+  private measureTextWidth(text: any, fontSize: any, textMeasure: any): any {
+    textMeasure.css({ 'fontSize': fontSize + 'px', 'lineHeight': fontSize + 'px' });
+    textMeasure.text(text);
+    return textMeasure.width();
+  }
+
+  private rpcRequestValue(): void {
+    this.error = '';
+    const ctx: any = this.ctx();
+    ctx.controlApi.sendTwoWayCommand(this.getValueMethod, null, this.requestTimeout).then(
+      (responseBody?: any) => {
+        this.setValue(this.parseValueFunction(responseBody));
+      },
+      () => {
+        const errorText: any = ctx.defaultSubscription.rpcErrorText;
+        this.onError(errorText);
+      }
+    );
+  }
+
+  private rpcUpdateValue(value?: any): void {
+    if (this.executingUpdateValue) {
+      this.scheduledValue = value;
+      return;
+    } else {
+      this.scheduledValue = null;
+      this.rpcValue = value;
+      this.executingUpdateValue = true;
+    }
+    this.error = '';
+    const ctx: any = this.ctx();
+    ctx.controlApi.sendOneWayCommand(this.setValueMethod, this.convertValueFunction(value), this.requestTimeout).then(
+      () => {
+        this.executingUpdateValue = false;
+        if (this.scheduledValue != null && this.scheduledValue != this.rpcValue) {
+          this.rpcUpdateValue(this.scheduledValue);
+        }
+      },
+      () => {
+        this.executingUpdateValue = false;
+        const errorText: any = ctx.defaultSubscription.rpcErrorText;
+        this.onError(errorText);
+      }
+    );
   }
 }

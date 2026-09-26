@@ -84,14 +84,16 @@ export class DashboardService {
     if ((pageLink.idOffset !== undefined)) {
         url += '&offset=' + pageLink.idOffset;
     }
-    this.http.get(url, config).then((response?: any) => {
-        response.data = this.prepareDashboards(response.data);
+    return new Promise((resolve, reject) => {
+      this.http.get(url, config).subscribe((response: any) => {
+        var data: any = this.prepareDashboards(response);
         if (pageLink.textSearch) {
-            response.data.data = $filter('filter')(response.data.data, {title: pageLink.textSearch});
+            data.data = $filter('filter')(data.data, {title: pageLink.textSearch});
         }
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
+        resolve(data);
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }

@@ -45,8 +45,8 @@
                             </mat-card-content>
                             <mat-card-actions layout="row" layout-align="end end">
                                 @for (action of actionsList; track $index) {
-                                  @if (action?.isEnabled?.(rowItem?.[n])) {
-                                  <button mat-icon-button color="primary" [disabled]="rootScope?.loading" (click)="action.onAction($event, rowItem[n])" attr.aria-label="{{ action?.name?.() }}" attr.matTooltip="{{ action?.details?.( rowItem?.[n] ) }}" matTooltipPosition="above">
+                                  @if (action?.isEnabled?.($any(this).rowItem?.[n])) {
+                                  <button mat-icon-button color="primary" [disabled]="rootScope?.loading" (click)="action.onAction($event, $any(this).rowItem[n])" attr.aria-label="{{ action?.name?.() }}" attr.matTooltip="{{ action?.details?.( $any(this).rowItem?.[n] ) }}" matTooltipPosition="above">
                                     
                                     <mat-icon>{{action?.icon}}</mat-icon>
                                 </button>
@@ -57,9 +57,9 @@
                     </div>
                     }
                     }
-                    @for (n of [] | range:columns; track $index) {
-                      @if (!rowItem?.[n]) {
-                      <div flex [ngStyle]="{'height':itemHeight+'px'}">
+                    @for (n of [] | range:$any(this).columns; track $index) {
+                      @if (!$any(this).rowItem?.[n]) {
+                      <div flex [ngStyle]="{'height':$any(this).itemHeight+'px'}">
                     </div>
                     }
                     }
@@ -67,11 +67,11 @@
             </div>
         </md-virtual-repeat-container>
     </div>
-    <tb-details-sidenav headerTitle="{{getItemTitleFunc(operatingItem())}}" headerSubtitle="{{itemDetailsText(operatingItem())}}" [isReadOnly]="isDetailsReadOnly(operatingItem())" [(isOpen)]="detailsConfig.isDetailsOpen" [(isEdit)]="detailsConfig.isDetailsEditMode" (onCloseDetails)="onCloseDetails()" (onToggleDetailsEditMode)="onToggleDetailsEditMode(detailsForm)" (onApplyDetails)="saveItem(detailsForm)" [(theForm)]="detailsForm">
-        <details-buttons>
+    <tb-details-sidenav headerTitle="{{$any(this).getItemTitleFunc($any(this).operatingItem())}}" headerSubtitle="{{$any(this).itemDetailsText($any(this).operatingItem())}}" [isReadOnly]="$any(this).isDetailsReadOnly($any(this).operatingItem())" [(isOpen)]="$any(this).detailsConfig.isDetailsOpen" [(isEdit)]="$any(this).detailsConfig.isDetailsEditMode" (onCloseDetails)="$any(this).onCloseDetails()" (onToggleDetailsEditMode)="$any(this).onToggleDetailsEditMode($any(this).detailsForm)" (onApplyDetails)="$any(this).saveItem($any(this).detailsForm)" [(theForm)]="$any(this).detailsForm">
+        <div details-buttons>
             <!-- TODO(port): ng-transclude with a named slot: use <ng-content select> here -->
             <div ng-content-placeholder></div>
-        </details-buttons>
+        </div>
         <form name="vm.detailsForm">
             <div><ng-content></ng-content></div>
         </form>
@@ -79,38 +79,38 @@
 </section>
 
 <section layout="row" layout-wrap class="tb-footer-buttons md-fab " layout-align="start end">
-    @for (groupAction of groupActionsList; track $index) {
-      <button mat-fab color="accent" [disabled]="rootScope?.loading" [hidden]="!(items?.selectedCount > 0)" class="tb-btn-footer md-hue-2" (click)="groupAction.onAction($event, items)" attr.aria-label="{{ groupAction?.name?.() }}" attr.matTooltip="{{ groupAction?.details?.(items?.selectedCount) }}" matTooltipPosition="above">
+    @for (groupAction of $any(this).groupActionsList; track $index) {
+      <button mat-fab color="accent" [disabled]="rootScope?.loading" [hidden]="!($any(this).items?.selectedCount > 0)" class="tb-btn-footer md-hue-2" (click)="groupAction.onAction($event, $any(this).items)" attr.aria-label="{{ groupAction?.name?.() }}" attr.matTooltip="{{ groupAction?.details?.($any(this).items?.selectedCount) }}" matTooltipPosition="above">
         
         <mat-icon>{{groupAction?.icon}}</mat-icon>
     </button>
     }
-    <button mat-fab color="primary" [disabled]="rootScope?.loading" [hidden]="!(topIndex > 0)" class="tb-btn-footer md-hue-1" (click)="moveToTop()" attr.aria-label="{{'grid.scroll-to-top' | translate}}" attr.matTooltip="{{'grid.scroll-to-top' | translate}}" matTooltipPosition="above">
+    <button mat-fab color="primary" [disabled]="rootScope?.loading" [hidden]="!($any(this).topIndex > 0)" class="tb-btn-footer md-hue-1" (click)="$any(this).moveToTop()" attr.aria-label="{{'grid.scroll-to-top' | translate}}" attr.matTooltip="{{'grid.scroll-to-top' | translate}}" matTooltipPosition="above">
         
         <mat-icon>arrow_drop_up</mat-icon>
     </button>
-    @if (addItemAction?.name?.() && addItemActions?.length == 0) {
+    @if (($any(this).addItemAction?.name?.() && $any(this).addItemActions?.length == 0) ? $any(this).addItemAction : null; as addItemAction) {
       <button mat-fab color="accent" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" (click)="addItemAction.onAction($event)" attr.aria-label="{{ addItemAction?.name?.() }}" attr.matTooltip="{{ addItemAction?.details?.() }}" matTooltipPosition="above">
         
         <mat-icon>{{ addItemAction?.icon }}</mat-icon>
     </button>
     }
-    <!-- TODO(port): md-fab-speed-dial: a mat-fab that toggles a list of mat-mini-fab buttons -->@if (addItemAction?.name?.()) {
-      <md-fab-speed-dial [disabled]="rootScope?.loading" md-open="vm.addItemActionsOpen" class="md-scale" md-direction="up">
-        <!-- TODO(port): md-fab-trigger: the mat-fab that opens the speed dial --><md-fab-trigger>
+    @if ($any(this).addItemAction?.name?.() ? $any(this).addItemAction : null; as addItemAction) {
+      <div class="md-scale" md-direction="up">
+        <ng-container>
             <button mat-fab color="accent" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" attr.aria-label="{{ addItemAction?.name?.() }}" attr.matTooltip="{{ addItemAction?.details?.() }}" matTooltipPosition="above">
                 
                 <mat-icon>{{ addItemAction?.icon }}</mat-icon>
             </button>
-        </md-fab-trigger>
-        <!-- TODO(port): md-fab-actions: the buttons the speed dial shows --><md-fab-actions>
-            @for (addItemAction of addItemActions; track $index) {
+        </ng-container>
+        <ng-container>
+            @for (addItemAction of $any(this).addItemActions; track $index) {
               <button mat-fab color="accent" [disabled]="rootScope?.loading" class="md-hue-2" (click)="addItemAction.onAction($event)" attr.aria-label="{{ addItemAction?.name?.() }}" attr.matTooltip="{{ addItemAction?.details?.() }}" matTooltipPosition="above">
                 
                 <mat-icon>{{addItemAction?.icon}}</mat-icon>
             </button>
             }
-        </md-fab-actions>
-    </md-fab-speed-dial>
+        </ng-container>
+    </div>
     }
 </section>

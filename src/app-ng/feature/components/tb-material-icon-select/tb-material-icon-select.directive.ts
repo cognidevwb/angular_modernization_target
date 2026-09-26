@@ -2,6 +2,8 @@ import { Component, inject, model } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { firstValueFrom } from 'rxjs';
+import { MaterialIconsDialogComponent } from '../material-icons-dialog/material-icons-dialog.component';
 
 import $ from 'jquery';
 // @ts-ignore
@@ -64,17 +66,13 @@ export class TbMaterialIconSelectDirective {
     if ($event) {
         $event.stopPropagation();
     }
-    this.dialog.show({
-        controller: 'MaterialIconsDialogController',
-        controllerAs: 'vm',
-        templateUrl: materialIconsDialogTemplate,
-        parent: $(this.document.body),
-        locals: {icon: this.icon},
-        multiple: true,
-        fullscreen: true,
-        targetEvent: $event
-    }).then((icon?: any) => {
-        this.icon = icon;
+    firstValueFrom(this.dialog.open(MaterialIconsDialogComponent, {
+        data: {icon: this.icon},
+        panelClass: 'tb-dialog'
+    }).afterClosed()).then((icon?: any) => {
+        if (icon !== undefined) {
+            this.icon = icon;
+        }
     });
   }
 }

@@ -14,7 +14,6 @@ import { TbRelationTypeAutocompleteDirective } from '../tb-relation-type-autocom
 import { TbEntitySubtypeListDirective } from '../tb-entity-subtype-list/tb-entity-subtype-list.directive';
 
 import $ from 'jquery';
-import entityFilterTemplate from '../../../../app/entity/entity-filter.tpl.html?raw';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -50,7 +49,6 @@ export class TbEntityFilterDirective {
   // TODO(port): template: 2 × ng-message left in place
   // TODO(port): template: 2 × ng-messages left in place
 
-  protected template: any = $templateCache.get(entityFilterTemplate);
   ngModelCtrl: any = ngModelCtrl;
   types: any;
   aliasFilterTypes: any;
@@ -60,7 +58,6 @@ export class TbEntityFilterDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     this.aliasFilterTypes = this.entityService.getAliasFilterTypesByEntityTypes(this.allowedEntityTypes());
     this.$watch('filter.type', (newType?: any, prevType?: any) => {
@@ -81,7 +78,6 @@ export class TbEntityFilterDirective {
                 }
             }
         }
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   updateFilter(...rest: any[]): any {

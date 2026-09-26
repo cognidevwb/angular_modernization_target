@@ -29,7 +29,6 @@ export class TbCircularProgressDirective {
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    this.viewContainerRef.createEmbeddedView(this.circularProgressElement);
     this.cssWidth = $(this.element.nativeElement).prop('style')['width'];
     if (!this.cssWidth) {
             $($(this.element.nativeElement)).css('width', this.width + 'px');

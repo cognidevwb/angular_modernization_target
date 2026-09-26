@@ -7,7 +7,6 @@ import { TbEntityTypeSelectDirective } from '../tb-entity-type-select/tb-entity-
 import { TbEntityAutocompleteDirective } from '../tb-entity-autocomplete/tb-entity-autocomplete.directive';
 
 import $ from 'jquery';
-import entitySelectTemplate from '../../../../app/entity/entity-select.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;
@@ -37,7 +36,6 @@ export class TbEntitySelectDirective {
   protected readonly entityService = inject(EntityService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(entitySelectTemplate);
   entityTypeCurrentTenant: any = types.aliasEntityType.current_tenant;
   protected entityTypes: any;
   protected entityTypeKeys: any;
@@ -53,7 +51,6 @@ export class TbEntitySelectDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
     this.entityTypes = this.entityService.prepareAllowedEntityTypesList(this.allowedEntityTypes(), this.useAliasEntityTypes());
     this.entityTypeKeys = Object.keys(this.entityTypes);

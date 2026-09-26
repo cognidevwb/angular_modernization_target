@@ -17,7 +17,7 @@
 
 -->
 <div attr.aria-label="{{ titleText | translate }}" style="width: 600px;" class="md-dialog">
-    <form name="theForm" (ngSubmit)="submit()">
+    <form name="theForm" #theForm="ngForm" (ngSubmit)="submit()">
         <mat-toolbar>
             <div class="md-toolbar-tools">
                 <h2 translate>{{titleText}}</h2>
@@ -39,7 +39,7 @@
         </mat-dialog-content>
         <mat-dialog-actions layout="row">
             <span flex></span>
-            <button mat-raised-button color="primary" [disabled]="rootScope?.loading || !theForm?.$dirty || !theForm?.$valid" type="submit">
+            <button mat-raised-button color="primary" [disabled]="rootScope?.loading || !theForm?.dirty || !theForm?.valid" type="submit">
                 {{ actionName | translate }}
             </button>
             <button mat-button [disabled]="rootScope?.loading" (click)="cancel()" style="margin-right:20px;">{{ 'action.cancel' |

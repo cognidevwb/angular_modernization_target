@@ -17,26 +17,44 @@
 
 -->
 <section flex layout='column' class="tb-entity-list">
-    <!-- TODO(port): md-chips: a mat-chip-grid with an input bound by matChipInputFor --><md-chips flex readonly="disabled" id="entity_list_chips" [required]="tbRequired()" [(ngModel)]="entityList" md-autocomplete-snap md-require-match="true">
-        <!-- TODO(port): md-autocomplete: an input with [matAutocomplete] and a mat-autocomplete panel --><md-autocomplete md-no-cache="true" id="entity" md-selected-item="selectedEntity" md-search-text="entitySearchText" md-items="item in fetchEntities(entitySearchText, 10)" md-item-text="item.name" md-min-length="0" placeholder="{{ 'entity.entity-list' | translate }}">
-            <!-- TODO(port): md-item-template: the content of each mat-option in the autocomplete --><md-item-template>
-                <span md-highlight-text="entitySearchText" md-highlight-flags="^i">{{item?.name}}</span>
-            </md-item-template>
-            <!-- TODO(port): md-not-found: a mat-option shown when the filtered list is empty --><md-not-found>
-                <span translate translate-values='{ entity: entitySearchText }'>entity.no-entities-matching</span>
-            </md-not-found>
-        </md-autocomplete>
-        <!-- TODO(port): md-chip-template: the content of each mat-chip-row --><md-chip-template>
-            <span>
-                <strong>{{$chip?.name}}</strong>
-            </span>
-        </md-chip-template>
-    </md-chips>
-    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-    @if (inputTouched) {
-      <div class="tb-error-messages" ng-messages="ngModelCtrl?.$error" role="alert">
-        <!-- TODO(port): ng-message has no one-to-one Angular form -->
-        <div translate ng-message="entityList" class="tb-error-message">entity.entity-list-empty</div>
-    </div>
+    <mat-form-field class="tb-entity-list-field" appearance="outline" subscriptSizing="dynamic">
+        <mat-chip-grid #chipGrid id="entity_list_chips" [disabled]="disabled()" [required]="tbRequired()">
+            @for (chip of entityList; track chip) {
+              <mat-chip-row (removed)="removeEntity(chip)" [removable]="!disabled()">
+                <strong>{{ chip?.name }}</strong>
+                @if (!disabled()) {
+                  <button matChipRemove aria-label="remove">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                }
+              </mat-chip-row>
+            }
+            <input
+                id="entity"
+                [placeholder]="'entity.entity-list' | translate"
+                [matChipInputFor]="chipGrid"
+                [matAutocomplete]="auto"
+                [ngModel]="entitySearchText"
+                (ngModelChange)="onSearchTextInput($event)"
+                (blur)="inputTouched = true"
+                [disabled]="disabled()"/>
+        </mat-chip-grid>
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onEntitySelected($event)">
+            @for (item of filteredEntities; track item) {
+              <mat-option [value]="item">
+                <span>{{ item?.name }}</span>
+              </mat-option>
+            }
+            @if (filteredEntities.length === 0) {
+              <mat-option disabled>
+                <span>{{ 'entity.no-entities-matching' | translate: { entity: entitySearchText } }}</span>
+              </mat-option>
+            }
+        </mat-autocomplete>
+    </mat-form-field>
+    @if (inputTouched && invalid) {
+      <div class="tb-error-messages" role="alert">
+        <div class="tb-error-message">{{ 'entity.entity-list-empty' | translate }}</div>
+      </div>
     }
 </section>

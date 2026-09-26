@@ -16,8 +16,8 @@ import { TbNoAnimateDirective } from '../../components/tb-no-animate/tb-no-anima
 import { TbEntitySubtypeSelectDirective } from '../../entity/tb-entity-subtype-select/tb-entity-subtype-select.directive';
 import { TbUserMenuDirective } from '../tb-user-menu/tb-user-menu.directive';
 import $ from 'jquery';
-import logoSvg from '../../../../svg/logo_title_white.svg';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -38,7 +38,7 @@ declare let $window: any;
 @Component({
   selector: 'home',
   standalone: true,
-  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbSideMenuDirective), forwardRef(() => TbNoAnimateDirective), forwardRef(() => TbEntitySubtypeSelectDirective), forwardRef(() => TbUserMenuDirective)],
+  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, MatSidenavModule, CommonModule, FormsModule, forwardRef(() => TbSideMenuDirective), forwardRef(() => TbNoAnimateDirective), forwardRef(() => TbEntitySubtypeSelectDirective), forwardRef(() => TbUserMenuDirective)],
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
@@ -60,9 +60,10 @@ export class HomeComponent {
 
   protected siteSideNav: any;
   Fullscreen: any;
-  logoSvg: any = logoSvg;
+  logoSvg: any = '/assets/svg/logo_title_white.svg';
   isShowSidenav: any = false;
   isLockSidenav: any = false;
+  forceFullscreen: any = false;
   isGtSm: any;
   entitySubtypeWatch: any;
   searchConfig: any;

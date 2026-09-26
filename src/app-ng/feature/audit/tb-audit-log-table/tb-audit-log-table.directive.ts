@@ -1,13 +1,42 @@
-import { Component, forwardRef, inject, input, model } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, forwardRef, inject, input, model } from '@angular/core';
 import { AuditLogService } from '../../api/services/audit-log.service';
 import { ElementRef } from '@angular/core';
 import { RootState } from '../../../root-state';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TbTimewindowDirective } from '../../components/tb-timewindow/tb-timewindow.directive';
-import auditLogTableTemplate from '../../../../app/audit/audit-log-table.tpl.html?raw';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { isEqual } from 'lodash-es';
+
+@Component({
+  selector: 'tb-audit-log-table',
+  standalone: true,
+  templateUrl: './tb-audit-log-table.directive.html',
+  imports: [
+    CommonModule,
+    FormsModule,
+    TbTimewindowDirective,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatListModule,
+    MatProgressBarModule,
+    MatDividerModule,
+    MatTooltipModule,
+    TranslateModule
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
 export class TbAuditLogTableDirective {
   readonly entityType = model<any>();
   readonly entityId = model<any>();
@@ -27,7 +56,6 @@ export class TbAuditLogTableDirective {
   // TODO(port): elements not resolved to a component: md-virtual-repeat-container
   // TODO(port): template: 1 × md-virtual-repeat-container left in place
 
-  protected template: any = $templateCache.get(auditLogTableTemplate);
   types: any;
   protected pageSize: any = 20;
   protected startTime: any = 0;
@@ -50,7 +78,6 @@ export class TbAuditLogTableDirective {
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     this.theAuditLogs = {
             getItemAtIndex: (index?: any, ...rest: any[]) => {
@@ -78,7 +105,7 @@ export class TbAuditLogTableDirective {
                         promise.then(
                             (auditLogs?: any) => {
                                 this.auditLogs.data = this.auditLogs.data.concat(this.prepareAuditLogsData(auditLogs.data));
-                                this.auditLogs.filtered = $filter('filter')(this.auditLogs.data, {$: this.searchText});
+                                this.auditLogs.filtered = this.filterAuditLogs(this.auditLogs.data, this.searchText);
                                 this.auditLogs.nextPageLink = auditLogs.nextPageLink;
                                 this.auditLogs.hasNext = auditLogs.hasNext;
                                 if (this.auditLogs.hasNext) {
@@ -97,26 +124,25 @@ export class TbAuditLogTableDirective {
             }
         };
     this.$watch("entityId", (newVal?: any, prevVal?: any) => {
-            if (newVal && !angular.equals(newVal, prevVal)) {
+            if (newVal && !isEqual(newVal, prevVal)) {
                 this.resetFilter();
                 this.reload();
             }
         });
     this.$watch("userId", (newVal?: any, prevVal?: any) => {
-            if (newVal && !angular.equals(newVal, prevVal)) {
+            if (newVal && !isEqual(newVal, prevVal)) {
                 this.resetFilter();
                 this.reload();
             }
         });
     this.$watch("customerId", (newVal?: any, prevVal?: any) => {
-            if (newVal && !angular.equals(newVal, prevVal)) {
+            if (newVal && !isEqual(newVal, prevVal)) {
                 this.resetFilter();
                 this.reload();
             }
         });
     this.reload();
     this.initWatchers();
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   prepareAuditLogsData(data?: any, ...rest: any[]): any {
@@ -129,6 +155,14 @@ export class TbAuditLogTableDirective {
         }
     );
     return data;
+  }
+
+  private filterAuditLogs(data: any[], searchText: any): any[] {
+    if (searchText === undefined || searchText === null || searchText === '') {
+      return data;
+    }
+    const lowerSearchText = String(searchText).toLowerCase();
+    return data.filter((item: any) => JSON.stringify(item).toLowerCase().includes(lowerSearchText));
   }
 
   getAuditLogsPromise(pageLink?: any, ...rest: any[]): any {
@@ -171,13 +205,13 @@ export class TbAuditLogTableDirective {
 
   initWatchers(...rest: any[]): any {
     this.timewindowWatchHandle = this.$watch("timewindow", (newVal?: any, prevVal?: any) => {
-        if (newVal && !angular.equals(newVal, prevVal)) {
+        if (newVal && !isEqual(newVal, prevVal)) {
             this.reload();
         }
     }, true);
 
     this.searchTextWatchHandle = this.$watch("searchText", (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal)) {
+        if (!isEqual(newVal, prevVal)) {
             this.searchTextUpdated();
         }
     }, true);
@@ -223,7 +257,7 @@ export class TbAuditLogTableDirective {
   }
 
   searchTextUpdated(...rest: any[]): any {
-    this.auditLogs.filtered = $filter('filter')(this.auditLogs.data, {$: this.searchText});
+    this.auditLogs.filtered = this.filterAuditLogs(this.auditLogs.data, this.searchText);
     this.theAuditLogs.getItemAtIndex(this.pageSize);
   }
 

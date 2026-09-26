@@ -19,6 +19,7 @@ export class MenuService {
   private sections: any = [];
   private homeSections: any = [];
   authenticatedHandle: any;
+  private authenticatedSubscription: any;
 
   // TODO(port): $rootScope.$on — a root scope event: subscribe to the service that raises it
   // TODO(port): $state.includes — $state.includes: this.router.url.startsWith(...)
@@ -27,7 +28,7 @@ export class MenuService {
     if (this.userService.isUserLoaded() === true) {
         this.buildMenu();
     }
-    this.authenticatedSubscription = this.userService.authenticated$.subscribe(() => {
+    this.authenticatedSubscription = (this.userService as any).authenticated$.subscribe(() => {
         this.buildMenu();
     });
   }

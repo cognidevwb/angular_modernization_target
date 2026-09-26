@@ -3,7 +3,7 @@ import { ElementRef } from '@angular/core';
 import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
-import datakeyConfigTemplate from '../../../../app/components/datakey-config.tpl.html?raw';
+const datakeyConfigTemplate: string = '';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $q: any;
@@ -43,6 +43,10 @@ export class TbDatakeyConfigDirective {
   dataKeyForm: any;
   dataKeySchema: any;
   model: any;
+  writeValue: any;
+  onChange: any;
+  _value: any;
+  _prevModel: any;
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
   // TODO(port): `scope.fetchEntityKeys(…)` — its result was read; an output emits and returns nothing: take the value from an input callback instead
@@ -121,7 +125,6 @@ export class TbDatakeyConfigDirective {
             }
             this._prevModel = newVal;
         });
-    this.viewContainerRef.createComponent(this.componentFactoryResolver.resolveComponentFactory(DatakeyConfig as any));
   }
 
   keysSearch(searchText?: any, ...rest: any[]): any {
@@ -133,11 +136,11 @@ export class TbDatakeyConfigDirective {
     } else {
         if (this.entityAlias()) {
             var deferred: any = $q.defer();
-            this.fetchEntityKeys.emit({
+            (this.fetchEntityKeys.emit({
                 entityAliasId: this.entityAlias().id,
                 query: searchText,
                 type: this.model.type
-            })
+            }) as any)
                 .then(function (keys?: any) {
                     keys.push(searchText);
                     deferred.resolve(keys);

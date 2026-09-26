@@ -1,12 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
+import { firstValueFrom } from 'rxjs';
 import { RuleChainService } from '../../api/services/rule-chain.service';
 import { UtilsService } from '../../common/services/utils.service';
 
 import $ from 'jquery';
 import { bindMethods } from '../../../bind-methods';
-import nodeScriptTestTemplate from '../../../../app/rulechain/script/node-script-test.tpl.html?raw';
+import { NodeScriptTestComponent } from '../script/node-script-test.component';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $q: any;
 
@@ -106,12 +107,8 @@ export class RuleNodeScriptTestService {
         argNames: argNames
     };
 
-    this.dialog.show({
-        controller: 'NodeScriptTestController',
-        controllerAs: 'vm',
-        templateUrl: nodeScriptTestTemplate,
-        parent: $(this.document.body),
-        locals: {
+    firstValueFrom(this.dialog.open(NodeScriptTestComponent, {
+        data: {
             msg: msg,
             metadata: metadata,
             msgType: msgType,
@@ -119,18 +116,14 @@ export class RuleNodeScriptTestService {
             inputParams: inputParams,
             onShowingCallback: onShowingCallback
         },
-        fullscreen: true,
-        multiple: true,
-        targetEvent: $event,
-        onComplete: (...rest: any[]) => {
-            onShowingCallback.onShowed();
-        }
-    }).then(
+        panelClass: 'tb-dialog'
+    }).afterClosed()).then(
         (script?: any) => {
-            deferred.resolve(script);
-        },
-        () => {
-            deferred.reject();
+            if (script !== undefined) {
+                deferred.resolve(script);
+            } else {
+                deferred.reject();
+            }
         }
     );
     return deferred.promise;

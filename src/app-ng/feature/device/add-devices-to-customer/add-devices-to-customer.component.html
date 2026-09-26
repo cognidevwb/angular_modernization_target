@@ -42,14 +42,14 @@
                     </mat-form-field>
                     <div style='min-height: 150px;'>
 					<span translate layout-align="center center" style="text-transform: uppercase; display: flex; height: 150px;" class="md-subhead" [hidden]="!(noData())">device.no-devices-text</span>
-                        <!-- TODO(port): md-virtual-repeat-container: a cdk-virtual-scroll-viewport with *cdkVirtualFor --><md-virtual-repeat-container [hidden]="!(hasData())" tb-scope-element="repeatContainer" md-top-index="vm.topIndex" flex style='min-height: 150px; width: 100%;'>
+                        <cdk-virtual-scroll-viewport itemSize="48" [hidden]="!(hasData())" style='min-height: 150px; width: 100%;' (scrolledIndexChange)="theDevices.fetchMoreItems_($event)">
                             <mat-list>
-                                <mat-list-item md-virtual-repeat="device in vm.theDevices" md-on-demand class="repeated-item" flex>
+                                <mat-list-item *cdkVirtualFor="let device of devices.data" class="repeated-item">
                                     <mat-checkbox (click)="toggleDeviceSelection($event, device)" attr.aria-label="{{ 'item.selected' | translate }}" [checked]="device?.selected"></mat-checkbox>
                                     <span> {{ device?.name }} </span>
                                 </mat-list-item>
                             </mat-list>
-                        </md-virtual-repeat-container>
+                        </cdk-virtual-scroll-viewport>
                     </div>
                 </fieldset>
             </div>

@@ -17,9 +17,6 @@ import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
 import { bindMethods } from '../../../bind-methods';
-import importDialogTemplate from '../../../../app/import-export/import-dialog.tpl.html?raw';
-import importDialogCSVTemplate from '../../../../app/import-export/import-dialog-csv.tpl.html?raw';
-import entityAliasesTemplate from '../../../../app/entity/alias/entity-aliases.tpl.html?raw';
 import * as JSZip from 'jszip';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let angular: any;
@@ -917,8 +914,8 @@ export class ImportExportService {
 
     // FOR IE:
 
-    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveOrOpenBlob(blob, filename);
+    if (window.navigator && (window.navigator as any).msSaveOrOpenBlob) {
+        (window.navigator as any).msSaveOrOpenBlob(blob, filename);
     } else {
         var e: any = document.createEvent('MouseEvents'),
             a: any = document.createElement('a');
@@ -1003,8 +1000,8 @@ export class ImportExportService {
     filename += '.' + fileType.extension;
     var blob: any = new Blob([data], {type: fileType.mimeType});
     // FOR IE:
-    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveOrOpenBlob(blob, filename);
+    if (window.navigator && (window.navigator as any).msSaveOrOpenBlob) {
+        (window.navigator as any).msSaveOrOpenBlob(blob, filename);
     } else {
         var e: any = document.createEvent('MouseEvents'),
             a: any = document.createElement('a');

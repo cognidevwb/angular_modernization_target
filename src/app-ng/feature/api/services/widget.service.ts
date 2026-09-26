@@ -73,8 +73,8 @@ export class WidgetService {
     window.TbMapWidgetV2 = TbMapWidgetV2;
     window.cssjs = cssjs;
     this.cssParser.testMode = false;
-    this.router.events.pipe(
-        filter((event: any) => event instanceof NavigationStart)
+    inject(Router).events.pipe(
+        filter((event: any) => event?.constructor?.name === 'NavigationStart')
     ).subscribe(() => {
         this.invalidateWidgetsBundleCache();
     });
@@ -266,7 +266,7 @@ export class WidgetService {
     var deferred: any = $q.defer();
     if (!this.allWidgetsBundles) {
         var url: any = '/api/widgetsBundles';
-        this.http.get(url, config).then((response?: any) => {
+        firstValueFrom(this.http.get(url, config)).then((response?: any) => {
             this.allWidgetsBundles = response.data;
             this.systemWidgetsBundles = [];
             this.tenantWidgetsBundles = [];
@@ -371,7 +371,7 @@ export class WidgetService {
     var deferred: any = $q.defer();
     this.loadWidgetsBundleCache().then(
         () => {
-            var widgetsBundles: any = filterFilter(this.allWidgetsBundles, {alias: bundleAlias});
+            var widgetsBundles: any = this.allWidgetsBundles.filter((wb: any) => wb.alias === bundleAlias);
             if (widgetsBundles.length > 0) {
                 deferred.resolve(widgetsBundles[0]);
             } else {
@@ -438,7 +438,7 @@ export class WidgetService {
     var deferred: any = $q.defer();
     var url: any = '/api/widgetTypes?isSystem=' + (isSystem ? 'true' : 'false') +
                 '&bundleAlias='+bundleAlias;
-    this.http.get(url, null).then(function success(response?: any) {
+    firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail(response?: any) {
         deferred.reject(response.data);

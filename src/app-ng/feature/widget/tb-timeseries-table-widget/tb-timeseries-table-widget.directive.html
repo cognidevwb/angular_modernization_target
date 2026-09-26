@@ -39,7 +39,7 @@
             @for (source of sources; track $index) {
               <mat-tab label="{{ source?.datasource?.name }}">
                 <div class="tb-absolute-fill" layout="column">
-                    <!-- TODO(port): md-table-container (angular-material-data-table): a mat-table with MatSort --><md-table-container flex>
+                    <!-- TODO(port): md-table-container (angular-material-data-table): a mat-table with MatSort --><div flex>
                         <table md-table>
                             <thead fix-head md-head md-order="source.query.order" md-on-reorder="vm.onReorder(source)">
                                 <tr md-row>
@@ -76,14 +76,14 @@
                         </table>
                         <mat-divider></mat-divider>
                         <span [hidden]="!(!sources?.[sourceIndex]?.data?.length)" layout-align="center center" class="no-data-found" translate>widget.no-data-found</span>
-                    </md-table-container>
+                    </div>
                 </div>
             </mat-tab>
             }
         </mat-tab-group>
         <!-- TODO(port): md-table-pagination: a mat-paginator -->@if (displayPagination) {
-          <md-table-pagination md-limit="vm.sources[vm.sourceIndex].query.limit" md-limit-options="vm.limitOptions" md-page="vm.sources[vm.sourceIndex].query.page" attr.md-total="{{sources?.[sourceIndex]?.data?.length}}" md-on-paginate="vm.onPaginate(vm.sources[vm.sourceIndex])" md-page-select>
-        </md-table-pagination>
+          <div md-limit="vm.sources[vm.sourceIndex].query.limit" md-limit-options="vm.limitOptions" md-page="vm.sources[vm.sourceIndex].query.page" attr.md-total="{{sources?.[sourceIndex]?.data?.length}}" md-on-paginate="vm.onPaginate(vm.sources[vm.sourceIndex])" md-page-select>
+        </div>
         }
     </div>
 </div>

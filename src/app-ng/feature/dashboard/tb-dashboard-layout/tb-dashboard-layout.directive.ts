@@ -1,7 +1,6 @@
 import { Component, forwardRef, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TbDashboardDirective } from '../../components/tb-dashboard/tb-dashboard.directive';
-import dashboardLayoutTemplate from '../../../../app/dashboard/layouts/dashboard-layout.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -269,6 +268,73 @@ export class TbDashboardLayoutDirective {
   readonly isMobile = model<any>();
   readonly widgetEditMode = model<any>();
 
+  protected dashboardInitComplete = false;
+  protected dashboardContainer: any;
+
+  protected noData(): boolean {
+    return this.dashboardInitComplete && this.layoutCtx() &&
+      this.layoutCtx().widgets && this.layoutCtx().widgets.length == 0;
+  }
+
+  protected addWidget($event?: any) {
+    if (this.dashboardCtx().onAddWidget) {
+      this.dashboardCtx().onAddWidget($event, this.layoutCtx());
+    }
+  }
+
+  protected editWidget($event?: any, widget?: any) {
+    if (this.dashboardCtx().onEditWidget) {
+      this.dashboardCtx().onEditWidget($event, this.layoutCtx(), widget);
+    }
+  }
+
+  protected exportWidget($event?: any, widget?: any) {
+    if (this.dashboardCtx().onExportWidget) {
+      this.dashboardCtx().onExportWidget($event, this.layoutCtx(), widget);
+    }
+  }
+
+  protected widgetMouseDown($event?: any, widget?: any) {
+    if (this.dashboardCtx().onWidgetMouseDown) {
+      this.dashboardCtx().onWidgetMouseDown($event, this.layoutCtx(), widget);
+    }
+  }
+
+  protected widgetClicked($event?: any, widget?: any) {
+    if (this.dashboardCtx().onWidgetClicked) {
+      this.dashboardCtx().onWidgetClicked($event, this.layoutCtx(), widget);
+    }
+  }
+
+  protected prepareDashboardContextMenu() {
+    if (this.dashboardCtx().prepareDashboardContextMenu) {
+      return this.dashboardCtx().prepareDashboardContextMenu(this.layoutCtx());
+    }
+    return undefined;
+  }
+
+  protected prepareWidgetContextMenu(widget?: any) {
+    if (this.dashboardCtx().prepareWidgetContextMenu) {
+      return this.dashboardCtx().prepareWidgetContextMenu(this.layoutCtx(), widget);
+    }
+    return undefined;
+  }
+
+  protected removeWidget($event?: any, widget?: any) {
+    if (this.dashboardCtx().onRemoveWidget) {
+      this.dashboardCtx().onRemoveWidget($event, this.layoutCtx(), widget);
+    }
+  }
+
+  protected dashboardInited(dashboardContainer?: any) {
+    this.dashboardContainer = dashboardContainer;
+    this.dashboardInitComplete = true;
+  }
+
+  protected dashboardInitFailed() {
+    this.dashboardInitComplete = true;
+  }
+
   restrict: any = "E";
   scope: any = true;
   bindToController: any = {
@@ -280,7 +346,6 @@ export class TbDashboardLayoutDirective {
         };
   controller: any = DashboardLayoutController;
   controllerAs: any;
-  templateUrl: any = dashboardLayoutTemplate;
 
   constructor() {
     let vm = this;

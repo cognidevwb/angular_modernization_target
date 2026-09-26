@@ -8,7 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { TbConfirmOnExitDirective } from '../../components/tb-confirm-on-exit/tb-confirm-on-exit.directive';
 
 import $ from 'jquery';
-import changePasswordTemplate from '../../../../app/profile/change-password.tpl.html';
+import { firstValueFrom } from 'rxjs';
+import { ChangePasswordComponent } from '../change-password/change-password.component';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -70,15 +71,7 @@ export class ProfileComponent {
   };
 
   changePassword = ($event?: any, ...rest: any[]): any => {
-    let vm = this;
-    (this.dialog as any).show({
-        controller: 'ChangePasswordController',
-        controllerAs: 'vm',
-        templateUrl: changePasswordTemplate,
-        parent: $(this.document.body),
-        fullscreen: true,
-        targetEvent: $event
-    }).then(function () {
+    firstValueFrom(this.dialog.open(ChangePasswordComponent, { panelClass: 'tb-dialog' }).afterClosed()).then(function () {
     }, function () {
     });
   };

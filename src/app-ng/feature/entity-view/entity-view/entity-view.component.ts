@@ -20,10 +20,14 @@ import { TbRelationTableDirective } from '../../entity/tb-relation-table/tb-rela
 import { TbAuditLogTableDirective } from '../../audit/tb-audit-log-table/tb-audit-log-table.directive';
 
 import $ from 'jquery';
-import addEntityViewTemplate from '../../../../app/entity-view/add-entity-view.tpl.html?raw';
-import entityViewCard from '../../../../app/entity-view/entity-view-card.tpl.html?raw';
-import assignToCustomerTemplate from '../../../../app/entity-view/assign-to-customer.tpl.html?raw';
-import addEntityViewsToCustomerTemplate from '../../../../app/entity-view/add-entity-views-to-customer.tpl.html?raw';
+// TODO(port): 'addEntityViewTemplate' — the add-entity-view dialog needs porting to its own component; kept as an untyped placeholder
+declare let addEntityViewTemplate: any;
+// TODO(port): 'entityViewCard' — the entity-view card template needs porting to its own component; kept as an untyped placeholder
+declare let entityViewCard: any;
+// TODO(port): 'assignToCustomerTemplate' — the assign-to-customer dialog needs porting to its own component; kept as an untyped placeholder
+declare let assignToCustomerTemplate: any;
+// TODO(port): 'addEntityViewsToCustomerTemplate' — the add-entity-views-to-customer dialog needs porting to its own component; kept as an untyped placeholder
+declare let addEntityViewsToCustomerTemplate: any;
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.

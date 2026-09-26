@@ -41,13 +41,13 @@
             <mat-progress-bar style="max-height: 0px;" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
             <mat-divider></mat-divider>
             <span translate layout-align="center center" style="margin-top: 25px;" class="tb-prompt" [hidden]="!(noData())">alarm.no-alarms-prompt</span>
-            <!-- TODO(port): md-virtual-repeat-container: a cdk-virtual-scroll-viewport with *cdkVirtualFor --><md-virtual-repeat-container [hidden]="!(hasData())" flex md-top-index="topIndex" tb-scope-element="repeatContainer">
-                <mat-list-item md-virtual-repeat="alarm in theAlarms" md-on-demand flex [ngStyle]="hasScroll() ? {'margin-right':'-15px'} : {}">
-                    <mat-list class="tb-row" flex layout="row" layout-align="start center" tb-alarm-row alarm="{{alarm}}">
+            <cdk-virtual-scroll-viewport itemSize="48" [hidden]="!(hasData())" flex tb-scope-element="repeatContainer">
+                <mat-list-item *cdkVirtualFor="let alarm of alarms.data" flex [ngStyle]="hasScroll() ? {'margin-right':'-15px'} : {}">
+                    <mat-list class="tb-row" flex layout="row" layout-align="start center" tb-alarm-row [alarm]="alarm">
                     </mat-list>
                     <mat-divider flex></mat-divider>
                 </mat-list-item>
-            </md-virtual-repeat-container>
+            </cdk-virtual-scroll-viewport>
         </mat-list>
     </div>
 </div>

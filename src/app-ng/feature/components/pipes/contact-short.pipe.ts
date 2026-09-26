@@ -1,4 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Ported from the AngularJS filter `contactShort` (module `thingsboard.filters.contactShort`) in src/app/components/contact-short.filter.js:16.
@@ -6,6 +7,8 @@ import { Pipe, PipeTransform } from '@angular/core';
  */
 @Pipe({ name: 'contactShort', standalone: true })
 export class ContactShortPipe implements PipeTransform {
+  private readonly translate = inject(TranslateService);
+
   transform(contact?: any, ...rest: any[]): any {
     var contactShort: any = '';
     if (contact) {
@@ -34,7 +37,7 @@ export class ContactShortPipe implements PipeTransform {
         }
     }
     if (contactShort === '') {
-        contactShort = $filter('translate')('contact.no-address');
+        contactShort = this.translate.instant('contact.no-address');
     }
     return contactShort;
   }

@@ -27,17 +27,15 @@
 	   <span translate layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill">widgets-bundle.empty</span>
 	 }
 </section>
-<tb-dashboard [(aliasController)]="aliasController" [(widgets)]="widgetTypes" [isEdit]="false" [isEditActionEnabled]="true" [isExportActionEnabled]="true" [isRemoveActionEnabled]="!isReadOnly()" (onEditWidget)="openWidgetType(event, widget)" (onExportWidget)="exportWidgetType(event, widget)" (onRemoveWidget)="removeWidgetType(event, widget)" (loadWidgets)="loadWidgetLibrary()" (onInit)="dashboardInited(dashboard)" (onInitFailed)="dashboardInitFailed(e)">
+<tb-dashboard [(aliasController)]="aliasController" [(widgets)]="widgetTypes" [isEdit]="false" [isEditActionEnabled]="true" [isExportActionEnabled]="true" [isRemoveActionEnabled]="!isReadOnly()" (onEditWidget)="openWidgetType($event.event, $event.widget)" (onExportWidget)="exportWidgetType($event.event, $event.widget)" (onRemoveWidget)="removeWidgetType($event.event, $event.widget)" (loadWidgets)="loadWidgetLibrary()" (onInit)="dashboardInited($event.dashboard)" (onInitFailed)="dashboardInitFailed($event.e)">
 </tb-dashboard>
 <section layout="row" layout-wrap class="tb-footer-buttons md-fab ">
-	<!-- TODO(port): md-fab-speed-dial: a mat-fab that toggles a list of mat-mini-fab buttons --><md-fab-speed-dial [disabled]="rootScope?.loading" [hidden]="!(!isReadOnly())" md-open="vm.addItemActionsOpen" class="md-scale" md-direction="up">
-		<!-- TODO(port): md-fab-trigger: the mat-fab that opens the speed dial --><md-fab-trigger>
-			<button mat-fab color="accent" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'widget.add-widget-type' | translate }}" attr.matTooltip="{{ 'widget.add-widget-type' | translate }}" matTooltipPosition="above">
-				
-				<mat-icon>add</mat-icon>
-			</button>
-		</md-fab-trigger>
-		<!-- TODO(port): md-fab-actions: the buttons the speed dial shows --><md-fab-actions>
+	<div [hidden]="!(!isReadOnly())" class="md-scale">
+		<button mat-fab color="accent" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" (click)="addItemActionsOpen = !addItemActionsOpen" attr.aria-label="{{ 'widget.add-widget-type' | translate }}" attr.matTooltip="{{ 'widget.add-widget-type' | translate }}" matTooltipPosition="above">
+			
+			<mat-icon>add</mat-icon>
+		</button>
+		<div [hidden]="!addItemActionsOpen">
 			<button mat-fab [disabled]="rootScope?.loading" class="tmd-accent md-hue-2" (click)="addWidgetType($event)" attr.aria-label="{{ 'action.create' | translate }}" attr.matTooltip="{{ 'widget-type.create-new-widget-type' | translate }}" matTooltipPosition="above">
 				
 				<mat-icon>insert_drive_file</mat-icon>
@@ -46,6 +44,6 @@
 				
 				<mat-icon>file_upload</mat-icon>
 			</button>
-		</md-fab-actions>
-	</md-fab-speed-dial>
+		</div>
+	</div>
 </section>

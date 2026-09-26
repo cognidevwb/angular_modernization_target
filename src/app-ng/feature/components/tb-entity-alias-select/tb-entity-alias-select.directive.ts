@@ -40,12 +40,13 @@ protected template: any = entityAliasSelectTemplate;
   entityAlias: any = null;
   $watch: any;
   entityAliasSearchText: any;
+  ngControl: any;
+  onChange: any;
 
   // TODO(port): `scope.onCreateEntityAlias(…)` — its result was read; an output emits and returns nothing: take the value from an input callback instead
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
     this.$watch('aliasController', () => {
             this.entityAliasList = [];

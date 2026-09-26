@@ -59,7 +59,7 @@
                 </button>
                 <mat-form-field flex>
                     <mat-label>&nbsp;</mat-label>
-                    <input matInput [(ngModel)]="query.search" class="searchInput" attr.placeholder="{{ 'common.enter-search' | translate }}">
+                    <input matInput [(ngModel)]="query.search" (ngModelChange)="updateRelations()" class="searchInput" attr.placeholder="{{ 'common.enter-search' | translate }}">
                 </mat-form-field>
                 <button mat-icon-button attr.aria-label="{{ 'action.back' | translate }}" (click)="exitFilterMode()" attr.matTooltip="{{ 'action.close' | translate }}" matTooltipPosition="above">
                     <mat-icon attr.aria-label="{{ 'action.close' | translate }}" class="material-icons">close</mat-icon>
@@ -128,7 +128,7 @@
                 </tbody>
             </table>
         </md-table-container>
-        <!-- TODO(port): md-table-pagination: a mat-paginator --><md-table-pagination md-limit="vm.query.limit" md-limit-options="[5, 10, 15]" md-page="vm.query.page" attr.md-total="{{relationsCount}}" md-on-paginate="vm.onPaginate" md-page-select>
-        </md-table-pagination>
+        <mat-paginator [length]="relationsCount" [pageSize]="query.limit" [pageSizeOptions]="[5, 10, 15]" [pageIndex]="query.page - 1" (page)="onPaginate($event)" showFirstLastButtons>
+        </mat-paginator>
     </div>
 </div>

@@ -16,6 +16,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 /**
  * Ported from the AngularJS controller `AddAssetsToCustomerController` (module `thingsboard.asset`) in src/app/asset/index.js:28.
@@ -24,7 +25,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'add-assets-to-customer',
   standalone: true,
-  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, forwardRef(() => TbScopeElementDirective)],
+  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, ScrollingModule, forwardRef(() => TbScopeElementDirective)],
   templateUrl: './add-assets-to-customer.component.html',
 })
 export class AddAssetsToCustomerComponent {

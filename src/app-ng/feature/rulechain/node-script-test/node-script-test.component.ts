@@ -64,6 +64,7 @@ export class NodeScriptTestComponent {
   layoutInited: any;
   nodeScriptTestDialogElement: any;
   theForm: any;
+  payloadForm: any;
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
   // TODO(port): $scope.$broadcast — a scope event: call the service that listens

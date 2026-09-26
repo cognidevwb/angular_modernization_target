@@ -39,4 +39,7 @@ export class SelectTargetLayoutComponent {
     this.theForm.$setPristine();
     (this.dialog as any).hide(layoutId);
   };
+
+  save = (...rest: any[]): any => {
+  };
 }

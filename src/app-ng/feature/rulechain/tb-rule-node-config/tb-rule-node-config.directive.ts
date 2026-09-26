@@ -6,7 +6,6 @@ import { TbRuleNodeDefinedConfigDirective } from '../tb-rule-node-defined-config
 import { TbJsonObjectEditDirective } from '../../components/tb-json-object-edit/tb-json-object-edit.directive';
 
 import $ from 'jquery';
-import ruleNodeConfigTemplate from '!raw-loader!../../../../app/rulechain/rulenode-config.tpl.html';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
@@ -38,7 +37,6 @@ export class TbRuleNodeConfigDirective {
   protected readonly translate = inject(TranslateService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(ruleNodeConfigTemplate);
   $watch: any;
   configuration: any;
   definedDirectiveError: any;
@@ -47,7 +45,6 @@ export class TbRuleNodeConfigDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.$watch('configuration', (newVal?: any, prevVal?: any) => {
             if (!angular.equals(newVal, prevVal)) {
                 ngModelCtrl.$setViewValue(this.configuration);

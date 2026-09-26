@@ -42,6 +42,7 @@ export class LoginComponent {
         name: '',
         password: ''
     };
+  oauth2Clients: any[] = [];
 
   // TODO(port): $state.go — $state.go: this.router.navigate([...])
 

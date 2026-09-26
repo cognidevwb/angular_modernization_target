@@ -42,14 +42,14 @@
                     </mat-form-field>
                     <div style='min-height: 150px;'>
 					<span translate layout-align="center center" style="text-transform: uppercase; display: flex; height: 150px;" class="md-subhead" [hidden]="!(noData())">customer.no-customers-text</span>
-                        <!-- TODO(port): md-virtual-repeat-container: a cdk-virtual-scroll-viewport with *cdkVirtualFor --><md-virtual-repeat-container [hidden]="!(hasData())" tb-scope-element="repeatContainer" md-top-index="vm.topIndex" flex style='min-height: 150px; width: 100%;'>
+                        <cdk-virtual-scroll-viewport itemSize="48" [hidden]="!(hasData())" tb-scope-element="repeatContainer" style='min-height: 150px; width: 100%;'>
                             <mat-list>
-                                <mat-list-item md-virtual-repeat="customer in vm.theCustomers" md-on-demand class="repeated-item" flex>
+                                <mat-list-item *cdkVirtualFor="let customer of customers.data" class="repeated-item">
                                     <mat-checkbox (click)="toggleCustomerSelection($event, customer)" attr.aria-label="{{ 'item.selected' | translate }}" [checked]="isCustomerSelected(customer)"></mat-checkbox>
                                     <span> {{ customer?.title }} </span>
                                 </mat-list-item>
                             </mat-list>
-                        </md-virtual-repeat-container>
+                        </cdk-virtual-scroll-viewport>
                     </div>
                 </fieldset>
             </div>

@@ -1,201 +1,15 @@
-import { Component, model } from '@angular/core';
-import webCameraWidgetTemplate from '../../../../app/widget/lib/web-camera-input-widget.tpl.html?raw';
+import { Component, ElementRef, effect, inject, model } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let scope: any;
-
-// Helpers at the legacy file's top level, beside the registration (as written).
-function WebCameraWidgetController(this: any, $element?: any, $scope?: any, $window?: any, types?: any, utils?: any, attributeService?: any, Fullscreen?: any) {
-    let vm: any = this;
-
-    vm.videoInput = [];
-    vm.videoDevice = "";
-    vm.previewPhoto = "";
-    vm.isShowCamera = false;
-    vm.isPreviewPhoto = false;
-
-    let streamDevice: any = null;
-    let indexWebCamera: any = 0;
-    let videoElement: any = null;
-    let canvas: any = null;
-    let photoCamera: any = null;
-    let dataKeyType: any = "";
-    let width: any = 640;
-    let height: any = 480;
-
-    const DEFAULT_IMAGE_TYPE: any = 'image/jpeg';
-    const DEFAULT_IMAGE_QUALITY: any = 0.92;
-
-    vm.getStream = getStream;
-    vm.createPhoto = createPhoto;
-    vm.takePhoto = takePhoto;
-    vm.switchWebCamera = switchWebCamera;
-    vm.cancelPhoto = cancelPhoto;
-    vm.closeCamera = closeCamera;
-    vm.savePhoto = savePhoto;
-
-    vm.isEntityDetected = false;
-    vm.dataKeyDetected = false;
-    vm.isCameraSupport = false;
-    vm.isDeviceDetect = false;
-
-    $scope.$watch('vm.ctx', function () {
-        if (vm.ctx && vm.ctx.datasources && vm.ctx.datasources.length) {
-            let datasource: any = vm.ctx.datasources[0];
-            if (datasource.type === types.datasourceType.entity) {
-                if (datasource.entityType && datasource.entityId) {
-                    if (vm.ctx.settings.widgetTitle && vm.ctx.settings.widgetTitle.length) {
-                        $scope.titleTemplate = utils.customTranslation(vm.ctx.settings.widgetTitle, vm.ctx.settings.widgetTitle);
-                    } else {
-                        $scope.titleTemplate = vm.ctx.widgetConfig.title;
-                    }
-                    vm.isEntityDetected = true;
-                }
-            }
-            width = vm.ctx.settings.maxWidth ? vm.ctx.settings.maxWidth : 640;
-            height = vm.ctx.settings.maxHeight ? vm.ctx.settings.maxWidth : 480;
-            if (datasource.dataKeys.length) {
-                $scope.currentKey = datasource.dataKeys[0].name;
-                dataKeyType = datasource.dataKeys[0].type;
-                vm.dataKeyDetected = true;
-            }
-            if (hasGetUserMedia()) {
-                vm.isCameraSupport = true;
-                getDevices().then(gotDevices).then(() => {
-                    vm.isDeviceDetect = !!vm.videoInput.length;
-                });
-            }
-        }
-    });
-
-    function getVideoAspectRatio() {
-        if (videoElement.videoWidth && videoElement.videoWidth > 0 &&
-            videoElement.videoHeight && videoElement.videoHeight > 0) {
-            return videoElement.videoWidth / videoElement.videoHeight;
-        }
-        return width / height;
-    }
-
-    vm.videoWidth = function() {
-        const videoRatio: any = getVideoAspectRatio();
-        return Math.min(width, height * videoRatio);
-    }
-
-    vm.videoHeight = function() {
-        const videoRatio: any = getVideoAspectRatio();
-        return Math.min(height, width / videoRatio);
-    }
-
-    function hasGetUserMedia() {
-        return !!($window.navigator.mediaDevices && $window.navigator.mediaDevices.getUserMedia);
-    }
-
-    function takePhoto(){
-        vm.isShowCamera = true;
-        videoElement = $element[0].querySelector('#videoStream');
-        photoCamera = $element[0].querySelector('#photoCamera');
-        canvas = $element[0].querySelector('canvas');
-        Fullscreen.enable(photoCamera);
-        getStream();
-    }
-
-    function cancelPhoto() {
-        vm.isPreviewPhoto = false;
-        vm.previewPhoto = "";
-    }
-
-    function switchWebCamera() {
-        indexWebCamera = (indexWebCamera+1)%vm.videoInput.length;
-        vm.videoDevice = vm.videoInput[indexWebCamera].deviceId;
-        getStream();
-    }
-
-    function getDevices() {
-        return $window.navigator.mediaDevices.enumerateDevices();
-    }
-
-    function gotDevices(deviceInfos?: any) {
-        for (const deviceInfo of deviceInfos) {
-            let device: any = {
-                deviceId: deviceInfo.deviceId,
-                label: ""
-            };
-            if (deviceInfo.kind === 'videoinput') {
-                device.label = deviceInfo.label || `Camera ${vm.videoInput.length + 1}`;
-                vm.videoInput.push(device);
-            }
-        }
-    }
-
-    function getStream() {
-        if (streamDevice !== null) {
-            streamDevice.getTracks().forEach(track => {
-                track.stop();
-            });
-        }
-        const constraints: any = {
-            video: {deviceId: vm.videoDevice !== "" ? {exact: vm.videoDevice} : undefined}
-        };
-        return $window.navigator.mediaDevices.getUserMedia(constraints).then(gotStream);
-    }
-
-    function gotStream(stream?: any) {
-        streamDevice = stream;
-        if(vm.videoDevice === ""){
-            indexWebCamera = vm.videoInput.findIndex(option => option.label === stream.getVideoTracks()[0].label);
-            indexWebCamera = indexWebCamera === -1 ? 0 : indexWebCamera;
-            vm.videoDevice = vm.videoInput[indexWebCamera].deviceId;
-        }
-        videoElement.srcObject = stream;
-    }
-
-    function createPhoto() {
-        canvas.width = vm.videoWidth();
-        canvas.height = vm.videoHeight();
-        canvas.getContext('2d').drawImage(videoElement, 0, 0, vm.videoWidth(), vm.videoHeight());
-        const mimeType: any = vm.ctx.settings.imageFormat ? vm.ctx.settings.imageFormat : DEFAULT_IMAGE_TYPE;
-        const quality: any = vm.ctx.settings.imageQuality ? vm.ctx.settings.imageQuality : DEFAULT_IMAGE_QUALITY;
-        vm.previewPhoto = canvas.toDataURL(mimeType, quality);
-        vm.isPreviewPhoto = true;
-    }
-
-    function closeCamera(){
-        Fullscreen.cancel(photoCamera);
-        vm.isShowCamera = false;
-        if (streamDevice !== null) {
-            streamDevice.getTracks().forEach(track => {
-                track.stop();
-            });
-        }
-        streamDevice = null;
-        videoElement.srcObject = null;
-    }
-
-    function savePhoto(){
-        let promiseData: any = null;
-        let datasource: any = vm.ctx.datasources[0];
-        let saveData: any = [{
-            key: datasource.dataKeys[0].name,
-            value: vm.previewPhoto
-        }];
-        if(dataKeyType === types.dataKeyType.attribute){
-            promiseData = attributeService.saveEntityAttributes(datasource.entityType, datasource.entityId, types.attributesScope.server.value, saveData);
-        } else if(dataKeyType === types.dataKeyType.timeseries){
-            promiseData = attributeService.saveEntityTimeseries(datasource.entityType, datasource.entityId, "scope", saveData);
-        }
-        promiseData.then(()=>{
-            vm.isPreviewPhoto = false;
-            closeCamera();
-        })
-    }
-}
+const DEFAULT_IMAGE_TYPE = 'image/jpeg';
+const DEFAULT_IMAGE_QUALITY = 0.92;
 
 /**
  * Ported from the AngularJS directive `tbWebCameraWidget` (module `thingsboard.widgets.webCameraWidget`) in src/app/widget/lib/web-camera-input-widget.js:22.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
   selector: 'tb-web-camera-widget',
@@ -206,17 +20,204 @@ function WebCameraWidgetController(this: any, $element?: any, $scope?: any, $win
 export class TbWebCameraWidgetDirective {
   readonly ctx = model<any>();
 
-  restrict: any = "E";
-  scope: any = true;
-  bindToController: any = {
-            ctx: '='
-        };
-  controller: any = WebCameraWidgetController;
-  controllerAs: any;
-  templateUrl: any = webCameraWidgetTemplate;
+  private readonly elementRef = inject(ElementRef);
+  private readonly http = inject(HttpClient);
+
+  videoInput: any[] = [];
+  videoDevice = '';
+  previewPhoto = '';
+  isShowCamera = false;
+  isPreviewPhoto = false;
+
+  isEntityDetected = false;
+  dataKeyDetected = false;
+  isCameraSupport = false;
+  isDeviceDetect = false;
+
+  private streamDevice: MediaStream | null = null;
+  private indexWebCamera = 0;
+  private videoElement: HTMLVideoElement | null = null;
+  private canvas: HTMLCanvasElement | null = null;
+  private photoCamera: HTMLElement | null = null;
+  private dataKeyType = '';
+  private width = 640;
+  private height = 480;
 
   constructor() {
-    let vm = this;
-    this.controllerAs = 'vm';
+    effect(() => {
+      const ctx: any = this.ctx();
+      if (ctx && ctx.datasources && ctx.datasources.length) {
+        const datasource: any = ctx.datasources[0];
+        if (datasource.type === 'entity') {
+          if (datasource.entityType && datasource.entityId) {
+            this.isEntityDetected = true;
+          }
+        }
+        this.width = ctx.settings.maxWidth ? ctx.settings.maxWidth : 640;
+        this.height = ctx.settings.maxHeight ? ctx.settings.maxWidth : 480;
+        if (datasource.dataKeys.length) {
+          this.dataKeyType = datasource.dataKeys[0].type;
+          this.dataKeyDetected = true;
+        }
+        if (this.hasGetUserMedia()) {
+          this.isCameraSupport = true;
+          this.getDevices().then(deviceInfos => this.gotDevices(deviceInfos)).then(() => {
+            this.isDeviceDetect = !!this.videoInput.length;
+          });
+        }
+      }
+    });
+  }
+
+  private getVideoAspectRatio(): number {
+    if (this.videoElement && this.videoElement.videoWidth && this.videoElement.videoWidth > 0 &&
+        this.videoElement.videoHeight && this.videoElement.videoHeight > 0) {
+      return this.videoElement.videoWidth / this.videoElement.videoHeight;
+    }
+    return this.width / this.height;
+  }
+
+  videoWidth(): number {
+    const videoRatio = this.getVideoAspectRatio();
+    return Math.min(this.width, this.height * videoRatio);
+  }
+
+  videoHeight(): number {
+    const videoRatio = this.getVideoAspectRatio();
+    return Math.min(this.height, this.width / videoRatio);
+  }
+
+  private hasGetUserMedia(): boolean {
+    return !!(window.navigator.mediaDevices && window.navigator.mediaDevices.getUserMedia);
+  }
+
+  takePhoto(): void {
+    this.isShowCamera = true;
+    const element = this.elementRef.nativeElement as HTMLElement;
+    this.videoElement = element.querySelector<HTMLVideoElement>('#videoStream');
+    this.photoCamera = element.querySelector<HTMLElement>('#photoCamera');
+    this.canvas = element.querySelector<HTMLCanvasElement>('canvas');
+    if (this.photoCamera && this.photoCamera.requestFullscreen) {
+      this.photoCamera.requestFullscreen();
+    }
+    this.getStream();
+  }
+
+  cancelPhoto(): void {
+    this.isPreviewPhoto = false;
+    this.previewPhoto = '';
+  }
+
+  switchWebCamera(): void {
+    this.indexWebCamera = (this.indexWebCamera + 1) % this.videoInput.length;
+    this.videoDevice = this.videoInput[this.indexWebCamera].deviceId;
+    this.getStream();
+  }
+
+  private getDevices(): Promise<MediaDeviceInfo[]> {
+    return window.navigator.mediaDevices.enumerateDevices();
+  }
+
+  private gotDevices(deviceInfos: MediaDeviceInfo[]): void {
+    for (const deviceInfo of deviceInfos) {
+      const device: any = {
+        deviceId: deviceInfo.deviceId,
+        label: ''
+      };
+      if (deviceInfo.kind === 'videoinput') {
+        device.label = deviceInfo.label || `Camera ${this.videoInput.length + 1}`;
+        this.videoInput.push(device);
+      }
+    }
+  }
+
+  private getStream(): Promise<void> {
+    if (this.streamDevice !== null) {
+      this.streamDevice.getTracks().forEach(track => {
+        track.stop();
+      });
+    }
+    const constraints: MediaStreamConstraints = {
+      video: { deviceId: this.videoDevice !== '' ? { exact: this.videoDevice } : undefined }
+    };
+    return window.navigator.mediaDevices.getUserMedia(constraints).then(stream => this.gotStream(stream));
+  }
+
+  private gotStream(stream: MediaStream): void {
+    this.streamDevice = stream;
+    if (this.videoDevice === '') {
+      let index = this.videoInput.findIndex(option => option.label === stream.getVideoTracks()[0].label);
+      index = index === -1 ? 0 : index;
+      this.indexWebCamera = index;
+      this.videoDevice = this.videoInput[index].deviceId;
+    }
+    if (this.videoElement) {
+      this.videoElement.srcObject = stream;
+    }
+  }
+
+  createPhoto(): void {
+    if (!this.canvas || !this.videoElement) {
+      return;
+    }
+    this.canvas.width = this.videoWidth();
+    this.canvas.height = this.videoHeight();
+    this.canvas.getContext('2d')!.drawImage(this.videoElement, 0, 0, this.videoWidth(), this.videoHeight());
+    const ctx: any = this.ctx();
+    const mimeType = ctx?.settings?.imageFormat ? ctx.settings.imageFormat : DEFAULT_IMAGE_TYPE;
+    const quality = ctx?.settings?.imageQuality ? ctx.settings.imageQuality : DEFAULT_IMAGE_QUALITY;
+    this.previewPhoto = this.canvas.toDataURL(mimeType, quality);
+    this.isPreviewPhoto = true;
+  }
+
+  closeCamera(): void {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+    this.isShowCamera = false;
+    if (this.streamDevice !== null) {
+      this.streamDevice.getTracks().forEach(track => {
+        track.stop();
+      });
+    }
+    this.streamDevice = null;
+    if (this.videoElement) {
+      this.videoElement.srcObject = null;
+    }
+  }
+
+  savePhoto(): void {
+    const ctx: any = this.ctx();
+    const datasource: any = ctx.datasources[0];
+    const saveData: any[] = [{
+      key: datasource.dataKeys[0].name,
+      value: this.previewPhoto
+    }];
+    let promiseData: Promise<any> = null as any;
+    if (this.dataKeyType === 'attribute') {
+      promiseData = this.saveEntityAttributes(datasource.entityType, datasource.entityId, 'SERVER_SCOPE', saveData);
+    } else if (this.dataKeyType === 'timeseries') {
+      promiseData = this.saveEntityTimeseries(datasource.entityType, datasource.entityId, 'scope', saveData);
+    }
+    promiseData.then(() => {
+      this.isPreviewPhoto = false;
+      this.closeCamera();
+    });
+  }
+
+  private saveEntityAttributes(entityType: string, entityId: string, scope: string, attributes: any[]): Promise<any> {
+    const attributesData: { [key: string]: any } = {};
+    attributes.forEach(attribute => {
+      attributesData[attribute.key] = attribute.value;
+    });
+    return firstValueFrom(this.http.post(`/api/plugins/telemetry/${entityType}/${entityId}/attributes/${scope}`, attributesData));
+  }
+
+  private saveEntityTimeseries(entityType: string, entityId: string, scope: string, timeseries: any[]): Promise<any> {
+    const timeseriesData: { [key: string]: any } = {};
+    timeseries.forEach(item => {
+      timeseriesData[item.key] = item.value;
+    });
+    return firstValueFrom(this.http.post(`/api/plugins/telemetry/${entityType}/${entityId}/timeseries/${scope}`, timeseriesData));
   }
 }

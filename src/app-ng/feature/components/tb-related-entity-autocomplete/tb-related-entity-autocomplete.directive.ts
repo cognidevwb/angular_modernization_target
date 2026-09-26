@@ -3,7 +3,6 @@ import { ElementRef } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 
 import $ from 'jquery';
-import relatedEntityAutocompleteTemplate from '../../../../app/components/related-entity-autocomplete.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $filter: any;
@@ -40,39 +39,38 @@ export class TbRelatedEntityAutocompleteDirective {
   protected readonly entityService = inject(EntityService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = relatedEntityAutocompleteTemplate;
   entity: any = null;
   entitySearchText: any = '';
   allEntities: any = null;
   $watch: any;
+  protected onChange: (value: any) => void = () => {};
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
-    this.writeValue = (value: any) => {
-            if (value) {
-                this.entityService.getRelatedEntity(value).then(
-                    (entity?: any) => {
-                        this.entity = entity;
-                    },
-                    () => {
-                        this.entity = null;
-                    }
-                );
-            } else {
-                this.entity = null;
-            }
-        };
     this.$watch('entity', () => {
             this.updateView();
         });
     this.$watch('disabled', () => {
             this.updateView();
         });
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  writeValue(value: any): void {
+    if (value) {
+        this.entityService.getRelatedEntity(value).then(
+            (entity?: any) => {
+                this.entity = entity;
+            },
+            () => {
+                this.entity = null;
+            }
+        );
+    } else {
+        this.entity = null;
+    }
   }
 
   fetchEntities(searchText?: any, ...rest: any[]): any {

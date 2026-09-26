@@ -38,6 +38,10 @@ export class LegendConfigPanelComponent {
 
   // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
 
+  protected update(): void {
+    this._mdPanelRef?.close();
+  }
+
   constructor() {
     let vm = this;
     this._mdPanelRef = this.dialogData.mdPanelRef;

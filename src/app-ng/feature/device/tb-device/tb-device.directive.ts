@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 import { TbEntitySubtypeAutocompleteDirective } from '../../entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive';
 
 import $ from 'jquery';
-import deviceFieldsetTemplate from '../../../../app/device/device-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -58,7 +57,6 @@ export class TbDeviceDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(deviceFieldsetTemplate);
   types: any;
   isAssignedToCustomer: any = false;
   isPublic: any = false;
@@ -68,7 +66,6 @@ export class TbDeviceDirective {
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     this.$watch('device', (newVal?: any) => {
             if (newVal) {
@@ -87,7 +84,6 @@ export class TbDeviceDirective {
                 }
             }
         });
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   onDeviceIdCopied(...rest: any[]): any {

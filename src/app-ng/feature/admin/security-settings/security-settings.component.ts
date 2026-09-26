@@ -10,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { TranslatePipe } from '@ngx-translate/core';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
@@ -22,7 +23,7 @@ declare let $mdExpansionPanel: any;
 @Component({
   selector: 'security-settings',
   standalone: true,
-  imports: [TranslatePipe, MatProgressBarModule, MatInputModule, MatFormFieldModule, MatCardModule, MatButtonModule, FormsModule, forwardRef(() => TbHelpDirective), forwardRef(() => TbConfirmOnExitDirective)],
+  imports: [TranslatePipe, MatProgressBarModule, MatInputModule, MatFormFieldModule, MatCardModule, MatButtonModule, MatExpansionModule, FormsModule, forwardRef(() => TbHelpDirective), forwardRef(() => TbConfirmOnExitDirective)],
   templateUrl: './security-settings.component.html',
 })
 export class SecuritySettingsComponent {

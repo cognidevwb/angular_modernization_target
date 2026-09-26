@@ -16,7 +16,7 @@
     limitations under the License.
 
 -->
-<!-- TODO(port): md-sidenav: a mat-sidenav inside a mat-sidenav-container --><md-sidenav class="md-sidenav-right md-whiteframe-4dp tb-sidenav-details" md-disable-backdrop md-is-open="isOpen" md-component-id="right" layout="column">
+<mat-sidenav class="md-sidenav-right md-whiteframe-4dp tb-sidenav-details" position="end" mode="over" [opened]="isOpen()">
       <header>
 	      <mat-toolbar class="md-theme-light" [ngStyle]="{'height':headerHeightPx()+'px'}">
 	      	<div class="md-toolbar-tools" layout="row">
@@ -49,4 +49,4 @@
       <div flex class="md-content">
 			<div><ng-content></ng-content></div>
       </div>
-</md-sidenav>	
+</mat-sidenav>

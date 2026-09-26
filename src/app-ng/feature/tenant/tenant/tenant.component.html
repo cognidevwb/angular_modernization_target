@@ -17,12 +17,12 @@
 
 -->
 <tb-grid (gridConfiguration)="tenantGridConfig">
-	<details-buttons [tbHelp]="'tenants'" help-container-id="help-container">
+	<div [tbHelp]="'tenants'" help-container-id="help-container">
 		<div id="help-container"></div>
-	</details-buttons>
+	</div>
 	<mat-tab-group [ngClass]="{'tb-headless': grid?.detailsConfig?.isDetailsEditMode}" id="tabs" flex class="tb-absolute-fill">
 		<mat-tab label="{{ 'tenant.details' | translate }}">
-			<tb-tenant [tenant]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(theForm)]="grid.detailsForm" (onManageUsers)="openTenantUsers(event, grid.detailsConfig.currentItem)" (onDeleteTenant)="grid.deleteItem(event, grid.detailsConfig.currentItem)"></tb-tenant>
+			<tb-tenant [tenant]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(theForm)]="grid.detailsForm" (onManageUsers)="openTenantUsers($event, grid.detailsConfig.currentItem)" (onDeleteTenant)="grid.deleteItem($event, grid.detailsConfig.currentItem)"></tb-tenant>
 		</mat-tab>
 		@if (!grid?.detailsConfig?.isDetailsEditMode) {
 		  <mat-tab md-on-select="vm.grid.triggerResize()" label="{{ 'attribute.attributes' | translate }}">

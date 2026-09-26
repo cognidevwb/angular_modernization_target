@@ -4,14 +4,20 @@ import { ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UtilsService } from '../../common/services/utils.service';
 import { types } from '../../common/constants/types';
+import { firstValueFrom } from 'rxjs';
+import { EventContentDialogComponent } from '../event-content-dialog/event-content-dialog.component';
 
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
-import eventErrorDialogTemplate from '../../../../app/event/event-content-dialog.tpl.html?raw';
 import eventRowLcEventTemplate from '../../../../app/event/event-row-lc-event.tpl.html?raw';
 import eventRowStatsTemplate from '../../../../app/event/event-row-stats.tpl.html?raw';
 import eventRowErrorTemplate from '../../../../app/event/event-row-error.tpl.html?raw';
 import eventRowDebugRuleNodeTemplate from '../../../../app/event/event-row-debug-rulenode.tpl.html?raw';
+
+declare module '*.tpl.html?raw' {
+  const content: string;
+  export default content;
+}
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;
@@ -91,19 +97,10 @@ export class TbEventRowDirective {
     catch(err: any) {
         sortedContent = content;
     }
-    this.dialog.show({
-        controller: 'EventContentDialogController',
-        controllerAs: 'vm',
-        templateUrl: eventErrorDialogTemplate,
-        locals: {content: sortedContent, title: title, contentType: contentType, showingCallback: onShowingCallback},
-        parent: $(this.document.body),
-        fullscreen: true,
-        targetEvent: $event,
-        multiple: true,
-        onShowing: (scope?: any, element?: any, ...rest: any[]) => {
-            onShowingCallback.onShowing(scope, element);
-        }
-    });
+    firstValueFrom(this.dialog.open(EventContentDialogComponent, {
+        data: {content: sortedContent, title: title, contentType: contentType, showingCallback: onShowingCallback},
+        panelClass: 'tb-dialog'
+    }).afterClosed());
   }
 
   checkTooltip($event?: any, ...rest: any[]): any {

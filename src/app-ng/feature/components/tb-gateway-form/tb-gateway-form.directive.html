@@ -17,6 +17,10 @@
 
 -->
 <div md-scroll-y layout="column" class="md-content gateway-form">
+    @let configurations = $any(this).configurations;
+    @let types = $any(this).types;
+    @let changeAlignment = $any(this).changeAlignment;
+    @let isReadOnlyForm = isReadOnly;
     <form name="gatewayConfiguration">
          <!-- TODO(port): md-expansion-panel-group (angular-material-expansion-panel): a mat-accordion --><md-expansion-panel-group>
             <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><md-expansion-panel attr.md-component-id="{{idForm}}thingsboardPanelId">
@@ -103,7 +107,7 @@
                                 <mat-label>{{'gateway.remote-logging-level' | translate }}</mat-label>
                                 <mat-select [disabled]="isReadOnlyForm" name="loggingLevel" [(ngModel)]="configurations.remoteLoggingLevel">
                                     @for (logLevel of types?.gatewayLogLevel; track $index) {
-                                      <mat-option [value]="logLevel" [selected]="$index === 5">
+                                      <mat-option [value]="logLevel">
                                         {{logLevel}}
                                     </mat-option>
                                     }
@@ -218,7 +222,7 @@
                         <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
                     </md-expansion-panel-header>
                     <!-- TODO(port): md-expansion-panel-content: the panel's content --><md-expansion-panel-content>
-                        <tb-gateway-config [(gatewayConfig)]="configurations.connectors" [(theForm)]="gatewayConfiguration" [(changeAlignment)]="changeAlignment" [(isReadOnly)]="isReadOnlyForm">
+                        <tb-gateway-config [(gatewayConfig)]="configurations.connectors" [(theForm)]="gatewayConfiguration" [(changeAlignment)]="$any(this).changeAlignment" [(isReadOnly)]="isReadOnly">
                         </tb-gateway-config>
                     </md-expansion-panel-content>
                 </md-expansion-panel-expanded>

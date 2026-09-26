@@ -16,7 +16,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -32,7 +35,7 @@ declare let $scope: any;
 @Component({
   selector: 'manage-dashboard-states',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule],
+  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, MatTableModule, MatSortModule, MatPaginatorModule],
   templateUrl: './manage-dashboard-states.component.html',
 })
 export class ManageDashboardStatesComponent {
@@ -50,6 +53,7 @@ export class ManageDashboardStatesComponent {
   allStates: any = [];
   states: any = [];
   statesCount: any = 0;
+  protected readonly displayedColumns = ['name', 'id', 'root', 'actions'];
   query: any = {
         order: 'name',
         limit: 5,

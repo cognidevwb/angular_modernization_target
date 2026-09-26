@@ -85,14 +85,14 @@
 							</mat-checkbox>
 						</section>
 						<section layout="column" flex [hidden]="!(isEdit || !timewindow?.hideAggInterval)">
-							<md-slider-container>
+							<div class="tb-slider-container" style="display: flex; align-items: center;">
 								<span translate>aggregation.limit</span>
 								<mat-slider flex min="{{minDatapointsLimit()}}" max="{{maxDatapointsLimit()}}" step="1" [disabled]="timewindow?.hideAggInterval" [(ngModel)]="timewindow.aggregation.limit" aria-label="limit" id="limit-slider">
 								</mat-slider>
 								<mat-form-field style="max-width: 80px;">
 									<input matInput flex type="number" step="1" [disabled]="timewindow?.hideAggInterval" attr.min="{{minDatapointsLimit()}}" attr.max="{{maxDatapointsLimit()}}" [(ngModel)]="timewindow.aggregation.limit" aria-label="limit" aria-controls="limit-slider">
 								</mat-form-field>
-							</md-slider-container>
+							</div>
 						</section>
 					</section>
 					@if (showRealtimeAggInterval()) {

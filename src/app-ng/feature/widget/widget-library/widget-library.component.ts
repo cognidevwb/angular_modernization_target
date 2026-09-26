@@ -6,6 +6,7 @@ import { ImportExportService } from '../../import-export/services/import-export.
 import { MatDialog } from '@angular/material/dialog';
 import { RootState } from '../../../root-state';
 import { Router } from '@angular/router';
+import { goState } from '../../../state-paths';
 import { TranslateService } from '@ngx-translate/core';
 import { UserService } from '../../api/services/user.service';
 import { UtilsService } from '../../common/services/utils.service';
@@ -57,6 +58,7 @@ export class WidgetLibraryComponent {
   protected widgetsBundleId: any;
   widgetTypes: any = [];
   dashboardInitComplete: any = false;
+  protected addItemActionsOpen: any = false;
   protected stateController: any = {
         getStateParams: function(...rest: any[]) {
             return {};
@@ -206,7 +208,7 @@ export class WidgetLibraryComponent {
         event.stopPropagation();
     }
     if (widget) {
-        this.router.go('home.widgets-bundles.widget-types.widget-type',
+        goState(this.router, 'home.widgets-bundles.widget-types.widget-type',
             {widgetTypeId: widget.typeId.id});
     } else {
         (this.dialog as any).show({
@@ -233,27 +235,24 @@ export class WidgetLibraryComponent {
     $event.stopPropagation();
     this.importExport.importWidgetType($event, this.widgetsBundle.alias).then(
         () => {
-            (this.router as any).go(this.router.current, this.router.params, {reload: true});
+            goState(this.router, 'home.widgets-bundles.widget-types', this.route.snapshot.params);
         },
         function fail() {}
     );
   };
 
   removeWidgetType = (event?: any, widget?: any, ...rest: any[]): any => {
-    var confirm: any = (this.dialog as any).confirm()
-        .targetEvent(event)
-        .title(this.translate.instant('widget.remove-widget-type-title', {widgetName: widget.config.title}))
-        .htmlContent(this.translate.instant('widget.remove-widget-type-text'))
-        .ariaLabel(this.translate.instant('widget.remove-widget-type'))
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    const confirmed = window.confirm(
+        this.translate.instant('widget.remove-widget-type-title', {widgetName: widget.config.title}) + '\n' +
+        this.translate.instant('widget.remove-widget-type-text')
+    );
+    if (confirmed) {
         this.widgetService.deleteWidgetType(widget.bundleAlias, widget.typeAlias, widget.isSystemType).then(
             () => {
                 this.widgetTypes.splice(this.widgetTypes.indexOf(widget), 1);
             },
             function fail() {}
         );
-    });
+    }
   };
 }

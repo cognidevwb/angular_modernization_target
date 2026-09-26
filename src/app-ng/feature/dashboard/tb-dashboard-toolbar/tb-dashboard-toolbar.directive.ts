@@ -1,4 +1,4 @@
-import { Component, model, output } from '@angular/core';
+import { Component, model, output, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // @ts-ignore
 import dashboardToolbarTemplate from '../../../../app/dashboard/dashboard-toolbar.tpl.html';
@@ -10,13 +10,15 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
+declare const angular: any;
+declare const addResizeListener: any;
+declare const removeResizeListener: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 function DashboardToolbarController(this: any, $scope?: any, $element?: any, $timeout?: any, mdFabToolbarAnimation?: any) {
 
     let vm: any = this;
 
-    declare const angular: any;
     vm.mdFabToolbarElement = angular.element($element[0].querySelector('md-fab-toolbar'));
 
     function initElements() {
@@ -31,11 +33,9 @@ function DashboardToolbarController(this: any, $scope?: any, $element?: any, $ti
         });
     }
 
-    declare const addResizeListener: any;
     addResizeListener(vm.mdFabToolbarElement[0], triggerFabResize); // eslint-disable-line no-undef
 
     $scope.$on("$destroy", function () {
-        declare const removeResizeListener: any;
         removeResizeListener(vm.mdFabToolbarElement[0], triggerFabResize); // eslint-disable-line no-undef
     });
 
@@ -77,6 +77,7 @@ function DashboardToolbarController(this: any, $scope?: any, $element?: any, $ti
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatIconModule, MatButtonModule, CommonModule],
   templateUrl: './tb-dashboard-toolbar.directive.html',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class TbDashboardToolbarDirective {
   readonly toolbarOpened = model<any>();

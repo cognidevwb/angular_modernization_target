@@ -9,7 +9,6 @@ import { FormsModule } from '@angular/forms';
 import { TbEntitySubtypeAutocompleteDirective } from '../../entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive';
 
 import $ from 'jquery';
-import assetFieldsetTemplate from '../../../../app/asset/asset-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -54,7 +53,6 @@ export class TbAssetDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(assetFieldsetTemplate);
   types: any;
   isAssignedToCustomer: any = false;
   isPublic: any = false;
@@ -64,7 +62,6 @@ export class TbAssetDirective {
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     this.$watch('asset', (newVal?: any) => {
             if (newVal) {
@@ -83,7 +80,6 @@ export class TbAssetDirective {
                 }
             }
         });
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   onAssetIdCopied(...rest: any[]): any {

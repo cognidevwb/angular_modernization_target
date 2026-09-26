@@ -29,7 +29,7 @@ export class TbLegendConfigDirective {
 
   // TODO(port): '$compile' — not in Angular: compose with components instead
   protected readonly document = inject(DOCUMENT);
-  protected readonly overlay = inject(Overlay);
+  protected readonly overlay: any = inject(Overlay);
   // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly element = inject(ElementRef);
 

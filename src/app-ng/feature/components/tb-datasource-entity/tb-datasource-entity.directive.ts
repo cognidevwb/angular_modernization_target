@@ -6,6 +6,7 @@ import { types } from '../../common/constants/types';
 import tinycolor from 'tinycolor2';
 import $ from 'jquery';
 import { isEqual } from 'lodash-es';
+import { DatakeyConfigDialogComponent } from '../datakey-config-dialog/datakey-config-dialog.component';
 const datasourceEntityTemplate = '../../../../app/components/datasource-entity.tpl.html';
 const datakeyConfigDialogTemplate = '../../../../app/components/datakey-config-dialog.tpl.html';
 

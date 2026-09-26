@@ -16,6 +16,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 /**
  * Ported from the AngularJS controller `AddDevicesToCustomerController` (module `thingsboard.device`) in src/app/device/index.js:29.
@@ -24,7 +25,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'add-devices-to-customer',
   standalone: true,
-  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, forwardRef(() => TbScopeElementDirective)],
+  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, ScrollingModule, forwardRef(() => TbScopeElementDirective)],
   templateUrl: './add-devices-to-customer.component.html',
 })
 export class AddDevicesToCustomerComponent {
@@ -32,9 +33,6 @@ export class AddDevicesToCustomerComponent {
   protected readonly deviceService = inject(DeviceService);
   protected readonly dialog = inject(MatDialog);
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
-  // TODO(port): elements not resolved to a component: md-virtual-repeat-container
-  // TODO(port): template: 1 × md-virtual-repeat-container left in place
-
   devices: any;
   searchText: any = '';
   theDevices: any;

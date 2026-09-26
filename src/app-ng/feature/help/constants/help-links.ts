@@ -29,34 +29,34 @@ export const helpLinks = {
                 ruleNodeMsgGenerator: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/action-nodes/#generator-node",
                 ruleNodeLog: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/action-nodes/#log-node",
                 ruleNodeRpcCallReply: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/action-nodes/#rpc-call-reply-node",
-                ruleNodeRpcCallRequest: helpBaseUrl + "/docs/user-guide/rule-engine-2-0/action-nodes/#rpc-call-request-node",
-                ruleNodeSaveAttributes: helpBaseUrl + "/docs/user-guide/rule-engine-2-0/action-nodes/#save-attributes-node",
-                ruleNodeSaveTimeseries: helpBaseUrl + "/docs/user-guide/rule-engine-2-0/action-nodes/#save-timeseries-node",
-                ruleNodeRuleChain: helpBaseUrl + "/docs/user-guide/ui/rule-chains/",
-                ruleNodeAwsSns: helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#aws-sns-node",
-                ruleNodeAwsSqs: helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#aws-sqs-node",
-                ruleNodeKafka: helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#kafka-node",
-                ruleNodeMqtt: helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#mqtt-node",
-                ruleNodeAzureIotHub: helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#azure-iot-hub-node",
-                ruleNodeRabbitMq: helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#rabbitmq-node",
-                ruleNodeRestApiCall: helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#rest-api-call-node",
-                ruleNodeSendEmail: helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#send-email-node",
-                rulechains: helpBaseUrl + "/docs/user-guide/ui/rule-chains/",
-                tenants: helpBaseUrl + "/docs/user-guide/ui/tenants",
-                customers: helpBaseUrl + "/docs/user-guide/ui/customers",
-                assets: helpBaseUrl + "/docs/user-guide/ui/assets",
-                devices: helpBaseUrl + "/docs/user-guide/ui/devices",
-                entityViews: helpBaseUrl + "/docs/user-guide/ui/entity-views",
-                entitiesImport: helpBaseUrl + "/docs/user-guide/bulk-provisioning",
-                dashboards: helpBaseUrl + "/docs/user-guide/ui/dashboards",
-                users: helpBaseUrl + "/docs/user-guide/ui/users",
-                widgetsBundles: helpBaseUrl + "/docs/user-guide/ui/widget-library#bundles",
-                widgetsConfig:  helpBaseUrl + "/docs/user-guide/ui/dashboards#widget-configuration",
-                widgetsConfigTimeseries:  helpBaseUrl + "/docs/user-guide/ui/dashboards#timeseries",
-                widgetsConfigLatest: helpBaseUrl +  "/docs/user-guide/ui/dashboards#latest",
-                widgetsConfigRpc: helpBaseUrl +  "/docs/user-guide/ui/dashboards#rpc",
-                widgetsConfigAlarm: helpBaseUrl +  "/docs/user-guide/ui/dashboards#alarm",
-                widgetsConfigStatic: helpBaseUrl +  "/docs/user-guide/ui/dashboards#static",
+                ruleNodeRpcCallRequest: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/action-nodes/#rpc-call-request-node",
+                ruleNodeSaveAttributes: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/action-nodes/#save-attributes-node",
+                ruleNodeSaveTimeseries: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/action-nodes/#save-timeseries-node",
+                ruleNodeRuleChain: (window as any).helpBaseUrl + "/docs/user-guide/ui/rule-chains/",
+                ruleNodeAwsSns: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#aws-sns-node",
+                ruleNodeAwsSqs: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#aws-sqs-node",
+                ruleNodeKafka: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#kafka-node",
+                ruleNodeMqtt: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#mqtt-node",
+                ruleNodeAzureIotHub: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#azure-iot-hub-node",
+                ruleNodeRabbitMq: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#rabbitmq-node",
+                ruleNodeRestApiCall: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#rest-api-call-node",
+                ruleNodeSendEmail: (window as any).helpBaseUrl + "/docs/user-guide/rule-engine-2-0/external-nodes/#send-email-node",
+                rulechains: (window as any).helpBaseUrl + "/docs/user-guide/ui/rule-chains/",
+                tenants: (window as any).helpBaseUrl + "/docs/user-guide/ui/tenants",
+                customers: (window as any).helpBaseUrl + "/docs/user-guide/ui/customers",
+                assets: (window as any).helpBaseUrl + "/docs/user-guide/ui/assets",
+                devices: (window as any).helpBaseUrl + "/docs/user-guide/ui/devices",
+                entityViews: (window as any).helpBaseUrl + "/docs/user-guide/ui/entity-views",
+                entitiesImport: (window as any).helpBaseUrl + "/docs/user-guide/bulk-provisioning",
+                dashboards: (window as any).helpBaseUrl + "/docs/user-guide/ui/dashboards",
+                users: (window as any).helpBaseUrl + "/docs/user-guide/ui/users",
+                widgetsBundles: (window as any).helpBaseUrl + "/docs/user-guide/ui/widget-library#bundles",
+                widgetsConfig:  (window as any).helpBaseUrl + "/docs/user-guide/ui/dashboards#widget-configuration",
+                widgetsConfigTimeseries:  (window as any).helpBaseUrl + "/docs/user-guide/ui/dashboards#timeseries",
+                widgetsConfigLatest: (window as any).helpBaseUrl +  "/docs/user-guide/ui/dashboards#latest",
+                widgetsConfigRpc: (window as any).helpBaseUrl +  "/docs/user-guide/ui/dashboards#rpc",
+                widgetsConfigAlarm: (window as any).helpBaseUrl +  "/docs/user-guide/ui/dashboards#alarm",
+                widgetsConfigStatic: (window as any).helpBaseUrl +  "/docs/user-guide/ui/dashboards#static",
             },
             getRuleNodeLink: function(ruleNode) {
                 if (ruleNode && ruleNode.component) {
@@ -65,8 +65,8 @@ export const helpLinks = {
                         ruleNode.component.configurationDescriptor.nodeDefinition.docUrl) {
                         return ruleNode.component.configurationDescriptor.nodeDefinition.docUrl;
                     } else if (ruleNode.component.clazz) {
-                        if (ruleNodeClazzHelpLinkMap[ruleNode.component.clazz]) {
-                            return ruleNodeClazzHelpLinkMap[ruleNode.component.clazz];
+                        if ((window as any).ruleNodeClazzHelpLinkMap[ruleNode.component.clazz]) {
+                            return (window as any).ruleNodeClazzHelpLinkMap[ruleNode.component.clazz];
                         }
                     }
                 }

@@ -5,7 +5,6 @@ import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import widgetsBundleSelectTemplate from '../../../../app/components/widgets-bundle-select.tpl.html?raw';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
@@ -36,7 +35,6 @@ export class TbWidgetsBundleSelectDirective {
   protected readonly widgetService = inject(WidgetService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = widgetsBundleSelectTemplate;
   widgetsBundle: any = null;
   widgetsBundles: any = [];
   protected widgetsBundleFetchFunction: any;
@@ -45,7 +43,6 @@ export class TbWidgetsBundleSelectDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
     this.widgetsBundleFetchFunction = this.widgetService.getAllWidgetsBundles;
     if ((this.bundlesScope !== undefined)) {

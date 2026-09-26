@@ -1,6 +1,5 @@
 import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import roundSwitchTemplate from '../../../../app/widget/lib/rpc/round-switch.tpl.html' with { loader: 'text' };
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
@@ -275,6 +274,11 @@ function RoundSwitchController(this: any, $element?: any, $scope?: any, utils?: 
 export class TbRoundSwitchDirective {
   readonly ctx = model<any>();
 
+  protected showTitle = false;
+  protected title = '';
+  protected checkboxId = '';
+  protected error = '';
+
   restrict: any = "E";
   scope: any = true;
   bindToController: any = {
@@ -282,7 +286,6 @@ export class TbRoundSwitchDirective {
         };
   controller: any = RoundSwitchController;
   controllerAs: any;
-  templateUrl: any = roundSwitchTemplate;
 
   constructor() {
     let vm = this;

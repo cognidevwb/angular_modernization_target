@@ -41,7 +41,7 @@
                                         <tb-message-type-autocomplete style="margin-bottom: 0px; min-width: 300px;" [ngRequired]="true" [(ngModel)]="inputParams.msgType" [(theForm)]="payloadForm">
                                         </tb-message-type-autocomplete>
                                     </div>
-                                    <tb-json-content flex [(ngModel)]="inputParams.msg" label="{{ 'rulenode.message' | translate }}" [(contentType)]="types.contentType.JSON.value" [validateContent]="true" validation-trigger-arg="validatePayload" [fillHeight]="true">
+                                    <tb-json-content flex [(ngModel)]="inputParams.msg" attr.label="{{ 'rulenode.message' | translate }}" [(contentType)]="types.contentType.JSON.value" [validateContent]="true" validation-trigger-arg="validatePayload" [fillHeight]="true">
                                     </tb-json-content>
                                 </div>
                             </ng-form>
@@ -75,7 +75,7 @@
                             <div class="tb-editor-area-title-panel">
                                 <label translate>rulenode.output</label>
                             </div>
-                            <tb-json-content [(ngModel)]="output" label="{{ 'rulenode.output' | translate }}" [(contentType)]="types.contentType.JSON.value" [validateContent]="false" [ngReadonly]="true" [fillHeight]="true">
+                            <tb-json-content [(ngModel)]="output" attr.label="{{ 'rulenode.output' | translate }}" [(contentType)]="types.contentType.JSON.value" [validateContent]="false" [ngReadonly]="true" [fillHeight]="true">
                             </tb-json-content>
                         </div>
                     </div>

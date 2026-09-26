@@ -187,7 +187,7 @@ export class EntityViewService {
   getEntityViewTypes(config?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/entityView/types';
-    this.http.get(url, config).then(function success(response?: any) {
+    this.http.get(url, config).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();

@@ -917,12 +917,12 @@ export class TbCustomActionPrettyEditorDirective {
             '<!--    </form>-->\n' +
             '<!--</md-dialog>-->\n';
     effect(() => {
-      if (this.ngControl && this.ngControl.control) {
-        this.ngControl.control.setValue(this.action, { emitEvent: false });
+      if ((this as any).ngControl && (this as any).ngControl.control) {
+        (this as any).ngControl.control.setValue(this.action, { emitEvent: false });
       }
-      this.onChange?.(this.action);
+      (this as any).onChange?.(this.action);
     });
-    this.writeValue = (value: any) => {
+    (this as any).writeValue = (value: any) => {
       this.action = value;
       if ((this.action.customHtml === undefined) && (this.action.customCss === undefined) && (this.action.customFunction === undefined)) {
         this.action.customFunction = this.sampleJsFunction;

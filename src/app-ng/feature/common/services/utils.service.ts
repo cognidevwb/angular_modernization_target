@@ -75,7 +75,7 @@ export class UtilsService {
     for (var func in this.predefinedFunctions) {
         this.predefinedFunctionsList.push(func);
     }
-    for (const [key, value] of Object.entries(mdColorPalette)) {
+    for (const [key, value] of Object.entries($mdColorPalette)) {
         for (const [label, color] of Object.entries(value as any)) {
             if (this.colorSpectrum.indexOf(label) > -1) {
                 var rgb: any = 'rgb(' + (color as any).value[0] + ',' + (color as any).value[1] + ',' + (color as any).value[2] + ')';
@@ -220,10 +220,10 @@ export class UtilsService {
   }
 
   processWidgetException(exception?: any, ...rest: any[]): any {
-    var parentScope: any = window.parent.angular.element(window.frameElement).scope();
+    var parentScope: any = (window.parent as any).angular.element(window.frameElement).scope();
     var data: any = this.parseException(exception, -5);
     if (this.rootScope.widgetEditMode) {
-        this.widgetException.emit(data);
+        this.rootScope.broadcast('widgetException', data);
         parentScope.$apply();
     }
     return data;

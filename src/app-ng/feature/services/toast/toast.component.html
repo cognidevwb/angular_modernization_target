@@ -16,11 +16,12 @@
     limitations under the License.
 
 -->
-<!-- TODO(port): md-toast: MatSnackBar, opened from the class --><md-toast class="tb-error-toast">
+<!-- TODO(port): md-toast: MatSnackBar, opened from the class -->
+<div class="tb-error-toast">
 	<div class="md-toast-content">
 		  <div class="md-toast-text" [innerHTML]="message"></div>
 		  <button mat-button (click)="closeToast()">
 		       {{ 'action.close' | translate }}
 		  </button>
 	</div>
-</md-toast>
+</div>

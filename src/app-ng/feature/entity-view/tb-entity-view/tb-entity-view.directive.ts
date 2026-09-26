@@ -13,7 +13,6 @@ import { TbEntitySubtypeAutocompleteDirective } from '../../entity/tb-entity-sub
 import { TbEntitySelectDirective } from '../../entity/tb-entity-select/tb-entity-select.directive';
 
 import $ from 'jquery';
-import entityViewFieldsetTemplate from '../../../../app/entity-view/entity-view-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,6 +20,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatChipsModule, MatChipInputEvent } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $mdConstant: any;
@@ -36,7 +38,7 @@ declare let element: any;
 @Component({
   selector: 'tb-entity-view',
   standalone: true,
-  imports: [TranslatePipe, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbEntitySubtypeAutocompleteDirective), forwardRef(() => TbEntitySelectDirective)],
+  imports: [TranslatePipe, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, MatExpansionModule, MatChipsModule, MatAutocompleteModule, CommonModule, FormsModule, forwardRef(() => TbEntitySubtypeAutocompleteDirective), forwardRef(() => TbEntitySelectDirective)],
   templateUrl: './tb-entity-view.directive.html',
 })
 export class TbEntityViewDirective {
@@ -76,7 +78,6 @@ export class TbEntityViewDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(entityViewFieldsetTemplate);
   attributesPanelId: any = (Math.random()*1000).toFixed(0);
   timeseriesPanelId: any = (Math.random()*1000).toFixed(0);
   $mdExpansionPanel: any = $mdExpansionPanel;
@@ -87,6 +88,12 @@ export class TbEntityViewDirective {
   allowedEntityTypes: any;
   protected semicolon: any = 186;
   separatorKeys: any;
+  protected attributeDataKeySearchText: string = '';
+  protected selectedAttributeDataKey: any = null;
+  protected attributeDataKeys: any[] = [];
+  protected timeseriesDataKeySearchText: string = '';
+  protected selectedTimeseriesDataKey: any = null;
+  protected timeseriesDataKeys: any[] = [];
   $watch: any;
   endTimeMs: any;
   maxStartTimeMs: any;
@@ -97,7 +104,6 @@ export class TbEntityViewDirective {
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     this.allowedEntityTypes = [this.typesRef.entityType.device, this.typesRef.entityType.asset];
     this.separatorKeys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA, this.semicolon];
@@ -167,6 +173,70 @@ export class TbEntityViewDirective {
     );
     return deferred.promise;
 
+  }
+
+  searchAttributeDataKeys(searchText: string): void {
+    this.attributeDataKeySearchText = searchText;
+    this.dataKeysSearch(searchText, this.types.dataKeyType.attribute).then((keys: any) => {
+      this.attributeDataKeys = keys;
+    });
+  }
+
+  searchTimeseriesDataKeys(searchText: string): void {
+    this.timeseriesDataKeySearchText = searchText;
+    this.dataKeysSearch(searchText, this.types.dataKeyType.timeseries).then((keys: any) => {
+      this.timeseriesDataKeys = keys;
+    });
+  }
+
+  addAttributeKey(target: 'cs' | 'sh' | 'ss', item: any): void {
+    const name = item && item.name !== undefined ? item.name : item;
+    if (name) {
+      this.entityView().keys.attributes[target].push(name);
+    }
+    this.attributeDataKeySearchText = '';
+  }
+
+  removeAttributeKey(target: 'cs' | 'sh' | 'ss', item: any): void {
+    const keys = this.entityView().keys.attributes[target];
+    const index = keys.indexOf(item);
+    if (index >= 0) {
+      keys.splice(index, 1);
+    }
+  }
+
+  addAttributeKeyFromInput(target: 'cs' | 'sh' | 'ss', event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    if (value) {
+      this.entityView().keys.attributes[target].push(value);
+    }
+    event.chipInput?.clear();
+    this.attributeDataKeySearchText = '';
+  }
+
+  addTimeseriesKey(item: any): void {
+    const name = item && item.name !== undefined ? item.name : item;
+    if (name) {
+      this.entityView().keys.timeseries.push(name);
+    }
+    this.timeseriesDataKeySearchText = '';
+  }
+
+  removeTimeseriesKey(item: any): void {
+    const keys = this.entityView().keys.timeseries;
+    const index = keys.indexOf(item);
+    if (index >= 0) {
+      keys.splice(index, 1);
+    }
+  }
+
+  addTimeseriesKeyFromInput(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    if (value) {
+      this.entityView().keys.timeseries.push(value);
+    }
+    event.chipInput?.clear();
+    this.timeseriesDataKeySearchText = '';
   }
 
   updateMinMaxDates(...rest: any[]): any {

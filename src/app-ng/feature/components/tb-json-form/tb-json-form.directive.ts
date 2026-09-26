@@ -30,7 +30,7 @@ function selectOrSet(this: any, projection?: any, obj?: any, valueToSet?: any) {
         return false;
     }
 
-declare let ObjectPath: any;
+    var parts: any = projection.split('.');
 
     if (parts.length === 1) {
         return setValue(obj, parts[0], valueToSet);
@@ -225,7 +225,7 @@ export class TbJsonFormDirective {
 
   openIconDialog(event?: any, ...rest: any[]): any {
     let vm = this;
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'MaterialIconsDialogController',
         controllerAs: 'vm',
         templateUrl: materialIconsDialogTemplate,

@@ -10,10 +10,9 @@ export class TbMissingTranslationHandlerService {
   private readonly __bound = bindMethods(this);
 
   constructor() {
-    return function (/*translationId*/) {
-        /*if (translationId && !translationId.startsWith(types.translate.customTranslationsPrefix)) {
-            $log.warn('Translation for ' + translationId + ' doesn\'t exist');
-        }*/
-    };
+    /*translationId*/
+    /*if (translationId && !translationId.startsWith(types.translate.customTranslationsPrefix)) {
+        $log.warn('Translation for ' + translationId + ' doesn\'t exist');
+    }*/
   }
 }

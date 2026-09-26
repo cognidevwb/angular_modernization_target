@@ -26,8 +26,6 @@ declare let element: any;
 @Directive({
   selector: '[tb-alarm-row]',
   standalone: true,
-selector: '[tb-alarm-row]',
-standalone: true,
 })
 export class TbAlarmRowDirective {
   // TODO(port): '$compile' — not in Angular: compose with components instead
@@ -55,7 +53,7 @@ export class TbAlarmRowDirective {
     let vm = this;
     var onShowingCallback: any = {
         onShowing: function(...rest: any[]){}
-    }
+    };
 (this.dialog as any).show({
     controller: 'AlarmDetailsDialogController',
     controllerAs: 'vm',

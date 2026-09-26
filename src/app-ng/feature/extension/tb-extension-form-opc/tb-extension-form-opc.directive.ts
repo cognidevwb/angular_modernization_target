@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import extensionFormOpcTemplate from '../../../../app/extension/extensions-forms/extension-form-opc.tpl.html?raw';
 import { LegacyInitDirective } from '../../../legacy-init.directive';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -28,7 +27,6 @@ declare let element: any;
 @Directive({
   selector: '[tb-extension-form-opc]',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatSelectModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCardModule, MatButtonModule, LegacyInitDirective],
 })
 export class TbExtensionFormOpcDirective {
   readonly configuration = model<any>();
@@ -79,7 +77,6 @@ export class TbExtensionFormOpcDirective {
     this.type = "long";
     this.value = "${Tag2}";
   };
-  protected template: any = $templateCache.get(extensionFormOpcTemplate);
   types: any;
   theForm: any;
   $parent: any;
@@ -107,7 +104,6 @@ export class TbExtensionFormOpcDirective {
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     this.theForm = this.$parent.theForm;
     if (!this.configuration().servers.length) {

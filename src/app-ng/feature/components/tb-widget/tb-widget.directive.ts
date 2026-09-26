@@ -29,6 +29,7 @@ export class TbWidgetDirective {
   $eval: any;
   $on: any;
   loadingData: any;
+  protected gridsterItemInitialized$: any;
 
   // TODO(port): link(scope, elem, attrs) — `elem` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 

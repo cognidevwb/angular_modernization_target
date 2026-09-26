@@ -2,9 +2,10 @@ import { Component, inject, model } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import $ from 'jquery';
-import linkFieldsetTemplate from '../../../../app/rulechain/link-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -25,7 +26,7 @@ declare let ngModelCtrl: any;
 @Component({
   selector: 'tb-rule-node-link',
   standalone: true,
-  imports: [TranslatePipe, CommonModule, FormsModule],
+  imports: [TranslatePipe, CommonModule, FormsModule, MatChipsModule, MatAutocompleteModule],
   templateUrl: './tb-rule-node-link.directive.html',
 })
 export class TbRuleNodeLinkDirective {
@@ -34,6 +35,7 @@ export class TbRuleNodeLinkDirective {
   readonly allowCustom = model<any>();
   readonly isEdit = model<any>();
   readonly isReadOnly = model<any>();
+  readonly required = model<any>();
 
   // TODO(port): '$compile' — not in Angular: compose with components instead
   // TODO(port): '$templateCache' — templateUrl on the component
@@ -47,7 +49,6 @@ export class TbRuleNodeLinkDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(linkFieldsetTemplate);
   selectedLabel: any = null;
   labelSearchText: any = null;
   ngModelCtrl: any = ngModelCtrl;
@@ -59,7 +60,6 @@ export class TbRuleNodeLinkDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     ngModelCtrl.$render = function () {
             this.labelsList.length = 0;
             for (var label in this.allowedLabels()) {
@@ -112,6 +112,33 @@ export class TbRuleNodeLinkDirective {
   labelsSearch(searchText?: any, ...rest: any[]): any {
     var labels: any = searchText ? $filter('filter')(this.labelsList, {name: searchText}) : this.labelsList;
     return labels.map((label?: any) => label.name);
+  }
+
+  protected removeLabel(chip: any): void {
+    const index: number = (this.labels || []).indexOf(chip);
+    if (index >= 0) {
+      this.labels.splice(index, 1);
+      this.updateLabels();
+    }
+  }
+
+  protected onLabelSelected(event: MatAutocompleteSelectedEvent): void {
+    const chip: any = this.transformLinkLabelChip(event.option.value);
+    this.labels = this.labels || [];
+    this.labels.push(chip);
+    this.labelSearchText = '';
+    this.updateLabels();
+  }
+
+  protected truncateLabel(text: string): string {
+    if (!text) {
+      return text;
+    }
+    const length: number = 6;
+    if (text.length <= length) {
+      return text;
+    }
+    return text.substring(0, length) + '...';
   }
 
   createLinkLabel(event?: any, chipsId?: any, ...rest: any[]): any {

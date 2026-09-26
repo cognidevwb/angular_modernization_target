@@ -17,7 +17,7 @@
 
 -->
 <!-- TODO(port): expression not parsed: `` -->
-<div flex (tbExpandFullscreen)="" tb-confirm-on-exit is-dirty="vm.isConfirmOnExit" expand-tooltip-direction="bottom" layout="column" class="md-content tb-rulechain" (keydown)="keyDown($event)" (keyup)="keyUp($event)" (onFullscreenChanged)="isFullscreen = $event.expanded">
+<div flex tbExpandFullscreen tb-confirm-on-exit is-dirty="vm.isConfirmOnExit" expand-tooltip-direction="bottom" layout="column" class="md-content tb-rulechain" (keydown)="$any(this).keyDown($event)" (keyup)="$any(this).keyUp($event)" (onFullscreenChanged)="isFullscreen = $any($event).expanded">
     <section class="tb-rulechain-container" flex layout="column">
         <div class="tb-rulechain-layout" flex layout="row">
             <section layout="row" layout-wrap class="tb-header-buttons md-fab tb-library-open">
@@ -114,15 +114,15 @@
             
         </div>
         <tb-details-sidenav class="tb-rulenode-details-sidenav" headerTitle="{{editingRuleNode?.name}}" headerSubtitle="{{(types?.ruleNodeType?.[editingRuleNode?.component?.type]?.name | translate)
-                            + ' - ' + editingRuleNode?.component?.name}}" [isReadOnly]="selectedRuleNodeTabIndex > 0" [(isOpen)]="isEditingRuleNode" tb-enable-backdrop [isAlwaysEdit]="true" (onCloseDetails)="onEditRuleNodeClosed()" (onToggleDetailsEditMode)="onRevertRuleNodeEdit(ruleNodeForm)" (onApplyDetails)="saveRuleNode(ruleNodeForm)" [(theForm)]="ruleNodeForm">
+                            + ' - ' + editingRuleNode?.component?.name}}" [isReadOnly]="$any(this).selectedRuleNodeTabIndex > 0" [(isOpen)]="isEditingRuleNode" tb-enable-backdrop [isAlwaysEdit]="true" (onCloseDetails)="onEditRuleNodeClosed()" (onToggleDetailsEditMode)="onRevertRuleNodeEdit(ruleNodeForm)" (onApplyDetails)="saveRuleNode(ruleNodeForm)" [(theForm)]="ruleNodeForm">
             <details-buttons [tbHelp]="helpLinkIdForRuleNodeType()" help-container-id="help-container">
                 <div id="help-container"></div>
             </details-buttons>
             @if (isEditingRuleNode) {
-              <mat-tab-group [selectedIndex]="selectedRuleNodeTabIndex" id="ruleNodeTabs" flex class="tb-absolute-fill">
+              <mat-tab-group [selectedIndex]="$any(this).selectedRuleNodeTabIndex" id="ruleNodeTabs" flex class="tb-absolute-fill">
                 <mat-tab label="{{ 'rulenode.details' | translate }}">
                     <form name="vm.ruleNodeForm">
-                        <tb-rule-node [(ruleNode)]="editingRuleNode" [(ruleChainId)]="ruleChain.id.id" [isEdit]="true" [isReadOnly]="false" (onDeleteRuleNode)="deleteRuleNode(event, editingRuleNode)" [(theForm)]="ruleNodeForm">
+                        <tb-rule-node [(ruleNode)]="editingRuleNode" [(ruleChainId)]="ruleChain.id.id" [isEdit]="true" [isReadOnly]="false" (onDeleteRuleNode)="$any(this).deleteRuleNode($event, editingRuleNode)" [(theForm)]="ruleNodeForm">
                         </tb-rule-node>
                     </form>
                 </mat-tab>

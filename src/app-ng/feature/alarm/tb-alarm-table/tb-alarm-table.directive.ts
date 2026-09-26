@@ -11,7 +11,7 @@ import { TbScopeElementDirective } from '../../components/tb-scope-element/tb-sc
 import { TbAlarmRowDirective } from '../tb-alarm-row/tb-alarm-row.directive';
 
 import $ from 'jquery';
-import alarmTableTemplate from '../../../../app/alarm/alarm-table.tpl.html';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -35,7 +35,7 @@ declare let element: any;
 @Component({
   selector: 'tb-alarm-table',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatSelectModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbTimewindowDirective), forwardRef(() => TbAlarmHeaderDirective), forwardRef(() => TbScopeElementDirective), forwardRef(() => TbAlarmRowDirective)],
+  imports: [TranslatePipe, MatTooltipModule, MatSelectModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, ScrollingModule, CommonModule, FormsModule, forwardRef(() => TbTimewindowDirective), forwardRef(() => TbAlarmHeaderDirective), forwardRef(() => TbScopeElementDirective), forwardRef(() => TbAlarmRowDirective)],
   templateUrl: './tb-alarm-table.directive.html',
 })
 export class TbAlarmTableDirective {
@@ -51,7 +51,6 @@ export class TbAlarmTableDirective {
   // TODO(port): elements not resolved to a component: md-virtual-repeat-container
   // TODO(port): template: 1 × md-virtual-repeat-container left in place
 
-  protected template: any = $templateCache.get(alarmTableTemplate);
   types: any;
   alarmSearchStatus: any;
   protected pageSize: any = 20;
@@ -75,7 +74,6 @@ export class TbAlarmTableDirective {
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     this.alarmSearchStatus = this.typesRef.alarmSearchStatus.any;
     this.theAlarms = {
@@ -139,7 +137,6 @@ export class TbAlarmTableDirective {
         });
     this.reload();
     this.initWatchers();
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   destroyWatchers(...rest: any[]): any {

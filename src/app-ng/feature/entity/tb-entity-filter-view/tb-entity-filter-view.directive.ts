@@ -6,7 +6,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
-import entityFilterViewTemplate from '../../../../app/entity/entity-filter-view.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;
@@ -31,7 +30,6 @@ export class TbEntityFilterViewDirective {
   protected readonly typesRef: any = types;
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(entityFilterViewTemplate);
   ngModelCtrl: any = ngModelCtrl;
   types: any;
   filterDisplayValue: any = '';
@@ -41,7 +39,6 @@ export class TbEntityFilterViewDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     this.$watch('filter', () => {
             this.updateDisplayValue();

@@ -14,6 +14,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 
+export interface TbTimeseriesTableWidgetDirective {
+  [key: string]: any;
+}
+
 import { takeUntil } from 'rxjs/operators';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
@@ -119,9 +123,9 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
         var namespace: any = 'ts-table-' + hashCode(cssString);
         cssParser.cssPreviewNamespace = namespace;
         cssParser.createStyleElement(namespace, cssString);
-        el.nativeElement.classList.add(namespace);
+        vm.el.nativeElement.classList.add(namespace);
 
-        vm.displayPagination = angular.isDefined(vm.settings.displayPagination) ? vm.settings.displayPagination : true;
+        vm.displayPagination = vm.settings.displayPagination !== undefined ? vm.settings.displayPagination : true;
 
         function hashCode(str?: any) {
             var hash: any = 0;
@@ -137,7 +141,7 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
         updateDatasources();
     }
 
-    timeseriesTableService.timeseriesTableDataUpdated$.pipe(takeUntil(this.destroy$)).subscribe(({tableId}: any) => {
+    vm.timeseriesTableService.timeseriesTableDataUpdated$.pipe(takeUntil(this.destroy$)).subscribe(({tableId}: any) => {
         if (vm.tableId == tableId) {
             dataUpdated();
         }
@@ -208,10 +212,10 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
 
     vm.cellContent = function(source?: any, index?: any, row?: any, value?: any) {
         if (index === 0) {
-            return datePipe.transform(value, dateFormatFilter);
+            return vm.datePipe.transform(value, dateFormatFilter);
         } else {
             var strContent: any = '';
-            if (angular.isDefined(value)) {
+            if (value !== undefined) {
                 strContent = ''+value;
             }
             var content: any = strContent;
@@ -238,6 +242,7 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
         return undefined;
     }
 
+    let oldIndex: any;
     effect(() => {
         const newIndex = vm.sourceIndex;
         if (newIndex != oldIndex) {
@@ -307,7 +312,7 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
                     var useCellStyleFunction: any = false;
 
                     if (keySettings.useCellStyleFunction === true) {
-                        if (angular.isDefined(keySettings.cellStyleFunction) && keySettings.cellStyleFunction.length > 0) {
+                        if (keySettings.cellStyleFunction !== undefined && keySettings.cellStyleFunction.length > 0) {
                             try {
                                 cellStyleFunction = new Function('value', keySettings.cellStyleFunction);
                                 useCellStyleFunction = true;
@@ -327,7 +332,7 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
                     var useCellContentFunction: any = false;
 
                     if (keySettings.useCellContentFunction === true) {
-                        if (angular.isDefined(keySettings.cellContentFunction) && keySettings.cellContentFunction.length > 0) {
+                        if (keySettings.cellContentFunction !== undefined && keySettings.cellContentFunction.length > 0) {
                             try {
                                 cellContentFunction = new Function('value, rowData, filter', keySettings.cellContentFunction);
                                 useCellContentFunction = true;
@@ -366,7 +371,7 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
                 for (let i: any = 0; i < item.length; i++) {
                     if (vm.showTimestamp) {
                         if (i === 0) {
-                            if (searchRegExp.test(datePipe.transform(item[i], dateFormatFilter))) {
+                            if (searchRegExp.test($filter('date')(item[i], dateFormatFilter))) {
                                 return true;
                             }
                         } else {

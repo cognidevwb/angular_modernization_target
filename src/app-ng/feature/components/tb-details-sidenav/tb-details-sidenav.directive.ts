@@ -11,7 +11,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { TranslatePipe } from '@ngx-translate/core';
+import { AnimationBuilder, animate, style } from '@angular/animations';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $animate: any;
 declare let $mdUtil: any;
@@ -24,7 +26,7 @@ declare let element: any;
 @Component({
   selector: 'tb-details-sidenav',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatIconModule, MatButtonModule, CommonModule],
+  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatIconModule, MatButtonModule, MatSidenavModule, CommonModule],
   templateUrl: './tb-details-sidenav.directive.html',
 })
 export class TbDetailsSidenavDirective {
@@ -45,6 +47,7 @@ export class TbDetailsSidenavDirective {
   // TODO(port): '$mdUtil' — AngularJS Material's internals: debounce/throttle → rxjs; nextTick → queueMicrotask
   protected readonly element = inject(ElementRef);
   protected readonly destroyRef = inject(DestroyRef);
+  protected readonly animationBuilder = inject(AnimationBuilder);
   // TODO(port): elements not resolved to a component: md-sidenav
   // TODO(port): template: 1 × md-sidenav left in place
   // TODO(port): template: 2 × ng-transclude left in place

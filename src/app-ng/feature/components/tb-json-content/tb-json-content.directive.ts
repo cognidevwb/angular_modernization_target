@@ -4,7 +4,7 @@ import { ToastService } from '../../services/toast.service';
 import { UtilsService } from '../../common/services/utils.service';
 import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ControlValueAccessor, NgControl } from '@angular/forms';
 import { TbExpandFullscreenDirective } from '../tb-expand-fullscreen/tb-expand-fullscreen.directive';
 
 import $ from 'jquery';
@@ -36,7 +36,7 @@ const js_beautify: any = beautify.js;
   imports: [TranslatePipe, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbExpandFullscreenDirective)],
   templateUrl: './tb-json-content.directive.html',
 })
-export class TbJsonContentDirective {
+export class TbJsonContentDirective implements ControlValueAccessor {
   readonly contentType = model<any>();
   readonly validateContent = model<any>();
   readonly hideErrorToast = model<any>();
@@ -48,6 +48,10 @@ export class TbJsonContentDirective {
   protected readonly toast = inject(ToastService);
   protected readonly utils = inject(UtilsService);
   protected readonly element = inject(ElementRef);
+  protected readonly ngControl = inject(NgControl, { optional: true, self: true });
+
+  onChange: (value: any) => void = () => {};
+  onTouched: () => void = () => {};
 
   protected template: any;
   label: any;
@@ -110,9 +114,6 @@ export class TbJsonContentDirective {
       contentBodyPrev = newContent;
       this.updateValidity();
     });
-    this.writeValue = (value: any) => {
-      this.contentBody = value;
-    };
     this.$on('form-submit', (event?: any, args?: any) => {
             if (!this.readonly()) {
                 if (!args || this.validationTriggerArg && this.validationTriggerArg == args) {
@@ -128,6 +129,21 @@ export class TbJsonContentDirective {
             this.updateEditorSize();
         });
     $compile($(this.element.nativeElement).contents())(this);
+    if (this.ngControl) {
+      this.ngControl.valueAccessor = this;
+    }
+  }
+
+  writeValue(value: any): void {
+    this.contentBody = value;
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
   }
 
   onFullscreenChanged(...rest: any[]): any {

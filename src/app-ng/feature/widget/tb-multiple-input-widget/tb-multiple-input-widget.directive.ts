@@ -1,6 +1,7 @@
-import { Component, model } from '@angular/core';
+import { Component, effect, inject, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import multipleInputWidgetTemplate from '../../../../app/widget/lib/multiple-input-widget.tpl.html' with { loader: 'text' };
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -8,7 +9,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { TranslatePipe } from '@ngx-translate/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
+import { httpOptions } from '../../../core/http-options';
 
 import moment from 'moment';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
@@ -190,13 +194,13 @@ function MultipleInputWidgetController(this: any, $q?: any, $scope?: any, $trans
         vm.settings.groupTitle = vm.settings.groupTitle || "${entityName}";
 
         //For backward compatibility
-        if (angular.isUndefined(vm.settings.showActionButtons)) {
+        if (vm.settings.showActionButtons === undefined) {
             vm.settings.showActionButtons = true;
         }
-        if (angular.isUndefined(vm.settings.fieldsAlignment)) {
+        if (vm.settings.fieldsAlignment === undefined) {
             vm.settings.fieldsAlignment = 'row';
         }
-        if (angular.isUndefined(vm.settings.fieldsInRow)) {
+        if (vm.settings.fieldsInRow === undefined) {
             vm.settings.fieldsInRow = 2;
         }
         //For backward compatibility
@@ -230,7 +234,7 @@ function MultipleInputWidgetController(this: any, $q?: any, $scope?: any, $trans
                         source.keys[j].data = {};
 
                         //For backward compatibility
-                        if (angular.isUndefined(source.keys[j].settings.dataKeyType)) {
+                        if (source.keys[j].settings.dataKeyType === undefined) {
                             if (vm.settings.attributesShared) {
                                 source.keys[j].settings.dataKeyType = 'shared';
                             } else {
@@ -238,7 +242,7 @@ function MultipleInputWidgetController(this: any, $q?: any, $scope?: any, $trans
                             }
                         }
 
-                        if (angular.isUndefined(source.keys[j].settings.dataKeyValueType)) {
+                        if (source.keys[j].settings.dataKeyValueType === undefined) {
                             if (source.keys[j].settings.inputTypeNumber) {
                                 source.keys[j].settings.dataKeyValueType = 'double';
                             } else {
@@ -246,7 +250,7 @@ function MultipleInputWidgetController(this: any, $q?: any, $scope?: any, $trans
                             }
                         }
 
-                        if (angular.isUndefined(source.keys[j].settings.isEditable)) {
+                        if (source.keys[j].settings.isEditable === undefined) {
                             if (source.keys[j].settings.readOnly) {
                                 source.keys[j].settings.isEditable = 'readonly';
                             } else {
@@ -353,8 +357,210 @@ export class TbMultipleInputWidgetDirective {
   templateUrl: any = multipleInputWidgetTemplate;
   key: any;
 
+  private readonly http = inject(HttpClient);
+  private readonly translate = inject(TranslateService);
+  private readonly snackBar = inject(MatSnackBar);
+
+  protected entityDetected = false;
+  protected isAllParametersValid = true;
+  protected sources: any[] = [];
+  protected settings: any;
+  protected isVerticalAlignment = false;
+  protected changeAlignment = false;
+  protected inputWidthSettings = '100%';
+  protected smallWidthContainer = false;
+  protected isFocused = false;
+  protected multipleInputForm: any;
+
+  private datasources: any = null;
+  private widgetConfig: any;
+  private subscription: any;
+
   constructor() {
     let vm = this;
     this.controllerAs = 'vm';
+
+    effect(() => {
+      const ctx = this.ctx();
+      if (ctx && ctx.defaultSubscription) {
+        this.settings = ctx.settings;
+        this.widgetConfig = ctx.widgetConfig;
+        this.subscription = ctx.defaultSubscription;
+        this.datasources = this.subscription.datasources;
+        this.initializeConfig();
+        this.updateDatasources();
+      }
+    });
+  }
+
+  protected getGroupTitle(datasource?: any): string {
+    const pattern = this.settings?.groupTitle || '${entityName}';
+    if (!datasource) {
+      return pattern;
+    }
+    return pattern.replace(/\$\{entityName\}/g, datasource.entityName ?? '')
+                  .replace(/\$\{entityLabel\}/g, datasource.entityLabel ?? datasource.entityName ?? '');
+  }
+
+  protected discardAll(): void {
+    for (const source of this.sources) {
+      for (const key of source.keys) {
+        key.data.currentValue = key.data.originalValue;
+      }
+    }
+    this.multipleInputForm?.$setPristine?.();
+  }
+
+  protected inputChanged(source?: any, key?: any): void {
+    if (!this.settings?.showActionButtons) {
+      if (!key.settings.required || (key.settings.required && key.data && key.data.currentValue !== undefined)) {
+        this.save({ datasource: source.datasource, keys: [key] });
+      }
+    }
+  }
+
+  protected async save(dataToSave?: any): Promise<void> {
+    const tasks: Promise<any>[] = [];
+    const config: any = { ignoreLoading: !this.settings?.showActionButtons };
+    const data: any[] = dataToSave ? [dataToSave] : this.sources;
+    for (const item of data) {
+      const serverAttributes: any[] = [];
+      const sharedAttributes: any[] = [];
+      const telemetry: any[] = [];
+      for (const key of item.keys) {
+        if ((key.data.currentValue !== key.data.originalValue) || this.settings?.updateAllValues) {
+          const attribute: any = { key: key.name };
+          if (key.data.currentValue) {
+            switch (key.settings.dataKeyValueType) {
+              case 'dateTime':
+              case 'date':
+                attribute.value = key.data.currentValue.getTime();
+                break;
+              case 'time':
+                attribute.value = key.data.currentValue.getTime() - (moment as any)().startOf('day').valueOf();//eslint-disable-line
+                break;
+              default:
+                attribute.value = key.data.currentValue;
+            }
+          } else {
+            attribute.value = key.data.currentValue === '' ? null : key.data.currentValue;
+          }
+          switch (key.settings.dataKeyType) {
+            case 'shared':
+              sharedAttributes.push(attribute);
+              break;
+            case 'timeseries':
+              telemetry.push(attribute);
+              break;
+            default:
+              serverAttributes.push(attribute);
+          }
+        }
+      }
+      if (serverAttributes.length) {
+        tasks.push(this.saveEntityAttributes(item.datasource.entityType, item.datasource.entityId, 'SERVER_SCOPE', serverAttributes, config));
+      }
+      if (sharedAttributes.length) {
+        tasks.push(this.saveEntityAttributes(item.datasource.entityType, item.datasource.entityId, 'SHARED_SCOPE', sharedAttributes, config));
+      }
+      if (telemetry.length) {
+        tasks.push(this.saveEntityTimeseries(item.datasource.entityType, item.datasource.entityId, telemetry, config));
+      }
+    }
+
+    if (tasks.length) {
+      try {
+        await Promise.all(tasks);
+        this.multipleInputForm?.$setPristine?.();
+        if (this.settings?.showResultMessage) {
+          this.snackBar.open(this.translate.instant('widgets.input-widgets.update-successful'), undefined, { duration: 1000 });
+        }
+      } catch (e) {
+        if (this.settings?.showResultMessage) {
+          this.snackBar.open(this.translate.instant('widgets.input-widgets.update-failed'), undefined);
+        }
+      }
+    } else {
+      this.multipleInputForm?.$setPristine?.();
+    }
+  }
+
+  private saveEntityAttributes(entityType: string, entityId: string, scope: string, attributes: any[], config: any): Promise<any> {
+    const body: any = {};
+    attributes.forEach(a => body[a.key] = a.value);
+    return firstValueFrom(this.http.post(`/api/plugins/telemetry/${entityType}/${entityId}/${scope}`, body, httpOptions(config)));
+  }
+
+  private saveEntityTimeseries(entityType: string, entityId: string, telemetry: any[], config: any): Promise<any> {
+    const body: any = {};
+    telemetry.forEach(a => body[a.key] = a.value);
+    return firstValueFrom(this.http.post(`/api/plugins/telemetry/${entityType}/${entityId}/timeseries/ANY`, body, httpOptions(config)));
+  }
+
+  private initializeConfig(): void {
+    this.settings.groupTitle = this.settings.groupTitle || '${entityName}';
+
+    if (this.settings.showActionButtons === undefined) {
+      this.settings.showActionButtons = true;
+    }
+    if (this.settings.fieldsAlignment === undefined) {
+      this.settings.fieldsAlignment = 'row';
+    }
+    if (this.settings.fieldsInRow === undefined) {
+      this.settings.fieldsInRow = 2;
+    }
+
+    this.isVerticalAlignment = !(this.settings.fieldsAlignment === 'row');
+
+    if (!this.isVerticalAlignment && this.settings.fieldsInRow) {
+      this.inputWidthSettings = 100 / this.settings.fieldsInRow + '%';
+    }
+    this.updateWidgetDisplaying();
+  }
+
+  private updateDatasources(): void {
+    this.sources = [];
+    if (this.datasources && this.datasources.length) {
+      this.entityDetected = true;
+      for (const datasource of this.datasources) {
+        const source: any = {
+          datasource,
+          keys: []
+        };
+        if (datasource.type === 'entity') {
+          for (let j = 0; j < datasource.dataKeys.length; j++) {
+            if ((datasource.entityType !== 'DEVICE') && (datasource.dataKeys[j].settings.dataKeyType === 'shared')) {
+              this.isAllParametersValid = false;
+            }
+            source.keys.push(datasource.dataKeys[j]);
+            if (source.keys[j].units) {
+              source.keys[j].label += ' (' + source.keys[j].units + ')';
+            }
+            source.keys[j].data = {};
+
+            if (source.keys[j].settings.dataKeyType === undefined) {
+              source.keys[j].settings.dataKeyType = this.settings.attributesShared ? 'shared' : 'server';
+            }
+            if (source.keys[j].settings.dataKeyValueType === undefined) {
+              source.keys[j].settings.dataKeyValueType = source.keys[j].settings.inputTypeNumber ? 'double' : 'string';
+            }
+            if (source.keys[j].settings.isEditable === undefined) {
+              source.keys[j].settings.isEditable = source.keys[j].settings.readOnly ? 'readonly' : 'editable';
+            }
+          }
+        } else {
+          this.entityDetected = false;
+        }
+        this.sources.push(source);
+      }
+    }
+  }
+
+  private updateWidgetDisplaying(): void {
+    const container = this.ctx()?.$container;
+    if (container && container[0]) {
+      this.changeAlignment = container[0].offsetWidth < 620;
+      this.smallWidthContainer = container[0].offsetWidth < 420;
+    }
   }
 }

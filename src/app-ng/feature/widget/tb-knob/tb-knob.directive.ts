@@ -1,10 +1,10 @@
 import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import knobTemplate from '../../../../app/widget/lib/rpc/knob.tpl.html?raw';
-
 import tinycolor from 'tinycolor2';
+import { isNumber } from 'lodash-es';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
+declare let CanvasDigitalGauge: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 function KnobController(this: any, $element?: any, $scope?: any, $document?: any) {
@@ -50,9 +50,9 @@ function KnobController(this: any, $element?: any, $scope?: any, $document?: any
 
     function init() {
 
-        vm.minValue = angular.isDefined(vm.ctx.settings.minValue) ? vm.ctx.settings.minValue : 0;
-        vm.maxValue = angular.isDefined(vm.ctx.settings.maxValue) ? vm.ctx.settings.maxValue : 100;
-        vm.title = angular.isDefined(vm.ctx.settings.title) ? vm.ctx.settings.title : '';
+        vm.minValue = vm.ctx.settings.minValue !== undefined ? vm.ctx.settings.minValue : 0;
+        vm.maxValue = vm.ctx.settings.maxValue !== undefined ? vm.ctx.settings.maxValue : 100;
+        vm.title = vm.ctx.settings.title !== undefined ? vm.ctx.settings.title : '';
 
         var canvasBarData: any = {
             renderTo: canvasBarElement[0],
@@ -188,7 +188,7 @@ function KnobController(this: any, $element?: any, $scope?: any, $document?: any
         });
         vm.ctx.resize = resize;
         resize();
-        var initialValue: any = angular.isDefined(vm.ctx.settings.initialValue) ? vm.ctx.settings.initialValue : vm.minValue;
+        var initialValue: any = vm.ctx.settings.initialValue !== undefined ? vm.ctx.settings.initialValue : vm.minValue;
         setValue(initialValue);
 
         var subscription: any = vm.ctx.defaultSubscription;
@@ -369,6 +369,10 @@ function KnobController(this: any, $element?: any, $scope?: any, $document?: any
 export class TbKnobDirective {
   readonly ctx = model<any>();
 
+  value: any = 0;
+  error: any = '';
+  title: any = '';
+
   restrict: any = "E";
   scope: any = true;
   bindToController: any = {
@@ -376,7 +380,6 @@ export class TbKnobDirective {
         };
   controller: any = KnobController;
   controllerAs: any;
-  templateUrl: any = knobTemplate;
 
   constructor() {
     let vm = this;

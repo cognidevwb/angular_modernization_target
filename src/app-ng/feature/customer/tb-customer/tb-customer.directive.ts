@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { TbContactDirective } from '../../components/tb-contact/tb-contact.directive';
 
 import $ from 'jquery';
-import customerFieldsetTemplate from '../../../../app/customer/customer-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -48,14 +47,12 @@ export class TbCustomerDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(customerFieldsetTemplate);
   isPublic: any = false;
   $watch: any;
 
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.$watch('customer', (newVal?: any) => {
             if (newVal) {
                 if (this.customer().additionalInfo) {
@@ -65,7 +62,6 @@ export class TbCustomerDirective {
                 }
             }
         });
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   onCustomerIdCopied(...rest: any[]): any {

@@ -3,13 +3,7 @@ import { ElementRef } from '@angular/core';
 import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
 
-import $ from 'jquery';
-import legendTemplate from '../../../../app/components/legend.tpl.html?raw';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let element: any;
 
 /**
  * Ported from the AngularJS directive `tbLegend` (module `thingsboard.directives.legend`) in src/app/components/legend.directive.js:25.
@@ -25,22 +19,15 @@ export class TbLegendDirective {
   readonly legendConfig = model<any>();
   readonly legendData = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly element = inject(ElementRef);
 
-  protected template: any = legendTemplate;
   isHorizontal: any;
   isRowDirection: any;
 
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.isHorizontal = this.legendConfig().position === types.position.bottom.value ||
             this.legendConfig().position === types.position.top.value;
     this.isRowDirection = this.legendConfig().direction === types.direction.row.value;
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   displayHeader(...rest: any[]): any {

@@ -1,7 +1,6 @@
 import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-const template = require('../../../../app/widget/lib/tripAnimation/trip-animation-widget.tpl.html');
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
@@ -296,7 +295,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
         }
 
         if (!staticSettings.useMarkerImageFunction &&
-            angular.isDefined(vm.ctx.settings.markerImage) &&
+            vm.ctx.settings.markerImage !== undefined &&
             vm.ctx.settings.markerImage.length > 0) {
             staticSettings.useMarkerImage = true;
             let url: any = vm.ctx.settings.markerImage;
@@ -376,7 +375,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
             labelText = vm.utils.createLabelFromDatasource(trip.dataSource, labelText);
             labelReplaceInfo = processPattern(labelText, vm.ctx.datasources, trip.dSIndex);
             label = fillPattern(labelText, labelReplaceInfo, calculateCurrentDate(trip.timeRange, vm.index));
-            if (vm.staticSettings.useLabelFunction && angular.isDefined(vm.staticSettings.labelFunction)) {
+            if (vm.staticSettings.useLabelFunction && vm.staticSettings.labelFunction !== undefined) {
                 try {
                     labelText = vm.staticSettings.labelFunction(vm.ctx.data, calculateCurrentDate(trip.timeRange, vm.index), trip.dSIndex);
                 } catch (e) {
@@ -392,7 +391,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
         if (vm.staticSettings.displayTooltip) {
             let tooltipReplaceInfo: any;
             let tooltipText: any = vm.staticSettings.tooltipPattern;
-            if (vm.staticSettings.useTooltipFunction && angular.isDefined(vm.staticSettings.tooltipFunction)) {
+            if (vm.staticSettings.useTooltipFunction && vm.staticSettings.tooltipFunction !== undefined) {
                 try {
                     tooltipText = vm.staticSettings.tooltipFunction(vm.ctx.data, calculateCurrentDate(trip.timeRange, vm.index), trip.dSIndex);
                 } catch (e) {
@@ -413,7 +412,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
         if (vm.staticSettings.displayTooltip) {
             let tooltipReplaceInfo: any;
             let tooltipText: any = vm.staticSettings.polygonTooltipPattern;
-            if (vm.staticSettings.usePolygonTooltipFunction && angular.isDefined(vm.staticSettings.polygonTooltipFunction)) {
+            if (vm.staticSettings.usePolygonTooltipFunction && vm.staticSettings.polygonTooltipFunction !== undefined) {
                 try {
                     tooltipText = vm.staticSettings.polygonTooltipFunction(vm.ctx.data, calculateCurrentDate(trip.timeRange, vm.index), trip.dSIndex);
                 } catch (e) {
@@ -434,7 +433,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
         if (vm.staticSettings.displayTooltip) {
             let tooltipReplaceInfo: any;
             let tooltipText: any = vm.staticSettings.tooltipPattern;
-            if (vm.staticSettings.useTooltipFunction && angular.isDefined(vm.staticSettings.tooltipFunction)) {
+            if (vm.staticSettings.useTooltipFunction && vm.staticSettings.tooltipFunction !== undefined) {
                 try {
                     tooltipText = vm.staticSettings.tooltipFunction(vm.ctx.data, calculateCurrentDate(trip.timeRange, index), trip.dSIndex);
                 } catch (e) {
@@ -453,7 +452,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
     function calculateColor(trip?: any) {
         let color: any = vm.staticSettings.pathColor;
         let colorFn: any;
-        if (vm.staticSettings.usePathColorFunction && angular.isDefined(vm.staticSettings.colorFunction)) {
+        if (vm.staticSettings.usePathColorFunction && vm.staticSettings.colorFunction !== undefined) {
             try {
                 colorFn = vm.staticSettings.colorFunction(vm.ctx.data, calculateCurrentDate(trip.timeRange, vm.index), trip.dSIndex);
             } catch (e) {
@@ -469,7 +468,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
     function calculatePolygonColor(trip?: any) {
         let color: any = vm.staticSettings.polygonColor;
         let colorFn: any;
-        if (vm.staticSettings.usePolygonColorFunction && angular.isDefined(vm.staticSettings.polygonColorFunction)) {
+        if (vm.staticSettings.usePolygonColorFunction && vm.staticSettings.polygonColorFunction !== undefined) {
             try {
                 colorFn = vm.staticSettings.polygonColorFunction(vm.ctx.data, calculateCurrentDate(trip.timeRange, vm.index), trip.dSIndex);
             } catch (e) {
@@ -484,7 +483,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
 
     function calculateIcon(trip?: any) {
         let icon: any = vm.staticSettings.icon;
-        if (vm.staticSettings.useMarkerImageFunction && angular.isDefined(vm.staticSettings.markerImageFunction)) {
+        if (vm.staticSettings.useMarkerImageFunction && vm.staticSettings.markerImageFunction !== undefined) {
             let rawIcon: any;
             try {
                 rawIcon = vm.staticSettings.markerImageFunction(vm.ctx.data, vm.staticSettings.markerImages, calculateCurrentDate(trip.timeRange, vm.index), trip.dSIndex);
@@ -559,7 +558,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
                         return ds.dataReceived === true;
                     });
                 vm.initTrips = vm.trips.every(function (trip?: any) {
-                    return angular.isDefined(trip.marker) && angular.isDefined(trip.polyline);
+                    return trip.marker !== undefined && trip.polyline !== undefined;
                 });
             });
 
@@ -567,15 +566,75 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
         }
     }
 
+    function isNumber(value?: any): boolean {
+        return typeof value === 'number' && !isNaN(value);
+    }
+
+    function padValue(val: any, dec: any): string {
+        let strVal: string;
+        const n = Math.pow(10, dec);
+        val = Math.round(val * n) / n;
+        strVal = val.toString();
+        if (dec > 0) {
+            let dotPosition = strVal.indexOf('.');
+            if (dotPosition === -1) {
+                strVal += '.';
+                dotPosition = strVal.length - 1;
+            }
+            const cnt = dec - (strVal.length - dotPosition - 1);
+            for (let i = 0; i < cnt; i++) {
+                strVal += '0';
+            }
+        }
+        return strVal;
+    }
+
+    function processPattern(pattern?: any, datasources?: any, dsIndex?: any) {
+        let replaceInfo: any = {};
+        replaceInfo.variables = [];
+        let reg: any = /\$\{([^}]*)\}/g;
+        let match: any = reg.exec(pattern);
+        while (match !== null) {
+            let variableInfo: any = {};
+            variableInfo.variable = match[0];
+            let label: any = match[1];
+            let valDec: any = 2;
+            if (label.indexOf(':') > -1) {
+                let labelParts: any = label.split(':');
+                label = labelParts[0];
+                valDec = parseFloat(labelParts[1]);
+            }
+            variableInfo.valDec = valDec;
+            variableInfo.dataKeyIndex = -1;
+            if (datasources && datasources[dsIndex]) {
+                let datasource: any = datasources[dsIndex];
+                for (let i: any = 0; i < datasource.dataKeys.length; i++) {
+                    let dataKey: any = datasource.dataKeys[i];
+                    if (dataKey.label === label) {
+                        variableInfo.dataKeyIndex = i;
+                        break;
+                    }
+                }
+            }
+            replaceInfo.variables.push(variableInfo);
+            match = reg.exec(pattern);
+        }
+        return replaceInfo;
+    }
+
+    function fillPatternWithActions(pattern?: any, actionFunctionName?: any, actionHandler?: any) {
+        return pattern;
+    }
+
     function fillPattern(pattern?: any, replaceInfo?: any, currentNormalizedValue?: any) {
-        let text: any = angular.copy(pattern);
+        let text: any = structuredClone(pattern);
         let reg: any = /\$\{([^}]*)\}/g;
         if (replaceInfo) {
             for (let v: any = 0; v < replaceInfo.variables.length; v++) {
                 let variableInfo: any = replaceInfo.variables[v];
                 let label: any = reg.exec(pattern)[1].split(":")[0];
                 let txtVal: any = '';
-                if (label.length > -1 && angular.isDefined(currentNormalizedValue[label])) {
+                if (label.length > -1 && currentNormalizedValue[label] !== undefined) {
                     let varData: any = currentNormalizedValue[label];
                     if (isNumber(varData)) {
                         txtVal = padValue(varData, variableInfo.valDec, 0);
@@ -680,7 +739,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
         if (vm.trips.length > 0) {
             vm.trips.forEach(function (trip?: any) {
                 configureTripSettings(trip, apply);
-                if (Object.keys(trip.timeRange).length > 0 && trip.latLngs.every(el => angular.isDefined(el))) {
+                if (Object.keys(trip.timeRange).length > 0 && trip.latLngs.every((el: any) => el !== undefined)) {
                     if (vm.staticSettings.showPoints) {
                         trip.points = [];
                         Object.keys(trip.timeRange).forEach(function (tRange?: any, index?: any) {
@@ -703,7 +762,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
                         });
                     }
 
-                    if (angular.isUndefined(trip.marker)) {
+                    if (trip.marker === undefined) {
                         trip.polyline = vm.map.createPolyline(trip.latLngs, trip.settings);
                         if (vm.staticSettings.usePolylineDecorator) {
                             trip.polylineDecorator = L.polylineDecorator(trip.polyline, {
@@ -728,7 +787,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
                     }
 
 
-                    if (trip.timeRange && Object.keys(trip.timeRange).length && angular.isUndefined(trip.marker)) {
+                    if (trip.timeRange && Object.keys(trip.timeRange).length && trip.marker === undefined) {
                         trip.marker = L.marker(calculateCurrentDate(trip.timeRange, vm.index).latLng);
                         trip.marker.setZIndexOffset(1000);
                         trip.marker.setIcon(vm.staticSettings.icon);
@@ -741,7 +800,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
                     }
                 }
 
-                if (vm.staticSettings.showPolygon && angular.isDefined(calculateCurrentDate(trip.timeRange, vm.index)[vm.staticSettings.polKeyName])) {
+                if (vm.staticSettings.showPolygon && calculateCurrentDate(trip.timeRange, vm.index)[vm.staticSettings.polKeyName] !== undefined) {
                     let polygonSettings: any = {
                         fill: true,
                         fillColor: trip.settings.polygonColor,
@@ -750,7 +809,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
                         fillOpacity: trip.settings.polygonOpacity,
                         opacity: trip.settings.polygonStrokeOpacity
                     };
-                    let polygonLatLngsRaw: any = mapPolygonArray(angular.fromJson(calculateCurrentDate(trip.timeRange, vm.index)[vm.staticSettings.polKeyName]));
+                    let polygonLatLngsRaw: any = mapPolygonArray(JSON.parse(calculateCurrentDate(trip.timeRange, vm.index)[vm.staticSettings.polKeyName]));
                     trip.polygon = L.polygon(polygonLatLngsRaw, polygonSettings).addTo(vm.map.map);
                     trip.polygon.on('click',function(){showHidePolygonTooltip(trip)});
                 }
@@ -766,7 +825,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
             let timeInterval: any = Object.keys(tripTimeRange);
             for (let i: any = 1; i < timeInterval.length; i++) {
                 if (timeInterval[i - 1] < time && timeInterval[i] > time) {
-                    let calcPosition: any = angular.copy(tripTimeRange[timeInterval[i - 1]]);
+                    let calcPosition: any = structuredClone(tripTimeRange[timeInterval[i - 1]]);
                     let startLatLng: any = tripTimeRange[timeInterval[i - 1]].latLng;
                     let finishLatLng: any = tripTimeRange[timeInterval[i]].latLng;
                     let percentRouteComplete: any = (time - timeInterval[i - 1]) / (timeInterval[i] - timeInterval[i - 1]);

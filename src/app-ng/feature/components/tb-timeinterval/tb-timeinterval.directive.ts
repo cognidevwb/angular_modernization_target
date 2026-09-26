@@ -1,10 +1,9 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, inject, model, DoCheck } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { TimeService } from '../../api/services/time.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgControl } from '@angular/forms';
 
 import $ from 'jquery';
-import timeintervalTemplate from '../../../../app/components/timeinterval.tpl.html?raw';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -27,7 +26,7 @@ declare let ngModelCtrl: any;
   imports: [TranslatePipe, MatSlideToggleModule, MatSelectModule, MatInputModule, MatFormFieldModule, MatCheckboxModule, FormsModule],
   templateUrl: './tb-timeinterval.directive.html',
 })
-export class TbTimeintervalDirective {
+export class TbTimeintervalDirective implements DoCheck {
   readonly required = model<any>(undefined, { alias: 'ngRequired' });
   readonly min = model<any>();
   readonly max = model<any>();
@@ -39,8 +38,8 @@ export class TbTimeintervalDirective {
   // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly timeService = inject(TimeService);
   protected readonly element = inject(ElementRef);
+  protected readonly ngControl = inject(NgControl, { optional: true });
 
-  protected template: any = timeintervalTemplate;
   rendered: any = false;
   days: any = 0;
   hours: any = 0;
@@ -50,11 +49,16 @@ export class TbTimeintervalDirective {
   $watch: any;
   intervalMs: any;
   intervals: any;
+  private prevRequired: any;
+  private prevMin: any;
+  private prevMax: any;
+  private prevIntervalMsVal: any;
+  private prevAdvancedVal: any;
+  private doCheckInitialized = false;
 
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     ngModelCtrl.$render = function () {
             if (ngModelCtrl.$viewValue) {
                 var intervalMs: any = ngModelCtrl.$viewValue;
@@ -65,30 +69,6 @@ export class TbTimeintervalDirective {
             }
             this.rendered = true;
         }
-    if (changes['required'] && changes['required'].previousValue !== undefined && changes['required'].currentValue !== changes['required'].previousValue) {
-      this.updateView();
-    }
-    if (changes['min'] && changes['min'].previousValue !== undefined && changes['min'].currentValue !== changes['min'].previousValue) {
-      this.updateView();
-    }
-    if (changes['max'] && changes['max'].previousValue !== undefined && changes['max'].currentValue !== changes['max'].previousValue) {
-      this.updateView();
-    }
-    if (changes['intervalMs'] && changes['intervalMs'].previousValue !== undefined && changes['intervalMs'].currentValue !== changes['intervalMs'].previousValue) {
-      this.updateView();
-    }
-    if (changes['advanced'] && changes['advanced'].previousValue !== undefined && changes['advanced'].currentValue !== changes['advanced'].previousValue) {
-      if (!this.advanced) {
-        this.intervalMs.set(this.calculateIntervalMs());
-      } else {
-        let intervalMs: any = this.intervalMs();
-        if (!intervalMs || isNaN(intervalMs)) {
-          intervalMs = this.calculateIntervalMs();
-        }
-        this.setIntervalMs(intervalMs);
-      }
-      this.updateView();
-    }
     this.$watch('secs', (newSecs?: any) => {
             if ((newSecs === undefined)) {
                 return;
@@ -151,6 +131,46 @@ export class TbTimeintervalDirective {
         });
     this.boundInterval();
     $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  ngDoCheck(): void {
+    const requiredVal = this.required();
+    const minVal = this.min();
+    const maxVal = this.max();
+    const intervalMsVal = this.intervalMs;
+    const advancedVal = this.advanced;
+    if (this.doCheckInitialized) {
+      if (this.prevRequired !== undefined && requiredVal !== this.prevRequired) {
+        this.updateView();
+      }
+      if (this.prevMin !== undefined && minVal !== this.prevMin) {
+        this.updateView();
+      }
+      if (this.prevMax !== undefined && maxVal !== this.prevMax) {
+        this.updateView();
+      }
+      if (this.prevIntervalMsVal !== undefined && intervalMsVal !== this.prevIntervalMsVal) {
+        this.updateView();
+      }
+      if (this.prevAdvancedVal !== undefined && advancedVal !== this.prevAdvancedVal) {
+        if (!this.advanced) {
+          this.intervalMs.set(this.calculateIntervalMs());
+        } else {
+          let intervalMs: any = this.intervalMs();
+          if (!intervalMs || isNaN(intervalMs)) {
+            intervalMs = this.calculateIntervalMs();
+          }
+          this.setIntervalMs(intervalMs);
+        }
+        this.updateView();
+      }
+    }
+    this.doCheckInitialized = true;
+    this.prevRequired = requiredVal;
+    this.prevMin = minVal;
+    this.prevMax = maxVal;
+    this.prevIntervalMsVal = intervalMsVal;
+    this.prevAdvancedVal = advancedVal;
   }
 
   boundInterval(...rest: any[]): any {
