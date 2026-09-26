@@ -1,5 +1,11 @@
 {
-  "phases": {},
+  "phases": {
+    "si-ready": {
+      "at": 1790440470,
+      "reused": false,
+      "status": "Ok"
+    }
+  },
   "playbook": "modernization-angular-v2",
   "started_utc": 1790440470
 }
