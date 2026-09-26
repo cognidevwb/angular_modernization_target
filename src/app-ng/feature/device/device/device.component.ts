@@ -34,8 +34,8 @@ import addDevicesToCustomerTemplate from '../../../../app/device/add-devices-to-
 import deviceCredentialsTemplate from '../../../../app/device/device-credentials.tpl.html';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $q: any;
 
 /**
  * Ported from the AngularJS controller `DeviceController` (module `thingsboard.device`) in src/app/device/index.js:29.

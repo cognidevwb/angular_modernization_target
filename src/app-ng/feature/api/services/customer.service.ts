@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { types } from '../../common/constants/types';
 import { bindMethods } from '../../../bind-methods';
 
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $q: any;
 
 /**
  * Ported from the AngularJS factory `customerService` (module `thingsboard.api.customer`) in src/app/api/customer.service.js:16.

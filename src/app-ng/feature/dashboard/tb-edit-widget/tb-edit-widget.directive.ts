@@ -11,9 +11,9 @@ import { TbWidgetConfigDirective } from '../../components/tb-widget-config/tb-wi
 import $ from 'jquery';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
-declare let $q: any;
 declare let $templateCache: any;
 declare let angular: any;
 declare let scope: any;

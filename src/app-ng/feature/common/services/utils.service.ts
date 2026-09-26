@@ -10,10 +10,10 @@ import jsonSchemaDefaults from 'json-schema-defaults';
 import base64js from 'base64-js';
 import {utf8Encode, utf8Decode} from '../../../../app/common/utf8-support';
 
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let angular: any;
 declare let $mdColorPalette: any;
-declare let $q: any;
 declare let $window: any;
 declare let scope: any;
 

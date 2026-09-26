@@ -8,10 +8,10 @@ import { MatInputModule } from '@angular/material/input';
 
 import $ from 'jquery';
 import { TranslatePipe } from '@ngx-translate/core';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $filter: any;
-declare let $q: any;
 declare let angular: any;
 declare let element: any;
 declare let ngModelCtrl: any;

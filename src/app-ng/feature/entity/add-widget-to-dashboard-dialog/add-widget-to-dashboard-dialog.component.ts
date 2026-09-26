@@ -26,8 +26,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $q: any;
 
 /**
  * Ported from the AngularJS controller `AddWidgetToDashboardDialogController` (module `thingsboard.entity`) in src/app/entity/index.js:37.

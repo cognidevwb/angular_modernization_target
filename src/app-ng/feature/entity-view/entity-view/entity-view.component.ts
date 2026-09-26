@@ -30,8 +30,8 @@ declare let assignToCustomerTemplate: any;
 declare let addEntityViewsToCustomerTemplate: any;
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $q: any;
 
 /**
  * Ported from the AngularJS controller `EntityViewController` (module `thingsboard.entityView`) in src/app/entity-view/index.js:28.

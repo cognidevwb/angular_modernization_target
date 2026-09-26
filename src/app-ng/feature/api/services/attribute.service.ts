@@ -4,10 +4,10 @@ import { TelemetryWebsocketService } from './telemetry-websocket.service';
 import { types } from '../../common/constants/types';
 import { bindMethods } from '../../../bind-methods';
 
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let angular: any;
 declare let $filter: any;
-declare let $q: any;
 declare let scope: any;
 
 /**

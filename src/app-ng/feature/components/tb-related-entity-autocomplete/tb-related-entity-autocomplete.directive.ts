@@ -3,10 +3,10 @@ import { ElementRef } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 
 import $ from 'jquery';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $filter: any;
-declare let $q: any;
 declare let $templateCache: any;
 declare let element: any;
 declare let ngModelCtrl: any;

@@ -31,8 +31,8 @@ import assignToCustomerTemplate from '../../../../app/asset/assign-to-customer.t
 import addAssetsToCustomerTemplate from '../../../../app/asset/add-assets-to-customer.tpl.html';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $q: any;
 
 /**
  * Ported from the AngularJS controller `AssetController` (module `thingsboard.asset`) in src/app/asset/index.js:28.

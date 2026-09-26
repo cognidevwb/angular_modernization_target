@@ -16,6 +16,7 @@ import $ from 'jquery';
 import Subscription from '../../../../app/api/subscription';
 import cssjs from '../../../../vendor/css.js/css';
 
+import { $q, $timeout } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let addResizeListener: any;
 declare let angular: any;
@@ -24,9 +25,7 @@ declare let $compile: any;
 declare let $filter: any;
 declare let $injector: any;
 declare let $ocLazyLoad: any;
-declare let $q: any;
 declare let $scope: any;
-declare let $timeout: any;
 declare let $window: any;
 declare let aliasController: any;
 declare let dashboard: any;

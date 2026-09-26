@@ -4,9 +4,9 @@ import { UtilsService } from '../../common/services/utils.service';
 import { types } from '../../common/constants/types';
 import { bindMethods } from '../../../bind-methods';
 
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $filter: any;
-declare let $q: any;
 
 /**
  * Ported from the AngularJS factory `alarmService` (module `thingsboard.api.alarm`) in src/app/api/alarm.service.js:16.

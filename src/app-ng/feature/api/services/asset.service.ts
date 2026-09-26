@@ -4,8 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
 import { bindMethods } from '../../../bind-methods';
 
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $q: any;
 
 /**
  * Ported from the AngularJS factory `assetService` (module `thingsboard.api.asset`) in src/app/api/asset.service.js:16.

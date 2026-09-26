@@ -11,10 +11,10 @@ import { ToastService } from '../../services/toast.service';
 import { TranslateService } from '@ngx-translate/core';
 import { bindMethods } from '../../../bind-methods';
 
+import { $q } from '../../../core/q';
+import { store } from '../../../core/app-store';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $q: any;
 declare let jwtHelper: any;
-declare let store: any;
 
 /**
  * Ported from the AngularJS factory `userService` (module `thingsboard.api.user`) in src/app/api/user.service.js:19.

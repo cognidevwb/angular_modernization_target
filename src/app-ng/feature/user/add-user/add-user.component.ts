@@ -10,8 +10,8 @@ import { types } from '../../common/constants/types';
 import $ from 'jquery';
 // @ts-ignore
 import activationLinkDialogTemplate from '../../../../app/user/activation-link.dialog.tpl.html';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $q: any;
 
 /**
  * Ported from the AngularJS controller `AddUserController` (module `thingsboard.user`) in src/app/user/index.js:27.

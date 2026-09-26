@@ -28,8 +28,8 @@ import makeDashboardPublicDialogTemplate from '../../../../app/dashboard/make-da
 import manageAssignedCustomersTemplate from '../../../../app/dashboard/manage-assigned-customers.tpl.html';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $q: any;
 
 /**
  * Ported from the AngularJS controller `DashboardsController` (module `thingsboard.dashboard`) in src/app/dashboard/index.js:50.

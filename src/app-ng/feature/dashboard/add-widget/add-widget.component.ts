@@ -20,9 +20,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let angular: any;
-declare let $q: any;
 
 /**
  * Ported from the AngularJS controller `AddWidgetController` (module `thingsboard.dashboard`) in src/app/dashboard/index.js:50.

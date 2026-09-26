@@ -7,8 +7,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { types } from '../../common/constants/types';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let types: any;
 
 /**
  * Ported from the AngularJS directive `tbTableColumnsAssignment` (module `thingsboard.importexport`) in src/app/import-export/index.js:22.

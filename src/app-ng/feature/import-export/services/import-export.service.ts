@@ -18,9 +18,9 @@ import { types } from '../../common/constants/types';
 import $ from 'jquery';
 import { bindMethods } from '../../../bind-methods';
 import * as JSZip from 'jszip';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let angular: any;
-declare let $q: any;
 declare let scope: any;
 
 /**

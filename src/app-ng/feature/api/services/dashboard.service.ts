@@ -4,9 +4,9 @@ import { RootState } from '../../../root-state';
 import { Router } from '@angular/router';
 import { bindMethods } from '../../../bind-methods';
 
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $filter: any;
-declare let $q: any;
 
 /**
  * Ported from the AngularJS factory `dashboardService` (module `thingsboard.api.dashboard`) in src/app/api/dashboard.service.js:16.

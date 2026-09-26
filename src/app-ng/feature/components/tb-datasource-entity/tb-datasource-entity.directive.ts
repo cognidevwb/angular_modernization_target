@@ -7,13 +7,13 @@ import tinycolor from 'tinycolor2';
 import $ from 'jquery';
 import { isEqual } from 'lodash-es';
 import { DatakeyConfigDialogComponent } from '../datakey-config-dialog/datakey-config-dialog.component';
+import { $q } from '../../../core/q';
 const datasourceEntityTemplate = '../../../../app/components/datasource-entity.tpl.html';
 const datakeyConfigDialogTemplate = '../../../../app/components/datakey-config-dialog.tpl.html';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $mdColorPicker: any;
-declare let $q: any;
 declare let $templateCache: any;
 declare let $window: any;
 declare let angular: any;

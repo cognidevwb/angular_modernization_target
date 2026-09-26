@@ -4,10 +4,10 @@ import { UtilsService } from '../../common/services/utils.service';
 import { types } from '../../common/constants/types';
 import { bindMethods } from '../../../bind-methods';
 
+import { $timeout } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $filter: any;
 declare let $log: any;
-declare let $timeout: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 function DatasourceSubscription(this: any, datasourceSubscription?: any, telemetryWebsocketService?: any, $timeout?: any, $filter?: any, $log?: any, types?: any, utils?: any) {

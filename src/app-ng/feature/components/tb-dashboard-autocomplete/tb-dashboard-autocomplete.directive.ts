@@ -5,11 +5,11 @@ import { UserService } from '../../api/services/user.service';
 
 import $ from 'jquery';
 import { isEqual } from 'lodash-es';
+import { $q } from '../../../core/q';
 declare function require(id: string): any;
 const dashboardAutocompleteTemplate: string = require('../../../../app/components/dashboard-autocomplete.tpl.html');
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
-declare let $q: any;
 declare let $templateCache: any;
 declare let angular: any;
 declare let element: any;

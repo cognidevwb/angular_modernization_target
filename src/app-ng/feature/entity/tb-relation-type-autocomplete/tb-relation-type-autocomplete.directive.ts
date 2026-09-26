@@ -9,10 +9,10 @@ import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
 import { TranslatePipe } from '@ngx-translate/core';
 import { NgFor } from '@angular/common';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $filter: any;
-declare let $q: any;
 declare let $templateCache: any;
 declare let angular: any;
 declare let element: any;

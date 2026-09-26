@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { bindMethods } from '../../bind-methods';
 
+import { $q } from '../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $q: any;
 
 /**
  * Ported from the AngularJS factory `clipboardService` (module `thingsboard.clipboard`) in src/app/services/clipboard.service.js:16.

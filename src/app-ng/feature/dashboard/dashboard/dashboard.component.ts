@@ -55,10 +55,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let THINGSBOARD_VERSION: any;
 declare let $filter: any;
-declare let $q: any;
 declare let $scope: any;
 declare let $window: any;
 declare let scope: any;

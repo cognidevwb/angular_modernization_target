@@ -22,9 +22,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
+import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $filter: any;
-declare let $q: any;
 
 /**
  * Ported from the AngularJS controller `WidgetLibraryController` (module `thingsboard.widget-library`) in src/app/widget/index.js:40.
