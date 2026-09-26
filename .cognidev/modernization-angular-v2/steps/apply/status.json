@@ -1,0 +1,25 @@
+{
+  "elapsedMs": 4148,
+  "finishedAt": 1790440489,
+  "inputs": [],
+  "kind": "rust-binary",
+  "outputs": [
+    {
+      "exists": true,
+      "kind": null,
+      "name": "units",
+      "optional": false,
+      "path": "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/.cognidev/modernization-angular-v2/port/units.json"
+    },
+    {
+      "exists": true,
+      "kind": "report",
+      "name": "PORT-LEDGER",
+      "optional": false,
+      "path": "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/PORT-LEDGER.md"
+    }
+  ],
+  "status": "Ok",
+  "step": "apply",
+  "summary": "Tool `tools/scaffold-units/target/release/scaffold-units` completed."
+}

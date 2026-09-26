@@ -1,5 +1,10 @@
 {
   "phases": {
+    "apply": {
+      "at": 1790440489,
+      "reused": false,
+      "status": "Ok"
+    },
     "assess": {
       "at": 1790440479,
       "reused": false,
