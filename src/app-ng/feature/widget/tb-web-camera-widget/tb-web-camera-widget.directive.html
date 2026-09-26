@@ -1,0 +1,81 @@
+<!-- Scaffolded by the playbook from src/app/widget/lib/web-camera-input-widget.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div layout="column" layout-align="center center" class="tb-web-camera">
+    @if (isEntityDetected && dataKeyDetected && isCameraSupport && isDeviceDetect) {
+      <div layout-fill>
+        <div [hidden]="!(!isShowCamera)" layout="column" layout-align="space-between center" layout-fill>
+            <div class="tb-web-camera__last-photo" flex>
+                <span [hidden]="!(!ctx()?.data?.[0]?.data?.[0]?.[1])" class="tb-web-camera__last-photo_text" translate>widgets.input-widgets.no-image</span>
+                <img [hidden]="!(ctx()?.data?.[0]?.data?.[0]?.[1])" class="tb-web-camera__last-photo_img" src="{{ctx()?.data?.[0]?.data?.[0]?.[1]}}">
+            </div>
+            <button mat-raised-button color="primary" (click)="takePhoto()">{{ "widgets.input-widgets.take-photo" | translate }}</button>
+        </div>
+        <div [hidden]="!(isShowCamera)" layout="column" layout-align="center center" id="photoCamera">
+            <div class="camera" [hidden]="!(!isPreviewPhoto)">
+                <video autoplay muted playsinline id="videoStream" class="camera-stream"></video>
+                <div class="camera-controls" layout="row" layout-wrap="" layout-align="space-between end">
+                    <div flex></div>
+                    <button mat-mini-fab color="primary" attr.aria-label="{{ 'widgets.input-widgets.switch-camera' | translate }}" (click)="switchWebCamera()" [disabled]="videoInput?.length < 2">
+                        <mat-icon fontIcon="switch_camera" attr.aaria-label="{{ 'widgets.input-widgets.switch-camera' | translate }}">switch_camera</mat-icon>
+                    </button>
+                    <button mat-fab class="md-hue-2" attr.aria-label="{{ 'widgets.input-widgets.take-photo' | translate }}" (click)="createPhoto()">
+                        <mat-icon fontIcon="photo_camera" aria-label="Take Photo">photo_camera</mat-icon>
+                    </button>
+                    <button mat-mini-fab color="primary" attr.aria-label="{{ 'action.cancel' | translate }}" (click)="closeCamera()">
+                        <mat-icon fontIcon="close" attr.aria-label="{{ 'action.cancel' | translate }}">close</mat-icon>
+                    </button>
+                    <div flex></div>
+                </div>
+            </div>
+            <div class="camera" [hidden]="!(isPreviewPhoto)">
+                <img class="camera-stream" src="{{previewPhoto}}">
+                <canvas style="display:none;"></canvas>
+                <div class="camera-controls" layout="row" layout-wrap="" layout-align="space-between end">
+                    <div flex></div>
+                    <button mat-fab color="primary" attr.aria-label="{{ 'action.cancel' | translate }}" (click)="cancelPhoto()">
+                        <mat-icon fontIcon="close" attr.aria-label="{{ 'action.cancel' | translate }}">close</mat-icon>
+                    </button>
+                    <button mat-fab class="md-hue-2" attr.aria-label="{{ 'action.save' | translate }}" (click)="savePhoto()">
+                        <mat-icon fontIcon="check" attr.aria-label="{{ 'action.save' | translate }}">check</mat-icon>
+                    </button>
+                    <div flex></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+    <div class="message-text" [hidden]="isEntityDetected">
+        {{ 'widgets.input-widgets.no-entity-selected' | translate }}
+    </div>
+    @if (isEntityDetected && !dataKeyDetected) {
+      <div class="message-text">
+        {{ 'widgets.input-widgets.no-datakey-selected' | translate }}
+    </div>
+    }
+    @if (isEntityDetected && dataKeyDetected && !isCameraSupport) {
+      <div class="message-text">
+        {{ 'widgets.input-widgets.no-support-web-camera' | translate }}
+    </div>
+    }
+    @if (isEntityDetected && dataKeyDetected && isCameraSupport && !isDeviceDetect) {
+      <div class="message-text">
+        {{ 'widgets.input-widgets.no-support-web-camera' | translate }}
+    </div>
+    }
+</div>

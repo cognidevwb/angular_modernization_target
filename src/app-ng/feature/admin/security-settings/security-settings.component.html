@@ -1,0 +1,150 @@
+<!-- Scaffolded by the playbook from src/app/admin/security-settings.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div [tbHelp]="'securitySettings'" help-container-id="help-container">
+    <mat-card class="settings-card">
+        <mat-card-header>
+            <mat-card-title layout="row">
+                <span translate class="md-headline">admin.security-settings</span>
+                <span flex></span>
+                <div id="help-container"></div>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-progress-bar mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
+        <span style="min-height: 5px;" flex="" [hidden]="!(!rootScope?.loading)"></span>
+        <mat-card-content>
+            <form name="vm.settingsForm" (ngSubmit)="save()" tb-confirm-on-exit confirm-form="vm.settingsForm">
+                <fieldset [disabled]="rootScope?.loading">
+                    <!-- TODO(port): md-expansion-panel-group (angular-material-expansion-panel): a mat-accordion --><md-expansion-panel-group md-component-id="securitySettingsPanelGroup" auto-expand="true" multiple>
+                        <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><md-expansion-panel md-component-id="generalPolicyPanel" id="generalPolicyPanel">
+                            <!-- TODO(port): md-expansion-panel-collapsed: the mat-expansion-panel-header --><md-expansion-panel-collapsed>
+                                <div class="tb-panel-title" translate>admin.general-policy</div>
+                                <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
+                            </md-expansion-panel-collapsed>
+                            <!-- TODO(port): md-expansion-panel-expanded: the panel's content --><md-expansion-panel-expanded>
+                                <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><md-expansion-panel-header (click)="$mdExpansionPanel('generalPolicyPanel').collapse()">
+                                    <div class="tb-panel-title" translate>admin.general-policy</div>
+                                    <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
+                                </md-expansion-panel-header>
+                                <!-- TODO(port): md-expansion-panel-content: the panel's content --><md-expansion-panel-content>
+                                    <mat-form-field class="md-block">
+                                        <mat-label translate>admin.max-failed-login-attempts</mat-label>
+                                        <input matInput type="number" step="1" min="0" name="maxFailedLoginAttempts" [(ngModel)]="securitySettings.maxFailedLoginAttempts">
+                                        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                        <div ng-messages="settingsForm?.maxFailedLoginAttempts?.$error">
+                                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                            <div translate ng-message="min">admin.minimum-max-failed-login-attempts-range</div>
+                                        </div>
+                                    </mat-form-field>
+                                    <mat-form-field class="md-block">
+                                        <mat-label translate>admin.user-lockout-notification-email</mat-label>
+                                        <input matInput type="email" name="userLockoutNotificationEmail" [(ngModel)]="securitySettings.userLockoutNotificationEmail">
+                                    </mat-form-field>
+                                </md-expansion-panel-content>
+                            </md-expansion-panel-expanded>
+                        </md-expansion-panel>
+                        <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><md-expansion-panel md-component-id="passwordPolicyPanel" id="passwordPolicyPanel">
+                            <!-- TODO(port): md-expansion-panel-collapsed: the mat-expansion-panel-header --><md-expansion-panel-collapsed>
+                                <div class="tb-panel-title" translate>admin.password-policy</div>
+                                <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
+                            </md-expansion-panel-collapsed>
+                            <!-- TODO(port): md-expansion-panel-expanded: the panel's content --><md-expansion-panel-expanded>
+                                <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><md-expansion-panel-header (click)="$mdExpansionPanel('passwordPolicyPanel').collapse()">
+                                    <div class="tb-panel-title" translate>admin.password-policy</div>
+                                    <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
+                                </md-expansion-panel-header>
+                                <!-- TODO(port): md-expansion-panel-content: the panel's content --><md-expansion-panel-content>
+                                    <mat-form-field class="md-block">
+                                        <mat-label translate>admin.minimum-password-length</mat-label>
+                                        <input matInput type="number" step="1" min="5" max="50" required name="minimumPasswordLength" [(ngModel)]="securitySettings.passwordPolicy.minimumLength">
+                                        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                        <div ng-messages="settingsForm?.minimumPasswordLength?.$error">
+                                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                            <div translate ng-message="required">admin.minimum-password-length-required</div>
+                                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                            <div translate ng-message="min">admin.minimum-password-length-range</div>
+                                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                            <div translate ng-message="max">admin.minimum-password-length-range</div>
+                                        </div>
+                                    </mat-form-field>
+                                    <mat-form-field class="md-block">
+                                        <mat-label translate>admin.minimum-uppercase-letters</mat-label>
+                                        <input matInput type="number" step="1" min="0" name="minimumUppercaseLetters" [(ngModel)]="securitySettings.passwordPolicy.minimumUppercaseLetters">
+                                        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                        <div ng-messages="settingsForm?.minimumUppercaseLetters?.$error">
+                                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                            <div translate ng-message="min">admin.minimum-uppercase-letters-range</div>
+                                        </div>
+                                    </mat-form-field>
+                                    <mat-form-field class="md-block">
+                                        <mat-label translate>admin.minimum-lowercase-letters</mat-label>
+                                        <input matInput type="number" step="1" min="0" name="minimumLowercaseLetters" [(ngModel)]="securitySettings.passwordPolicy.minimumLowercaseLetters">
+                                        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                        <div ng-messages="settingsForm?.minimumLowercaseLetters?.$error">
+                                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                            <div translate ng-message="min">admin.minimum-lowercase-letters-range</div>
+                                        </div>
+                                    </mat-form-field>
+                                    <mat-form-field class="md-block">
+                                        <mat-label translate>admin.minimum-digits</mat-label>
+                                        <input matInput type="number" step="1" min="0" name="minimumDigits" [(ngModel)]="securitySettings.passwordPolicy.minimumDigits">
+                                        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                        <div ng-messages="settingsForm?.minimumDigits?.$error">
+                                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                            <div translate ng-message="min">admin.minimum-digits-range</div>
+                                        </div>
+                                    </mat-form-field>
+                                    <mat-form-field class="md-block">
+                                        <mat-label translate>admin.minimum-special-characters</mat-label>
+                                        <input matInput type="number" step="1" min="0" name="minimumSpecialCharacters" [(ngModel)]="securitySettings.passwordPolicy.minimumSpecialCharacters">
+                                        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                        <div ng-messages="settingsForm?.minimumSpecialCharacters?.$error">
+                                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                            <div translate ng-message="min">admin.minimum-special-characters-range</div>
+                                        </div>
+                                    </mat-form-field>
+                                    <mat-form-field class="md-block">
+                                        <mat-label translate>admin.password-expiration-period-days</mat-label>
+                                        <input matInput type="number" step="1" min="0" name="passwordExpirationPeriodDays" [(ngModel)]="securitySettings.passwordPolicy.passwordExpirationPeriodDays">
+                                        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                        <div ng-messages="settingsForm?.passwordExpirationPeriodDays?.$error">
+                                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                            <div translate ng-message="min">admin.password-expiration-period-days-range</div>
+                                        </div>
+                                    </mat-form-field>
+                                    <mat-form-field class="md-block">
+                                        <mat-label translate>admin.password-reuse-frequency-days</mat-label>
+                                        <input matInput type="number" step="1" min="0" name="passwordReuseFrequencyDays" [(ngModel)]="securitySettings.passwordPolicy.passwordReuseFrequencyDays">
+                                        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                        <div ng-messages="settingsForm?.passwordReuseFrequencyDays?.$error">
+                                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                            <div translate ng-message="min">admin.password-reuse-frequency-days-range</div>
+                                        </div>
+                                    </mat-form-field>
+                                </md-expansion-panel-content>
+                            </md-expansion-panel-expanded>
+                        </md-expansion-panel>
+                    </md-expansion-panel-group>
+                    <div layout="row" layout-align="end center" width="100%" layout-wrap>
+                        <button mat-raised-button color="primary" [disabled]="rootScope?.loading || settingsForm?.$invalid || !settingsForm?.$dirty" type="submit">{{'action.save' | translate}}</button>
+                    </div>
+                </fieldset>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

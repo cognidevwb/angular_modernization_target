@@ -1,0 +1,160 @@
+<!-- Scaffolded by the playbook from src/app/import-export/import-dialog-csv.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div attr.aria-label="{{ importTitle | translate }}" class="md-dialog tb-import-stepper" [tbHelp]="'entitiesImport'" help-container-id="help-container">
+    <mat-toolbar>
+        <div class="md-toolbar-tools">
+            <h2 translate>{{ importTitle }}</h2>
+            <span flex></span>
+            <div id="help-container"></div>
+            <button mat-icon-button (click)="cancel()" [disabled]="isImportData">
+                <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
+            </button>
+        </div>
+    </mat-toolbar>
+
+    <span style="max-height: 5px; height: 5px;" flex></span>
+    <mat-dialog-content>
+        <md-stepper id="import-stepper" md-mobile-step-text="vm.isMobileStepText" md-vertical="vm.isVertical" md-linear="vm.isLinear" md-alternative="vm.isAlternative">
+            <!-- TODO(port): md-step: a mat-step --><md-step attr.md-label="{{ 'import.stepper-text.select-file' | translate }}">
+                <!-- TODO(port): md-step-body: the mat-step's content --><md-step-body>
+                    <form name="vm.theFormStep1">
+                        <fieldset [disabled]="rootScope?.loading">
+                            <div layout="column" layout-padding>
+                                <div class="tb-container">
+                                    <label class="tb-label" translate>{{ importFileLabel }}</label>
+                                    <div flow-init="{singleFile:true}" flow-file-added="vm.fileAdded( $file )" class="tb-file-select-container">
+                                        <div class="tb-file-clear-container">
+                                            <button mat-icon-button color="primary" (click)="clearFile()" class="tb-file-clear-btn" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                
+                                                <mat-icon attr.aria-label="{{ 'action.remove' | translate }}" class="material-icons">
+                                                    close
+                                                </mat-icon>
+                                            </button>
+                                        </div>
+                                        <div class="alert tb-flow-drop" flow-drop>
+                                            <label for="select" translate>import.drop-file-csv</label>
+                                            <input class="file-input" flow-btn flow-attrs="{accept:'.csv,application/csv,text/csv'}" id="select">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div [hidden]="!(!fileName)" translate>import.no-file</div>
+                                    <div [hidden]="!(fileName)">{{ fileName }}</div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </md-step-body>
+
+                <!-- TODO(port): md-step-actions: the buttons calling stepper.next()/previous() --><md-step-actions layout="row">
+                    <span flex></span>
+                    <button mat-button [disabled]="rootScope?.loading" (click)="cancel()">
+                        {{ 'action.cancel' | translate }}
+                    </button>
+                    <button mat-raised-button color="primary" [disabled]="rootScope?.loading || !theFormStep1?.$dirty || !theFormStep1?.$valid || !importData" (click)="nextStep(2)">
+                        {{ 'action.continue' | translate }}
+                    </button>
+                </md-step-actions>
+            </md-step>
+
+            <!-- TODO(port): md-step: a mat-step --><md-step attr.md-label="{{ 'import.stepper-text.configuration' | translate }}">
+                <!-- TODO(port): md-step-body: the mat-step's content --><md-step-body>
+                    <div layout="column">
+                        <mat-form-field>
+                            <mat-label translate>import.csv-delimiter</mat-label>
+                            <mat-select [(ngModel)]="importParameters.delim">
+                                @for (delimiter of delimiters; track $index) {
+                                  <mat-option [value]="delimiter?.key">
+                                    {{delimiter?.value}}
+                                </mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-checkbox [(ngModel)]="importParameters.isHeader" aria-label="First line contains column names">
+                            {{ 'import.csv-first-line-header' | translate }}
+                        </mat-checkbox>
+                        <mat-checkbox [(ngModel)]="importParameters.isUpdate" aria-label="Update attributes/telemetry">
+                            {{ 'import.csv-update-data' | translate }}
+                        </mat-checkbox>
+                    </div>
+                </md-step-body>
+
+                <!-- TODO(port): md-step-actions: the buttons calling stepper.next()/previous() --><md-step-actions layout="row">
+                    <button mat-button [disabled]="rootScope?.loading" (click)="previousStep(1)">Back
+                    </button>
+                    <span flex></span>
+                    <button mat-button [disabled]="rootScope?.loading" (click)="cancel()">
+                        {{ 'action.cancel' | translate }}
+                    </button>
+                    <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="nextStep(3)">
+                        {{ 'action.continue' | translate }}
+                    </button>
+                </md-step-actions>
+            </md-step>
+
+            <!-- TODO(port): md-step: a mat-step --><md-step attr.md-label="{{ 'import.stepper-text.column-type' | translate }}">
+                <!-- TODO(port): md-step-body: the mat-step's content --><md-step-body>
+                    <form name="vm.theFormStep3">
+                        <tb-table-columns-assignment [(columns)]="columnsParam" [(theForm)]="theFormStep3" [(entityType)]="entityType"></tb-table-columns-assignment>
+                    </form>
+                </md-step-body>
+
+                <!-- TODO(port): md-step-actions: the buttons calling stepper.next()/previous() --><md-step-actions layout="row">
+                    <button mat-button [disabled]="rootScope?.loading" (click)="previousStep()">Back
+                    </button>
+                    <span flex></span>
+                    <button mat-button [disabled]="rootScope?.loading" (click)="cancel()">
+                        {{ 'action.cancel' | translate }}
+                    </button>
+                    <button mat-raised-button color="primary" [disabled]="rootScope?.loading || !theFormStep3?.$dirty || !theFormStep3?.$valid" (click)="nextStep(4)">
+                        {{ 'action.continue' | translate }}
+                    </button>
+                </md-step-actions>
+            </md-step>
+
+            <!-- TODO(port): md-step: a mat-step --><md-step attr.md-label="{{ 'import.stepper-text.creat-entities' | translate }}">
+                <!-- TODO(port): md-step-body: the mat-step's content --><md-step-body>
+                    <mat-progress-bar color="warn" class="tb-import-progress" mode="determinate" value="{{progressCreate}}"></mat-progress-bar>
+                </md-step-body>
+            </md-step>
+            <!-- TODO(port): md-step: a mat-step --><md-step attr.md-label="{{ 'import.stepper-text.done' | translate }}">
+                <!-- TODO(port): md-step-body: the mat-step's content --><md-step-body layout="column">
+                    <div>
+                        @if (statistical?.create && statistical?.create?.entity) {
+                          <p class="md-body-1" translate translate-values="{count: vm.statistical.create.entity}">import.message.create-entities</p>
+                        }
+                        @if (statistical?.update && statistical?.update?.entity) {
+                          <p class="md-body-1" translate translate-values="{count: vm.statistical.update.entity}">import.message.update-entities</p>
+                        }
+                        @if (statistical?.error && statistical?.error?.entity) {
+                          <p class="md-body-1" translate translate-values="{count: vm.statistical.error.entity}">import.message.error-entities</p>
+                        }
+                    </div>
+                </md-step-body>
+                <!-- TODO(port): md-step-actions: the buttons calling stepper.next()/previous() --><md-step-actions layout="row">
+                    <span flex></span>
+                    <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="nextStep(6)">
+                        {{ 'action.ok' | translate }}
+                    </button>
+                </md-step-actions>
+            </md-step>
+
+        </md-stepper>
+    </mat-dialog-content>
+</div>

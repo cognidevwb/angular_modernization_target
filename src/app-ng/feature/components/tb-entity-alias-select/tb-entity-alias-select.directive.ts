@@ -1,0 +1,137 @@
+import { Component, inject, model, output } from '@angular/core';
+import { ElementRef } from '@angular/core';
+import { EntityService } from '../../api/services/entity.service';
+import $ from 'jquery';
+import entityAliasSelectTemplate from '../../../../app/components/entity-alias-select.tpl.html';
+
+// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
+declare let $compile: any;
+declare let $mdConstant: any;
+declare let $templateCache: any;
+declare let angular: any;
+declare let scope: any;
+declare let element: any;
+declare let ngModelCtrl: any;
+
+/**
+ * Ported from the AngularJS directive `tbEntityAliasSelect` (module `thingsboard.directives.entityAliasSelect`) in src/app/components/entity-alias-select.directive.js:29.
+ * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ */
+@Component({
+  selector: 'tb-entity-alias-select',
+  standalone: true,
+  template: '', // TODO(port): no template found
+})
+export class TbEntityAliasSelectDirective {
+  readonly tbRequired = model<any>();
+  readonly aliasController = model<any>();
+  readonly allowedEntityTypes = model<any>();
+  readonly onCreateEntityAlias = output<any>();
+
+  // TODO(port): '$compile' — not in Angular: compose with components instead
+  // TODO(port): '$mdConstant' — key codes: @angular/cdk/keycodes
+  // TODO(port): '$templateCache' — templateUrl on the component
+  protected readonly entityService = inject(EntityService);
+  protected readonly element = inject(ElementRef);
+
+  protected template: any = $templateCache.get(entityAliasSelectTemplate);
+  ngModelCtrl: any = ngModelCtrl;
+  entityAliasList: any = [];
+  entityAlias: any = null;
+  $watch: any;
+  entityAliasSearchText: any;
+
+  // TODO(port): `scope.onCreateEntityAlias(…)` — its result was read; an output emits and returns nothing: take the value from an input callback instead
+  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+
+  constructor() {
+    $(this.element.nativeElement).html(this.template);
+    this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
+    this.$watch('aliasController', () => {
+            this.entityAliasList = [];
+            var entityAliases: any = this.aliasController().getEntityAliases();
+            for (var aliasId in entityAliases) {
+                if (this.allowedEntityTypes()) {
+                    if (!this.entityService.filterAliasByEntityTypes(entityAliases[aliasId], this.allowedEntityTypes())) {
+                        continue;
+                    }
+                }
+                this.entityAliasList.push(entityAliases[aliasId]);
+            }
+        });
+    this.$watch('entityAlias', () => {
+            this.updateView();
+        });
+    ngModelCtrl.$render = function () {
+            if (ngModelCtrl.$viewValue) {
+                this.entityAlias = ngModelCtrl.$viewValue;
+            }
+        }
+    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  updateValidity(...rest: any[]): any {
+    var value: any = ngModelCtrl.$viewValue;
+    var valid: any = (value !== undefined) && value != null || !this.tbRequired();
+    ngModelCtrl.$setValidity('entityAlias', valid);
+  }
+
+  entityAliasSearch(entityAliasSearchText?: any, ...rest: any[]): any {
+    return entityAliasSearchText ? this.entityAliasList.filter(
+        this.createFilterForEntityAlias(entityAliasSearchText)) : this.entityAliasList;
+  }
+
+  createFilterForEntityAlias(query?: any, ...rest: any[]): any {
+    var lowercaseQuery: any = angular.lowercase(query);
+    return function filterFn(entityAlias?: any) {
+        return (angular.lowercase(entityAlias.alias).indexOf(lowercaseQuery) === 0);
+    };
+  }
+
+  updateView(...rest: any[]): any {
+    ngModelCtrl.$setViewValue(this.entityAlias);
+    this.updateValidity();
+  }
+
+  textIsNotEmpty(text?: any, ...rest: any[]): any {
+    return (text && text != null && text.length > 0) ? true : false;
+  }
+
+  entityAliasEnter($event?: any, ...rest: any[]): any {
+    if ($event.keyCode === $mdConstant.KEY_CODE.ENTER) {
+        $event.preventDefault();
+        if (!this.entityAlias) {
+            var found: any = this.entityAliasSearch(this.entityAliasSearchText);
+            found = found.length > 0;
+            if (!found) {
+                this.createEntityAlias($event, this.entityAliasSearchText);
+            }
+        }
+    }
+  }
+
+  createEntityAlias(event?: any, alias?: any, ...rest: any[]): any {
+    var autoChild: any = $('#entity-autocomplete', $(this.element.nativeElement))[0].firstElementChild;
+    var el: any = $(autoChild);
+    el.scope().$mdAutocompleteCtrl.hidden = true;
+    el.scope().$mdAutocompleteCtrl.hasNotFound = false;
+    event.preventDefault();
+    var promise: any = this.onCreateEntityAlias.emit({event: event, alias: alias, allowedEntityTypes: this.allowedEntityTypes()});
+    if (promise) {
+        promise.then(
+            (newAlias?: any) => {
+                el.scope().$mdAutocompleteCtrl.hasNotFound = true;
+                if (newAlias) {
+                    this.entityAliasList.push(newAlias);
+                    this.entityAlias = newAlias;
+                }
+            },
+            function fail() {
+                el.scope().$mdAutocompleteCtrl.hasNotFound = true;
+            }
+        );
+    } else {
+        el.scope().$mdAutocompleteCtrl.hasNotFound = true;
+    }
+  }
+}

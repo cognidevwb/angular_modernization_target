@@ -1,0 +1,118 @@
+<!-- Scaffolded by the playbook from src/app/alarm/alarm-details-dialog.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div attr.aria-label="{{ 'alarm.alarm-details' | translate }}" class="md-dialog">
+    <mat-toolbar>
+        <div class="md-toolbar-tools">
+            <h2 translate>alarm.alarm-details</h2>
+            <span flex></span>
+            <button mat-icon-button (click)="close()">
+                <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
+            </button>
+        </div>
+    </mat-toolbar>
+    <mat-dialog-content>
+        <div class="md-dialog-content" layout="column">
+            <div layout="row">
+                <mat-form-field class="md-block">
+                    <mat-label translate>alarm.created-time</mat-label>
+                    <input matInput [(ngModel)]="createdTime" readonly>
+                </mat-form-field>
+                <mat-form-field flex class="md-block">
+                    <mat-label translate>alarm.originator</mat-label>
+                    <input matInput [(ngModel)]="alarm.originatorName" readonly>
+                </mat-form-field>
+            </div>
+            @if (startTime || endTime) {
+              <div layout="row">
+                @if (startTime) {
+                  <mat-form-field flex class="md-block">
+                    <mat-label translate>alarm.start-time</mat-label>
+                    <input matInput [(ngModel)]="startTime" readonly>
+                </mat-form-field>
+                }
+                @if (endTime) {
+                  <mat-form-field flex class="md-block">
+                    <mat-label translate>alarm.end-time</mat-label>
+                    <input matInput [(ngModel)]="endTime" readonly>
+                </mat-form-field>
+                }
+                @if (!startTime || !endTime) {
+                  <span flex></span>
+                }
+            </div>
+            }
+            @if (ackTime || clearTime) {
+              <div layout="row">
+                @if (ackTime) {
+                  <mat-form-field flex class="md-block">
+                    <mat-label translate>alarm.ack-time</mat-label>
+                    <input matInput [(ngModel)]="ackTime" readonly>
+                </mat-form-field>
+                }
+                @if (clearTime) {
+                  <mat-form-field flex class="md-block">
+                    <mat-label translate>alarm.clear-time</mat-label>
+                    <input matInput [(ngModel)]="clearTime" readonly>
+                </mat-form-field>
+                }
+                @if (!ackTime || !clearTime) {
+                  <span flex></span>
+                }
+            </div>
+            }
+            <div layout="row">
+                <mat-form-field flex class="md-block">
+                    <mat-label translate>alarm.type</mat-label>
+                    <input matInput [(ngModel)]="alarm.type" readonly>
+                </mat-form-field>
+                <mat-form-field flex class="md-block">
+                    <mat-label translate>alarm.severity</mat-label>
+                    <input matInput class="tb-severity" [ngClass]="types?.alarmSeverity?.[alarm?.severity]?.class" [(ngModel)]="alarmSeverity" readonly>
+                </mat-form-field>
+                <mat-form-field flex class="md-block">
+                    <mat-label translate>alarm.status</mat-label>
+                    <input matInput [(ngModel)]="alarmStatus" readonly>
+                </mat-form-field>
+            </div>
+            <div [hidden]="!(displayDetails)" class="md-caption" style="padding-left: 3px; padding-bottom: 10px; color: rgba(0,0,0,0.57);" translate>alarm.details</div>
+            <div [hidden]="!(displayDetails)" flex class="tb-alarm-details-panel" layout="column">
+                <div flex id="tb-alarm-details" readonly ui-ace="vm.alarmDetailsOptions" [(ngModel)]="alarmDetails">
+                </div>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions layout="row">
+        @if (allowAcknowledgment && (alarm?.status==types?.alarmStatus?.activeUnack ||
+                          alarm?.status==types?.alarmStatus?.clearedUnack)) {
+          <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="acknowledge()" style="margin-right:20px;">{{ 'alarm.acknowledge' |
+            translate }}
+        </button>
+        }
+        @if (allowClear && (alarm?.status==types?.alarmStatus?.activeAck ||
+                          alarm?.status==types?.alarmStatus?.activeUnack)) {
+          <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="clear()">{{ 'alarm.clear' |
+            translate }}
+        </button>
+        }
+        <span flex></span>
+        <button mat-button [disabled]="rootScope?.loading" (click)="close()" style="margin-right:20px;">{{ 'action.close' |
+            translate }}
+        </button>
+    </mat-dialog-actions>
+</div>

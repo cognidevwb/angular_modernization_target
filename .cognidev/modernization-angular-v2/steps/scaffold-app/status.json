@@ -1,0 +1,10 @@
+{
+  "elapsedMs": 122,
+  "finishedAt": 1790440479,
+  "inputs": [],
+  "kind": "shell",
+  "outputs": [],
+  "status": "Ok",
+  "step": "scaffold-app",
+  "summary": "Tool `scripts/scaffold-app.sh` completed."
+}

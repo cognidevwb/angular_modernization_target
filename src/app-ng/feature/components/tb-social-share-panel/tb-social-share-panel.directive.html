@@ -1,0 +1,36 @@
+<!-- Scaffolded by the playbook from src/app/components/socialshare-panel.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div layout="row" [hidden]="!(!isShareLinkLocal())">
+    <button mat-icon-button color="primary" socialshare socialshare-provider="facebook" attr.socialshare-title="{{ shareTitle() }}" attr.socialshare-text="{{ shareText() }}" attr.socialshare-url="{{ shareLink() }}" attr.matTooltip="{{ 'action.share-via' | translate:{provider:'Facebook'} }}" matTooltipPosition="above">
+        <mat-icon aria-label="Facebook">facebook</mat-icon>
+        
+    </button>
+    <button mat-icon-button color="primary" socialshare socialshare-provider="twitter" attr.socialshare-text="{{ shareTitle() }}" attr.socialshare-hashtags="{{ shareHashTags() }}" attr.socialshare-url="{{ shareLink() }}" attr.matTooltip="{{ 'action.share-via' | translate:{provider:'Twitter'} }}" matTooltipPosition="above">
+        <mat-icon aria-label="Twitter">twitter</mat-icon>
+        
+    </button>
+    <button mat-icon-button color="primary" socialshare socialshare-provider="linkedin" attr.socialshare-text="{{ shareTitle() }}" attr.socialshare-url="{{ shareLink() }}" attr.matTooltip="{{ 'action.share-via' | translate:{provider:'Linkedin'} }}" matTooltipPosition="above">
+        <mat-icon aria-label="Linkedin">linkedin</mat-icon>
+        
+    </button>
+    <button mat-icon-button color="primary" socialshare socialshare-provider="reddit" attr.socialshare-text="{{ shareTitle() }}" attr.socialshare-url="{{ shareLink() }}" attr.matTooltip="{{ 'action.share-via' | translate:{provider:'Reddit'} }}" matTooltipPosition="above">
+        <mat-icon svgIcon="mdi:reddit" aria-label="Reddit"></mat-icon>
+        
+    </button>
+</div>

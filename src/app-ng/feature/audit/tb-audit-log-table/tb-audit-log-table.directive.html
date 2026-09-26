@@ -1,0 +1,59 @@
+<!-- Scaffolded by the playbook from src/app/audit/audit-log-table.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div flex class="md-content md-padding tb-absolute-fill" layout="column">
+    <div flex layout="column" class="tb-audit-logs" [ngClass]="{'md-whiteframe-z1': pageMode()}">
+        <div layout="column" layout-gt-sm="row" layout-align-gt-sm="start center" class="tb-audit-log-toolbar" [ngClass]="{'md-padding': pageMode(), 'tb-audit-log-margin-18px': !pageMode()}">
+            <tb-timewindow [(ngModel)]="timewindow" history-only [asButton]="true"></tb-timewindow>
+            <div flex layout="row" layout-align="start center">
+                <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{'audit-log.search' | translate}}" matTooltipPosition="above">
+                    <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
+                    
+                </button>
+                <mat-form-field flex class="tb-audit-log-search-input">
+                    <mat-label>&nbsp;</mat-label>
+                    <input matInput [(ngModel)]="searchText" attr.placeholder="{{'audit-log.search' | translate}}">
+                </mat-form-field>
+                <button mat-icon-button [disabled]="rootScope?.loading" aria-label="Close" (click)="searchText = ''" attr.matTooltip="{{ 'audit-log.clear-search' | translate }}" matTooltipPosition="above">
+                    <mat-icon aria-label="Close" class="material-icons">close</mat-icon>
+                    
+                </button>
+                <button mat-icon-button [disabled]="rootScope?.loading" (click)="reload()" attr.matTooltip="{{ 'action.refresh' | translate }}" matTooltipPosition="above">
+                    <mat-icon>refresh</mat-icon>
+                    
+                </button>
+            </div>
+        </div>
+        <div flex layout="column" class="tb-audit-log-container" [ngClass]="{'md-whiteframe-z1': !pageMode()}">
+            <mat-list flex layout="column" class="tb-audit-log-table" [ngClass]="{'tb-audit-log-table-full': pageMode()}">
+                <mat-list class="tb-row tb-header" layout="row" layout-align="start center" tb-audit-log-header attr.audit-log-mode="{{auditLogMode()}}">
+                </mat-list>
+                <mat-progress-bar style="max-height: 0px;" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
+                <mat-divider></mat-divider>
+                <span translate layout-align="center center" style="margin-top: 25px;" class="tb-prompt" [hidden]="!(noData())">audit-log.no-audit-logs-prompt</span>
+                <!-- TODO(port): md-virtual-repeat-container: a cdk-virtual-scroll-viewport with *cdkVirtualFor --><md-virtual-repeat-container [hidden]="!(hasData())" flex md-top-index="topIndex" tb-scope-element="repeatContainer">
+                    <mat-list-item md-virtual-repeat="auditLog in theAuditLogs" md-on-demand flex [ngStyle]="hasScroll() ? {'margin-right':'-15px'} : {}">
+                        <mat-list class="tb-row" flex layout="row" layout-align="start center" tb-audit-log-row attr.audit-log-mode="{{auditLogMode()}}" attr.audit-log="{{auditLog}}">
+                        </mat-list>
+                        <mat-divider flex></mat-divider>
+                    </mat-list-item>
+                </md-virtual-repeat-container>
+            </mat-list>
+        </div>
+    </div>
+</div>

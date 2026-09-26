@@ -1,0 +1,152 @@
+<!-- Scaffolded by the playbook from src/app/components/widget/action/custom-action-pretty-editor.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div class="tb-custom-action-pretty md-whiteframe-z1" (tbExpandFullscreen)="fullscreen" (fullscreenZindex)="100" (hideExpandButton)="true">
+    <div layout="row" layout-align="end center" class="tb-action-expand-button" [ngClass]="{'tb-fullscreen-editor': fullscreen}">
+        <button mat-button hide-xs hide-sm attr.aria-label="{{ 'widget.toggle-fullscreen' | translate }}" (click)="toggleFullscreen()" attr.matTooltip="{{ 'widget.toggle-fullscreen' | translate }}" matTooltipPosition="below">
+            
+            <mat-icon [hidden]="!(!fullscreen)" attr.aria-label="{{ 'widget.toggle-fullscreen' | translate }}">
+                fullscreen
+            </mat-icon>
+            <mat-icon [hidden]="!(fullscreen)" attr.aria-label="{{ 'widget.toggle-fullscreen' | translate }}">
+                fullscreen_exit
+            </mat-icon>
+            @if (fullscreen) {
+              <span translate hide-xs hide-sm>widget.toggle-fullscreen</span>
+            }
+        </button>
+    </div>
+    <div class="tb-custom-action-editor" [ngClass]="{'tb-fullscreen-editor': fullscreen}">
+        @if (!fullscreen) {
+          <div>
+            <mat-tab-group [selectedIndex]="3" style="width: 100%;">
+                <mat-tab label="{{ 'widget.resources' | translate }}">
+                    <div class="tb-custom-action-editor-container" style="background-color: #fff;">
+                        <div class="md-padding">
+                            @for (resource of action?.customResources; track $index) {
+                              <div flex layout="row" style="max-height: 40px;" layout-align="start center">
+                                <mat-form-field flex class="md-block" style="margin: 10px 0px 0px 0px; max-height: 40px;">
+                                    <input matInput attr.placeholder="{{ 'widget.resource-url' | translate }}" [required]="true" name="resource" [(ngModel)]="resource.url">
+                                </mat-form-field>
+                                <button mat-icon-button color="primary" [disabled]="rootScope?.loading" (click)="removeResource($index)" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'widget.remove-resource' | translate }}" matTooltipPosition="above">
+                                    
+                                    <mat-icon attr.aria-label="{{ 'action.delete' | translate }}" class="material-icons">
+                                        close
+                                    </mat-icon>
+                                </button>
+                            </div>
+                            }
+                            <div>
+                                <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="addResource()" attr.aria-label="{{ 'action.add' | translate }}" attr.matTooltip="{{ 'widget.add-resource' | translate }}" matTooltipPosition="above">
+                                    
+                                    <span translate>action.add</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="{{ 'widget.css' | translate }}">
+                    <!-- TODO(port): expression not parsed: `` -->
+                    <div class="tb-custom-action-editor-container" (tbExpandFullscreen)="" (fullscreenZindex)="100" expand-button-id="expand-button">
+                        <div class="tb-editor-area-title-panel">
+                            <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyCss()">{{ 'widget.tidy' | translate }}
+                            </button>
+                            <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
+                        </div>
+                        <div id="css-panel" class="css-panel" ui-ace="cssEditorOptions" [(ngModel)]="action.customCss"></div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="{{ 'widget.html' | translate }}">
+                    <!-- TODO(port): expression not parsed: `` -->
+                    <div class="tb-custom-action-editor-container" (tbExpandFullscreen)="" (fullscreenZindex)="100" expand-button-id="expand-button">
+                        <div class="tb-editor-area-title-panel">
+                            <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyHtml()">{{ 'widget.tidy' | translate }}
+                            </button>
+                            <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
+                        </div>
+                        <div id="html-panel" class="html-panel" ui-ace="htmlEditorOptions" [(ngModel)]="action.customHtml"></div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="{{ 'widget.js' | translate }}">
+                    <tb-js-func [(ngModel)]="action.customFunction" attr.function-args="{{ ['$event', 'widgetContext', 'entityId', 'entityName', 'htmlTemplate', 'additionalParams'] }}" attr.validation-args="{{ [] }}">
+                    </tb-js-func>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+        }
+        @if (fullscreen) {
+          <div class="tb-fullscreen-panel" layout="row" layout-fill>
+            <div id="left-panel" class="tb-split tb-content">
+                <mat-tab-group [selectedIndex]="2" layout="column" layout-fill>
+                    <mat-tab label="{{ 'widget.resources' | translate }}">
+                        <div class="tb-custom-action-editor-container" style="background-color: #fff;">
+                            <div class="md-padding">
+                                @for (resource of action?.customResources; track $index) {
+                                  <div flex layout="row" style="max-height: 40px;" layout-align="start center">
+                                    <mat-form-field flex class="md-block" style="margin: 10px 0px 0px 0px; max-height: 40px;">
+                                        <input matInput attr.placeholder="{{ 'widget.resource-url' | translate }}" [required]="true" name="resource" [(ngModel)]="resource.url">
+                                    </mat-form-field>
+                                    <button mat-icon-button color="primary" [disabled]="rootScope?.loading" (click)="removeResource($index)" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'widget.remove-resource' | translate }}" matTooltipPosition="above">
+                                        
+                                        <mat-icon attr.aria-label="{{ 'action.delete' | translate }}" class="material-icons">
+                                            close
+                                        </mat-icon>
+                                    </button>
+                                </div>
+                                }
+                                <div>
+                                    <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="addResource()" attr.aria-label="{{ 'action.add' | translate }}" attr.matTooltip="{{ 'widget.add-resource' | translate }}" matTooltipPosition="above">
+                                        
+                                        <span translate>action.add</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-tab>
+                    <mat-tab label="{{ 'widget.css' | translate }}">
+                        <!-- TODO(port): expression not parsed: `` -->
+                        <div class="tb-custom-action-editor-container" (tbExpandFullscreen)="" (fullscreenZindex)="100" expand-button-id="expand-button">
+                            <div class="tb-editor-area-title-panel">
+                                <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyCss()">{{ 'widget.tidy' | translate }}
+                                </button>
+                                <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
+                            </div>
+                            <div id="css-panel" class="css-panel" ui-ace="cssEditorOptions" [(ngModel)]="action.customCss"></div>
+                        </div>
+                    </mat-tab>
+                    <mat-tab label="{{ 'widget.html' | translate }}">
+                        <!-- TODO(port): expression not parsed: `` -->
+                        <div class="tb-custom-action-editor-container" (tbExpandFullscreen)="" (fullscreenZindex)="100" expand-button-id="expand-button">
+                            <div class="tb-editor-area-title-panel">
+                                <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyHtml()">{{ 'widget.tidy' | translate }}
+                                </button>
+                                <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
+                            </div>
+                            <div id="html-panel" class="html-panel" ui-ace="htmlEditorOptions" [(ngModel)]="action.customHtml"></div>
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+            <div id="right-panel" class="tb-split tb-content">
+                <tb-js-func [(ngModel)]="action.customFunction" attr.function-args="{{ ['$event', 'widgetContext', 'entityId', 'entityName', 'htmlTemplate', 'additionalParams'] }}" attr.validation-args="{{ [] }}" [fillHeight]="true">
+                </tb-js-func>
+            </div>
+        </div>
+        }
+    </div>
+</div>

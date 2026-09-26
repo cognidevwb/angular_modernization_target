@@ -1,0 +1,65 @@
+<!-- Scaffolded by the playbook from src/app/widget/lib/date-range-navigator/date-range-navigator.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div class="date-range-navigator" [ngClass]="{'short-mode':ctx()?.width < 400, 'labels-hidden': settings?.hideLabels, 'long-mode': ctx()?.width >= 400}">
+    @if (ctx()) {
+      <div class="drn__element picker" [hidden]="settings?.hidePicker">
+        <div class="picker__wrapper">
+            <label [hidden]="settings?.hideLabels">{{ 'widgets.date-range-navigator.localizationMap.Date picker' | translate }}</label>
+            <md-date-range [(ngModel)]="advancedModel" md-on-select="triggerChange()" localization-map="localizationMap" one-panel="settings.onePanel" auto-confirm="settings.autoConfirm" show-template="settings.showTemplate" first-day-of-week="settings.firstDayOfWeek"></md-date-range>
+        </div>
+    </div>
+    }
+
+    <div class="drn__element navigation" [hidden]="settings?.hideInterval">
+        <mat-form-field class="md-block" flex-gt-sm>
+            <mat-label [hidden]="settings?.hideLabels">{{ 'widgets.date-range-navigator.localizationMap.Interval' | translate }}</mat-label>
+            <mat-select [(ngModel)]="selectedDateInterval" (ngModelChange)="changeInterval()" aria-label="Pick date interval">
+                @if (customInterval) {
+                  <mat-option [value]="customInterval?.ts">{{'widgets.date-range-navigator.localizationMap.' + customInterval?.label | translate}}</mat-option>
+                }
+                @for (dateKey of __keys(datesMap); track dateKey) {
+                  @let dateValue = (datesMap)[dateKey];
+                  <mat-option [value]="dateValue?.ts">
+                    {{'widgets.date-range-navigator.localizationMap.' + dateValue?.label | translate}}
+                </mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="drn__element step" [hidden]="settings?.hideStepSize">
+        <button mat-icon-button (click)="goBack()">
+            <mat-icon>keyboard_arrow_left</mat-icon>
+        </button>
+        <mat-form-field class="md-block" flex-gt-sm>
+            <mat-label [hidden]="settings?.hideLabels">{{ 'widgets.date-range-navigator.localizationMap.Step size' | translate }}</mat-label>
+            <mat-select [(ngModel)]="selectedStepSize" aria-label="Pick date interval">
+                @for (dateKey of __keys(datesMap); track dateKey) {
+                  @let dateValue = (datesMap)[dateKey];
+                  <mat-option [value]="dateValue?.ts">
+                    {{'widgets.date-range-navigator.localizationMap.'+dateValue?.label | translate}}
+                </mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+        <button mat-icon-button (click)="goForth()">
+            <mat-icon>keyboard_arrow_right</mat-icon>
+        </button>
+    </div>
+</div>

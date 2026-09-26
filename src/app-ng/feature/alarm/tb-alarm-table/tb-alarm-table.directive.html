@@ -1,0 +1,53 @@
+<!-- Scaffolded by the playbook from src/app/alarm/alarm-table.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div flex class="md-content md-padding tb-absolute-fill" layout="column">
+    <section layout="row">
+        <mat-form-field class="md-block" style="width: 200px;">
+            <mat-label translate>alarm.alarm-status</mat-label>
+            <mat-select [(ngModel)]="alarmSearchStatus" [disabled]="rootScope?.loading">
+                @for (searchStatus of types?.alarmSearchStatus; track $index) {
+                  <mat-option [value]="searchStatus">
+                    {{ ('alarm.search-status.' + searchStatus) | translate }}
+                </mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+        <tb-timewindow flex [(ngModel)]="timewindow" history-only [asButton]="true"></tb-timewindow>
+        <button mat-icon-button [disabled]="rootScope?.loading" (click)="reload()" attr.matTooltip="{{ 'action.refresh' | translate }}" matTooltipPosition="above">
+            <mat-icon>refresh</mat-icon>
+            
+        </button>
+    </section>
+    <div flex layout="column" class="tb-alarm-container md-whiteframe-z1">
+        <mat-list flex layout="column" class="tb-alarm-table">
+            <mat-list class="tb-row tb-header" layout="row" layout-align="start center" tb-alarm-header>
+            </mat-list>
+            <mat-progress-bar style="max-height: 0px;" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
+            <mat-divider></mat-divider>
+            <span translate layout-align="center center" style="margin-top: 25px;" class="tb-prompt" [hidden]="!(noData())">alarm.no-alarms-prompt</span>
+            <!-- TODO(port): md-virtual-repeat-container: a cdk-virtual-scroll-viewport with *cdkVirtualFor --><md-virtual-repeat-container [hidden]="!(hasData())" flex md-top-index="topIndex" tb-scope-element="repeatContainer">
+                <mat-list-item md-virtual-repeat="alarm in theAlarms" md-on-demand flex [ngStyle]="hasScroll() ? {'margin-right':'-15px'} : {}">
+                    <mat-list class="tb-row" flex layout="row" layout-align="start center" tb-alarm-row alarm="{{alarm}}">
+                    </mat-list>
+                    <mat-divider flex></mat-divider>
+                </mat-list-item>
+            </md-virtual-repeat-container>
+        </mat-list>
+    </div>
+</div>

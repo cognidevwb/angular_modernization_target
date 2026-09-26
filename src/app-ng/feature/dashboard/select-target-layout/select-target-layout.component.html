@@ -1,0 +1,47 @@
+<!-- Scaffolded by the playbook from src/app/dashboard/layouts/select-target-layout.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div attr.aria-label="{{ 'layout.select' | translate }}" class="md-dialog">
+    <form name="theForm" (ngSubmit)="save()">
+        <mat-toolbar>
+            <div class="md-toolbar-tools">
+                <h2 translate>{{ 'layout.select' }}</h2>
+                <span flex></span>
+                <button mat-icon-button (click)="cancel()">
+                    <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
+                </button>
+            </div>
+        </mat-toolbar>
+        <mat-progress-bar color="warn" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
+        <span style="min-height: 5px;" flex="" [hidden]="!(!rootScope?.loading)"></span>
+        <mat-dialog-content>
+            <div class="md-dialog-content">
+                <fieldset [disabled]="rootScope?.loading">
+                    <div layout="row" layout-align="start center">
+                        <button mat-raised-button color="primary" flex class="tb-layout-button" layout="column" (click)="selectLayout($event, 'main')">
+                            <span translate>layout.main</span>
+                        </button>
+                        <button mat-raised-button color="primary" flex class="tb-layout-button" layout="column" (click)="selectLayout($event, 'right')">
+                            <span translate>layout.right</span>
+                        </button>
+                    </div>
+                </fieldset>
+            </div>
+        </mat-dialog-content>
+    </form>
+</div>

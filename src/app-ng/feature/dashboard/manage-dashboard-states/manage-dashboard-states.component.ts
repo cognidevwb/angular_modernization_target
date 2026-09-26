@@ -1,0 +1,219 @@
+import { Component, inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+
+import $ from 'jquery';
+import dashboardStateDialogTemplate from '../../../../app/dashboard/states/dashboard-state-dialog.tpl.html';
+import { inject as injectRoot } from '@angular/core';
+import { RootState } from '../../../root-state';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslatePipe } from '@ngx-translate/core';
+// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
+declare let angular: any;
+declare let $filter: any;
+declare let $scope: any;
+
+/**
+ * Ported from the AngularJS controller `ManageDashboardStatesController` (module `thingsboard.dashboard.states`) in src/app/dashboard/states/index.js:22.
+ * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ */
+@Component({
+  selector: 'manage-dashboard-states',
+  standalone: true,
+  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule],
+  templateUrl: './manage-dashboard-states.component.html',
+})
+export class ManageDashboardStatesComponent {
+  protected readonly rootScope = injectRoot(RootState);
+  // TODO(port): '$scope' — component state: fields and signals on this class
+  protected readonly dialog = inject(MatDialog);
+  // TODO(port): '$filter' — inject the pipe class and call transform()
+  protected readonly document = inject(DOCUMENT);
+  protected readonly translate = inject(TranslateService);
+  protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
+  // TODO(port): elements not resolved to a component: md-table-container, md-table-pagination
+  // TODO(port): template: 1 × md-table-container left in place
+  // TODO(port): template: 1 × md-table-pagination left in place
+
+  allStates: any = [];
+  states: any = [];
+  statesCount: any = 0;
+  query: any = {
+        order: 'name',
+        limit: 5,
+        page: 1,
+        search: null
+    };
+  theForm: any;
+  state: any;
+
+  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
+  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
+
+  constructor() {
+    let vm = this;
+    for (var id in this.dialogData.states) {
+        var state: any = this.dialogData.states[id];
+        state.id = id;
+        this.allStates.push(state);
+    }
+    this.enterFilterMode = this.enterFilterMode;
+    this.exitFilterMode = this.exitFilterMode;
+    this.onReorder = this.onReorder;
+    this.onPaginate = this.onPaginate;
+    this.addState = this.addState;
+    this.editState = this.editState;
+    this.deleteState = this.deleteState;
+    this.cancel = this.cancel;
+    this.save = this.save;
+    $scope.$watch("vm.query.search", (newVal?: any, prevVal?: any) => {
+        if (!angular.equals(newVal, prevVal) && this.query.search != null) {
+            this.updateStates();
+        }
+    });
+    this.updateStates ();
+  }
+
+  updateStates(...rest: any[]): any {
+    var result: any = $filter('orderBy')(this.allStates, this.query.order);
+    if (this.query.search != null) {
+        result = $filter('filter')(result, {$: this.query.search});
+    }
+    this.statesCount = result.length;
+    var startIndex: any = this.query.limit * (this.query.page - 1);
+    this.states = result.slice(startIndex, startIndex + this.query.limit);
+  }
+
+  enterFilterMode = (...rest: any[]): any => {
+    this.query.search = '';
+  };
+
+  exitFilterMode = (...rest: any[]): any => {
+    this.query.search = null;
+    this.updateStates();
+  };
+
+  onReorder = (...rest: any[]): any => {
+    this.updateStates();
+  };
+
+  onPaginate = (...rest: any[]): any => {
+    this.updateStates();
+  };
+
+  addState = ($event?: any, ...rest: any[]): any => {
+    this.openStateDialog($event, null, true);
+  };
+
+  editState = ($event?: any, alertRule?: any, ...rest: any[]): any => {
+    if ($event) {
+        $event.stopPropagation();
+    }
+    this.openStateDialog($event, alertRule, false);
+  };
+
+  openStateDialog($event?: any, state?: any, isAdd?: any, ...rest: any[]): any {
+    let vm = this;
+    var prevStateId: any = null;
+    if (!isAdd) {
+        prevStateId = state.id;
+    }
+    this.dialog.show({
+        controller: 'DashboardStateDialogController',
+        controllerAs: 'vm',
+        templateUrl: dashboardStateDialogTemplate,
+        parent: $(this.document.body),
+        locals: {isAdd: isAdd, allStates: this.allStates, state: structuredClone(state)},
+        multiple: true,
+        fullscreen: true,
+        targetEvent: $event
+    }).then((state?: any) => {
+        this.saveState(state, prevStateId);
+        this.updateStates();
+    });
+  }
+
+  getStateIndex(id?: any, ...rest: any[]): any {
+    var result: any = $filter('filter')(this.allStates, {id: id}, true);
+    if (result && result.length) {
+        return this.allStates.indexOf(result[0]);
+    }
+    return -1;
+  }
+
+  saveState(state?: any, prevStateId?: any, ...rest: any[]): any {
+    if (prevStateId) {
+        var index: any = this.getStateIndex(prevStateId);
+        if (index > -1) {
+            this.allStates[index] = state;
+        }
+    } else {
+        this.allStates.push(state);
+    }
+    if (state.root) {
+        for (var i: any=0; i < this.allStates.length; i++) {
+            var otherState: any = this.allStates[i];
+            if (otherState.id !== state.id) {
+                otherState.root = false;
+            }
+        }
+    }
+    this.theForm.$setDirty();
+  }
+
+  deleteState = ($event?: any, state?: any, ...rest: any[]): any => {
+    if ($event) {
+        $event.stopPropagation();
+    }
+    if (state) {
+        var title: any = this.translate.instant('dashboard.delete-state-title');
+        var content: any = this.translate.instant('dashboard.delete-state-text', {stateName: state.name});
+        var confirm: any = this.dialog.confirm()
+            .targetEvent($event)
+            .title(title)
+            .htmlContent(content)
+            .ariaLabel(title)
+            .cancel(this.translate.instant('action.no'))
+            .ok(this.translate.instant('action.yes'));
+
+        confirm._options.multiple = true;
+        confirm._options.fullscreen = true;
+
+        this.dialog.show(confirm).then(() => {
+            var index: any = this.getStateIndex(state.id);
+            if (index > -1) {
+                this.allStates.splice(index, 1);
+            }
+            this.theForm.$setDirty();
+            this.updateStates();
+        });
+    }
+  };
+
+  cancel = (...rest: any[]): any => {
+    this.dialog.cancel();
+  };
+
+  save = (...rest: any[]): any => {
+    this.theForm.$setPristine();
+    var savedStates: any = {};
+    for (var i: any=0;i<this.allStates.length;i++) {
+        var state: any = this.allStates[i];
+        var id: any = state.id;
+        delete state.id;
+        savedStates[id] = state;
+    }
+    this.dialog.hide(savedStates);
+  };
+}

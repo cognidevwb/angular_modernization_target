@@ -1,0 +1,654 @@
+<!-- Scaffolded by the playbook from src/app/extension/extensions-forms/extension-form-modbus.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<mat-card class="extension-form extension-modbus">
+    <mat-card-header>
+        <mat-card-title>
+            <span translate class="md-headline">extension.configuration</span>
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+        <v-accordion id="modbus-server-configs-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
+            <v-pane id="modbus-servers-pane" expanded="true">
+                <v-pane-header>
+                    {{ 'extension.modbus-server' | translate }}
+                </v-pane-header>
+
+                <v-pane-content>
+                    @if (configuration()?.servers?.length === 0) {
+                      <div>
+                        <span translate layout-align="center center" class="tb-prompt">extension.modbus-add-server-prompt</span>
+                    </div>
+                    }
+
+                    @if (configuration()?.servers?.length > 0) {
+                      <div>
+                        <ol class="list-group">
+                            @for (serverIndex of __keys(configuration()?.servers); track serverIndex) {
+                              @let server = (configuration()?.servers)[serverIndex];
+                              <li class="list-group-item">
+                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeItem(server, configuration().servers)" [hidden]="configuration()?.servers?.length < 2" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                    <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
+                                    
+                                </button>
+
+                                <mat-card>
+                                    <mat-card-content>
+                                        
+                                        <div layout="row">
+    
+                                            <mat-form-field flex="50" class="md-block tb-container-for-select">
+                                                <mat-label translate>extension.modbus-transport</mat-label>
+                                                <mat-select required name="transportType_{{serverIndex}}" [(ngModel)]="server.transport.type" (ngModelChange)="onTransportChanged(server)">
+                                                    @for (transportType of __keys(types?.extensionModbusTransports); track transportType) {
+                                                      @let transportValue = (types?.extensionModbusTransports)[transportType];
+                                                      <mat-option [value]="transportType"><span>{{ transportValue }}</span></mat-option>
+                                                    }
+                                                </mat-select>
+                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                <div ng-messages="theForm?.['transportType_' + serverIndex]?.$error">
+                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                    <div translate ng-message="required">extension.field-required</div>
+                                                </div>
+                                            </mat-form-field>
+                                            
+                                        </div>
+                                        
+                                        @if (server?.transport?.type == 'tcp' || server?.transport?.type == 'udp') {
+                                          <div>
+                                            <div layout="row">
+                                                <mat-form-field flex="33" class="md-block">
+                                                    <mat-label translate>extension.host</mat-label>
+                                                    <input matInput required attr.name="transportHost_{{serverIndex}}" [(ngModel)]="server.transport.host">
+                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                    <div ng-messages="theForm?.['transportHost_' + serverIndex]?.$error">
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="required">extension.field-required</div>
+                                                    </div>
+                                                </mat-form-field>
+
+                                                <mat-form-field flex="33" class="md-block">
+                                                    <mat-label translate>extension.port</mat-label>
+                                                    <input matInput type="number" required attr.name="transportPort_{{serverIndex}}" [(ngModel)]="server.transport.port" min="1" max="65535">
+                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                    <div ng-messages="theForm?.['transportPort_' + serverIndex]?.$error">
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="required">extension.field-required</div>
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="min">extension.port-range</div>
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="max">extension.port-range</div>
+                                                    </div>
+                                                </mat-form-field>
+                                                
+                                                <mat-form-field flex="33" class="md-block">
+                                                    <mat-label translate>extension.timeout</mat-label>
+                                                    <input matInput type="number" required attr.name="transportTimeout_{{serverIndex}}" [(ngModel)]="server.transport.timeout">
+                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                    <div ng-messages="theForm?.['transportTimeout_' + serverIndex]?.$error">
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="required">extension.field-required</div>
+                                                    </div>
+                                                </mat-form-field>
+                                            </div>
+
+                                            @if (server?.transport?.type == 'tcp') {
+                                              <div layout="row">
+                                                <mat-form-field flex="50" class="md-block">
+                                                    <mat-checkbox attr.aria-label="{{ 'extension.modbus-tcp-reconnect' | translate }}" [checked]="server?.transport?.reconnect" name="transportTcpReconnect_{{serverIndex}}" [(ngModel)]="server.transport.reconnect">{{ 'extension.modbus-tcp-reconnect' | translate }}
+                                                    </mat-checkbox>
+                                                </mat-form-field>
+
+                                                <mat-form-field flex="50" class="md-block">
+                                                    <mat-checkbox attr.aria-label="{{ 'extension.modbus-rtu-over-tcp' | translate }}" [checked]="server?.transport?.rtuOverTcp" name="transportRtuOverTcp_{{serverIndex}}" [(ngModel)]="server.transport.rtuOverTcp">{{ 'extension.modbus-rtu-over-tcp' | translate }}
+                                                    </mat-checkbox>
+                                                </mat-form-field>
+                                            </div>
+                                            }
+                                        </div>
+                                        }
+                                        
+                                        @if (server?.transport?.type == 'rtu') {
+                                          <div>
+                                        
+                                            <div layout="row">
+                                                <mat-form-field flex="70" class="md-block">
+                                                    <mat-label translate>extension.modbus-port-name</mat-label>
+                                                    <input matInput required attr.name="transportPortName_{{serverIndex}}" [(ngModel)]="server.transport.portName">
+                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                    <div ng-messages="theForm?.['transportPortName_' + serverIndex]?.$error">
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="required">extension.field-required</div>
+                                                    </div>
+                                                </mat-form-field>
+                                                
+                                                <mat-form-field flex="30" class="md-block">
+                                                    <mat-label translate>extension.timeout</mat-label>
+                                                    <input matInput type="number" required attr.name="transportTimeout_{{serverIndex}}" [(ngModel)]="server.transport.timeout">
+                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                    <div ng-messages="theForm?.['transportTimeout_' + serverIndex]?.$error">
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="required">extension.field-required</div>
+                                                    </div>
+                                                </mat-form-field>
+                                            </div>
+                                            
+                                            <div layout="row">
+                                                <mat-form-field flex="50" class="md-block tb-container-for-select">
+                                                    <mat-label translate>extension.modbus-encoding</mat-label>
+                                                    <mat-select required name="transportEncoding_{{serverIndex}}" [(ngModel)]="server.transport.encoding">
+                                                        @for (encodingType of __keys(types?.extensionModbusRtuEncodings); track encodingType) {
+                                                          @let encodingValue = (types?.extensionModbusRtuEncodings)[encodingType];
+                                                          <mat-option [value]="encodingType"><span>{{ encodingValue }}</span></mat-option>
+                                                        }
+                                                    </mat-select>
+                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                    <div ng-messages="theForm?.['transportEncoding_' + serverIndex]?.$error">
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="required">extension.field-required</div>
+                                                    </div>
+                                                </mat-form-field>
+                                                
+                                                <mat-form-field flex="50" class="md-block tb-container-for-select">
+                                                    <mat-label translate>extension.modbus-parity</mat-label>
+                                                    <mat-select name="transportParity_{{serverIndex}}" [(ngModel)]="server.transport.parity">
+                                                        @for (parityKey of __keys(types?.extensionModbusRtuParities); track parityKey) {
+                                                          @let parityValue = (types?.extensionModbusRtuParities)[parityKey];
+                                                          <mat-option [value]="parityValue">
+                                                            {{parityValue}}
+                                                        </mat-option>
+                                                        }
+                                                    </mat-select>
+                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                    <div ng-messages="theForm?.['transportParity_' + serverIndex]?.$error">
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="required">extension.field-required</div>
+                                                    </div>
+                                                </mat-form-field>
+                                            
+                                            </div>
+                                            
+                                            <div layout="row">
+                                                <mat-form-field flex="33" class="md-block">
+                                                    <mat-label translate>extension.modbus-baudrate</mat-label>
+                                                    <input matInput type="number" required attr.name="transportBaudRate_{{serverIndex}}" [(ngModel)]="server.transport.baudRate">
+                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                    <div ng-messages="theForm?.['transportBaudRate_' + serverIndex]?.$error">
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="required">extension.field-required</div>
+                                                    </div>
+                                                </mat-form-field>
+                                                
+                                                <mat-form-field flex="33" class="md-block">
+                                                    <mat-label translate>extension.modbus-databits</mat-label>
+                                                    <input matInput type="number" required attr.name="transportDataBits_{{serverIndex}}" [(ngModel)]="server.transport.dataBits" min="7" max="8">
+                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                    <div ng-messages="theForm?.['transportDataBits_' + serverIndex]?.$error">
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="required">extension.field-required</div>
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="min">extension.modbus-databits-range</div>
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="max">extension.modbus-databits-range</div>
+                                                    </div>
+                                                </mat-form-field>
+                                                
+                                                <mat-form-field flex="33" class="md-block">
+                                                    <mat-label translate>extension.modbus-stopbits</mat-label>
+                                                    <input matInput type="number" required attr.name="transportStopBits_{{serverIndex}}" [(ngModel)]="server.transport.stopBits" min="1" max="2">
+                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                    <div ng-messages="theForm?.['transportStopBits_' + serverIndex]?.$error">
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="required">extension.field-required</div>
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="min">extension.modbus-stopbits-range</div>
+                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                        <div translate ng-message="max">extension.modbus-stopbits-range</div>
+                                                    </div>
+                                                </mat-form-field>
+                                            </div>                                          
+                                        </div>
+                                        }
+
+                                        <v-accordion id="modbus-mapping-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
+                                            <v-pane id="modbus-mapping-pane_{{serverIndex}}">
+                                                <v-pane-header>
+                                                    {{ 'extension.mapping' | translate }}
+                                                </v-pane-header>
+                                                <v-pane-content>
+                                                    @if (server?.devices?.length > 0) {
+                                                      <div>
+                                                        <ol class="list-group">
+                                                            @for (deviceIndex of __keys(server?.devices); track deviceIndex) {
+                                                              @let device = (server?.devices)[deviceIndex];
+                                                              <li class="list-group-item">
+                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeItem(device, server.devices)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                    <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
+                                                                    
+                                                                </button>
+
+                                                                <mat-card>
+                                                                    <mat-card-content>
+                                                                        <div flex layout="row">
+                                                                            <mat-form-field flex="80" class="md-block">
+                                                                                <mat-label translate>extension.modbus-device-name</mat-label>
+                                                                                <input matInput required attr.name="deviceName_{{serverIndex}}{{deviceIndex}}" [(ngModel)]="device.deviceName">
+                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                <div ng-messages="theForm?.['deviceName_' + serverIndex + deviceIndex]?.$error">
+                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                </div>
+                                                                            </mat-form-field>
+                                                                        
+                                                                            <mat-form-field flex="20" class="md-block">
+                                                                                <mat-label translate>extension.modbus-unit-id</mat-label>
+                                                                                <input matInput type="number" required attr.name="unitId_{{serverIndex}}{{deviceIndex}}" [(ngModel)]="device.unitId" min="1" max="247">
+                                                                                
+                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                <div ng-messages="theForm?.['unitId_' + serverIndex + deviceIndex]?.$error">
+                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                    <div translate ng-message="min">extension.modbus-unit-id-range</div>
+                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                    <div translate ng-message="max">extension.modbus-unit-id-range</div>
+                                                                                </div>
+                                                                            </mat-form-field>
+                                                                        </div>
+                                                                          
+                                                                        <div flex layout="row">  
+                                                                            <mat-form-field flex="50" class="md-block">
+                                                                                <mat-label translate>extension.modbus-attributes-poll-period</mat-label>
+                                                                                <input matInput type="number" required attr.name="attributesPollPeriod_{{serverIndex}}{{deviceIndex}}" [(ngModel)]="device.attributesPollPeriod" min="1">
+                                                                                
+                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                <div ng-messages="theForm?.['attributesPollPeriod_' + serverIndex + deviceIndex]?.$error">
+                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                    <div translate ng-message="min">extension.modbus-poll-period-range</div>
+                                                                                </div>
+                                                                            </mat-form-field>
+                                                                            
+                                                                            <mat-form-field flex="50" class="md-block">
+                                                                                <mat-label translate>extension.modbus-timeseries-poll-period</mat-label>
+                                                                                <input matInput type="number" required attr.name="timeseriesPollPeriod_{{serverIndex}}{{deviceIndex}}" [(ngModel)]="device.timeseriesPollPeriod" min="1">
+                                                                                
+                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                <div ng-messages="theForm?.['timeseriesPollPeriod_' + serverIndex + deviceIndex]?.$error">
+                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                    <div translate ng-message="min">extension.modbus-poll-period-range</div>
+                                                                                </div>
+                                                                            </mat-form-field>
+                                                                            
+                                                                        </div>
+
+
+                                                                        <v-accordion id="modbus-attributes-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
+                                                                            <v-pane id="modbus-attributes-pane_{{serverIndex}}{{deviceIndex}}">
+                                                                                <v-pane-header>
+                                                                                    {{ 'extension.attributes' | translate }}
+                                                                                </v-pane-header>
+                                                                                <v-pane-content>
+                                                                                    <div [hidden]="!(device?.attributes?.length > 0)">
+                                                                                        <ol class="list-group">
+                                                                                            @for (attributeIndex of __keys(device?.attributes); track attributeIndex) {
+                                                                                              @let attribute = (device?.attributes)[attributeIndex];
+                                                                                              <li class="list-group-item">
+                                                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeItem(attribute, device.attributes)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                                                    <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
+                                                                                                    
+                                                                                                </button>
+                                                                                                <mat-card>
+                                                                                                    <mat-card-content>
+
+                                                                                                        <section flex layout="row">
+                                                                                                            <mat-form-field flex="50" class="md-block">
+                                                                                                                <mat-label translate>extension.modbus-tag</mat-label>
+                                                                                                                <input matInput required attr.name="modbusAttributeTag_{{serverIndex}}{{deviceIndex}}{{attributeIndex}}" [(ngModel)]="attribute.tag">
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['modbusAttributeTag_' + serverIndex + deviceIndex + attributeIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+
+                                                                                                            <mat-form-field flex="30" class="md-block tb-container-for-select">
+                                                                                                                <mat-label translate>extension.type</mat-label>
+                                                                                                                <mat-select required name="modbusAttributeType_{{serverIndex}}{{deviceIndex}}{{attributeIndex}}" [(ngModel)]="attribute.type">
+                                                                                                                    @for (attrType of __keys(types?.extensionValueType); track attrType) {
+                                                                                                                      @let attrTypeValue = (types?.extensionValueType)[attrType];
+                                                                                                                      <mat-option [value]="attrType">
+                                                                                                                        {{attrTypeValue | translate}}
+                                                                                                                    </mat-option>
+                                                                                                                    }
+                                                                                                                </mat-select>
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['modbusAttributeType_' + serverIndex + deviceIndex + attributeIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                            
+                                                                                                            <mat-form-field flex="20" class="md-block">
+                                                                                                                <mat-label translate>extension.modbus-poll-period</mat-label>
+                                                                                                                <input matInput type="number" attr.name="pollPeriod_{{serverIndex}}{{deviceIndex}}" [(ngModel)]="attribute.pollPeriod" min="1">
+                                                                                                                
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['pollPeriod_' + serverIndex + deviceIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="min">extension.modbus-poll-period-range</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                        </section>
+                                                                                                        
+                                                                                                        <section flex layout="row">                                                                                                        
+                                                                                                            <mat-form-field flex="50" class="md-block tb-container-for-select">
+                                                                                                                <mat-label translate>extension.type</mat-label>
+                                                                                                                <mat-select required name="modbusAttributeFunctionCode_{{serverIndex}}{{deviceIndex}}{{attributeIndex}}" [(ngModel)]="attribute.functionCode">
+                                                                                                                    @for (functionCode of __keys(types?.extensionModbusFunctionCodes); track functionCode) {
+                                                                                                                      @let functionName = (types?.extensionModbusFunctionCodes)[functionCode];
+                                                                                                                      <mat-option [value]="functionCode">
+                                                                                                                        {{functionName}}
+                                                                                                                    </mat-option>
+                                                                                                                    }
+                                                                                                                </mat-select>
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['modbusAttributeFunctionCode_' + serverIndex + deviceIndex + attributeIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+
+                                                                                                            <mat-form-field flex="50" class="md-block">
+                                                                                                                <mat-label translate>extension.modbus-register-address</mat-label>
+                                                                                                                <input matInput type="number" required attr.name="address_{{serverIndex}}{{deviceIndex}}" [(ngModel)]="attribute.address" min="0" max="65535">
+                                                                                                                
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['address_' + serverIndex + deviceIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="min">extension.modbus-register-address-range</div>
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="max">extension.modbus-register-address-range</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                            
+                                                                                                        </section>
+                                                                                                        
+                                                                                                        <section flex layout="row">                                                                                                        
+                                                                                                            @if (attribute?.type != 'boolean') {
+                                                                                                              <mat-form-field flex="50" class="md-block">
+                                                                                                                <mat-label translate>extension.modbus-register-count</mat-label>
+                                                                                                                <input matInput type="number" attr.name="registerCount_{{serverIndex}}{{deviceIndex}}" [(ngModel)]="attribute.registerCount" min="1">
+                                                                                                                
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['registerCount_' + serverIndex + deviceIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="min">extension.modbus-register-count-range</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                            }
+                                                                                                        
+                                                                                                            @if (attribute?.type == 'boolean' && attribute?.functionCode >= 3) {
+                                                                                                              <mat-form-field flex="50" class="md-block">
+                                                                                                                <mat-label translate>extension.modbus-register-bit-index</mat-label>
+                                                                                                                <input matInput type="number" required attr.name="bit_{{serverIndex}}{{deviceIndex}}" [(ngModel)]="attribute.bit" min="0" max="15">
+                                                                                                                
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['bit_' + serverIndex + deviceIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="min">extension.modbus-register-bit-index-range</div>
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="max">extension.modbus-register-bit-index-range</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                            }
+                                                                                                        </section>
+                                                                                                        
+                                                                                                        <section flex layout="row">    
+                                                                                                            @if (attribute?.functionCode >= 3) {
+                                                                                                              <mat-form-field flex="100" class="md-block">
+                                                                                                                <mat-label translate>extension.modbus-byte-order</mat-label>
+                                                                                                                <input matInput required attr.name="modbusByteOrder_{{serverIndex}}{{deviceIndex}}{{attributeIndex}}" [(ngModel)]="attribute.byteOrder">
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['modbusByteOrder_' + serverIndex + deviceIndex + attributeIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                            } 
+                                                                                                            
+                                                                                                        </section>
+
+
+                                                                                                    </mat-card-content>
+                                                                                                </mat-card>
+                                                                                            </li>
+                                                                                            }
+                                                                                        </ol>
+                                                                                    </div>
+                                                                                    <div flex layout="row" layout-align="start center">
+                                                                                        <button mat-raised-button color="primary" (click)="addNewAttribute(device)" attr.aria-label="{{ 'action.add' | translate }}">
+                                                                                            <mat-icon class="material-icons">add</mat-icon>
+                                                                                            <span translate>extension.add-attribute</span>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </v-pane-content>
+                                                                            </v-pane>
+                                                                        </v-accordion>
+
+                                                                        <v-accordion id="modbus-timeseries-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
+                                                                            <v-pane id="modbus-timeseries-pane_{{serverIndex}}{{deviceIndex}}">
+                                                                                <v-pane-header>
+                                                                                    {{ 'extension.timeseries' | translate }}
+                                                                                </v-pane-header>
+                                                                                <v-pane-content>
+                                                                                    <div [hidden]="!(device?.timeseries?.length > 0)">
+                                                                                        <ol class="list-group">
+                                                                                            @for (timeseriesIndex of __keys(device?.timeseries); track timeseriesIndex) {
+                                                                                              @let timeserie = (device?.timeseries)[timeseriesIndex];
+                                                                                              <li class="list-group-item">
+                                                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeItem(timeserie, device.timeseries)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                                                    <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
+                                                                                                    
+                                                                                                </button>
+                                                                                                <mat-card>
+                                                                                                    <mat-card-content>
+
+                                                                                                        <section flex layout="row">
+                                                                                                            <mat-form-field flex="50" class="md-block">
+                                                                                                                <mat-label translate>extension.modbus-tag</mat-label>
+                                                                                                                <input matInput required attr.name="modbusTimeserieTag_{{serverIndex}}{{deviceIndex}}{{timeseriesIndex}}" [(ngModel)]="timeserie.tag">
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['modbusTimeserieTag_' + serverIndex + deviceIndex + timeseriesIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+
+                                                                                                            <mat-form-field flex="30" class="md-block tb-container-for-select">
+                                                                                                                <mat-label translate>extension.type</mat-label>
+                                                                                                                <mat-select required name="modbusTimeserieType_{{serverIndex}}{{deviceIndex}}{{timeseriesIndex}}" [(ngModel)]="timeserie.type">
+                                                                                                                    @for (attrType of __keys(types?.extensionValueType); track attrType) {
+                                                                                                                      @let attrTypeValue = (types?.extensionValueType)[attrType];
+                                                                                                                      <mat-option [value]="attrType">
+                                                                                                                        {{attrTypeValue | translate}}
+                                                                                                                    </mat-option>
+                                                                                                                    }
+                                                                                                                </mat-select>
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['modbusTimeserieType_' + serverIndex + deviceIndex + timeseriesIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                            
+                                                                                                            <mat-form-field flex="20" class="md-block">
+                                                                                                                <mat-label translate>extension.modbus-poll-period</mat-label>
+                                                                                                                <input matInput type="number" attr.name="pollPeriod_{{serverIndex}}{{deviceIndex}}" [(ngModel)]="timeserie.pollPeriod" min="1">
+                                                                                                                
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['pollPeriod_' + serverIndex + deviceIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="min">extension.modbus-poll-period-range</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                        </section>
+                                                                                                        
+                                                                                                        <section flex layout="row">  
+                                                                                                            <mat-form-field flex="50" class="md-block tb-container-for-select">
+                                                                                                                <mat-label translate>extension.type</mat-label>
+                                                                                                                <mat-select required name="modbusTimeserieFunctionCode_{{serverIndex}}{{deviceIndex}}{{timeseriesIndex}}" [(ngModel)]="timeserie.functionCode">
+                                                                                                                    @for (functionCode of __keys(types?.extensionModbusFunctionCodes); track functionCode) {
+                                                                                                                      @let functionName = (types?.extensionModbusFunctionCodes)[functionCode];
+                                                                                                                      <mat-option [value]="functionCode">
+                                                                                                                        {{functionName}}
+                                                                                                                    </mat-option>
+                                                                                                                    }
+                                                                                                                </mat-select>
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['modbusTimeserieFunctionCode_' + serverIndex + deviceIndex + timeseriesIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+
+                                                                                                            <mat-form-field flex="50" class="md-block">
+                                                                                                                <mat-label translate>extension.modbus-register-address</mat-label>
+                                                                                                                <input matInput type="number" required attr.name="address_{{serverIndex}}{{deviceIndex}}" [(ngModel)]="timeserie.address" min="0" max="65535">
+                                                                                                                
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['address_' + serverIndex + deviceIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="min">extension.modbus-register-address-range</div>
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="max">extension.modbus-register-address-range</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                        </section>
+                                                                                                        
+                                                                                                        <section flex layout="row">
+                                                                                                            @if (timeserie?.type != 'boolean') {
+                                                                                                              <mat-form-field flex="50" class="md-block">
+                                                                                                                <mat-label translate>extension.modbus-register-count</mat-label>
+                                                                                                                <input matInput type="number" attr.name="registerCount_{{serverIndex}}{{deviceIndex}}" [(ngModel)]="timeserie.registerCount" min="1">
+                                                                                                                
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['registerCount_' + serverIndex + deviceIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="min">extension.modbus-register-count-range</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                            }
+
+                                                                                                            @if (timeserie?.type == 'boolean' && timeserie?.functionCode >= 3) {
+                                                                                                              <mat-form-field flex="50" class="md-block">
+                                                                                                                <mat-label translate>extension.modbus-register-bit-index</mat-label>
+                                                                                                                <input matInput type="number" required attr.name="bit_{{serverIndex}}{{deviceIndex}}" [(ngModel)]="timeserie.bit" min="0" max="15">
+                                                                                                                
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['bit_' + serverIndex + deviceIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="min">extension.modbus-register-bit-index-range</div>
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="max">extension.modbus-register-bit-index-range</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                            }
+                                                                                                        </section>
+                                                                                                        
+                                                                                                        <section flex layout="row">                                                                                                           
+                                                                                                            @if (timeserie?.functionCode >= 3) {
+                                                                                                              <mat-form-field flex="100" class="md-block">
+                                                                                                                <mat-label translate>extension.modbus-byte-order</mat-label>
+                                                                                                                <input matInput required attr.name="modbusByteOrder_{{serverIndex}}{{deviceIndex}}{{timeseriesIndex}}" [(ngModel)]="timeserie.byteOrder">
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['modbusByteOrder_' + serverIndex + deviceIndex + timeseriesIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                            } 
+                                                                                                            
+                                                                                                        </section>
+                                                                                                    </mat-card-content>
+                                                                                                </mat-card>
+                                                                                            </li>
+                                                                                            }
+                                                                                        </ol>
+                                                                                    </div>
+                                                                                    <div flex layout="row" layout-align="start center">
+                                                                                        <button mat-raised-button color="primary" (click)="addNewTimeseries(device)" attr.aria-label="{{ 'action.add' | translate }}">
+                                                                                            <mat-icon class="material-icons">add</mat-icon>
+                                                                                            <span translate>extension.add-timeseries</span>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </v-pane-content>
+                                                                            </v-pane>
+                                                                        </v-accordion>
+
+
+                                                                    </mat-card-content>
+                                                                </mat-card>
+                                                            </li>
+                                                            }
+                                                        </ol>
+                                                    </div>
+                                                    }
+                                                    <div flex layout="row" layout-align="start center">
+                                                        <button mat-raised-button color="primary" (click)="addDevice(server.devices)" attr.aria-label="{{ 'action.add' | translate }}">
+                                                            <mat-icon class="material-icons">add</mat-icon>
+                                                            <span translate>extension.add-device</span>
+                                                        </button>
+                                                    </div>
+                                                </v-pane-content>
+                                            </v-pane>
+                                        </v-accordion>
+
+                                    </mat-card-content>
+                                </mat-card>
+                            </li>
+                            }
+                        </ol>
+
+                        <div flex layout="row" layout-align="start center">
+                            <button mat-raised-button color="primary" (click)="addServer(configuration().servers)" attr.aria-label="{{ 'action.add' | translate }}">
+                                <mat-icon class="material-icons">add</mat-icon>
+                                <span translate>extension.modbus-add-server</span>
+                            </button>
+                        </div>
+
+                    </div>
+                    }
+                </v-pane-content>
+            </v-pane>
+        </v-accordion>
+        <!--{{config}}-->
+    </mat-card-content>
+</mat-card>

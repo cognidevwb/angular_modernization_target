@@ -1,0 +1,68 @@
+<!-- Scaffolded by the playbook from src/app/login/login.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div layout="row" layout-align="center center" style="width: 100%;" class="md-content">
+    <mat-card flex="initial" class="tb-login-card">
+        <mat-card-header>
+            <img attr.src="{{logoSvg}}" aria-label="logo" class="tb-login-logo">
+        </mat-card-header>
+        <mat-progress-bar color="warn" style="z-index: 1; max-height: 0px; width: inherit;" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
+        <mat-card-content>
+            <form class="login-form" (ngSubmit)="login()">
+                <div layout="column" class="tb-padding" id="toast-parent">
+                    <span style="height: 50px;"></span>
+                    <mat-form-field class="md-block">
+                        <mat-label translate>login.username</mat-label>
+                        <mat-icon attr.aria-label="{{ 'login.username' | translate }}" class="material-icons">
+                            email
+                        </mat-icon>
+                        <input matInput id="username-input" type="email" autofocus [(ngModel)]="user.name">
+                    </mat-form-field>
+                    <mat-form-field class="md-block">
+                        <mat-label translate>common.password</mat-label>
+                        <mat-icon attr.aria-label="{{ 'common.password' | translate }}" class="material-icons">
+                            lock
+                        </mat-icon>
+                        <input matInput id="password-input" type="password" [(ngModel)]="user.password">
+                    </mat-form-field>
+                    <div layout-gt-sm="column" layout-align="center end" class="tb-padding">
+                        <!-- TODO(port): ui-sref has no one-to-one Angular form -->
+                        <a mat-button ui-sref="login.resetPasswordRequest">{{ 'login.forgot-password' | translate }}
+                        </a>
+                    </div>
+                    <button mat-raised-button type="submit">{{ 'login.login' | translate }}</button>
+                    @if (oauth2Clients?.length) {
+                      <div class="oauth-container" layout="column">
+                        <div class="container-divider">
+                            <div class="line"><mat-divider></mat-divider></div>
+                            <div class="text mat-typography">{{ "login.or" | translate | uppercase }}</div>
+                            <div class="line"><mat-divider></mat-divider></div>
+                        </div>
+                        @for (oauth2Client of oauth2Clients; track $index) {
+                          <a mat-raised-button color="accent" class="md-hue-2" layout="row" layout-align="center center" href="{{ oauth2Client?.url }}" target="_self">
+                            <mat-icon class="material-icons md-18" svgIcon="{{ oauth2Client?.icon }}"></mat-icon>
+                            {{ 'login.login-with' | translate: {name: oauth2Client?.name} }}
+                        </a>
+                        }
+                    </div>
+                    }
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

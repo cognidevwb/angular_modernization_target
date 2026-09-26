@@ -1,0 +1,134 @@
+<!-- Scaffolded by the playbook from src/app/entity/relation/relation-table.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div flex class="md-content md-padding tb-absolute-fill tb-relation-table tb-data-table" layout="column">
+    <section layout="row">
+        <mat-form-field class="md-block" style="width: 200px;">
+            <mat-label translate>relation.direction</mat-label>
+            <mat-select [(ngModel)]="direction" [disabled]="rootScope?.loading">
+                @for (direction of types?.entitySearchDirection; track $index) {
+                  <mat-option [value]="direction">
+                    {{ ('relation.search-direction.' + direction) | translate}}
+                </mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </section>
+    <div layout="column" class="md-whiteframe-z1 toolbarsContainer">
+        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(!selectedRelations?.length
+                                                                 && query?.search === null)">
+            <div class="md-toolbar-tools">
+                <span>{{(direction == types?.entitySearchDirection?.from ?
+                    'relation.from-relations' : 'relation.to-relations') | translate}}</span>
+                <span flex></span>
+                <button mat-icon-button (click)="addRelation($event)" attr.matTooltip="{{ 'action.add' | translate }}" matTooltipPosition="above">
+                    <mat-icon>add</mat-icon>
+                    
+                </button>
+                <button mat-icon-button (click)="enterFilterMode($event)" attr.matTooltip="{{ 'action.search' | translate }}" matTooltipPosition="above">
+                    <mat-icon>search</mat-icon>
+                    
+                </button>
+                <button mat-icon-button (click)="reloadRelations()" attr.matTooltip="{{ 'action.refresh' | translate }}" matTooltipPosition="above">
+                    <mat-icon>refresh</mat-icon>
+                    
+                </button>
+            </div>
+        </mat-toolbar>
+        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(!selectedRelations?.length
+                                                                 && query?.search != null)">
+            <div class="md-toolbar-tools">
+                <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{ 'action.search' | translate }}" matTooltipPosition="above">
+                    <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
+                    
+                </button>
+                <mat-form-field flex>
+                    <mat-label>&nbsp;</mat-label>
+                    <input matInput [(ngModel)]="query.search" class="searchInput" attr.placeholder="{{ 'common.enter-search' | translate }}">
+                </mat-form-field>
+                <button mat-icon-button attr.aria-label="{{ 'action.back' | translate }}" (click)="exitFilterMode()" attr.matTooltip="{{ 'action.close' | translate }}" matTooltipPosition="above">
+                    <mat-icon attr.aria-label="{{ 'action.close' | translate }}" class="material-icons">close</mat-icon>
+                    
+                </button>
+            </div>
+        </mat-toolbar>
+        <mat-toolbar class="md-table-toolbar alternate" [hidden]="!(selectedRelations?.length)">
+            <div class="md-toolbar-tools">
+                <span translate translate-values="{count: vm.selectedRelations.length}" translate-interpolation="messageformat">relation.selected-relations</span>
+                <span flex></span>
+                <button mat-icon-button (click)="deleteRelations($event)" attr.matTooltip="{{ 'action.delete' | translate }}" matTooltipPosition="above">
+                    <mat-icon>delete</mat-icon>
+                    
+                </button>
+            </div>
+        </mat-toolbar>
+        <!-- TODO(port): md-table-container (angular-material-data-table): a mat-table with MatSort --><md-table-container>
+            <table md-table md-row-select multiple="" [(ngModel)]="selectedRelations" md-progress="vm.relationsDeferred.promise">
+                <thead fix-head md-head md-order="vm.query.order" md-on-reorder="vm.onReorder">
+                <tr md-row>
+                    <th md-column md-order-by="type"><span translate>relation.type</span></th>
+                    @if (direction == types?.entitySearchDirection?.from) {
+                      <th md-column md-order-by="toEntityTypeName"><span translate>relation.to-entity-type</span></th>
+                    }
+                    @if (direction == types?.entitySearchDirection?.to) {
+                      <th md-column md-order-by="fromEntityTypeName"><span translate>relation.from-entity-type</span></th>
+                    }
+                    @if (direction == types?.entitySearchDirection?.from) {
+                      <th md-column md-order-by="toName"><span translate>relation.to-entity-name</span></th>
+                    }
+                    @if (direction == types?.entitySearchDirection?.to) {
+                      <th md-column md-order-by="fromName"><span translate>relation.from-entity-name</span></th>
+                    }
+                    <th md-column><span>&nbsp</span></th>
+                </tr>
+                </thead>
+                <tbody md-body>
+                @for (relation of relations; track $index) {
+                  <tr md-row md-select="relation" md-select-id="relation" md-auto-select>
+                    <td md-cell>{{ relation?.type }}</td>
+                    @if (direction == types?.entitySearchDirection?.from) {
+                      <td md-cell>{{ relation?.toEntityTypeName  }}</td>
+                    }
+                    @if (direction == types?.entitySearchDirection?.to) {
+                      <td md-cell>{{ relation?.fromEntityTypeName  }}</td>
+                    }
+                    @if (direction == types?.entitySearchDirection?.from) {
+                      <td md-cell>{{ relation?.toName }}</td>
+                    }
+                    @if (direction == types?.entitySearchDirection?.to) {
+                      <td md-cell>{{ relation?.fromName }}</td>
+                    }
+                    <td md-cell class="tb-action-cell">
+                        <button mat-icon-button attr.aria-label="{{ 'action.edit' | translate }}" (click)="editRelation($event, relation)" attr.matTooltip="{{ 'relation.edit' | translate }}" matTooltipPosition="above">
+                            <mat-icon attr.aria-label="{{ 'action.edit' | translate }}" class="material-icons">edit</mat-icon>
+                            
+                        </button>
+                        <button mat-icon-button attr.aria-label="{{ 'action.delete' | translate }}" (click)="deleteRelation($event, relation)" attr.matTooltip="{{ 'relation.delete' | translate }}" matTooltipPosition="above">
+                            <mat-icon attr.aria-label="{{ 'action.delete' | translate }}" class="material-icons">delete</mat-icon>
+                            
+                        </button>
+                    </td>
+                </tr>
+                }
+                </tbody>
+            </table>
+        </md-table-container>
+        <!-- TODO(port): md-table-pagination: a mat-paginator --><md-table-pagination md-limit="vm.query.limit" md-limit-options="[5, 10, 15]" md-page="vm.query.page" attr.md-total="{{relationsCount}}" md-on-paginate="vm.onPaginate" md-page-select>
+        </md-table-pagination>
+    </div>
+</div>

@@ -1,0 +1,173 @@
+<!-- Scaffolded by the playbook from src/app/dashboard/dashboard-settings.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div attr.aria-label="{{ 'dashboard.settings' | translate }}" class="md-dialog">
+    <form name="theForm" (ngSubmit)="save()">
+        <mat-toolbar>
+            <div class="md-toolbar-tools">
+                <h2 translate>{{settings ? 'dashboard.settings' : 'layout.settings'}}</h2>
+                <span flex></span>
+                <button mat-icon-button (click)="cancel()">
+                    <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
+                </button>
+            </div>
+        </mat-toolbar>
+        <mat-progress-bar color="warn" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
+        <span style="min-height: 5px;" flex="" [hidden]="!(!rootScope?.loading)"></span>
+        <mat-dialog-content>
+            <div class="md-dialog-content">
+                <fieldset [disabled]="rootScope?.loading">
+                    <div [hidden]="!(settings)">
+                       <mat-form-field class="md-block">
+                            <mat-label translate>dashboard.state-controller</mat-label>
+                            <mat-select attr.aria-label="{{ 'dashboard.state-controller' | translate }}" [(ngModel)]="settings.stateControllerId" (ngModelChange)="stateControllerIdChanged()">
+                                @for (stateControllerId of __keys(stateControllers); track stateControllerId) {
+                                  @let stateController = (stateControllers)[stateControllerId];
+                                  <mat-option [value]="stateControllerId">
+                                    {{stateControllerId}}
+                                </mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                        <div layout="row" layout-align="start center">
+                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.toolbar-always-open' | translate }}" [(ngModel)]="settings.toolbarAlwaysOpen">{{ 'dashboard.toolbar-always-open' | translate }}
+                            </mat-checkbox>
+                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.display-title' | translate }}" [(ngModel)]="settings.showTitle">{{ 'dashboard.display-title' | translate }}
+                            </mat-checkbox>
+                            <div flex [required]="false" md-color-picker [(ngModel)]="settings.titleColor" attr.label="{{ 'dashboard.title-color' | translate }}" icon="format_color_fill" default="rgba(0, 0, 0, 0.870588)" md-color-clear-button="false" open-on-input="true" md-color-generic-palette="false" md-color-history="false"></div>
+                        </div>
+                        <div layout="row" layout-align="start center">
+                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.display-dashboards-selection' | translate }}" [(ngModel)]="settings.showDashboardsSelect">{{ 'dashboard.display-dashboards-selection' | translate }}
+                            </mat-checkbox>
+                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.display-entities-selection' | translate }}" [(ngModel)]="settings.showEntitiesSelect">{{ 'dashboard.display-entities-selection' | translate }}
+                            </mat-checkbox>
+                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.display-dashboard-timewindow' | translate }}" [(ngModel)]="settings.showDashboardTimewindow">{{ 'dashboard.display-dashboard-timewindow' | translate }}
+                            </mat-checkbox>
+                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.display-dashboard-export' | translate }}" [(ngModel)]="settings.showDashboardExport">{{ 'dashboard.display-dashboard-export' | translate }}
+                            </mat-checkbox>
+                        </div>
+                    </div>
+                    <div [hidden]="!(gridSettings)">
+                        <div flex [required]="false" md-color-picker [(ngModel)]="gridSettings.color" attr.label="{{ 'layout.color' | translate }}" icon="format_color_fill" default="rgba(0, 0, 0, 0.870588)" md-color-clear-button="false" open-on-input="true" md-color-generic-palette="false" md-color-history="false"></div>
+                        <mat-form-field class="md-block">
+                            <mat-label translate>dashboard.columns-count</mat-label>
+                            <input matInput [required]="gridSettings" type="number" step="any" name="columns" [(ngModel)]="gridSettings.columns" min="10" max="1000">
+                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                            <div ng-messages="theForm?.columns?.$error" multiple md-auto-hide="false">
+                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                <div ng-message="required" translate>dashboard.columns-count-required</div>
+                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                <div ng-message="min" translate>dashboard.min-columns-count-message</div>
+                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                <div ng-message="max">dashboard.max-columns-count-message</div>
+                            </div>
+                        </mat-form-field>
+                        <small translate>dashboard.widgets-margins</small>
+                        <div flex layout="row">
+                            <mat-form-field flex class="md-block">
+                                <mat-label translate>dashboard.horizontal-margin</mat-label>
+                                <input matInput [required]="gridSettings" type="number" step="any" name="hMargin" [(ngModel)]="hMargin" min="0" max="50">
+                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                <div ng-messages="theForm?.hMargin?.$error" multiple md-auto-hide="false">
+                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                    <div ng-message="required" translate>dashboard.horizontal-margin-required</div>
+                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                    <div ng-message="min" translate>dashboard.min-horizontal-margin-message</div>
+                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                    <div ng-message="max" translate>dashboard.max-horizontal-margin-message</div>
+                                </div>
+                            </mat-form-field>
+                            <mat-form-field flex class="md-block">
+                                <mat-label translate>dashboard.vertical-margin</mat-label>
+                                <input matInput [required]="gridSettings" type="number" step="any" name="vMargin" [(ngModel)]="vMargin" min="0" max="50">
+                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                <div ng-messages="theForm?.vMargin?.$error" multiple md-auto-hide="false">
+                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                    <div ng-message="required" translate>dashboard.vertical-margin-required</div>
+                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                    <div ng-message="min" translate>dashboard.min-vertical-margin-message</div>
+                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                    <div ng-message="max" translate>dashboard.max-vertical-margin-message</div>
+                                </div>
+                            </mat-form-field>
+                        </div>
+                        <mat-checkbox flex attr.aria-label="{{ 'dashboard.autofill-height' | translate }}" [(ngModel)]="gridSettings.autoFillHeight">{{ 'dashboard.autofill-height' | translate }}
+                        </mat-checkbox>
+                        <div flex [required]="false" md-color-picker [(ngModel)]="gridSettings.backgroundColor" attr.label="{{ 'dashboard.background-color' | translate }}" icon="format_color_fill" default="rgba(0,0,0,0)" md-color-clear-button="false" open-on-input="true" md-color-generic-palette="false" md-color-history="false"></div>
+                        <div class="tb-container">
+                            <label class="tb-label" translate>dashboard.background-image</label>
+                            <div flow-init="{singleFile:true}" flow-file-added="vm.imageAdded( $file )" class="tb-image-select-container">
+                                <div class="tb-image-preview-container">
+                                    <div [hidden]="!(!gridSettings?.backgroundImageUrl)" translate>dashboard.no-image</div>
+                                    <img [hidden]="!(gridSettings?.backgroundImageUrl)" class="tb-image-preview" attr.src="{{gridSettings?.backgroundImageUrl}}">
+                                </div>
+                                <div class="tb-image-clear-container">
+                                    <button mat-icon-button color="primary" (click)="clearImage()" class="tb-image-clear-btn" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                        
+                                        <mat-icon attr.aria-label="{{ 'action.remove' | translate }}" class="material-icons">
+                                            close
+                                        </mat-icon>
+                                    </button>
+                                </div>
+                                <div class="alert tb-flow-drop" flow-drop>
+                                    <label for="select" translate>dashboard.drop-image</label>
+                                    <input class="file-input" flow-btn flow-attrs="{accept:'image/*'}" id="select">
+                                </div>
+                            </div>
+                        </div>
+                        <mat-form-field class="md-block">
+                            <mat-label translate>dashboard.background-size-mode</mat-label>
+                            <mat-select [(ngModel)]="gridSettings.backgroundSizeMode" placeholder="{{ 'dashboard.background-size-mode' | translate }}">
+                                <mat-option value="100%">Fit width</mat-option>
+                                <mat-option value="auto 100%">Fit height</mat-option>
+                                <mat-option value="cover">Cover</mat-option>
+                                <mat-option value="contain">Contain</mat-option>
+                                <mat-option value="auto">Original size</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <small translate>dashboard.mobile-layout</small>
+                        <div flex layout="row" layout-align="start center">
+                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.autofill-height' | translate }}" [(ngModel)]="gridSettings.mobileAutoFillHeight">{{ 'dashboard.autofill-height' | translate }}
+                            </mat-checkbox>
+                            <mat-form-field flex class="md-block">
+                                <mat-label translate>dashboard.mobile-row-height</mat-label>
+                                <input matInput [required]="gridSettings" type="number" step="any" name="mobileRowHeight" [(ngModel)]="gridSettings.mobileRowHeight" min="5" max="200">
+                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                <div ng-messages="theForm?.mobileRowHeight?.$error" multiple md-auto-hide="false">
+                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                    <div ng-message="required" translate>dashboard.mobile-row-height-required</div>
+                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                    <div ng-message="min" translate>dashboard.min-mobile-row-height-message</div>
+                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                    <div ng-message="max" translate>dashboard.max-mobile-row-height-message</div>
+                                </div>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions layout="row">
+            <span flex></span>
+            <button mat-raised-button color="primary" [disabled]="rootScope?.loading || !theForm?.$dirty || !theForm?.$valid" type="submit">
+                {{ 'action.save' | translate }}
+            </button>
+            <button mat-button [disabled]="rootScope?.loading" (click)="cancel()" style="margin-right:20px;">{{ 'action.cancel' | translate }}</button>
+        </mat-dialog-actions>
+    </form>
+</div>

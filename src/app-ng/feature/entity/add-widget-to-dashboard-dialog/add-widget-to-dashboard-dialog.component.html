@@ -1,0 +1,76 @@
+<!-- Scaffolded by the playbook from src/app/entity/attribute/add-widget-to-dashboard-dialog.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div attr.aria-label="{{ 'attribute.add-widget-to-dashboard' | translate }}" style="min-width: 400px;" class="md-dialog">
+    <form name="theForm" (ngSubmit)="add($event)">
+        <mat-toolbar>
+            <div class="md-toolbar-tools">
+                <h2 translate>attribute.add-widget-to-dashboard</h2>
+                <span flex></span>
+                <button mat-icon-button (click)="cancel()">
+                    <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
+                </button>
+            </div>
+        </mat-toolbar>
+        <mat-progress-bar color="warn" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
+        <span style="min-height: 5px;" flex="" [hidden]="!(!rootScope?.loading)"></span>
+        <mat-dialog-content>
+            <div class="md-dialog-content">
+                <div class="md-content md-padding" layout="column">
+                    <fieldset [disabled]="rootScope?.loading">
+                        <mat-radio-group color="primary" [(ngModel)]="addToDashboardType">
+                            <mat-radio-button color="primary" flex [value]="0" class="md-align-top-left md-radio-interactive">
+                                <section flex layout="column" style="width: 300px;">
+                                    <span translate style="padding-bottom: 10px;">dashboard.select-existing</span>
+                                    <tb-dashboard-autocomplete [(theForm)]="theForm" [ngDisabled]="rootScope?.loading || addToDashboardType != 0" [tbRequired]="addToDashboardType === 0" [(ngModel)]="dashboardId" [selectFirstDashboard]="false">
+                                    </tb-dashboard-autocomplete>
+                                </section>
+                            </mat-radio-button>
+                            <mat-radio-button color="primary" flex [value]="1" class="md-align-top-left md-radio-interactive">
+                                <section flex layout="column" style="width: 300px;">
+                                    <span translate>dashboard.create-new</span>
+                                    <mat-form-field class="md-block">
+                                        <mat-label translate>dashboard.new-dashboard-title</mat-label>
+                                        <input matInput [required]="addToDashboardType === 1" name="title" [(ngModel)]="newDashboard.title">
+                                        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                        <div ng-messages="theForm?.title?.$error">
+                                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                            <div translate ng-message="required">dashboard.title-required</div>
+                                        </div>
+                                    </mat-form-field>
+                                </section>
+                            </mat-radio-button>
+                        </mat-radio-group>
+                    </fieldset>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions layout="row">
+            <span flex></span>
+            <mat-checkbox [(ngModel)]="openDashboard" attr.aria-label="{{ 'dashboard.open-dashboard' | translate }}" style="margin-bottom: 0; padding-right: 20px;">
+                {{ 'dashboard.open-dashboard' | translate }}
+            </mat-checkbox>
+            <button mat-raised-button color="primary" [disabled]="rootScope?.loading || theForm?.$invalid || !theForm?.$dirty" type="submit">
+                {{ 'action.add' | translate }}
+            </button>
+            <button mat-button [disabled]="rootScope?.loading" (click)="cancel()" style="margin-right:20px;">
+                {{ 'action.cancel' | translate }}
+            </button>
+        </mat-dialog-actions>
+    </form>
+</div>

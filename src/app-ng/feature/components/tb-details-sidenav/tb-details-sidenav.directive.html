@@ -1,0 +1,52 @@
+<!-- Scaffolded by the playbook from src/app/components/details-sidenav.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- TODO(port): md-sidenav: a mat-sidenav inside a mat-sidenav-container --><md-sidenav class="md-sidenav-right md-whiteframe-4dp tb-sidenav-details" md-disable-backdrop md-is-open="isOpen" md-component-id="right" layout="column">
+      <header>
+	      <mat-toolbar class="md-theme-light" [ngStyle]="{'height':headerHeightPx()+'px'}">
+	      	<div class="md-toolbar-tools" layout="row">
+	      		<div flex class="md-toolbar-tools" layout="column" layout-align="start start">
+		        	<span class="tb-details-title">{{headerTitle()}}</span>
+		        	<span class="tb-details-subtitle">{{headerSubtitle()}}</span>
+					<!-- TODO(port): ng-transclude with a named slot: use <ng-content select> here -->
+					<span style="width: 100%;" ng-content-placeholder></span>
+	        	</div>
+				<!-- TODO(port): ng-transclude with a named slot: use <ng-content select> here -->
+				<div ng-content-placeholder></div>
+	        	<button mat-icon-button (click)="closeDetails()">
+	        		<mat-icon aria-label="close" class="material-icons">close</mat-icon>
+	        	</button>	        	
+	        </div>
+		    @if (!isReadOnly()) {
+		      <section layout="row" layout-wrap class="tb-header-buttons md-fab">
+				<button mat-fab color="accent" [hidden]="!(isEdit())" [disabled]="rootScope?.loading || theForm()?.$invalid || !theForm()?.$dirty" class="tb-btn-header md-hue-2 md-fab-bottom-right" attr.aria-label="{{ 'action.apply' | translate }}" (click)="detailsApply()" attr.matTooltip="{{ 'action.apply-changes' | translate }}" matTooltipPosition="above">
+					  
+					  <mat-icon>done</mat-icon>
+				</button>
+				<button mat-fab color="accent" [disabled]="rootScope?.loading || (isAlwaysEdit() && !theForm()?.$dirty)" class="tb-btn-header md-hue-2 md-fab-bottom-right" attr.aria-label="{{ 'details.edit-mode' | translate }}" (click)="toggleDetailsEditMode()" attr.matTooltip="{{ (isAlwaysEdit() ? 'action.decline-changes' : 'details.toggle-edit-mode') | translate }}" matTooltipPosition="above">
+					
+					<mat-icon options='{"easing": "circ-in-out", "duration": 375, "rotation": "none"}'>{{isEdit() ? 'close' : 'edit'}}</mat-icon>
+				</button>
+			</section>
+		    }
+	      </mat-toolbar>
+      </header>
+      <div flex class="md-content">
+			<div><ng-content></ng-content></div>
+      </div>
+</md-sidenav>	

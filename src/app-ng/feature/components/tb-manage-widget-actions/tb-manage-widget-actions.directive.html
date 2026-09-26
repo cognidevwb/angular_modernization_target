@@ -1,0 +1,88 @@
+<!-- Scaffolded by the playbook from src/app/components/widget/action/manage-widget-actions.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- TODO(port): ng-form has no one-to-one Angular form -->
+<div ng-form="manageWidgetActionsForm" class="tb-manage-widget-actions md-whiteframe-z1 toolbarsContainer" layout="column">
+    <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(query?.search === null)">
+        <div class="md-toolbar-tools">
+            <span translate>widget-config.actions</span>
+            <span flex></span>
+            <button mat-icon-button (click)="addAction($event)" attr.matTooltip="{{ 'widget-config.add-action' | translate }}" matTooltipPosition="above">
+                <mat-icon>add</mat-icon>
+                
+            </button>
+            <button mat-icon-button (click)="enterFilterMode($event)" attr.matTooltip="{{ 'action.search' | translate }}" matTooltipPosition="above">
+                <mat-icon>search</mat-icon>
+                
+            </button>
+        </div>
+    </mat-toolbar>
+    <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(query?.search != null)">
+        <div class="md-toolbar-tools">
+            <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{ 'widget-config.search-actions' | translate }}" matTooltipPosition="above">
+                <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
+                
+            </button>
+            <mat-form-field flex>
+                <mat-label>&nbsp;</mat-label>
+                <input matInput [(ngModel)]="query.search" class="searchInput" name="querySearchInput" attr.placeholder="{{ 'widget-config.search-actions' | translate }}">
+            </mat-form-field>
+            <button mat-icon-button aria-label="Close" (click)="exitFilterMode()" attr.matTooltip="{{ 'action.close' | translate }}" matTooltipPosition="above">
+                <mat-icon aria-label="Close" class="material-icons">close</mat-icon>
+                
+            </button>
+        </div>
+    </mat-toolbar>
+    <!-- TODO(port): md-table-container (angular-material-data-table): a mat-table with MatSort --><md-table-container>
+        <table md-table>
+            <thead fix-head md-head md-order="vm.query.order" md-on-reorder="vm.onReorder">
+            <tr md-row>
+                <th md-column md-order-by="actionSourceName"><span translate>widget-config.action-source</span></th>
+                <th md-column md-order-by="name"><span translate>widget-config.action-name</span></th>
+                <th md-column md-order-by="icon"><span translate>widget-config.action-icon</span></th>
+                <th md-column md-order-by="typeName"><span translate>widget-config.action-type</span></th>
+                <th md-column><span>&nbsp</span></th>
+            </tr>
+            </thead>
+            <tbody md-body>
+                @for (action of actions; track $index) {
+                  <tr md-row>
+                    <td md-cell>{{action?.actionSourceName}}</td>
+                    <td md-cell>{{action?.name}}</td>
+                    <td md-cell>
+                        <mat-icon attr.aria-label="{{ 'widget-config.action-icon' | translate }}" class="material-icons">{{action?.icon}}</mat-icon>
+                    </td>
+                    <td md-cell>{{action?.typeName}}</td>
+                    <td md-cell class="tb-action-cell">
+                        <button mat-icon-button attr.aria-label="{{ 'action.edit' | translate }}" (click)="editAction($event, action)" attr.matTooltip="{{ 'widget-config.edit-action' | translate }}" matTooltipPosition="above">
+                            <mat-icon attr.aria-label="{{ 'action.edit' | translate }}" class="material-icons">edit</mat-icon>
+                            
+                        </button>
+                        <button mat-icon-button attr.aria-label="{{'action.delete' | translate}}" (click)="deleteAction($event, action)" attr.matTooltip="{{ 'widget-config.delete-action' | translate }}" matTooltipPosition="above">
+                            <mat-icon aria-label="Delete" class="material-icons">delete</mat-icon>
+                            
+                        </button>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </md-table-container>
+    <!-- TODO(port): md-table-pagination: a mat-paginator --><md-table-pagination md-limit="vm.query.limit" md-limit-options="[10, 15, 20]" md-page="vm.query.page" attr.md-total="{{actionsCount}}" md-on-paginate="vm.onPaginate" md-page-select>
+    </md-table-pagination>
+</div>

@@ -1,0 +1,132 @@
+<!-- Scaffolded by the playbook from src/app/entity/attribute/add-attribute-dialog.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div attr.aria-label="{{ 'attribute.add' | translate }}" style="min-width: 400px;" class="md-dialog">
+    <form name="theForm" (ngSubmit)="add()">
+        <mat-toolbar>
+            <div class="md-toolbar-tools">
+                <h2 translate>attribute.add</h2>
+                <span flex></span>
+                <button mat-icon-button (click)="cancel()">
+                    <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
+                </button>
+            </div>
+        </mat-toolbar>
+        <mat-progress-bar color="warn" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
+        <span style="min-height: 5px;" flex="" [hidden]="!(!rootScope?.loading)"></span>
+        <mat-dialog-content>
+            <div class="md-dialog-content">
+                <div class="md-content md-padding" layout="column">
+                    <fieldset [disabled]="rootScope?.loading">
+                        <mat-form-field class="md-block">
+                            <mat-label translate>attribute.key</mat-label>
+                            <input matInput required name="key" [(ngModel)]="attribute.key">
+                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                            <div ng-messages="theForm?.key?.$error">
+                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                <div translate ng-message="required">attribute.key-required</div>
+                            </div>
+                        </mat-form-field>
+                        <section layout="row">
+                            <mat-form-field flex="40" class="md-block" style="width: 200px;">
+                                <mat-label translate>value.type</mat-label>
+                                <mat-select [(ngModel)]="valueType" [disabled]="rootScope?.loading">
+                                    @for (type of valueTypes; track $index) {
+                                      <mat-option [value]="type">
+                                        <mat-icon svgIcon="{{ type?.icon }}"></mat-icon>
+                                        <span>{{type?.name | translate}}</span>
+                                    </mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+                            @if (valueType===valueTypes?.string) {
+                              <mat-form-field flex="60" class="md-block">
+                                <mat-label translate>value.string-value</mat-label>
+                                <input matInput required name="value" [(ngModel)]="attribute.value">
+                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                <div ng-messages="theForm?.value?.$error">
+                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                    <div translate ng-message="required">attribute.value-required</div>
+                                </div>
+                            </mat-form-field>
+                            }
+                            @if (valueType===valueTypes?.integer) {
+                              <mat-form-field flex="60" class="md-block">
+                                <mat-label translate>value.integer-value</mat-label>
+                                <!-- TODO(port): expression not parsed: `/^-?[0-9]+$/` -->
+                                <input matInput required name="value" type="number" step="1" [pattern]="/^-?[0-9]+$/" [(ngModel)]="attribute.value">
+                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                <div ng-messages="theForm?.value?.$error">
+                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                    <div translate ng-message="required">attribute.value-required</div>
+                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                    <div translate ng-message="pattern">value.invalid-integer-value</div>
+                                </div>
+                            </mat-form-field>
+                            }
+                            @if (valueType===valueTypes?.double) {
+                              <mat-form-field flex="60" class="md-block">
+                                <mat-label translate>value.double-value</mat-label>
+                                <input matInput required name="value" type="number" step="any" [(ngModel)]="attribute.value">
+                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                <div ng-messages="theForm?.value?.$error">
+                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                    <div translate ng-message="required">attribute.value-required</div>
+                                </div>
+                            </mat-form-field>
+                            }
+                            @if (valueType===valueTypes?.boolean) {
+                              <div layout="column" layout-align="center" flex="60">
+                                <mat-checkbox [(ngModel)]="attribute.value" style="margin-bottom: 0;">
+                                    {{ (attribute?.value ? 'value.true' : 'value.false') | translate }}
+                                </mat-checkbox>
+                            </div>
+                            }
+                            @if (valueType===valueTypes?.json) {
+                              <div layout="row" layout-align="center" flex="60" class="md-block">
+                                <mat-form-field flex class="md-block">
+                                    <mat-label translate>value.json-value</mat-label>
+                                    <input matInput required tb-json-to-string name="value" [(ngModel)]="attribute.value">
+                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                    <div ng-messages="theForm?.value?.$error">
+                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                        <div translate ng-message="required">attribute.value-required</div>
+                                    </div>
+                                </mat-form-field>
+                                <button mat-icon-button (click)="addJSON($event)" style="margin: 18px 0;" attr.aria-label="{{ 'action.edit' | translate }}" attr.matTooltip="{{ 'action.edit' | translate }}" matTooltipPosition="above">
+                                    
+                                    <mat-icon>open_in_new</mat-icon>
+                                </button>
+                            </div>
+                            }
+                        </section>
+                    </fieldset>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions layout="row">
+            <span flex></span>
+            <button mat-raised-button color="primary" [disabled]="rootScope?.loading || theForm?.$invalid || !theForm?.$dirty" type="submit">
+                {{ 'action.add' | translate }}
+            </button>
+            <button mat-button [disabled]="rootScope?.loading" (click)="cancel()" style="margin-right:20px;">
+                {{ 'action.cancel' | translate }}
+            </button>
+        </mat-dialog-actions>
+    </form>
+</div>

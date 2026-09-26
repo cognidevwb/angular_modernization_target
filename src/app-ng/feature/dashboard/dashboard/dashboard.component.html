@@ -1,0 +1,225 @@
+<!-- Scaffolded by the playbook from src/app/dashboard/dashboard.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+@if (dashboard) {
+  <div style="padding-top: 150px;" flex (tbExpandFullscreen)="widgetEditMode || iframeMode || forceFullscreen" expand-button-id="dashboard-expand-button" (hideExpandButton)="hideFullscreenButton()" expand-tooltip-direction="bottom" class="md-content">
+    <section class="tb-dashboard-toolbar" [hidden]="!(showDashboardToolbar())" [ngClass]="{ 'tb-dashboard-toolbar-opened': toolbarOpened, 'tb-dashboard-toolbar-closed': !toolbarOpened }">
+        <tb-dashboard-toolbar [hidden]="!(!widgetEditMode)" [(forceFullscreen)]="forceFullscreen" [(toolbarOpened)]="toolbarOpened" (onTriggerClick)="openToolbar()">
+            <div class="tb-dashboard-action-panels" layout-sm="column" layout-xs="column" layout-align-gt-sm="space-between center" layout="row" layout-align="center stretch">
+                <div class="tb-dashboard-action-panel" flex-md="30" layout="row" layout-align-gt-sm="start center" layout-align="space-between center">
+                    <button mat-icon-button [hidden]="!(showCloseToolbar())" aria-label="close-toolbar" class="close-action" (click)="closeToolbar()" attr.matTooltip="{{ 'dashboard.close-toolbar' | translate }}" matTooltipPosition="below">
+                        
+                        <mat-icon aria-label="close-toolbar" class="material-icons">arrow_forward</mat-icon>
+                    </button>
+                    @if (!isPublicUser() && forceFullscreen) {
+                      <tb-user-menu hide-xs hide-sm [displayUserInfo]="true">
+                    </tb-user-menu>
+                    }
+                    <button mat-icon-button [hidden]="!(showRightLayoutSwitch())" aria-label="switch-layouts" (click)="toggleLayouts()" attr.matTooltip="{{ (isRightLayoutOpened ? 'dashboard.hide-details' : 'dashboard.show-details') | translate }}" matTooltipPosition="below">
+                        <mat-icon options='{"easing": "circ-in-out", "duration": 375, "rotation": "none"}'>{{isRightLayoutOpened ? 'arrow_back' : 'menu'}}</mat-icon>
+                        
+                    </button>
+                    <button mat-icon-button id="dashboard-expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}">
+                    </button>
+                    <button mat-icon-button [hidden]="!(isEdit || displayExport())" attr.aria-label="{{ 'action.export' | translate }}" (click)="exportDashboard($event)" attr.matTooltip="{{ 'dashboard.export' | translate }}" matTooltipPosition="below">
+                        
+                        <mat-icon attr.aria-label="{{ 'action.export' | translate }}" class="material-icons">file_download</mat-icon>
+                    </button>
+                    <tb-timewindow [hidden]="!(isEdit || displayDashboardTimewindow())" is-toolbar (isEdit)="isEdit" direction="left" tooltip-direction="bottom" aggregation="true" [(ngModel)]="dashboardCtx.dashboardTimewindow">
+                    </tb-timewindow>
+                    <tb-aliases-entity-select [hidden]="!(!isEdit && displayEntitiesSelect())" tooltip-direction="bottom" [(aliasController)]="dashboardCtx.aliasController">
+                    </tb-aliases-entity-select>
+                    <button mat-icon-button [hidden]="!(isEdit)" attr.aria-label="{{ 'entity.aliases' | translate }}" (click)="openEntityAliases($event)" attr.matTooltip="{{ 'entity.aliases' | translate }}" matTooltipPosition="below">
+                        
+                        <mat-icon attr.aria-label="{{ 'entity.aliases' | translate }}" class="material-icons">devices_other</mat-icon>
+                    </button>
+                    <button mat-icon-button [hidden]="!(isEdit)" attr.aria-label="{{ 'dashboard.settings' | translate }}" (click)="openDashboardSettings($event)" attr.matTooltip="{{ 'dashboard.settings' | translate }}" matTooltipPosition="below">
+                        
+                        <mat-icon attr.aria-label="{{ 'dashboard.settings' | translate }}" class="material-icons">settings</mat-icon>
+                    </button>
+                    <tb-dashboard-select [hidden]="!(!isEdit && !widgetEditMode && displayDashboardsSelect())" [(ngModel)]="currentDashboardId" dashboardsScope="{{currentDashboardScope}}" [(customerId)]="currentCustomerId">
+                    </tb-dashboard-select>
+                </div>
+                <div class="tb-dashboard-action-panel" flex-md="70" layout="row" layout-align-gt-sm="end center" layout-align="space-between center">
+                    @if (!isPublicUser() && forceFullscreen) {
+                      <tb-user-menu hide-gt-sm [displayUserInfo]="true">
+                    </tb-user-menu>
+                    }
+                    <div flex-xs flex-sm layout="row" layout-align-gt-sm="start center" layout-align="space-between center" [hidden]="!(isEdit)">
+                        <button mat-icon-button attr.aria-label="{{ 'dashboard.manage-states' | translate }}" (click)="manageDashboardStates($event)" attr.matTooltip="{{ 'dashboard.manage-states' | translate }}" matTooltipPosition="below">
+                            
+                            <mat-icon attr.aria-label="{{ 'dashboard.manage-states' | translate }}" class="material-icons">layers</mat-icon>
+                        </button>
+                        <button mat-icon-button attr.aria-label="{{ 'layout.manage' | translate }}" (click)="manageDashboardLayouts($event)" attr.matTooltip="{{ 'layout.manage' | translate }}" matTooltipPosition="below">
+                            
+                            <mat-icon attr.aria-label="{{ 'layout.manage' | translate }}" class="material-icons">view_compact</mat-icon>
+                        </button>
+                    </div>
+                    @if (isEdit) {
+                      <tb-states-component flex-xs flex-sm [statesControllerId]="'default'" [(dashboardCtrl)]="vm" [(states)]="dashboardConfiguration.states">
+                    </tb-states-component>
+                    }
+                    @if (!isEdit) {
+                      <tb-states-component flex-xs flex-sm [(statesControllerId)]="dashboardConfiguration.settings.stateControllerId" [(dashboardCtrl)]="vm" [(states)]="dashboardConfiguration.states">
+                    </tb-states-component>
+                    }
+                 </div>
+            </div>
+        </tb-dashboard-toolbar>
+    </section>
+    <section class="tb-dashboard-container tb-absolute-fill" [ngClass]="{ 'is-fullscreen': forceFullscreen, 'tb-dashboard-toolbar-opened': toolbarOpened, 'tb-dashboard-toolbar-closed': !toolbarOpened }">
+        <section [hidden]="!(!rootScope?.loading && dashboardConfigurationError())" layout-align="center center" [ngStyle]="{'color': dashboard?.configuration?.settings?.titleColor}" [ngClass]="{'tb-padded' : !widgetEditMode}" style="text-transform: uppercase; display: flex; z-index: 1;" class="md-headline tb-absolute-fill">
+            <span translate>
+                dashboard.configuration-error
+            </span>
+        </section>
+        @if (!widgetEditMode) {
+          <section class="tb-dashboard-title" layout="row" layout-align="center center" [ngStyle]="{'color': dashboard?.configuration?.settings?.titleColor}">
+            <h3 [hidden]="!(!isEdit && displayTitle())">{{ dashboard?.title }}</h3>
+            <mat-form-field [hidden]="!(isEdit)" class="md-block" style="height: 30px;">
+                <mat-label translate [ngStyle]="{'color': dashboard?.configuration?.settings?.titleColor}">dashboard.title</mat-label>
+                <input matInput class="tb-dashboard-title" [ngStyle]="{'color': dashboard?.configuration?.settings?.titleColor}" required name="title" [(ngModel)]="dashboard.title">
+            </mat-form-field>
+        </section>
+        }
+        <div class="tb-absolute-fill tb-dashboard-layouts" attr.layout="{{forceDashboardMobileMode ? 'column' : 'row'}}" [ngClass]="{ 'tb-padded' : !widgetEditMode && (isEdit || displayTitle()), 'tb-shrinked' : isEditingWidget }">
+            <div [hidden]="!(layouts?.main?.show)" id="tb-main-layout" [ngStyle]="{width: mainLayoutWidth(),
+                            height: mainLayoutHeight()}">
+                <tb-dashboard-layout [(layoutCtx)]="layouts.main.layoutCtx" [(dashboardCtx)]="dashboardCtx" [(isEdit)]="isEdit" [(isMobile)]="forceDashboardMobileMode" [(widgetEditMode)]="widgetEditMode">
+                </tb-dashboard-layout>
+            </div>
+            <!-- TODO(port): md-sidenav: a mat-sidenav inside a mat-sidenav-container -->@if (layouts?.right?.show) {
+              <md-sidenav id="tb-right-layout" class="md-sidenav-right" [ngStyle]="{minWidth: rightLayoutWidth(),
+                                   maxWidth: rightLayoutWidth(),
+                                   height: rightLayoutHeight(),
+                                   zIndex: 25}" md-component-id="right-dashboard-layout" aria-label="Right dashboard layout" md-is-open="vm.rightLayoutOpened" md-is-locked-open="!vm.isMobile">
+                <tb-dashboard-layout style="height: 100%;" [(layoutCtx)]="layouts.right.layoutCtx" [(dashboardCtx)]="dashboardCtx" [(isEdit)]="isEdit" [(isMobile)]="forceDashboardMobileMode" [(widgetEditMode)]="widgetEditMode">
+                </tb-dashboard-layout>
+            </md-sidenav>
+            }
+        </div>
+        <tb-details-sidenav class="tb-widget-details-sidenav" headerTitle="{{editingWidget?.config?.title}}" headerSubtitle="{{editingWidgetSubtitle}}" [isReadOnly]="false" [(isOpen)]="isEditingWidget" [isAlwaysEdit]="true" (onCloseDetails)="onEditWidgetClosed()" (onToggleDetailsEditMode)="onRevertWidgetEdit(widgetForm)" (onApplyDetails)="saveWidget(widgetForm)" [(theForm)]="widgetForm">
+            <details-buttons [tbHelp]="helpLinkIdForWidgetType()" help-container-id="help-container">
+                <div id="help-container"></div>
+            </details-buttons>
+            @if (isEditingWidget) {
+              <form name="vm.widgetForm">
+                <tb-edit-widget [(dashboard)]="dashboard" [(aliasController)]="dashboardCtx.aliasController" [(widgetEditMode)]="widgetEditMode" [(widget)]="editingWidget" [(widgetLayout)]="editingWidgetLayout" [(theForm)]="widgetForm">
+                </tb-edit-widget>
+            </form>
+            }
+        </tb-details-sidenav>
+        @if (!widgetEditMode) {
+          <tb-details-sidenav class="tb-select-widget-sidenav" headerTitle="{{'dashboard.select-widget-title' | translate}}" headerHeightPx="120" [isReadOnly]="true" [(isOpen)]="isAddingWidget" [isEdit]="false" (onCloseDetails)="onAddWidgetClosed()">
+            @if (isAddingWidget) {
+              <header-pane>
+                <div layout="row">
+                    <span class="tb-details-subtitle">{{ 'widgets-bundle.current' | translate }}</span>
+                    <tb-widgets-bundle-select flex-offset="5" flex [(ngModel)]="widgetsBundle" [tbRequired]="true" [selectFirstBundle]="false">
+                    </tb-widgets-bundle-select>
+                </div>
+            </header-pane>
+            }
+            @if (isAddingWidget) {
+              <div>
+                @if (timeseriesWidgetTypes?.length > 0 || latestWidgetTypes?.length > 0 ||
+                                rpcWidgetTypes?.length > 0 || alarmWidgetTypes?.length > 0 ||
+                                staticWidgetTypes?.length > 0) {
+                  <mat-tab-group flex class="tb-absolute-fill">
+                    @if (timeseriesWidgetTypes?.length > 0) {
+                      <mat-tab style="height: 100%;" label="{{ 'widget.timeseries' | translate }}">
+                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="timeseriesWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType(event, widget)">
+                        </tb-dashboard>
+                    </mat-tab>
+                    }
+                    @if (latestWidgetTypes?.length > 0) {
+                      <mat-tab style="height: 100%;" label="{{ 'widget.latest-values' | translate }}">
+                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="latestWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType(event, widget)">
+                        </tb-dashboard>
+                    </mat-tab>
+                    }
+                    @if (rpcWidgetTypes?.length > 0) {
+                      <mat-tab style="height: 100%;" label="{{ 'widget.rpc' | translate }}">
+                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="rpcWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType(event, widget)">
+                        </tb-dashboard>
+                    </mat-tab>
+                    }
+                    @if (alarmWidgetTypes?.length > 0) {
+                      <mat-tab style="height: 100%;" label="{{ 'widget.alarm' | translate }}">
+                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="alarmWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType(event, widget)">
+                        </tb-dashboard>
+                    </mat-tab>
+                    }
+                    @if (staticWidgetTypes?.length > 0) {
+                      <mat-tab style="height: 100%;" label="{{ 'widget.static' | translate }}">
+                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="staticWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType(event, widget)">
+                        </tb-dashboard>
+                    </mat-tab>
+                    }
+                </mat-tab-group>
+                }
+                @if (timeseriesWidgetTypes?.length === 0 && latestWidgetTypes?.length === 0 &&
+                                       rpcWidgetTypes?.length === 0 && alarmWidgetTypes?.length === 0 &&
+                                       staticWidgetTypes?.length === 0 && widgetsBundle) {
+                  <span translate layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill">widgets-bundle.empty</span>
+                }
+                @if (!widgetsBundle) {
+                  <span translate layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill">widget.select-widgets-bundle</span>
+                }
+            </div>
+            }
+        </tb-details-sidenav>
+        }
+        <section layout="row" layout-wrap class="tb-footer-buttons md-fab" layout-align="start end">
+            <!-- TODO(port): md-fab-speed-dial: a mat-fab that toggles a list of mat-mini-fab buttons --><md-fab-speed-dial [disabled]="rootScope?.loading" [hidden]="!(!isAddingWidget && isEdit && !widgetEditMode)" md-open="vm.addItemActionsOpen" class="md-scale" md-direction="up">
+                <!-- TODO(port): md-fab-trigger: the mat-fab that opens the speed dial --><md-fab-trigger>
+                    <button mat-fab color="accent" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'dashboard.add-widget' | translate }}" attr.matTooltip="{{ 'dashboard.add-widget' | translate }}" matTooltipPosition="above">
+                        
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </md-fab-trigger>
+                <!-- TODO(port): md-fab-actions: the buttons the speed dial shows --><md-fab-actions>
+                    <button mat-fab [disabled]="rootScope?.loading" class="tmd-accent md-hue-2" (click)="addWidget($event)" attr.aria-label="{{ 'action.create' | translate }}" attr.matTooltip="{{ 'dashboard.create-new-widget' | translate }}" matTooltipPosition="above">
+                        
+                        <mat-icon>insert_drive_file</mat-icon>
+                    </button>
+                    <button mat-fab [disabled]="rootScope?.loading" class="tmd-accent md-hue-2" (click)="importWidget($event)" attr.aria-label="{{ 'action.import' | translate }}" attr.matTooltip="{{ 'dashboard.import-widget' | translate }}" matTooltipPosition="above">
+                        
+                        <mat-icon>file_upload</mat-icon>
+                    </button>
+                </md-fab-actions>
+            </md-fab-speed-dial>
+            @if ((isTenantAdmin() || isSystemAdmin()) && !forceFullscreen) {
+              <button mat-fab color="accent" [hidden]="!(isEdit && !isAddingWidget && !rootScope?.loading)" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'action.apply' | translate }}" (click)="saveDashboard()" attr.matTooltip="{{ 'action.apply-changes' | translate }}" matTooltipPosition="above">
+                
+                <mat-icon>done</mat-icon>
+            </button>
+            }
+            @if ((isTenantAdmin() || isSystemAdmin()) && !forceFullscreen) {
+              <button mat-fab color="accent" [hidden]="!(!isAddingWidget && !rootScope?.loading)" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'action.edit-mode' | translate }}" (click)="toggleDashboardEditMode()" attr.matTooltip="{{ (isEdit ? 'action.decline-changes' : 'action.enter-edit-mode') | translate }}" matTooltipPosition="above">
+                
+                <mat-icon options='{"easing": "circ-in-out", "duration": 375, "rotation": "none"}'>{{isEdit ? 'close' : 'edit'}}</mat-icon>
+            </button>
+            }
+        </section>
+    </section>
+    <section class="tb-powered-by-footer" [ngStyle]="{'color': dashboard?.configuration?.settings?.titleColor}">
+        <span>Powered by <a href="https://thingsboard.io" target="_blank">Thingsboard v.{{ thingsboardVersion }}</a></span>
+    </section>
+</div>
+}

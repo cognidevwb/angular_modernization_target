@@ -1,0 +1,40 @@
+<!-- Scaffolded by the playbook from src/app/components/json-content.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- TODO(port): expression not parsed: `` -->
+<div style="background: #fff;" [ngClass]="{'fill-height': fillHeight()}" (tbExpandFullscreen)="" (fullscreenZindex)="100" expand-button-id="expand-button" (onFullscreenChanged)="onFullscreenChanged()" layout="column">
+    <div layout="row" layout-align="start center" style="height: 40px;" class="tb-json-content-toolbar">
+        <label class="tb-title no-padding" [ngClass]="{'tb-error': !contentValid}">{{ label }}</label>
+        <span flex></span>
+        @if (!readonly()) {
+          <button mat-button class="tidy" attr.aria-label="{{ 'js-func.tidy' | translate }}" (click)="beautifyJSON()">{{
+            'js-func.tidy' | translate }}
+        </button>
+        }
+        @if (!readonly()) {
+          <button mat-button class="tidy" attr.aria-label="{{ 'js-func.mini' | translate }}" (click)="minifyJSON()">{{
+            'js-func.mini' | translate }}
+        </button>
+        }
+        <button mat-icon-button id="expand-button" aria-label="Fullscreen" class="tb-md-32 tb-fullscreen-button-style"></button>
+    </div>
+    <div flex id="tb-json-panel" class="tb-json-content-panel" layout="column">
+        <div flex id="tb-json-input" [ngClass]="{'fill-height': fillHeight()}" [readonly]="readonly()" ui-ace="jsonEditorOptions" [(ngModel)]="contentBody">
+        </div>
+    </div>
+</div>

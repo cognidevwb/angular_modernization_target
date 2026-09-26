@@ -1,0 +1,94 @@
+<!-- Scaffolded by the playbook from src/app/entity/alias/entity-aliases.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div class="md-dialog tb-aliases-dialog" style="width: 700px;" attr.aria-label="{{ title | translate }}">
+	<form name="theForm" (ngSubmit)="save()">
+		<mat-toolbar>
+			<div class="md-toolbar-tools">
+				<h2>{{ title | translate }}</h2>
+				<span flex></span>
+				<button mat-icon-button (click)="cancel()">
+					<mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
+				</button>
+			</div>
+		</mat-toolbar>
+		<mat-progress-bar color="warn" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
+		<span style="min-height: 5px;" flex="" [hidden]="!(!rootScope?.loading)"></span>
+		<div class="tb-aliases-header" flex layout="row" layout-align="start center">
+			<span flex="5"></span>
+			<div flex layout="row" layout-align="start center">
+				<span class="tb-header-label" translate flex="20" style="min-width: 150px;">alias.name</span>
+				<span class="tb-header-label" translate flex="70" style="padding-left: 10px;">alias.entity-filter</span>
+				<span class="tb-header-label" translate flex="10" style="padding-left: 10px; min-width: 120px;">alias.resolve-multiple</span>
+				<span style="min-width: 80px;"></span>
+			</div>
+		</div>
+		<mat-divider></mat-divider>
+		<mat-dialog-content>
+			<div class="md-dialog-content">
+				<fieldset [disabled]="rootScope?.loading">
+					<!-- TODO(port): ng-form has no one-to-one Angular form -->
+					@for (entityAlias of entityAliases; track $index) {
+					  <div ng-form name="aliasForm" flex layout="row" layout-align="start center">
+						<span flex="5">{{$index + 1}}.</span>
+						<div class="md-whiteframe-4dp tb-alias" flex layout="row" layout-align="start center">
+							<mat-form-field flex="20" style="min-width: 150px;" class="md-block">
+								<input matInput required name="alias" attr.placeholder="{{ 'entity.alias' | translate }}" [(ngModel)]="entityAlias.alias">
+								<!-- TODO(port): ng-messages has no one-to-one Angular form -->
+								<div ng-messages="aliasForm?.alias?.$error">
+									<!-- TODO(port): ng-message has no one-to-one Angular form -->
+									<div translate ng-message="required">entity.alias-required</div>
+								</div>
+							</mat-form-field>
+							<tb-entity-filter-view flex="70" style="padding-left: 10px;" [(ngModel)]="entityAlias.filter">
+							</tb-entity-filter-view>
+							<section flex="10" style="padding-left: 10px; min-width: 120px;" class="tb-resolve-multiple-switch" layout="column" layout-align="center center">
+								<mat-slide-toggle class="resolve-multiple-switch" [(ngModel)]="entityAlias.filter.resolveMultiple" aria-label="resolve-multiple-switcher">
+								</mat-slide-toggle>
+							</section>
+							<button mat-icon-button color="primary" [disabled]="rootScope?.loading" style="min-width: 40px;" (click)="editAlias($event, entityAlias)" attr.aria-label="{{ 'action.edit' | translate }}" attr.matTooltip="{{ 'alias.edit' | translate }}" matTooltipPosition="above">
+								
+								<mat-icon attr.aria-label="{{ 'alias.edit' | translate }}" class="material-icons">
+									edit
+								</mat-icon>
+							</button>
+							<button mat-icon-button color="primary" [disabled]="rootScope?.loading" style="min-width: 40px;" (click)="removeAlias($event, entityAlias)" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'entity.remove-alias' | translate }}" matTooltipPosition="above">
+								
+								<mat-icon attr.aria-label="{{ 'action.delete' | translate }}" class="material-icons">
+									close
+								</mat-icon>
+							</button>
+						</div>
+					</div>
+					}
+				</fieldset>
+			</div>
+		</mat-dialog-content>
+		<mat-dialog-actions layout="row">
+			<button mat-raised-button color="primary" [hidden]="!(!disableAdd)" [disabled]="rootScope?.loading" (click)="addAlias($event)" attr.aria-label="{{ 'alias.add' | translate }}" attr.matTooltip="{{ 'alias.add' | translate }}" matTooltipPosition="above">
+				
+				<span translate>alias.add</span>
+			</button>
+			<span flex></span>
+			<button mat-raised-button color="primary" [disabled]="rootScope?.loading || theForm?.$invalid || !theForm?.$dirty" type="submit">
+				{{ 'action.save' | translate }}
+			</button>
+			<button mat-button [disabled]="rootScope?.loading" (click)="cancel()" style="margin-right:20px;">{{ 'action.cancel' | translate }}</button>
+		</mat-dialog-actions>
+	</form>
+</div>

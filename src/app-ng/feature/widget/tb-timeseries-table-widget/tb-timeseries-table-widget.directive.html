@@ -1,0 +1,89 @@
+<!-- Scaffolded by the playbook from src/app/widget/lib/timeseries-table-widget.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div class="tb-absolute-fill tb-entities-table tb-data-table timeseriesWidget" layout="column">
+    <div flex class="tb-absolute-fill" layout="column">
+        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(query?.search !== null)">
+            <div class="md-toolbar-tools">
+                <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{'entity.search' | translate}}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                    <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
+                    
+                </button>
+                <mat-form-field flex>
+                    <mat-label>&nbsp;</mat-label>
+                    <input matInput [(ngModel)]="query.search" class="searchInput" attr.placeholder="{{'widget.search-data' | translate}}" cdkFocusInitial>
+                </mat-form-field>
+                <button mat-icon-button aria-label="Close" (click)="exitFilterMode()" attr.matTooltip="{{ 'action.close' | translate }}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                    <mat-icon aria-label="Close" class="material-icons">close</mat-icon>
+                    
+                </button>
+            </div>
+        </mat-toolbar>
+
+        <mat-tab-group [selectedIndex]="sourceIndex" [ngClass]="{'tb-headless': sources?.length === 1}" id="tabs" flex>
+            @for (source of sources; track $index) {
+              <mat-tab label="{{ source?.datasource?.name }}">
+                <div class="tb-absolute-fill" layout="column">
+                    <!-- TODO(port): md-table-container (angular-material-data-table): a mat-table with MatSort --><md-table-container flex>
+                        <table md-table>
+                            <thead fix-head md-head md-order="source.query.order" md-on-reorder="vm.onReorder(source)">
+                                <tr md-row>
+                                    <th [hidden]="!(showTimestamp)" md-column md-order-by="0">
+                                        <span>Timestamp</span>
+                                    </th>
+                                    @for (h of source?.ts?.header; track $index) {
+                                      <th md-column attr.md-order-by="{{ h?.index }}">
+                                        <span>{{ h?.dataKey?.label }}</span>
+                                    </th>
+                                    }
+                                </tr>
+                            </thead>
+
+                            <tbody md-body>
+                                @for (row of source?.ts?.data; track $index) {
+                                  <tr md-row (click)="onRowClick($event, row)">
+                                    @for (d of row; track $index) {
+                                      <td [hidden]="!($index > 0 || ($index === 0 && showTimestamp))" md-cell [ngStyle]="cellStyle(source, $index, d)" [innerHTML]="cellContent(source, $index, row, d)"></td>
+                                    }
+                                    <td md-cell class="tb-action-cell" [ngStyle]="{minWidth: actionCellDescriptors?.length*36+'px',
+                                                   maxWidth: actionCellDescriptors?.length*36+'px',
+                                                   width: actionCellDescriptors?.length*36+'px'}">
+                                        @for (actionDescriptor of actionCellDescriptors; track $index) {
+                                          <button mat-icon-button attr.aria-label="{{ actionDescriptor?.displayName }}" (click)="onActionButtonClick($event, row, actionDescriptor)" [disabled]="rootScope?.loading" attr.matTooltip="{{ actionDescriptor?.displayName }}" matTooltipPosition="above">
+                                           <mat-icon attr.aria-label="{{ actionDescriptor?.displayName }}" class="material-icons">{{actionDescriptor?.icon}}</mat-icon>
+                                           
+                                        </button>
+                                        }
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <mat-divider></mat-divider>
+                        <span [hidden]="!(!sources?.[sourceIndex]?.data?.length)" layout-align="center center" class="no-data-found" translate>widget.no-data-found</span>
+                    </md-table-container>
+                </div>
+            </mat-tab>
+            }
+        </mat-tab-group>
+        <!-- TODO(port): md-table-pagination: a mat-paginator -->@if (displayPagination) {
+          <md-table-pagination md-limit="vm.sources[vm.sourceIndex].query.limit" md-limit-options="vm.limitOptions" md-page="vm.sources[vm.sourceIndex].query.page" attr.md-total="{{sources?.[sourceIndex]?.data?.length}}" md-on-paginate="vm.onPaginate(vm.sources[vm.sourceIndex])" md-page-select>
+        </md-table-pagination>
+        }
+    </div>
+</div>

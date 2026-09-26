@@ -1,0 +1,121 @@
+<!-- Scaffolded by the playbook from src/app/components/timewindow-panel.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<form name="theForm" (ngSubmit)="update()">
+	<fieldset [disabled]="rootScope?.loading">
+		<div style="height: 100%" flex layout="column" class="md-content">
+			<section layout="column">
+				<mat-tab-group [ngClass]="{'tb-headless': historyOnly}" [selectedIndex]="timewindow?.selectedTab">
+					<mat-tab label="{{ 'timewindow.realtime' | translate }}">
+						<div class="md-content md-padding" layout="column">
+							<tb-timeinterval [(hideFlag)]="timewindow.hideInterval" [predefinedName]="'timewindow.last'" [(isEdit)]="isEdit" [ngRequired]="timewindow?.selectedTab === 0" [(ngModel)]="timewindow.realtime.timewindowMs" style="padding-top: 8px;"></tb-timeinterval>
+						</div>
+					</mat-tab>
+					<mat-tab label="{{ 'timewindow.history' | translate }}">
+						<section layout="row">
+							<section layout="column" class="md-padding" style="padding-top: 8px;">
+								@if (isEdit) {
+								  <label class="tb-small advanced-label" translate>timewindow.hide</label>
+								}
+								@if (isEdit) {
+								  <mat-checkbox attr.aria-label="{{ 'timewindow.hide' | translate }}" [(ngModel)]="timewindow.hideInterval">
+								</mat-checkbox>
+								}
+							</section>
+							<section layout="column" flex [hidden]="!(isEdit || !timewindow?.hideInterval)">
+								<div class="md-content md-padding" layout="column" style="padding-top: 8px;">
+									<mat-radio-group color="primary" [disabled]="timewindow?.hideInterval" [(ngModel)]="timewindow.history.historyType">
+										<mat-radio-button color="primary" [value]="0" attr.aria-label="{{ 'timewindow.last' | translate }}" class="md-align-top-left md-radio-interactive">
+											<section layout="column">
+												<tb-timeinterval [predefinedName]="'timewindow.last'" [ngRequired]="timewindow?.selectedTab === 1 && timewindow?.history?.historyType === 0" [hidden]="!(timewindow?.history?.historyType === 0)" [(ngModel)]="timewindow.history.timewindowMs" style="padding-top: 8px;"></tb-timeinterval>
+											</section>
+										</mat-radio-button>
+										<mat-radio-button color="primary" [value]="1" attr.aria-label="{{ 'timewindow.time-period' | translate }}" class="md-align-top-left md-radio-interactive">
+											<section layout="column">
+												<span translate>timewindow.time-period</span>
+												<tb-datetime-period [ngRequired]="timewindow?.selectedTab === 1 && timewindow?.history?.historyType === 1" [hidden]="!(timewindow?.history?.historyType === 1)" [(ngModel)]="timewindow.history.fixedTimewindow" style="padding-top: 8px;"></tb-datetime-period>
+											</section>
+										</mat-radio-button>
+									</mat-radio-group>
+								</div>
+							</section>
+						</section>
+					</mat-tab>
+				</mat-tab-group>
+				@if (aggregation) {
+				  <div class="md-content md-padding" layout="column">
+					<section layout="row">
+						<section layout="column" style="padding-top: 5px;" [hidden]="!(isEdit)">
+							<label class="tb-small advanced-label" translate>timewindow.hide</label>
+							<mat-checkbox attr.aria-label="{{ 'timewindow.hide' | translate }}" [(ngModel)]="timewindow.hideAggregation">
+							</mat-checkbox>
+						</section>
+						<section layout="column" flex [hidden]="!(isEdit || !timewindow?.hideAggregation)">
+							<mat-form-field>
+								<mat-label translate>aggregation.function</mat-label>
+								<mat-select [disabled]="timewindow?.hideAggregation" [(ngModel)]="timewindow.aggregation.type" style="min-width: 150px;">
+									@for (type of aggregationTypes; track $index) {
+									  <mat-option [value]="type?.value">
+										{{type?.name | translate}}
+									</mat-option>
+									}
+								</mat-select>
+							</mat-form-field>
+						</section>
+					</section>
+					<section layout="row" [hidden]="!(showLimit())">
+						<section layout="column" style="padding-top: 5px;" [hidden]="!(showLimit() && isEdit)">
+							<label class="tb-small advanced-label" translate>timewindow.hide</label>
+							<mat-checkbox attr.aria-label="{{ 'timewindow.hide' | translate }}" [(ngModel)]="timewindow.hideAggInterval">
+							</mat-checkbox>
+						</section>
+						<section layout="column" flex [hidden]="!(isEdit || !timewindow?.hideAggInterval)">
+							<md-slider-container>
+								<span translate>aggregation.limit</span>
+								<mat-slider flex min="{{minDatapointsLimit()}}" max="{{maxDatapointsLimit()}}" step="1" [disabled]="timewindow?.hideAggInterval" [(ngModel)]="timewindow.aggregation.limit" aria-label="limit" id="limit-slider">
+								</mat-slider>
+								<mat-form-field style="max-width: 80px;">
+									<input matInput flex type="number" step="1" [disabled]="timewindow?.hideAggInterval" attr.min="{{minDatapointsLimit()}}" attr.max="{{maxDatapointsLimit()}}" [(ngModel)]="timewindow.aggregation.limit" aria-label="limit" aria-controls="limit-slider">
+								</mat-form-field>
+							</md-slider-container>
+						</section>
+					</section>
+					@if (showRealtimeAggInterval()) {
+					  <tb-timeinterval [min]="minRealtimeAggInterval()" [max]="maxRealtimeAggInterval()" [(ngModel)]="timewindow.realtime.interval" [(isEdit)]="isEdit" [(hideFlag)]="timewindow.hideAggInterval" [predefinedName]="'aggregation.group-interval'">
+					</tb-timeinterval>
+					}
+					@if (showHistoryAggInterval()) {
+					  <tb-timeinterval [min]="minHistoryAggInterval()" [max]="maxHistoryAggInterval()" [(ngModel)]="timewindow.history.interval" [(isEdit)]="isEdit" [(hideFlag)]="timewindow.hideAggInterval" [predefinedName]="'aggregation.group-interval'">
+					</tb-timeinterval>
+					}
+				</div>
+				}
+			</section>
+			<span flex></span>
+			<section layout="row" layout-alignment="start center">
+				  <span flex></span>
+				  <button mat-raised-button color="primary" [disabled]="rootScope?.loading || theForm?.$invalid || !theForm?.$dirty" type="submit">
+				  		{{ 'action.update' | translate }}
+				  </button>
+			      <button mat-button [disabled]="rootScope?.loading" (click)="cancel()" style="margin-right:20px;">
+					  {{ 'action.cancel' | translate }}
+			      </button>
+			</section> 
+		</div>
+	</fieldset>
+</form>

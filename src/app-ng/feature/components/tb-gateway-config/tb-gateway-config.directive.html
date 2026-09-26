@@ -1,0 +1,73 @@
+<!-- Scaffolded by the playbook from src/app/components/gateway/gateway-config.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<section name="gatewayConfig" layout="column" class="gateway-config">
+    <!-- TODO(port): ng-form has no one-to-one Angular form -->
+    @for (connector of gatewayConfig(); track $index) {
+      <section layout="row" ng-form="gatewayConfig_{{$index}}">
+        <div layout="column" layout-align="center start" class="gateway-config-row">
+            <!-- TODO(port): ng-disabled holds an interpolation (`{{ }}`) where Angular binds an expression: write it as an expression -->
+            <mat-slide-toggle [disabled]="isReadOnly()" [(ngModel)]="connector.enabled" [disabled]="gatewayConfig_{{$index}}.$invalid || vm.validateJSON(connector.config)" attr.aria-label="{{ 'gateway.connector-enabled' | translate }}">
+            </mat-slide-toggle>
+        </div>
+        <div layout="row" flex class="gateway-config-row" [ngClass]="{'gateway-config-row-vertical': changeAlignment()}">
+            <mat-form-field class="md-block" flex>
+                <mat-label>{{'gateway.connector-type' | translate }}</mat-label>
+                <mat-select [disabled]="isReadOnly()" name="connectorType" (ngModelChange)="changeConnectorType(connector)" attr.aria-label="{{ 'gateway.gateway.connector-type' | translate }}" [(ngModel)]="connector.configType" required>
+                    @for (configType of types?.gatewayConfigType; track $index) {
+                      <mat-option [value]="configType?.value">
+                        {{configType?.value}}
+                    </mat-option>
+                    }
+                </mat-select>
+                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                <div ng-messages="theForm()?.connectorType?.$error">
+                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                    <div ng-message="required" translate>gateway.connector-type-required</div>
+                </div>
+            </mat-form-field>
+            <mat-form-field class="md-block" flex>
+                <!-- TODO(port): ng-model-options has no one-to-one Angular form -->
+                <input matInput [disabled]="isReadOnly()" attr.placeholder="{{'gateway.connector-name' | translate }}" ng-model-options="{ updateOn: 'blur' }" (ngModelChange)="changeConnectorName(connector, $index)" name="connectorName" [(ngModel)]="connector.name" required>
+                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                <div ng-messages="theForm()?.connectorName?.$error">
+                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                    <div ng-message="required" translate>gateway.connector-name-required</div>
+                </div>
+            </mat-form-field>
+        </div>
+        <div layout="row" layout-align="end center" class="action-buttons" [ngClass]="{'gateway-config-row-vertical': changeAlignment()}">
+            <button mat-icon-button [disabled]="isReadOnly()" (click)="openConfigDialog($event, $index, connector.config, connector.name)" attr.aria-label="{{ 'gateway.update-config' | translate }}" [ngClass]="{'md-warn': validateJSON(connector?.config)}" attr.matTooltip="{{ 'gateway.update-config' | translate }}" matTooltipPosition="above">
+                <mat-icon class="material-icons">more_horiz</mat-icon>
+                
+            </button>
+            <button mat-icon-button [disabled]="isReadOnly()" (click)="removeConnector($index)" attr.aria-label="{{ 'gateway.delete' | translate }}" attr.matTooltip="{{ 'gateway.delete' | translate }}" matTooltipPosition="above">
+                <mat-icon class="material-icons">close</mat-icon>
+                
+            </button>
+        </div>
+    </section>
+    }
+    <span [hidden]="!(!gatewayConfig()?.length)" layout-align="center center" [ngClass]="{'disabled': disabled()}" class="no-data-found" translate>{{'gateway.no-connectors'}}</span>
+    <div>
+        <button mat-raised-button [hidden]="!(!isReadOnly())" (click)="addNewConnector()" attr.aria-label="{{ 'gateway.connector-add' | translate }}" attr.matTooltip="{{ 'gateway.connector-add' | translate }}" matTooltipPosition="above">
+            
+            <span translate>action.add</span>
+        </button>
+    </div>
+</section>

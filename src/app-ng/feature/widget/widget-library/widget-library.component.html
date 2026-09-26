@@ -1,0 +1,51 @@
+<!-- Scaffolded by the playbook from src/app/widget/widget-library.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<section [hidden]="!(!rootScope?.loading && noData())" layout-align="center center" style="text-transform: uppercase; display: flex; z-index: 1;" class="md-headline tb-absolute-fill">
+	 @if (!isReadOnly()) {
+	   <button mat-button class="tb-add-new-widget" (click)="addWidgetType($event)">
+	 	 <mat-icon attr.aria-label="{{ 'action.add' | translate }}" class="material-icons tb-md-96">add</mat-icon>
+	 	 {{ 'widget.add-widget-type' | translate }}
+	 </button>
+	 }
+	 @if (isReadOnly()) {
+	   <span translate layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill">widgets-bundle.empty</span>
+	 }
+</section>
+<tb-dashboard [(aliasController)]="aliasController" [(widgets)]="widgetTypes" [isEdit]="false" [isEditActionEnabled]="true" [isExportActionEnabled]="true" [isRemoveActionEnabled]="!isReadOnly()" (onEditWidget)="openWidgetType(event, widget)" (onExportWidget)="exportWidgetType(event, widget)" (onRemoveWidget)="removeWidgetType(event, widget)" (loadWidgets)="loadWidgetLibrary()" (onInit)="dashboardInited(dashboard)" (onInitFailed)="dashboardInitFailed(e)">
+</tb-dashboard>
+<section layout="row" layout-wrap class="tb-footer-buttons md-fab ">
+	<!-- TODO(port): md-fab-speed-dial: a mat-fab that toggles a list of mat-mini-fab buttons --><md-fab-speed-dial [disabled]="rootScope?.loading" [hidden]="!(!isReadOnly())" md-open="vm.addItemActionsOpen" class="md-scale" md-direction="up">
+		<!-- TODO(port): md-fab-trigger: the mat-fab that opens the speed dial --><md-fab-trigger>
+			<button mat-fab color="accent" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'widget.add-widget-type' | translate }}" attr.matTooltip="{{ 'widget.add-widget-type' | translate }}" matTooltipPosition="above">
+				
+				<mat-icon>add</mat-icon>
+			</button>
+		</md-fab-trigger>
+		<!-- TODO(port): md-fab-actions: the buttons the speed dial shows --><md-fab-actions>
+			<button mat-fab [disabled]="rootScope?.loading" class="tmd-accent md-hue-2" (click)="addWidgetType($event)" attr.aria-label="{{ 'action.create' | translate }}" attr.matTooltip="{{ 'widget-type.create-new-widget-type' | translate }}" matTooltipPosition="above">
+				
+				<mat-icon>insert_drive_file</mat-icon>
+			</button>
+			<button mat-fab [disabled]="rootScope?.loading" class="tmd-accent md-hue-2" (click)="importWidgetType($event)" attr.aria-label="{{ 'action.import' | translate }}" attr.matTooltip="{{ 'widget-type.import' | translate }}" matTooltipPosition="above">
+				
+				<mat-icon>file_upload</mat-icon>
+			</button>
+		</md-fab-actions>
+	</md-fab-speed-dial>
+</section>

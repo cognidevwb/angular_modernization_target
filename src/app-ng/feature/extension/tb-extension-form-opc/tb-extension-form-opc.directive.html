@@ -1,0 +1,500 @@
+<!-- Scaffolded by the playbook from src/app/extension/extensions-forms/extension-form-opc.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<mat-card class="extension-form extension-opc">
+    <mat-card-header>
+        <mat-card-title>
+            <span translate class="md-headline">extension.configuration</span>
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+        <v-accordion id="opc-server-configs-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
+            <v-pane id="opc-servers-pane" expanded="true">
+                <v-pane-header>
+                    {{ 'extension.opc-server' | translate }}
+                </v-pane-header>
+
+                <v-pane-content>
+                    @if (configuration()?.servers?.length === 0) {
+                      <div>
+                        <span translate layout-align="center center" class="tb-prompt">extension.opc-add-server-prompt</span>
+                    </div>
+                    }
+
+                    @if (configuration()?.servers?.length > 0) {
+                      <div>
+                        <ol class="list-group">
+                            @for (serverIndex of __keys(configuration()?.servers); track serverIndex) {
+                              @let server = (configuration()?.servers)[serverIndex];
+                              <li class="list-group-item">
+                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeItem(server, configuration().servers)" [hidden]="configuration()?.servers?.length < 2" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                    <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
+                                    
+                                </button>
+
+                                <mat-card>
+                                    <mat-card-content>
+
+                                        <div layout="row">
+                                            <mat-form-field flex="50" class="md-block">
+                                                <mat-label translate>extension.opc-application-name</mat-label>
+                                                <input matInput required attr.name="applicationName_{{serverIndex}}" [(ngModel)]="server.applicationName">
+                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                <div ng-messages="theForm?.['applicationName_' + serverIndex]?.$error">
+                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                    <div translate ng-message="required">extension.field-required</div>
+                                                </div>
+                                            </mat-form-field>
+
+
+                                            <mat-form-field flex="50" class="md-block">
+                                                <mat-label translate>extension.opc-application-uri</mat-label>
+                                                <input matInput attr.name="applicationUri_{{serverIndex}}" [(ngModel)]="server.applicationUri">
+                                            </mat-form-field>
+                                        </div>
+
+
+                                        <div layout="row">
+                                            <mat-form-field flex="50" class="md-block">
+                                                <mat-label translate>extension.host</mat-label>
+                                                <input matInput required attr.name="host_{{serverIndex}}" [(ngModel)]="server.host">
+                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                <div ng-messages="theForm?.['host_' + serverIndex]?.$error">
+                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                    <div translate ng-message="required">extension.field-required</div>
+                                                </div>
+                                            </mat-form-field>
+
+                                            <mat-form-field flex="50" class="md-block">
+                                                <mat-label translate>extension.port</mat-label>
+                                                <input matInput type="number" required attr.name="port_{{serverIndex}}" [(ngModel)]="server.port" min="1" max="65535">
+                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                <div ng-messages="theForm?.['port_' + serverIndex]?.$error">
+                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                    <div translate ng-message="required">extension.field-required</div>
+                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                    <div translate ng-message="min">extension.port-range</div>
+                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                    <div translate ng-message="max">extension.port-range</div>
+                                                </div>
+                                            </mat-form-field>
+                                        </div>
+
+                                        <div layout="row">
+                                            <mat-form-field flex="50" class="md-block">
+                                                <mat-label translate>extension.opc-scan-period-in-seconds</mat-label>
+                                                <input matInput type="number" required attr.name="scanPeriodInSeconds_{{serverIndex}}" [(ngModel)]="server.scanPeriodInSeconds">
+                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                <div ng-messages="theForm?.['scanPeriodInSeconds_' + serverIndex]?.$error">
+                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                    <div translate ng-message="required">extension.field-required</div>
+                                                </div>
+                                            </mat-form-field>
+
+                                            <mat-form-field flex="50" class="md-block">
+                                                <mat-label translate>extension.timeout</mat-label>
+                                                <input matInput type="number" required attr.name="timeoutInMillis_{{serverIndex}}" [(ngModel)]="server.timeoutInMillis">
+                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                <div ng-messages="theForm?.['timeoutInMillis_' + serverIndex]?.$error">
+                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                    <div translate ng-message="required">extension.field-required</div>
+                                                </div>
+                                            </mat-form-field>
+                                        </div>
+
+                                        <div layout="row">
+
+                                            <mat-form-field flex="50" class="md-block tb-container-for-select">
+                                                <mat-label translate>extension.opc-security</mat-label>
+                                                <mat-select required name="securityType_{{serverIndex}}" [(ngModel)]="server.security">
+                                                    @for (securityType of __keys(types?.extensionOpcSecurityTypes); track securityType) {
+                                                      @let securityValue = (types?.extensionOpcSecurityTypes)[securityType];
+                                                      <mat-option [value]="securityType"><span>{{ securityValue }}</span></mat-option>
+                                                    }
+                                                </mat-select>
+                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                <div ng-messages="theForm?.['securityType_' + serverIndex]?.$error">
+                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                    <div translate ng-message="required">extension.field-required</div>
+                                                </div>
+                                            </mat-form-field>
+
+                                            <mat-form-field flex="50" class="md-block tb-container-for-select">
+                                                <mat-label translate>extension.opc-identity</mat-label>
+                                                <mat-select required name="identityType_{{serverIndex}}" [(ngModel)]="server.identity.type">
+                                                    @for (identityType of __keys(types?.extensionIdentityType); track identityType) {
+                                                      @let identityValue = (types?.extensionIdentityType)[identityType];
+                                                      <mat-option [value]="identityType"><span>{{ identityValue | translate }}</span></mat-option>
+                                                    }
+                                                </mat-select>
+                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                <div ng-messages="theForm?.['identityType_' + serverIndex]?.$error">
+                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                    <div translate ng-message="required">extension.field-required</div>
+                                                </div>
+                                            </mat-form-field>
+                                        </div>
+
+                                        @if (server?.identity?.type != 'username') {
+                                          <div>
+                                            <span class="" legacyInit (legacyInit)="server.identity = {'type':'anonymous'}"></span>
+                                        </div>
+                                        }
+                                        @if (server?.identity?.type == 'username') {
+                                          <div layout="row">
+                                            <mat-form-field flex="50" class="md-block">
+                                                <mat-label translate>extension.username</mat-label>
+                                                <input matInput required attr.name="identityUsername_{{serverIndex}}" [(ngModel)]="server.identity.username">
+                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                <div ng-messages="theForm?.['identityUsername_' + serverIndex]?.$error">
+                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                    <div translate ng-message="required">extension.field-required</div>
+                                                </div>
+                                            </mat-form-field>
+
+                                            <mat-form-field flex="50" class="md-block">
+                                                <mat-label translate>extension.password</mat-label>
+                                                <input matInput required attr.name="identityPassword_{{serverIndex}}" [(ngModel)]="server.identity.password">
+                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                <div ng-messages="theForm?.['identityPassword_' + serverIndex]?.$error">
+                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                    <div translate ng-message="required">extension.field-required</div>
+                                                </div>
+                                            </mat-form-field>
+                                        </div>
+                                        }
+
+                                        @if (server?.security != 'None') {
+                                          <v-accordion id="opc-keystore-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
+                                            <v-pane id="opc-keystore-pane__{{serverIndex}}" expanded="true">
+                                                <v-pane-header>
+                                                    {{ 'extension.opc-keystore' | translate }}
+                                                </v-pane-header>
+                                                <v-pane-content>
+
+                                                    <mat-form-field class="md-block tb-container-for-select">
+                                                        <mat-label translate>extension.opc-keystore-type</mat-label>
+                                                        <mat-select required name="keystoreType_{{serverIndex}}" [(ngModel)]="server.keystore.type">
+                                                            @for (keystoreType of __keys(types?.extensionKeystoreType); track keystoreType) {
+                                                              @let keystoreValue = (types?.extensionKeystoreType)[keystoreType];
+                                                              <mat-option [value]="keystoreType"><span>{{ keystoreValue }}</span></mat-option>
+                                                            }
+                                                        </mat-select>
+                                                        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                        <div ng-messages="theForm?.['keystoreType_'+serverIndex]?.$error">
+                                                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                            <div translate ng-message="required">extension.field-required</div>
+                                                        </div>
+                                                    </mat-form-field>
+
+                                                    <section class="dropdown-section">
+                                                        <div class="tb-container" [ngClass]="{'ng-invalid':!server?.keystore?.fileContent}">
+                                                            @let fieldsToFill = {"location":"location", "fileContent":"fileContent"};
+                                                            <span></span>
+                                                            <label class="tb-label" translate>extension.opc-keystore-location</label>
+                                                            <div flow-init="{singleFile:true}" flow-file-added='fileAdded($file, server.keystore, fieldsToFill)' class="tb-file-select-container">
+                                                                <div class="tb-file-clear-container">
+                                                                    <button mat-icon-button color="primary" (click)='clearFile(server.keystore, fieldsToFill)' class="tb-file-clear-btn" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                        
+                                                                        <mat-icon attr.aria-label="{{ 'action.remove' | translate }}" class="material-icons">close</mat-icon>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="alert tb-flow-drop" flow-drop>
+                                                                    <label attr.for="dropFileKeystore_{{serverIndex}}" translate>extension.drop-file</label>
+                                                                    <input flow-attrs="{accept:'.pfx,.p12'}" type="file" class="file-input" flow-btn attr.id="dropFileKeystore_{{serverIndex}}" name="keystoreFile" [(ngModel)]="server.keystore.fileContent">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="dropdown-messages">
+                                                            @if (!server?.keystore?.[fieldsToFill?.location]) {
+                                                              <div class="tb-error-message" translate>extension.no-file</div>
+                                                            }
+                                                            @if (server?.keystore?.[fieldsToFill?.location]) {
+                                                              <div>{{server?.keystore?.[fieldsToFill?.location]}}</div>
+                                                            }
+                                                        </div>
+                                                    </section>
+
+
+                                                    <div flex layout="row">
+                                                        <mat-form-field flex="50" class="md-block">
+                                                            <mat-label translate>extension.opc-keystore-password</mat-label>
+                                                            <input matInput required attr.name="keystorePassword_{{serverIndex}}" [(ngModel)]="server.keystore.password">
+                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                            <div ng-messages="theForm?.['keystorePassword_' + serverIndex]?.$error">
+                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                <div translate ng-message="required">extension.field-required</div>
+                                                            </div>
+                                                        </mat-form-field>
+
+                                                        <mat-form-field flex="50" class="md-block">
+                                                            <mat-label translate>extension.opc-keystore-alias</mat-label>
+                                                            <input matInput required attr.name="keystoreAlias_{{serverIndex}}" [(ngModel)]="server.keystore.alias">
+                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                            <div ng-messages="theForm?.['keystoreAlias_' + serverIndex]?.$error">
+                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                <div translate ng-message="required">extension.field-required</div>
+                                                            </div>
+                                                        </mat-form-field>
+                                                    </div>
+
+                                                    <mat-form-field class="md-block">
+                                                        <mat-label translate>extension.opc-keystore-key-password</mat-label>
+                                                        <input matInput required attr.name="keystoreKeyPassword_{{serverIndex}}" [(ngModel)]="server.keystore.keyPassword">
+                                                        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                        <div ng-messages="theForm?.['keystoreKeyPassword_' + serverIndex]?.$error">
+                                                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                            <div translate ng-message="required">extension.field-required</div>
+                                                        </div>
+                                                    </mat-form-field>
+
+                                                </v-pane-content>
+                                            </v-pane>
+                                        </v-accordion>
+                                        }
+
+
+                                        <v-accordion id="opc-mapping-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
+                                            <v-pane id="opc-mapping-pane_{{serverIndex}}">
+                                                <v-pane-header>
+                                                    {{ 'extension.mapping' | translate }}
+                                                </v-pane-header>
+                                                <v-pane-content>
+                                                    @if (server?.mapping?.length > 0) {
+                                                      <div>
+                                                        <ol class="list-group">
+                                                            @for (mapIndex of __keys(server?.mapping); track mapIndex) {
+                                                              @let map = (server?.mapping)[mapIndex];
+                                                              <li class="list-group-item">
+                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeItem(map, server.mapping)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                    <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
+                                                                    
+                                                                </button>
+
+                                                                <mat-card>
+                                                                    <mat-card-content>
+                                                                        <div flex layout="row">
+                                                                            <mat-form-field flex="50" class="md-block">
+                                                                                <mat-label translate>extension.opc-device-node-pattern</mat-label>
+                                                                                <input matInput required attr.name="deviceNodePattern_{{serverIndex}}{{mapIndex}}" [(ngModel)]="map.deviceNodePattern">
+                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                <div ng-messages="theForm?.['deviceNodePattern_' + serverIndex + mapIndex]?.$error">
+                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                </div>
+                                                                            </mat-form-field>
+
+                                                                            <mat-form-field flex="50" class="md-block">
+                                                                                <mat-label translate>extension.opc-device-name-pattern</mat-label>
+                                                                                <input matInput required attr.name="deviceNamePattern_{{serverIndex}}{{mapIndex}}" [(ngModel)]="map.deviceNamePattern">
+                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                <div ng-messages="theForm?.['deviceNamePattern_' + serverIndex + mapIndex]?.$error">
+                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                </div>
+                                                                            </mat-form-field>
+                                                                        </div>
+
+
+                                                                        <v-accordion id="opc-attributes-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
+                                                                            <v-pane id="opc-attributes-pane_{{serverIndex}}{{mapIndex}}">
+                                                                                <v-pane-header>
+                                                                                    {{ 'extension.attributes' | translate }}
+                                                                                </v-pane-header>
+                                                                                <v-pane-content>
+                                                                                    <div [hidden]="!(map?.attributes?.length > 0)">
+                                                                                        <ol class="list-group">
+                                                                                            @for (attributeIndex of __keys(map?.attributes); track attributeIndex) {
+                                                                                              @let attribute = (map?.attributes)[attributeIndex];
+                                                                                              <li class="list-group-item">
+                                                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeItem(attribute, map.attributes)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                                                    <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
+                                                                                                    
+                                                                                                </button>
+                                                                                                <mat-card>
+                                                                                                    <mat-card-content>
+
+                                                                                                        <section flex layout="row">
+                                                                                                            <mat-form-field flex="60" class="md-block">
+                                                                                                                <mat-label translate>extension.key</mat-label>
+                                                                                                                <input matInput required attr.name="opcAttributeKey_{{serverIndex}}{{mapIndex}}{{attributeIndex}}" [(ngModel)]="attribute.key">
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['opcAttributeKey_' + serverIndex + mapIndex + attributeIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                            <mat-form-field flex="40" class="md-block tb-container-for-select">
+                                                                                                                <mat-label translate>extension.type</mat-label>
+                                                                                                                <mat-select required name="opcAttributeType_{{serverIndex}}{{mapIndex}}{{attributeIndex}}" [(ngModel)]="attribute.type">
+                                                                                                                    @for (attrType of __keys(types?.extensionValueType); track attrType) {
+                                                                                                                      @let attrTypeValue = (types?.extensionValueType)[attrType];
+                                                                                                                      <mat-option [value]="attrType">
+                                                                                                                        {{attrTypeValue | translate}}
+                                                                                                                    </mat-option>
+                                                                                                                    }
+                                                                                                                </mat-select>
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['opcAttributeType_' + serverIndex + mapIndex + attributeIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                        </section>
+
+                                                                                                        <section flex layout="row">
+                                                                                                            <mat-form-field flex="100" class="md-block">
+                                                                                                                <mat-label translate>extension.value</mat-label>
+                                                                                                                <input matInput required attr.name="opcAttributeValue_{{serverIndex}}{{mapIndex}}{{attributeIndex}}" [(ngModel)]="attribute.value">
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['opcAttributeValue_' + serverIndex + mapIndex + attributeIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+
+                                                                                                        </section>
+
+
+                                                                                                    </mat-card-content>
+                                                                                                </mat-card>
+                                                                                            </li>
+                                                                                            }
+                                                                                        </ol>
+                                                                                    </div>
+                                                                                    <div flex layout="row" layout-align="start center">
+                                                                                        <button mat-raised-button color="primary" (click)="addNewAttribute(map.attributes)" attr.aria-label="{{ 'action.add' | translate }}">
+                                                                                            <mat-icon class="material-icons">add</mat-icon>
+                                                                                            <span translate>extension.add-attribute</span>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </v-pane-content>
+                                                                            </v-pane>
+                                                                        </v-accordion>
+
+                                                                        <v-accordion id="opc-timeseries-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
+                                                                            <v-pane id="opc-timeseries-pane_{{serverIndex}}{{mapIndex}}">
+                                                                                <v-pane-header>
+                                                                                    {{ 'extension.timeseries' | translate }}
+                                                                                </v-pane-header>
+                                                                                <v-pane-content>
+                                                                                    <div [hidden]="!(map?.timeseries?.length > 0)">
+                                                                                        <ol class="list-group">
+                                                                                            @for (timeseriesIndex of __keys(map?.timeseries); track timeseriesIndex) {
+                                                                                              @let timeseries = (map?.timeseries)[timeseriesIndex];
+                                                                                              <li class="list-group-item">
+                                                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeItem(timeseries, map.timeseries)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                                                    <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
+                                                                                                    
+                                                                                                </button>
+                                                                                                <mat-card>
+                                                                                                    <mat-card-content>
+                                                                                                        <section flex layout="row">
+                                                                                                            <mat-form-field flex="60" class="md-block">
+                                                                                                                <mat-label translate>extension.key</mat-label>
+                                                                                                                <input matInput required attr.name="opcTimeseriesKey_{{serverIndex}}{{mapIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.key">
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['opcTimeseriesKey_' + serverIndex + mapIndex + timeseriesIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                            <mat-form-field flex="40" class="md-block tb-container-for-select">
+                                                                                                                <mat-label translate>extension.type</mat-label>
+                                                                                                                <mat-select required name="opcTimeseriesType_{{serverIndex}}{{mapIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.type">
+                                                                                                                    @for (attrType of __keys(types?.extensionValueType); track attrType) {
+                                                                                                                      @let attrTypeValue = (types?.extensionValueType)[attrType];
+                                                                                                                      <mat-option [value]="attrType">
+                                                                                                                        {{attrTypeValue | translate}}
+                                                                                                                    </mat-option>
+                                                                                                                    }
+                                                                                                                </mat-select>
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['opcTimeseriesType_' + serverIndex + mapIndex + timeseriesIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                        </section>
+                                                                                                        <section flex layout="row">
+                                                                                                            <mat-form-field flex="100" class="md-block">
+                                                                                                                <mat-label translate>extension.value</mat-label>
+                                                                                                                <input matInput required attr.name="opcTimeseriesValue_{{serverIndex}}{{mapIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.value">
+                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
+                                                                                                                <div ng-messages="theForm?.['opcTimeseriesValue_' + serverIndex + mapIndex + timeseriesIndex]?.$error">
+                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
+                                                                                                                    <div translate ng-message="required">extension.field-required</div>
+                                                                                                                </div>
+                                                                                                            </mat-form-field>
+                                                                                                        </section>
+                                                                                                    </mat-card-content>
+                                                                                                </mat-card>
+                                                                                            </li>
+                                                                                            }
+                                                                                        </ol>
+                                                                                    </div>
+                                                                                    <div flex layout="row" layout-align="start center">
+                                                                                        <button mat-raised-button color="primary" (click)="addNewAttribute(map.timeseries)" attr.aria-label="{{ 'action.add' | translate }}">
+                                                                                            <mat-icon class="material-icons">add</mat-icon>
+                                                                                            <span translate>extension.add-timeseries</span>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </v-pane-content>
+                                                                            </v-pane>
+                                                                        </v-accordion>
+
+
+                                                                    </mat-card-content>
+                                                                </mat-card>
+                                                            </li>
+                                                            }
+                                                        </ol>
+                                                    </div>
+                                                    }
+                                                    <div flex layout="row" layout-align="start center">
+                                                        <button mat-raised-button color="primary" (click)="addMap(server.mapping)" attr.aria-label="{{ 'action.add' | translate }}">
+                                                            <mat-icon class="material-icons">add</mat-icon>
+                                                            <span translate>extension.add-map</span>
+                                                        </button>
+                                                    </div>
+                                                </v-pane-content>
+                                            </v-pane>
+                                        </v-accordion>
+
+                                    </mat-card-content>
+                                </mat-card>
+                            </li>
+                            }
+                        </ol>
+
+                        <div flex layout="row" layout-align="start center">
+                            <button mat-raised-button color="primary" (click)="addServer(configuration().servers)" attr.aria-label="{{ 'action.add' | translate }}">
+                                <mat-icon class="material-icons">add</mat-icon>
+                                <span translate>extension.opc-add-server</span>
+                            </button>
+                        </div>
+
+                    </div>
+                    }
+                </v-pane-content>
+            </v-pane>
+        </v-accordion>
+        <!--{{config}}-->
+    </mat-card-content>
+</mat-card>

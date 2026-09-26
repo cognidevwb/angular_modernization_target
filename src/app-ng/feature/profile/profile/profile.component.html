@@ -1,0 +1,69 @@
+<!-- Scaffolded by the playbook from src/app/profile/profile.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div layout="row" width="100%" layout-wrap>
+    <mat-card flex-gt-sm="60" flex="100" style="height: 100%;">
+        <mat-card-header>
+            <mat-card-title>
+                <span translate class="md-headline">profile.profile</span>
+                <span style='opacity: 0.7;'>{{ profileUser?.email }}</span>
+            </mat-card-title>
+            <mat-card-title>
+                <span translate class="md-subhead">profile.last-login-time</span>
+                <span style='opacity: 0.7;'>{{ profileUser?.additionalInfo?.lastLoginTs | date :  'yyyy-MM-dd HH:mm:ss' }}</span>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-progress-bar mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
+        <span style="min-height: 5px;" flex="" [hidden]="!(!rootScope?.loading)"></span>
+        <mat-card-content>
+            <form name="theForm" (ngSubmit)="save()" tb-confirm-on-exit confirm-form="theForm">
+                <fieldset [disabled]="rootScope?.loading">
+                    <mat-form-field class="md-block">
+                        <mat-label translate>user.email</mat-label>
+                        <input matInput name="email" type="email" [(ngModel)]="profileUser.email">
+                    </mat-form-field>
+                    <mat-form-field class="md-block">
+                        <mat-label translate>user.first-name</mat-label>
+                        <input matInput name="firstName" [(ngModel)]="profileUser.firstName">
+                    </mat-form-field>
+                    <mat-form-field class="md-block">
+                        <mat-label translate>user.last-name</mat-label>
+                        <input matInput name="lastName" [(ngModel)]="profileUser.lastName">
+                    </mat-form-field>
+                    <mat-form-field class="md-block">
+                        <mat-label translate>language.language</mat-label>
+                        <mat-select name="language" [(ngModel)]="profileUser.additionalInfo.lang">
+                            @for (lang of languageList; track $index) {
+                              <mat-option [value]="lang">
+                                {{ lang ? ('language.locales.' + lang | translate) : ''}}
+                            </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                    <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="changePassword($event)">{{ 'profile.change-password' | translate }}
+                    </button>
+                    <div layout="row" layout-align="end center" width="100%" layout-wrap>
+                        <button mat-raised-button color="primary" [disabled]="rootScope?.loading || theForm?.$invalid || !theForm?.$dirty" type="submit">{{ 'action.save' | translate }}
+                        </button>
+                    </div>
+                </fieldset>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>
+

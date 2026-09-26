@@ -1,0 +1,44 @@
+<!-- Scaffolded by the playbook from src/app/components/kv-map.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<section layout="column" class="tb-kv-map">
+    <label translate class="tb-title no-padding">{{ titleText() }}</label>
+    @for (keyVal of kvList; track $index) {
+      <div layout="row" style="max-height: 40px;" layout-align="start center">
+        <mat-form-field flex class="md-block" style="margin: 10px 0px 0px 0px; max-height: 40px;">
+            <input matInput attr.placeholder="{{ (keyPlaceholderText() ? keyPlaceholderText() : 'key-val.key') | translate }}" [disabled]="disabled()" [required]="true" name="key" [(ngModel)]="keyVal.key">
+        </mat-form-field>
+        <mat-form-field flex class="md-block" style="margin: 10px 0px 0px 0px; max-height: 40px;">
+            <input matInput attr.placeholder="{{ (valuePlaceholderText() ? valuePlaceholderText() : 'key-val.value') | translate }}" [disabled]="disabled()" [required]="true" name="value" [(ngModel)]="keyVal.value">
+        </mat-form-field>
+        <button mat-icon-button color="primary" [hidden]="!(!disabled())" [disabled]="rootScope?.loading" (click)="removeKeyVal($index)" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'key-val.remove-entry' | translate }}" matTooltipPosition="above">
+            
+            <mat-icon attr.aria-label="{{ 'action.delete' | translate }}" class="material-icons">
+                close
+            </mat-icon>
+        </button>
+    </div>
+    }
+    <span [hidden]="!(!kvList?.length)" layout-align="center center" [ngClass]="{'disabled': disabled()}" class="no-data-found" translate>{{noDataText() ? noDataText() : 'key-val.no-data'}}</span>
+    <div>
+        <button mat-raised-button color="primary" [hidden]="!(!disabled())" [disabled]="rootScope?.loading" (click)="addKeyVal()" attr.aria-label="{{ 'action.add' | translate }}" attr.matTooltip="{{ 'key-val.add-entry' | translate }}" matTooltipPosition="above">
+            
+            <span translate>action.add</span>
+        </button>
+    </div>
+</section>

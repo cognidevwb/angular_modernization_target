@@ -1,0 +1,70 @@
+<!-- Scaffolded by the playbook from src/app/widget/lib/tripAnimation/trip-animation-widget.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div class="trip-animation-widget" layout="column" layout-align="center start" [ngStyle]="{'padding-top' : (!widgetConfig?.showTitle && ctx()?.settings?.showLabel) ? '5px' : '0px'}">
+    <div class="trip-animation-label-container" [hidden]="!(ctx()?.settings?.showLabel)">
+        {{trips?.[activeTripIndex]?.settings?.labelText}}
+    </div>
+    <div class="trip-animation-container" layout="column">
+        <div flex id='trip-animation-map'></div>
+        <div class="trip-animation-info-panel" layout="row">
+            <button mat-fab color="primary" aria-label="tooltip" [hidden]="!(staticSettings?.displayTooltip)" (click)="showHideTooltip()">
+                <mat-icon>info_outline</mat-icon>
+            </button>
+        </div>
+        <div class="trip-animation-tooltip md-whiteframe-z4" layout="column" [ngClass]="!staticSettings?.showTooltip ? 'trip-animation-tooltip-hidden':''" [innerHTML]="mainTooltip" [ngStyle]="{'background-color': staticSettings?.tooltipColor, 'opacity': staticSettings?.tooltipOpacity, 'color': staticSettings?.tooltipFontColor}">
+        </div>
+    </div>
+    <div class="trip-animation-control-panel">
+        <md-slider-container>
+            <button mat-icon-button aria-label="Start" (click)="moveStart()">
+                <mat-icon class="material-icons" [ngStyle]="{'color': staticSettings?.buttonColor}">fast_rewind</mat-icon>
+            </button>
+            <button mat-icon-button aria-label="Previous" (click)="movePrev()">
+                <mat-icon class="material-icons" [ngStyle]="{'color': staticSettings?.buttonColor}">skip_previous</mat-icon>
+            </button>
+            <mat-slider [(ngModel)]="index" min="{{minTimeIndex}}" max="{{maxTimeIndex}}" (ngModelChange)="recalculateTrips()"></mat-slider>
+            <button mat-icon-button aria-label="Next" (click)="moveNext()">
+                <mat-icon class="material-icons" [ngStyle]="{'color': staticSettings?.buttonColor}">skip_next</mat-icon>
+            </button>
+            <button mat-icon-button aria-label="End" (click)="moveEnd()">
+                <mat-icon class="material-icons" [ngStyle]="{'color': staticSettings?.buttonColor}">fast_forward</mat-icon>
+            </button>
+            <button mat-icon-button aria-label="Play" (click)="playMove(true)" [disabled]="isPlaying">
+                <mat-icon class="material-icons" [ngStyle]="{'color': isPlaying ? staticSettings?.disabledButtonColor : staticSettings?.buttonColor}">
+                    play_circle_outline
+                </mat-icon>
+            </button>
+            <mat-select [(ngModel)]="speed" aria-label="Speed selector">
+                @for (speed of speeds; track $index) {
+                  <mat-option [value]="speed" flex="1">{{ speed}}
+                </mat-option>
+                }
+            </mat-select>
+            <button mat-icon-button aria-label="Stop playing" (click)="stopPlay()" [disabled]="!isPlaying">
+                <mat-icon class="material-icons" [ngStyle]="{'color': isPlaying ? staticSettings?.buttonColor : staticSettings?.disabledButtonColor}">
+                    pause_circle_outline
+                </mat-icon>
+            </button>
+        </md-slider-container>
+        <div class="panel-timer">
+            <span [hidden]="!(animationTime)">{{ animationTime | date:'medium'}}</span>
+            <span [hidden]="animationTime">{{ "widget.no-data-found" | translate}}</span>
+        </div>
+    </div>
+</div>

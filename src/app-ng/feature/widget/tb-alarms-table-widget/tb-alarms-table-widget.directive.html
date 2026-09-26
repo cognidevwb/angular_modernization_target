@@ -1,0 +1,100 @@
+<!-- Scaffolded by the playbook from src/app/widget/lib/alarms-table-widget.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div class="tb-absolute-fill tb-alarms-table tb-data-table" layout="column">
+    <div [hidden]="!(showData)" flex class="tb-absolute-fill" layout="column">
+        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(!selectedAlarms?.length &&
+                                                                  query?.search != null)">
+            <div class="md-toolbar-tools">
+                <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{'alarm.search' | translate}}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                    <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
+                    
+                </button>
+                <mat-form-field flex>
+                    <mat-label>&nbsp;</mat-label>
+                    <input matInput [(ngModel)]="query.search" class="searchInput" attr.placeholder="{{'alarm.search' | translate}}">
+                </mat-form-field>
+                <button mat-icon-button aria-label="Close" (click)="exitFilterMode()" attr.matTooltip="{{ 'action.close' | translate }}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                    <mat-icon aria-label="Close" class="material-icons">close</mat-icon>
+                    
+                </button>
+            </div>
+        </mat-toolbar>
+        <mat-toolbar class="md-table-toolbar alternate" [hidden]="!(selectedAlarms?.length)">
+            <div class="md-toolbar-tools">
+                <span translate="alarm.selected-alarms" translate-values="{count: vm.selectedAlarms.length}" translate-interpolation="messageformat"></span>
+                <span flex></span>
+                @if (allowAcknowledgment) {
+                  <button mat-icon-button (click)="ackAlarms($event)" attr.matTooltip="{{ 'alarm.acknowledge' | translate }}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                    <mat-icon>done</mat-icon>
+                    
+                </button>
+                }
+                @if (allowClear) {
+                  <button mat-icon-button (click)="clearAlarms($event)" attr.matTooltip="{{ 'alarm.clear' | translate }}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                    <mat-icon>clear</mat-icon>
+                    
+                </button>
+                }
+            </div>
+        </mat-toolbar>
+        <!-- TODO(port): md-table-container (angular-material-data-table): a mat-table with MatSort --><md-table-container flex>
+            <table md-table md-row-select="vm.enableSelection" multiple="" [(ngModel)]="selectedAlarms">
+                <thead fix-head md-head md-order="vm.query.order" md-on-reorder="vm.onReorder">
+                <tr md-row>
+                    @for (key of alarmSource?.dataKeys; track $index) {
+                      @if (key?.display) {
+                      <th md-column attr.md-order-by="{{ key?.name }}"><span>{{ key?.title }}</span></th>
+                    }
+                    }
+                    <th md-column class="tb-action-cell" layout="row" layout-align="end center"></th>
+                </tr>
+                </thead>
+                <tbody md-body>
+                @for (alarm of alarms; track $index) {
+                  <tr [hidden]="!(alarms?.length)" md-row md-select="alarm" md-select-id="id.id" md-auto-select="false" (click)="onRowClick($event, alarm)" [ngClass]="{'tb-current': isCurrent(alarm)}">
+                    @for (key of alarmSource?.dataKeys; track $index) {
+                      @if (key?.display) {
+                      <td md-cell flex [ngStyle]="cellStyle(alarm, key)" [innerHTML]="cellContent(alarm, key)">
+                    </td>
+                    }
+                    }
+                    <td md-cell class="tb-action-cell" [ngStyle]="{minWidth: actionCellDescriptors?.length*36+'px',
+                                   maxWidth: actionCellDescriptors?.length*36+'px',
+                                   width: actionCellDescriptors?.length*36+'px'}">
+                        @for (actionDescriptor of actionCellDescriptors; track $index) {
+                          <button mat-icon-button [disabled]="!actionEnabled(alarm, actionDescriptor)" attr.aria-label="{{ actionDescriptor?.displayName }}" (click)="onActionButtonClick($event, alarm, actionDescriptor)" [disabled]="rootScope?.loading" attr.matTooltip="{{ actionDescriptor?.displayName }}" matTooltipPosition="above">
+                            <mat-icon attr.aria-label="{{ actionDescriptor?.displayName }}" class="material-icons">{{actionDescriptor?.icon}}</mat-icon>
+                            
+                        </button>
+                        }
+                    </td>
+                </tr>
+                }
+                </tbody>
+            </table>
+            <mat-divider></mat-divider>
+            <span [hidden]="!(!alarms?.length)" layout-align="center center" class="no-data-found" translate>alarm.no-alarms-prompt</span>
+        </md-table-container>
+        <!-- TODO(port): md-table-pagination: a mat-paginator -->@if (displayPagination) {
+          <md-table-pagination md-boundary-links md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" attr.md-total="{{alarmsCount}}" md-on-paginate="vm.onPaginate" md-page-select="vm.isGtMd">
+        </md-table-pagination>
+        }
+    </div>
+    <span [hidden]="!(!showData)" layout-align="center center" style="text-transform: uppercase; display: flex;" class="tb-absolute-fill" translate>alarm.no-data</span>
+</div>

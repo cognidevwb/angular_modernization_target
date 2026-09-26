@@ -1,0 +1,166 @@
+<!-- Scaffolded by the playbook from src/app/entity/attribute/attribute-table.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!--
+
+    Copyright © 2016-2020 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div flex class="md-content md-padding tb-absolute-fill" layout="column">
+    <section [hidden]="!(!disableAttributeScopeSelection())">
+        <mat-form-field class="md-block" style="width: 200px;">
+            <mat-label translate>attribute.attributes-scope</mat-label>
+            <mat-select [(ngModel)]="attributeScope" [disabled]="rootScope?.loading || attributeScopeSelectionReadonly">
+                @for (scope of attributeScopes; track $index) {
+                  <mat-option [value]="scope">
+                    {{scope?.name | translate}}
+                </mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </section>
+    <div class="md-whiteframe-z1 toolbarsContainer" [ngClass]="{flex: mode==='widget'}">
+        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(mode==='default'
+                                                                 && !selectedAttributes?.length
+                                                                 && query?.search === null)">
+            <div class="md-toolbar-tools">
+                <span translate>{{ attributeScope?.name }}</span>
+                <span flex></span>
+                <button mat-icon-button [hidden]="!(!attributeScope?.clientSide)" (click)="addAttribute($event)" attr.matTooltip="{{ 'action.add' | translate }}" matTooltipPosition="above">
+                    <mat-icon>add</mat-icon>
+                    
+                </button>
+                <button mat-icon-button (click)="enterFilterMode($event)" attr.matTooltip="{{ 'action.search' | translate }}" matTooltipPosition="above">
+                    <mat-icon>search</mat-icon>
+                    
+                </button>
+                <button mat-icon-button [hidden]="!(!attributeScope?.clientSide)" (click)="getEntityAttributes()" attr.matTooltip="{{ 'action.refresh' | translate }}" matTooltipPosition="above">
+                    <mat-icon>refresh</mat-icon>
+                    
+                </button>
+            </div>
+        </mat-toolbar>
+        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(mode==='default'
+                                                                 && !selectedAttributes?.length
+                                                                 && query?.search != null)">
+            <div class="md-toolbar-tools">
+                <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{ 'action.search' | translate }}" matTooltipPosition="above">
+                    <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
+                    
+                </button>
+                <mat-form-field flex>
+                    <mat-label>&nbsp;</mat-label>
+                    <input matInput [(ngModel)]="query.search" class="searchInput" attr.placeholder="{{ 'common.enter-search' | translate }}">
+                </mat-form-field>
+                <button mat-icon-button attr.aria-label="{{ 'action.back' | translate }}" (click)="exitFilterMode()" attr.matTooltip="{{ 'action.close' | translate }}" matTooltipPosition="above">
+                    <mat-icon attr.aria-label="{{ 'action.close' | translate }}" class="material-icons">close</mat-icon>
+                    
+                </button>
+            </div>
+        </mat-toolbar>
+        <mat-toolbar class="md-table-toolbar alternate" [hidden]="!(mode==='default' && selectedAttributes?.length)">
+            <div class="md-toolbar-tools">
+                <span attr.translate="{{(attributeScope === types?.latestTelemetry) ? 'attribute.selected-telemetry' : 'attribute.selected-attributes'}}" translate-values="{count: selectedAttributes.length}" translate-interpolation="messageformat"></span>
+                <span flex></span>
+                <button mat-icon-button [hidden]="!(!attributeScope?.clientSide)" (click)="deleteAttributes($event)" attr.matTooltip="{{ 'action.delete' | translate }}" matTooltipPosition="above">
+                    <mat-icon>delete</mat-icon>
+                    
+                </button>
+                <button mat-raised-button color="accent" class="md-hue-2" (click)="enterWidgetMode()" attr.matTooltip="{{ 'attribute.show-on-widget' | translate }}" matTooltipPosition="above">
+                    
+                    <mat-icon>now_widgets</mat-icon>
+                    <span translate>attribute.show-on-widget</span>
+                </button>
+            </div>
+        </mat-toolbar>
+        <mat-toolbar class="md-table-toolbar alternate" [hidden]="!(mode==='widget')">
+            <div class="md-toolbar-tools">
+                <div flex layout="row" layout-align="start">
+                    <span class="tb-details-subtitle">{{ 'widgets-bundle.current' | translate }}</span>
+                    <tb-widgets-bundle-select flex-offset="5" flex [(ngModel)]="widgetsBundle" [selectFirstBundle]="false" [(selectBundleAlias)]="selectedWidgetsBundleAlias">
+                    </tb-widgets-bundle-select>
+                </div>
+                <button mat-raised-button color="accent" [hidden]="!(widgetsList?.length > 0)" class="md-hue-2" (click)="addWidgetToDashboard($event)" attr.matTooltip="{{ 'attribute.add-to-dashboard' | translate }}" matTooltipPosition="above">
+                    
+                    <mat-icon>dashboard</mat-icon>
+                    <span translate>attribute.add-to-dashboard</span>
+                </button>
+                <button mat-icon-button attr.aria-label="{{ 'action.back' | translate }}" (click)="exitWidgetMode()" attr.matTooltip="{{ 'action.close' | translate }}" matTooltipPosition="above">
+                    <mat-icon attr.aria-label="{{ 'action.close' | translate }}" class="material-icons">close</mat-icon>
+                    
+                </button>
+            </div>
+        </mat-toolbar>
+        <!-- TODO(port): md-table-container (angular-material-data-table): a mat-table with MatSort --><md-table-container [hidden]="!(mode!='widget')">
+            <table class="tb-attribute-table" md-table md-row-select multiple="" [(ngModel)]="selectedAttributes" md-progress="attributesDeferred.promise">
+                <thead [hidden]="!(mode!='widget')" fix-head md-head md-order="query.order" md-on-reorder="onReorder">
+                    <tr md-row>
+                        <th md-column md-order-by="lastUpdateTs"><span translate>attribute.last-update-time</span></th>
+                        <th md-column md-order-by="key"><span translate>attribute.key</span></th>
+                        <th md-column><span translate>attribute.value</span></th>
+                    </tr>
+                </thead>
+                <tbody md-body>
+                    @for (attribute of attributes?.data; track $index) {
+                      <tr md-row md-select="attribute" md-select-id="key" md-auto-select>
+                        <td md-cell>{{attribute?.lastUpdateTs | date :  'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td md-cell>{{attribute?.key}}</td>
+                        <td md-cell class="tb-value-cell" (click)="editAttribute($event, attribute)">
+                            <span>{{attribute?.value}}</span>
+                            <span [hidden]="!(!attributeScope?.clientSide)"><mat-icon>edit</mat-icon></span>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </md-table-container>
+        <!-- TODO(port): md-table-pagination: a mat-paginator --><md-table-pagination [hidden]="!(mode!='widget')" md-limit="query.limit" md-limit-options="[5, 10, 15]" md-page="query.page" attr.md-total="{{attributes?.count}}" md-on-paginate="onPaginate" md-page-select>
+        </md-table-pagination>
+        @if (mode==='widget') {
+          <ul flex rn-carousel class="widgets-carousel" rn-carousel-index="widgetsCarousel.index" rn-carousel-buffered rn-carousel-transition="fadeAndSlide" rn-swipe-disabled="true">
+            @for (widgets of widgetsList; track $index) {
+              <li>
+                <tb-dashboard [(aliasController)]="aliasController" [widgets]="widgets" [columns]="20" [isEdit]="false" [isMobileDisabled]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false">
+                </tb-dashboard>
+            </li>
+            }
+            @if (widgetsLoaded &&
+                                   widgetsList?.length === 0 &&
+                                   widgetsBundle) {
+              <span translate layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill">widgets-bundle.empty</span>
+            }
+            @if (!widgetsBundle) {
+              <span translate layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill">widget.select-widgets-bundle</span>
+            }
+            <div [hidden]="!(widgetsList?.length > 1)" style="position: absolute; left: 0; height: 100%;" layout="column" layout-align="center">
+                <button mat-icon-button [hidden]="!(widgetsCarousel?.index > 0)" (click)="prevWidget()" attr.matTooltip="{{ 'attribute.prev-widget' | translate }}" matTooltipPosition="above">
+                    <mat-icon>navigate_before</mat-icon>
+                    
+                </button>
+            </div>
+            <div [hidden]="!(widgetsList?.length > 1)" style="position: absolute; right: 0; height: 100%;" layout="column" layout-align="center">
+                <button mat-icon-button [hidden]="!(widgetsCarousel?.index < widgetsList?.length-1)" (click)="nextWidget()" attr.matTooltip="{{ 'attribute.next-widget' | translate }}" matTooltipPosition="above">
+                    <mat-icon>navigate_next</mat-icon>
+                    
+                </button>
+            </div>
+            <div style="position: absolute; bottom: 0; width: 100%; font-size: 24px;" layout="row" layout-align="center">
+                @if (widgetsList?.length > 1) {
+                  <div rn-carousel-indicators slides="widgetsList" rn-carousel-index="widgetsCarousel.index">
+                </div>
+                }
+            </div>
+        </ul>
+        }
+    </div>
+</div>
