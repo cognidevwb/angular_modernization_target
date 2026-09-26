@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 720,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/alarm/alarm-details-dialog/alarm-details-dialog.component.ts\n\n2 item(s) to handle in this file.\n\n### G1902\nLines to replace: L25–L25\nKind: fix\nTask: Make line 25 of `src/app-ng/feature/alarm/alarm-details-dialog/alarm-details-dialog.component.ts` type-check without changing what it does.\nBefore: Cannot find name 'beautify'.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n### G1903\nLines to replace: L165–L165\nKind: fix\nTask: Make line 165 of `src/app-ng/feature/alarm/alarm-details-dialog/alarm-details-dialog.component.ts` type-check without changing what it does.\nBefore: Property 'hide' does not exist on type 'MatDialog'.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n\nThe file's lines:\nL19| import { TranslatePipe } from '@ngx-translate/core';\nL20| // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.\nL21| declare let $filter: any;\nL22| declare let scope: any;\nL23| \nL24| // Helpers at the legacy file's top level, beside the registration (as written).\nL25| const js_beautify: any = beautify.js;\nL26| \nL27| /**\nL28|  * Ported from the AngularJS controller `AlarmDetailsDialogController` (module `thingsboard.alarm`) in src/app/alarm/index.js:21.\nL29|  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.\nL30|  */\nL31| @Component({\n…\nL159|             this.loadAlarm();\nL160|         }\nL161|     );\nL162|   };\nL163| \nL164|   close = (...rest: any[]): any => {\nL165|     this.dialog.hide(this.alarmUpdated ? this.alarm : null);\nL166|   };\nL167| }\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

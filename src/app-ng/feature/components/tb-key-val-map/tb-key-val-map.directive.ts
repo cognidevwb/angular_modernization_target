@@ -1,7 +1,7 @@
 import { Component, input, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import kvMapTemplate from '../../../../app/components/kv-map.tpl.html';
+import kvMapTemplate from '../../../../app/components/kv-map.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,7 +15,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 declare let scope: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
-function KeyValMapController(this: any, $scope?: any, $mdUtil?: any) {
+function KeyValMapController(this: any) {
 
     let vm: any = this;
 
@@ -24,7 +24,7 @@ function KeyValMapController(this: any, $scope?: any, $mdUtil?: any) {
     vm.removeKeyVal = removeKeyVal;
     vm.addKeyVal = addKeyVal;
 
-    $scope.$watch('vm.keyValMap', () => {
+    vm.ngOnChanges = () => {
         stopWatchKvList();
         vm.kvList.length = 0;
         if (vm.keyValMap) {
@@ -39,13 +39,14 @@ function KeyValMapController(this: any, $scope?: any, $mdUtil?: any) {
                 }
             }
         }
-        $mdUtil.nextTick(() => {
-            watchKvList();
-        });
-    });
+        watchKvList();
+    };
+
+    let kvListEffectRef: any = null;
 
     function watchKvList() {
-        $scope.kvListWatcher = $scope.$watch('vm.kvList', () => {
+        kvListEffectRef = effect(() => {
+            const list = vm.kvList;
             if (!vm.keyValMap) {
                 return;
             }
@@ -54,17 +55,17 @@ function KeyValMapController(this: any, $scope?: any, $mdUtil?: any) {
                     delete vm.keyValMap[property];
                 }
             }
-            for (var i: any=0;i<vm.kvList.length;i++) {
-                var entry: any = vm.kvList[i];
+            for (var i: any = 0; i < list.length; i++) {
+                var entry: any = list[i];
                 vm.keyValMap[entry.key] = entry.value;
             }
-        }, true);
+        });
     }
 
     function stopWatchKvList() {
-        if ($scope.kvListWatcher) {
-            $scope.kvListWatcher();
-            $scope.kvListWatcher = null;
+        if (kvListEffectRef) {
+            kvListEffectRef.destroy();
+            kvListEffectRef = null;
         }
     }
 

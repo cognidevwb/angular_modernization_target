@@ -5,7 +5,7 @@ import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import widgetsBundleSelectTemplate from '../../../../app/components/widgets-bundle-select.tpl.html';
+import widgetsBundleSelectTemplate from '../../../../app/components/widgets-bundle-select.tpl.html?raw';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
@@ -36,7 +36,7 @@ export class TbWidgetsBundleSelectDirective {
   protected readonly widgetService = inject(WidgetService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(widgetsBundleSelectTemplate);
+  protected template: any = widgetsBundleSelectTemplate;
   widgetsBundle: any = null;
   widgetsBundles: any = [];
   protected widgetsBundleFetchFunction: any;

@@ -1,0 +1,14 @@
+{
+  "content": "### G216,G217,G2100\n```ts\nimport auditLogTableTemplate from '../../../../app/audit/audit-log-table.tpl.html?raw';\n```\n\n### G2101\n```ts\n            auditLog.actionDataText = auditLog.actionData ? JSON.stringify(auditLog.actionData, null, 2) : '';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 3176,
+    "costMicros": 13868,
+    "inputTokens": 2,
+    "outputTokens": 116
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "content": "### G2189\n```ts\nimport navTreeTemplate from '../../../../app/components/nav-tree.tpl.html?raw';\n```\n\n### G1598\n```ts\n    $scope.$onChanges = ($scope.$onChanges || function () {});\n    Object.defineProperty(vm, 'loadNodes', {\n        get: function () { return vm._loadNodes; },\n        set: function (newVal: any) {\n            vm._loadNodes = newVal;\n            if (newVal) {\n                initTree();\n            }\n        }\n    });\n```\n\n### G505\n```ts\n        vm.treeElement = $('.tb-nav-tree-container', $element)\n            .jstree(config);\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1998,
+    "costMicros": 10236,
+    "inputTokens": 2,
+    "outputTokens": 224
+  }
+}

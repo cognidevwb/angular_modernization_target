@@ -27,9 +27,13 @@ export class MenuService {
     if (this.userService.isUserLoaded() === true) {
         this.buildMenu();
     }
-    this.authenticatedHandle = this.rootScope.$on('authenticated', () => {
+    this.authenticatedSubscription = this.userService.authenticated$.subscribe(() => {
         this.buildMenu();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.authenticatedSubscription.unsubscribe();
   }
 
   getSections(...rest: any[]): any {
@@ -348,7 +352,7 @@ export class MenuService {
   }
 
   sectionHeight(section?: any, ...rest: any[]): any {
-    if (this.router.includes(section.state)) {
+    if ((this.router as any).includes(section.state)) {
         return section.height;
     } else {
         return '0px';
@@ -357,6 +361,6 @@ export class MenuService {
   }
 
   sectionActive(section?: any, ...rest: any[]): any {
-    return this.router.includes(section.state);
+    return (this.router as any).includes(section.state);
   }
 }

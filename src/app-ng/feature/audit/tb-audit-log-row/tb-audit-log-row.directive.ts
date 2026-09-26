@@ -7,7 +7,9 @@ import { CommonModule } from '@angular/common';
 
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
+// @ts-ignore
 import auditLogDetailsDialogTemplate from '../../../../app/audit/audit-log-details-dialog.tpl.html';
+// @ts-ignore
 import auditLogRowTemplate from '../../../../app/audit/audit-log-row.tpl.html';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,7 +28,7 @@ declare let element: any;
 @Directive({
   selector: '[tb-audit-log-row]',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatIconModule, MatButtonModule],
+  standalone: true,
 })
 export class TbAuditLogRowDirective {
   // TODO(port): '$compile' — not in Angular: compose with components instead
@@ -57,7 +59,7 @@ export class TbAuditLogRowDirective {
     var onShowingCallback: any = {
         onShowing: function(...rest: any[]){}
     }
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'AuditLogDetailsDialogController',
         controllerAs: 'vm',
         templateUrl: auditLogDetailsDialogTemplate,

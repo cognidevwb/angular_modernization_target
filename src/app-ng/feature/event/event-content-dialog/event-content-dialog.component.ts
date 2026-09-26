@@ -16,6 +16,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 declare let scope: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
+declare const beautify: any;
 const js_beautify: any = beautify.js;
 
 /**
@@ -91,6 +92,6 @@ export class EventContentDialogComponent {
   }
 
   close = (...rest: any[]): any => {
-    this.dialog.hide();
+(this.dialog as any).hide();
   };
 }

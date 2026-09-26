@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 780,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/widget/widgets-bundle/widgets-bundle.component.ts\n\n3 item(s) to handle in this file.\n\n### G2688\nLines to replace: L11–L11\nKind: fix\nTask: Make line 11 of `src/app-ng/feature/widget/widgets-bundle/widgets-bundle.component.ts` type-check without changing what it does.\nBefore: Cannot find module '../../../../app/widget/add-widgets-bundle.tpl.html' or its corresponding type declarations.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n### G2689\nLines to replace: L12–L12\nKind: fix\nTask: Make line 12 of `src/app-ng/feature/widget/widgets-bundle/widgets-bundle.component.ts` type-check without changing what it does.\nBefore: Cannot find module '../../../../app/widget/widgets-bundle-card.tpl.html' or its corresponding type declarations.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n### G2690\nLines to replace: L195–L195\nKind: fix\nTask: Make line 195 of `src/app-ng/feature/widget/widgets-bundle/widgets-bundle.component.ts` type-check without changing what it does.\nBefore: Property 'go' does not exist on type 'Router'.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n\nThe file's lines:\nL5| import { TranslateService } from '@ngx-translate/core';\nL6| import { UserService } from '../../api/services/user.service';\nL7| import { WidgetService } from '../../api/services/widget.service';\nL8| import { types } from '../../common/constants/types';\nL9| import { TbGridDirective } from '../../components/tb-grid/tb-grid.directive';\nL10| import { TbWidgetsBundleDirective } from '../tb-widgets-bundle/tb-widgets-bundle.directive';\nL11| import addWidgetsBundleTemplate from '../../../../app/widget/add-widgets-bundle.tpl.html';\nL12| import widgetsBundleCard from '../../../../app/widget/widgets-bundle-card.tpl.html';\nL13| \nL14| /**\nL15|  * Ported from the AngularJS controller `WidgetsBundleController` (module `thingsboard.widget-library`) in src/app/widget/index.js:40.\nL16|  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.\nL17|  */\nL18| @Component({\n…\nL189|   };\nL190| \nL191|   openWidgetsBundle = ($event?: any, widgetsBundle?: any, ...rest: any[]): any => {\nL192|     if ($event) {\nL193|         $event.stopPropagation();\nL194|     }\nL195|     this.router.go('home.widgets-bundles.widget-types', {widgetsBundleId: widgetsBundle.id.id});\nL196|   };\nL197| }\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

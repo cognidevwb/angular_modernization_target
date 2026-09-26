@@ -1,0 +1,14 @@
+{
+  "content": "### G2341\n```ts\nimport entityViewFieldsetTemplate from '../../../../app/entity-view/entity-view-fieldset.tpl.html?raw';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1337,
+    "costMicros": 5942,
+    "inputTokens": 2,
+    "outputTokens": 59
+  }
+}

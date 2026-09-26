@@ -12,8 +12,8 @@ import { FormsModule } from '@angular/forms';
 import { TbDashboardAutocompleteDirective } from '../../components/tb-dashboard-autocomplete/tb-dashboard-autocomplete.directive';
 
 import $ from 'jquery';
-import selectTargetStateTemplate from '../../../../app/dashboard/states/select-target-state.tpl.html';
-import selectTargetLayoutTemplate from '../../../../app/dashboard/layouts/select-target-layout.tpl.html';
+const selectTargetStateTemplate = '../../../../app/dashboard/states/select-target-state.tpl.html';
+const selectTargetLayoutTemplate = '../../../../app/dashboard/layouts/select-target-layout.tpl.html';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -70,7 +70,7 @@ export class AddWidgetToDashboardDialogComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+(this.dialog as any).cancel();
   };
 
   selectTargetState($event?: any, dashboard?: any, ...rest: any[]): any {
@@ -79,25 +79,25 @@ export class AddWidgetToDashboardDialogComponent {
     var states: any = dashboard.configuration.states;
     var stateIds: any = Object.keys(states);
     if (stateIds.length > 1) {
-        this.dialog.show({
-            controller: 'SelectTargetStateController',
-            controllerAs: 'vm',
-            templateUrl: selectTargetStateTemplate,
-            parent: $(this.document.body),
-            locals: {
-                states: states
-            },
-            fullscreen: true,
-            multiple: true,
-            targetEvent: $event
-        }).then(
-            function success(stateId?: any) {
-                deferred.resolve(stateId);
-            },
-            function fail() {
-                deferred.reject();
-            }
-        );
+(this.dialog as any).show({
+        controller: 'SelectTargetStateController',
+        controllerAs: 'vm',
+        templateUrl: selectTargetStateTemplate,
+        parent: $(this.document.body),
+        locals: {
+            states: states
+        },
+        fullscreen: true,
+        multiple: true,
+        targetEvent: $event
+    }).then(
+        function success(stateId?: any) {
+            deferred.resolve(stateId);
+        },
+        function fail() {
+            deferred.reject();
+        }
+    );
 
     } else {
         deferred.resolve(stateIds[0]);
@@ -111,22 +111,22 @@ export class AddWidgetToDashboardDialogComponent {
     var layouts: any = dashboard.configuration.states[targetState].layouts;
     var layoutIds: any = Object.keys(layouts);
     if (layoutIds.length > 1) {
-        this.dialog.show({
-            controller: 'SelectTargetLayoutController',
-            controllerAs: 'vm',
-            templateUrl: selectTargetLayoutTemplate,
-            parent: $(this.document.body),
-            fullscreen: true,
-            multiple: true,
-            targetEvent: $event
-        }).then(
-            function success(layoutId?: any) {
-                deferred.resolve(layoutId);
-            },
-            function fail() {
-                deferred.reject();
-            }
-        );
+(this.dialog as any).show({
+        controller: 'SelectTargetLayoutController',
+        controllerAs: 'vm',
+        templateUrl: selectTargetLayoutTemplate,
+        parent: $(this.document.body),
+        fullscreen: true,
+        multiple: true,
+        targetEvent: $event
+    }).then(
+        function success(layoutId?: any) {
+            deferred.resolve(layoutId);
+        },
+        function fail() {
+            deferred.reject();
+        }
+    );
     } else {
         deferred.resolve(layoutIds[0]);
     }
@@ -170,7 +170,7 @@ export class AddWidgetToDashboardDialogComponent {
             this.dashboardService.saveDashboard(theDashboard).then(
                 (dashboard?: any) => {
                     this.theForm.$setPristine();
-                    this.dialog.hide();
+(this.dialog as any).hide();
                     if (this.openDashboard) {
                         var stateParams: any = {
                             dashboardId: dashboard.id.id
@@ -180,7 +180,7 @@ export class AddWidgetToDashboardDialogComponent {
                         if (stateIndex > 0) {
                             stateParams.state = this.utils.objToBase64([ {id: targetState, params: {}} ]);
                         }
-                        this.router.go('home.dashboards.dashboard', stateParams);
+(this.router as any).go('home.dashboards.dashboard', stateParams);
                     }
                 }
             );

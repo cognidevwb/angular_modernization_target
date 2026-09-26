@@ -24,7 +24,7 @@ export class ClipboardService {
     const isRTL: any = document.documentElement.getAttribute('dir') == 'rtl';
     this.removeFake();
     this.fakeHandlerCallback = () => this.removeFake();
-    this.fakeHandler = document.body.addEventListener('click', this.fakeHandlerCallback) || true;
+    this.fakeHandler = (document.body.addEventListener('click', this.fakeHandlerCallback), true);
     this.fakeElem = document.createElement('textarea');
     this.fakeElem.style.fontSize = '12pt';
     this.fakeElem.style.border = '0';

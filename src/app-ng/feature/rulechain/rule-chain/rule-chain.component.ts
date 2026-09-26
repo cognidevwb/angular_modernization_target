@@ -17,7 +17,9 @@ import { TbEventTableDirective } from '../../event/tb-event-table/tb-event-table
 import { TbRuleNodeLinkDirective } from '../tb-rule-node-link/tb-rule-node-link.directive';
 
 import $ from 'jquery';
+// @ts-ignore
 import addRuleNodeTemplate from '../../../../app/rulechain/add-rulenode.tpl.html';
+// @ts-ignore
 import addRuleNodeLinkTemplate from '../../../../app/rulechain/add-link.tpl.html';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
@@ -146,11 +148,11 @@ export class RuleChainComponent {
   constructor() {
     let vm = this;
     this.types = this.typesRef;
-    if (this.router.current.data.import && !ruleChain) {
-        this.router.go('home.ruleChains');
+    if ((this.router as any).current.data.import && !ruleChain) {
+        (this.router as any).go('home.ruleChains');
         return;
     }
-    this.isImport = this.router.current.data.import;
+    this.isImport = (this.router as any).current.data.import;
     $scope.$watch(() => {
         return this.isDirty || this.isImport;
     }, (val?: any) => {
@@ -1329,7 +1331,7 @@ export class RuleChainComponent {
                         this.isDirty = false;
                         this.isImport = false;
                         $mdUtil.nextTick(() => {
-                            this.router.go('home.ruleChains.ruleChain', {ruleChainId: this.ruleChain.id.id});
+                            (this.router as any).go('home.ruleChains.ruleChain', {ruleChainId: this.ruleChain.id.id});
                         });
                     } else {
                         this.prepareRuleChain();
@@ -1353,7 +1355,7 @@ export class RuleChainComponent {
 
     this.enableHotKeys = false;
 
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'AddRuleNodeController',
         controllerAs: 'vm',
         templateUrl: addRuleNodeTemplate,
@@ -1390,7 +1392,7 @@ export class RuleChainComponent {
 
   addRuleNodeLink($event?: any, link?: any, labels?: any, allowCustomLabels?: any, ...rest: any[]): any {
     let vm = this;
-    return this.dialog.show({
+    return (this.dialog as any).show({
         controller: 'AddRuleNodeLinkController',
         controllerAs: 'vm',
         templateUrl: addRuleNodeLinkTemplate,

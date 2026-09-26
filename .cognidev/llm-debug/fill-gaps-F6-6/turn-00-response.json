@@ -1,0 +1,14 @@
+{
+  "content": "### G1910\n```ts\nthis.http.get(url, null).toPromise().then(function success(response?: any) {\n    deferred.resolve(response);\n}, function fail() {\n    deferred.reject();\n});\n```\n\n### G1911\n```ts\nthis.http.post(url, settings).toPromise().then(function success(response?: any) {\n    deferred.resolve(response);\n}, function fail(response?: any) {\n    deferred.reject(response);\n});\n```\n\n### G1912\n```ts\nthis.http.get(url, null).toPromise().then(function success(response?: any) {\n    deferred.resolve(response);\n}, function fail() {\n    deferred.reject();\n});\n```\n\n### G1913\n```ts\nthis.http.post(url, securitySettings).toPromise().then(function success(response?: any) {\n    deferred.resolve(response);\n}, function fail(response?: any) {\n    deferred.reject(response);\n});\n```\n\n### G1914\n```ts\nthis.http.post(url, settings).toPromise().then(function success() {\n    deferred.resolve();\n}, function fail(response?: any) {\n    deferred.reject(response);\n});\n```\n\n### G1915\n```ts\nthis.http.get(url, null).toPromise().then(function success(response?: any) {\n    deferred.resolve(response);\n}, function fail() {\n    deferred.reject();\n});\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2691,
+    "costMicros": 15118,
+    "inputTokens": 2,
+    "outputTokens": 435
+  }
+}

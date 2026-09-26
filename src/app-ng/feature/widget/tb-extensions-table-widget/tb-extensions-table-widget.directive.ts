@@ -1,6 +1,7 @@
 import { Component, forwardRef, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TbExtensionTableDirective } from '../../extension/tb-extension-table/tb-extension-table.directive';
+// @ts-ignore
 import extensionsTableWidgetTemplate from '../../../../app/widget/lib/extensions-table-widget.tpl.html';
 import { MatTabsModule } from '@angular/material/tabs';
 
@@ -8,13 +9,32 @@ import { MatTabsModule } from '@angular/material/tabs';
 declare let scope: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
-function ExtensionsTableWidgetController(this: any, $scope?: any, $translate?: any, utils?: any) {
+import { inject } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+
+// Helpers at the legacy file's top level, beside the registration (as written).
+function ExtensionsTableWidgetController(this: any, utils?: any) {
     var vm: any = this;
+    const translate = inject(TranslateService);
 
     vm.datasources = null;
     vm.tabsHidden = false;
+    vm.events$ = new Subject<{ name: string; payload?: any }>();
 
-    $scope.$watch('vm.ctx', function() {
+    var eventsSubscription = vm.events$.subscribe(function(event: any) {
+        if (event.name === 'filterMode') {
+            vm.tabsHidden = event.payload;
+        } else if (event.name === 'selectedExtensions') {
+            vm.tabsHidden = event.payload;
+        }
+    });
+
+    vm.ngOnDestroy = function() {
+        eventsSubscription.unsubscribe();
+    };
+
+    vm.ngOnChanges = function() {
         if (vm.ctx && vm.ctx.defaultSubscription) {
             vm.settings = vm.ctx.settings;
             vm.subscription = vm.ctx.defaultSubscription;
@@ -22,14 +42,14 @@ function ExtensionsTableWidgetController(this: any, $scope?: any, $translate?: a
             initializeConfig();
             updateDatasources();
         }
-    });
+    };
 
     function initializeConfig() {
 
         if (vm.settings.extensionsTitle && vm.settings.extensionsTitle.length) {
             vm.extensionsTitle = utils.customTranslation(vm.settings.extensionsTitle, vm.settings.extensionsTitle);
         } else {
-            vm.extensionsTitle = $translate.instant('extension.extensions');
+            vm.extensionsTitle = translate.instant('extension.extensions');
         }
         vm.ctx.widgetTitle = vm.extensionsTitle;
 
@@ -51,7 +71,7 @@ function ExtensionsTableWidgetController(this: any, $scope?: any, $translate?: a
         name: "action.search",
         show: true,
         onAction: function() {
-            $scope.$broadcast("showSearch", vm.selectedSource);
+            vm.events$.next({ name: "showSearch", payload: vm.selectedSource });
         },
         icon: "search"
     };
@@ -60,7 +80,7 @@ function ExtensionsTableWidgetController(this: any, $scope?: any, $translate?: a
         name: "action.refresh",
         show: true,
         onAction: function() {
-            $scope.$broadcast("refreshExtensions", vm.selectedSource);
+            vm.events$.next({ name: "refreshExtensions", payload: vm.selectedSource });
         },
         icon: "refresh"
     };
@@ -69,7 +89,7 @@ function ExtensionsTableWidgetController(this: any, $scope?: any, $translate?: a
         name: "action.add",
         show: true,
         onAction: function() {
-            $scope.$broadcast("addExtension", vm.selectedSource);
+            vm.events$.next({ name: "addExtension", payload: vm.selectedSource });
         },
         icon: "add"
     };
@@ -78,7 +98,7 @@ function ExtensionsTableWidgetController(this: any, $scope?: any, $translate?: a
         name: "extension.export-extensions-configuration",
         show: true,
         onAction: function() {
-            $scope.$broadcast("exportExtensions", vm.selectedSource);
+            vm.events$.next({ name: "exportExtensions", payload: vm.selectedSource });
         },
         icon: "file_download"
     };
@@ -87,18 +107,10 @@ function ExtensionsTableWidgetController(this: any, $scope?: any, $translate?: a
         name: "extension.import-extensions-configuration",
         show: true,
         onAction: function() {
-            $scope.$broadcast("importExtensions", vm.selectedSource);
+            vm.events$.next({ name: "importExtensions", payload: vm.selectedSource });
         },
         icon: "file_upload"
     };
-
-    $scope.$on("filterMode", function($event?: any, mode?: any) {
-        vm.tabsHidden = mode;
-    });
-
-    $scope.$on("selectedExtensions", function($event?: any, mode?: any) {
-        vm.tabsHidden = mode;
-    });
 }
 
 /**

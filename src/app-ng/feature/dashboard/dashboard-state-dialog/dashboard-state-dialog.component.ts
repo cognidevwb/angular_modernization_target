@@ -93,12 +93,12 @@ export class DashboardStateDialogComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   save = (...rest: any[]): any => {
     this.theForm.$setPristine();
     this.state.id = this.state.id.trim();
-    this.dialog.hide(this.state);
+    (this.dialog as any).hide(this.state);
   };
 }

@@ -7,7 +7,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
 import { linkAttrs } from '../../../legacy-link';
 import $ from 'jquery';
+// @ts-ignore
 import aliasesEntitySelectButtonTemplate from '../../../../app/entity/alias/aliases-entity-select-button.tpl.html';
+// @ts-ignore
 import aliasesEntitySelectPanelTemplate from '../../../../app/entity/alias/aliases-entity-select-panel.tpl.html';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -66,7 +68,7 @@ export class TbAliasesEntitySelectDirective {
         return;
     }
     var position: any;
-    var panelHeight: any = this.breakpoints('min-height: 350px') ? 250 : 150;
+    var panelHeight: any = (this.breakpoints as any)('min-height: 350px') ? 250 : 150;
     var panelWidth: any = 300;
     var offset: any = this.element.nativeElement.getBoundingClientRect();
     var bottomY: any = offset.bottom - $(window).scrollTop(); //eslint-disable-line
@@ -83,7 +85,7 @@ export class TbAliasesEntitySelectDirective {
     } else {
         xPosition = this.overlay.xPosition.ALIGN_START;
     }
-    position = this.overlay.newPanelPosition()
+    position = (this.overlay as any).newPanelPosition()
         .relativeTo($(this.element.nativeElement))
         .addPanelPosition(xPosition, yPosition);
     var config: any = {
@@ -105,7 +107,7 @@ export class TbAliasesEntitySelectDirective {
         escapeToClose: true,
         focusOnOpen: false
     };
-    this.overlay.open(config);
+    (this.overlay as any).open(config);
   }
 
   updateView(...rest: any[]): any {

@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
-import entitySubtypeSelectTemplate from '../../../../app/entity/entity-subtype-select.tpl.html';
+import entitySubtypeSelectTemplate from '../../../../app/entity/entity-subtype-select.tpl.html?raw';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';

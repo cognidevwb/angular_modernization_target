@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { TbContactDirective } from '../../components/tb-contact/tb-contact.directive';
 
 import $ from 'jquery';
-import customerFieldsetTemplate from '../../../../app/customer/customer-fieldset.tpl.html';
+import customerFieldsetTemplate from '../../../../app/customer/customer-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';

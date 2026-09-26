@@ -65,7 +65,7 @@ export class ManageAssignedCustomersComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   submit = (...rest: any[]): any => {
@@ -83,7 +83,7 @@ export class ManageAssignedCustomersComponent {
         tasks.push(promise);
     }
     Promise.all(tasks).then(() => {
-        this.dialog.hide();
+    (this.dialog as any).hide();
     });
   };
 }

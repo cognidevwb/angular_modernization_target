@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import linkFieldsetTemplate from '../../../../app/rulechain/link-fieldset.tpl.html';
+import linkFieldsetTemplate from '../../../../app/rulechain/link-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { TranslatePipe } from '@ngx-translate/core';

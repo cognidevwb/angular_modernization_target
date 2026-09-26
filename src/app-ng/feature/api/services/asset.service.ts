@@ -30,7 +30,7 @@ export class AssetService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.get(url, config).then(function success(response?: any) {
+    this.http.get(url, config).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -48,7 +48,7 @@ export class AssetService {
         ids += assetIds[i];
     }
     var url: any = '/api/assets?assetIds=' + ids;
-    this.http.get(url, config).then(function success(response?: any) {
+    this.http.get(url, config).toPromise().then(function success(response?: any) {
         var assets: any = response.data;
         assets.sort(function (asset1?: any, asset2?: any) {
             var id1: any =  asset1.id.id;
@@ -71,7 +71,7 @@ export class AssetService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.post(url, asset, config).then(function success(response?: any) {
+    this.http.post(url, asset, config).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -86,7 +86,7 @@ export class AssetService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.delete(url, config).then(function success() {
+    this.http.delete(url, config).toPromise().then(function success() {
         deferred.resolve();
     }, function fail() {
         deferred.reject();
@@ -101,7 +101,7 @@ export class AssetService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.post(url, null, config).then(function success(response?: any) {
+    this.http.post(url, null, config).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -116,7 +116,7 @@ export class AssetService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.delete(url, config).then(function success(response?: any) {
+    this.http.delete(url, config).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -131,7 +131,7 @@ export class AssetService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.post(url, null, config).then(function success(response?: any) {
+    this.http.post(url, null, config).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -154,7 +154,7 @@ export class AssetService {
     if ((type !== undefined) && type.length) {
         url += '&type=' + type;
     }
-    this.http.get(url, config).then((response?: any) => {
+    this.http.get(url, config).toPromise().then((response?: any) => {
         if (applyCustomersInfo) {
             this.customerService.applyAssignedCustomersInfo(response.data.data).then(
                 function success(data?: any) {
@@ -189,7 +189,7 @@ export class AssetService {
     if ((type !== undefined) && type.length) {
         url += '&type=' + type;
     }
-    this.http.get(url, config).then((response?: any) => {
+    this.http.get(url, config).toPromise().then((response?: any) => {
         if (applyCustomersInfo) {
             this.customerService.applyAssignedCustomerInfo(response.data.data, customerId).then(
                 function success(data?: any) {
@@ -217,7 +217,7 @@ export class AssetService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.post(url, query, config).then(function success(response?: any) {
+    this.http.post(url, query, config).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -254,7 +254,7 @@ export class AssetService {
   getAssetTypes(config?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/asset/types';
-    this.http.get(url, config).then(function success(response?: any) {
+    this.http.get(url, config).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -266,7 +266,7 @@ export class AssetService {
     config = config || {};
     var deferred: any = $q.defer();
     var url: any = '/api/tenant/assets?assetName=' + assetName;
-    this.http.get(url, config).then(function success(response?: any) {
+    this.http.get(url, config).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();

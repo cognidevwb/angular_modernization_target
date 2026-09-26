@@ -1,0 +1,14 @@
+{
+  "content": "### G2153\n```ts\n  this.fullscreenZindex = (this.fullscreenZindex as any).emit(undefined);\n```\n\n### G2154\n```ts\n    if (!true) {\n```\n\n(No change needed on this exact line by itself; see below for the actual fix on L69.)\n\n```ts\n            (this as any).fullscreenZindex = '70';\n```\n\n### G1407,G1408\n```ts\n    let prevExpanded: any;\n    effect(() => {\n      const newExpanded: any = this.expanded;\n      if (newExpanded != prevExpanded) {\n        prevExpanded = newExpanded;\n        if (this.expanded) {\n          this.elementParent = $(this.element.nativeElement).parent();\n          $(this.element.nativeElement).detach();\n          if (this.backgroundStyle()) {\n            this.fullscreenParent.attr(\"ng-style\",\"backgroundStyle\");\n            $compile(this.fullscreenParent)(this);\n          }\n          this.fullscreenParent.append($(this.element.nativeElement));\n          this.fullscreenParent.css('display', '');\n          this.fullscreenParent.css('z-index', this.fullscreenZindex);\n          $(this.element.nativeElement).addClass('tb-fullscreen');\n        } else {\n          if (this.elementParent) {\n            $(this.element.nativeElement).detach();\n            this.elementParent.append($(this.element.nativeElement));\n            this.elementParent = null;\n          }\n          $(this.element.nativeElement).removeClass('tb-fullscreen');\n          this.fullscreenParent.css('display', 'none');\n          this.fullscreenParent.css('z-index', '');\n        }\n        if (true) {\n          this.onFullscreenChanged.emit({expanded: this.expanded});\n        }\n      }\n    });\n```\n\n### G1409\n```ts\n    effect(() => {\n      const newExpanded: any = this.expand.emit(undefined);\n      this.expanded = newExpanded;\n    });\n```\n\n### G1892,G1415,G1416\n```ts\n  renderExpandButton(expandButton?: any, ...rest: any[]): any {\n    if (expandButton) {\n        expandButton = $(expandButton);\n        if (this.hideExpandButton()) {\n            expandButton.remove();\n        } else {\n            expandButton.attr('md-ink-ripple', 'false');\n            expandButton.append(this.html);\n\n            $compile(expandButton.contents())(this);\n\n            expandButton.on(\"click\", this.toggleExpand);\n        }\n    } else if (!this.hideExpandButton()) {\n        var button: any = $('<md-button class=\"tb-fullscreen-button-style tb-fullscreen-button-pos md-icon-button\" ' +\n            'md-ink-ripple=\"false\" ng-click=\"toggleExpand($event)\">' +\n            this.html +\n            '</md-button>');\n\n        $compile(button)(this);\n\n        $(this.element.nativeElement).prepend(button);\n    }\n  }\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 4400,
+    "costMicros": 104234,
+    "inputTokens": 2,
+    "outputTokens": 8663
+  }
+}

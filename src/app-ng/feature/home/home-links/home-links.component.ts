@@ -34,10 +34,10 @@ export class HomeLinksComponent {
 
   constructor() {
     this.sectionColspan = this.sectionColspan;
-    $scope.$watch(() => { return this.breakpoints('lg'); }, () => {
+    $scope.$watch(() => { return this.breakpoints.isMatched('lg'); }, () => {
         this.updateColumnCount();
     });
-    $scope.$watch(() => { return this.breakpoints('gt-lg'); }, () => {
+    $scope.$watch(() => { return this.breakpoints.isMatched('gt-lg'); }, () => {
         this.updateColumnCount();
     });
     this.updateColumnCount();
@@ -46,10 +46,10 @@ export class HomeLinksComponent {
 
   updateColumnCount(...rest: any[]): any {
     this.cols = 2;
-    if (this.breakpoints('lg')) {
+    if (this.breakpoints.isMatched('lg')) {
         this.cols = 3;
     }
-    if (this.breakpoints('gt-lg')) {
+    if (this.breakpoints.isMatched('gt-lg')) {
         this.cols = 4;
     }
   }

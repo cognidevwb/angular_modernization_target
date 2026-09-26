@@ -10,6 +10,7 @@ import { TbHelpDirective } from '../../help/tb-help/tb-help.directive';
 import { TbWidgetConfigDirective } from '../../components/tb-widget-config/tb-widget-config.directive';
 
 import $ from 'jquery';
+// @ts-ignore
 import entityAliasDialogTemplate from '../../../../app/entity/alias/entity-alias-dialog.tpl.html';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
@@ -120,7 +121,7 @@ export class AddWidgetComponent {
   };
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   add = (...rest: any[]): any => {
@@ -129,7 +130,7 @@ export class AddWidgetComponent {
         this.widget.config = this.widgetConfig.config;
         this.widget.config.mobileOrder = this.widgetConfig.layout.mobileOrder;
         this.widget.config.mobileHeight = this.widgetConfig.layout.mobileHeight;
-        this.dialog.hide({widget: this.widget});
+        (this.dialog as any).hide({widget: this.widget});
     }
   };
 
@@ -184,7 +185,7 @@ export class AddWidgetComponent {
     var deferred: any = $q.defer();
     var singleEntityAlias: any = {id: null, alias: alias, filter: {}};
 
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'EntityAliasDialogController',
         controllerAs: 'vm',
         templateUrl: entityAliasDialogTemplate,

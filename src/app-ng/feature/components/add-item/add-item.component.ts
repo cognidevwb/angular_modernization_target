@@ -30,14 +30,14 @@ export class AddItemComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   add = (...rest: any[]): any => {
     saveItemFunction(this.item).then((item?: any) => {
         this.item = item;
         this.theForm.$setPristine();
-        this.dialog.hide();
+    (this.dialog as any).hide();
     });
   };
 }

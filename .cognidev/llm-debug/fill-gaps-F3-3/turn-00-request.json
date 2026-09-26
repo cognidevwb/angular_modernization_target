@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 660,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/alarm/tb-alarm-header/tb-alarm-header.directive.ts\n\n1 item(s) to handle in this file.\n\n### G1904\nLines to replace: L5–L5\nKind: fix\nTask: Make line 5 of `src/app-ng/feature/alarm/tb-alarm-header/tb-alarm-header.directive.ts` type-check without changing what it does.\nBefore: Cannot find module '../../../../app/alarm/alarm-header.tpl.html' or its corresponding type declarations.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n\nThe file's lines:\nL1| import { Directive, inject } from '@angular/core';\nL2| import { ElementRef } from '@angular/core';\nL3| \nL4| import $ from 'jquery';\nL5| import alarmHeaderTemplate from '../../../../app/alarm/alarm-header.tpl.html';\nL6| // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.\nL7| declare let $compile: any;\nL8| declare let $templateCache: any;\nL9| declare let element: any;\nL10| \nL11| /**\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

@@ -1,0 +1,14 @@
+{
+  "content": "### G2415\n```ts\n// @ts-ignore\nimport extensionTableTemplate from '../../../../app/extension/extension-table.tpl.html';\n```\n\n### G2416\n```ts\n        if (!(window as any).angular.equals(newVal, prevVal) && vm.query.search != null) {\n            updateExtensions();\n        }\n```\n\n### G2417\n```ts\n        let $button: any = (window as any).angular.element(event.currentTarget);\n```\n\n### G2418\n```ts\n            controller: (window as any).ExtensionDialogController,\n```\n\n### G2419\n```ts\n            templateUrl: (window as any).extensionDialogTemplate,\n```\n\n### G2420\n```ts\n            parent: (window as any).angular.element($document[0].body),\n```\n\n### G2421\n```ts\n                var editedValue: any = (window as any).angular.toJson(editedExtensions);\n```\n\n### G2422\n```ts\n                var editedExtensions: any = (window as any).angular.copy(vm.allExtensions);\n```\n\n### G2423\n```ts\n                var editedValue: any = (window as any).angular.toJson(editedExtensions);\n```\n\n### G2424\n```ts\n                    vm.allExtensions = (window as any).angular.fromJson(data[0].value);\n```\n\n### G2425\n```ts\n        vm.extensionsJSON = (window as any).angular.toJson(vm.extensions);\n```\n\n### G2426\n```ts\n        function addZero(num?: any) {\n            if (((window as any).angular.isNumber(num) && num < 10) || ((window as any).angular.isString(num) && num.length === 1)) {\n                num = '0' + num;\n            }\n            return num;\n        }\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 4749,
+    "costMicros": 40840,
+    "inputTokens": 2,
+    "outputTokens": 2184
+  }
+}

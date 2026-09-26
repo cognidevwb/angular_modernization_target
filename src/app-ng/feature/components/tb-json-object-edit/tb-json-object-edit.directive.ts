@@ -7,6 +7,7 @@ import { UtilsService } from '../../common/services/utils.service';
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
 import fixAceEditor from '../../../../app/components/ace-editor-fix';
+// @ts-ignore
 import jsonObjectEditTemplate from '../../../../app/components/json-object-edit.tpl.html';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
@@ -70,28 +71,30 @@ export class TbJsonObjectEditDirective {
                 fixAceEditor(_ace);
             }
         };
-    this.$watch('contentBody', (newVal?: any, prevVal?: any) => {
-            if (!angular.equals(newVal, prevVal)) {
-                var object: any = this.validate();
-                if (this.objectValid) {
-                    if (object == null) {
-                        this.object = null;
-                    } else {
-                        if (this.object == null) {
-                            this.object = {};
-                        }
-                        Object.keys(this.object).forEach((key?: any) => {
-                            delete this.object[key];
-                        });
-                        Object.keys(object).forEach((key?: any) => {
-                            this.object[key] = object[key];
-                        });
+    effect(() => {
+      const newVal = this.contentBody;
+      if (!isEqual(newVal, this._prevContentBody)) {
+            var object: any = this.validate();
+            if (this.objectValid) {
+                if (object == null) {
+                    this.object = null;
+                } else {
+                    if (this.object == null) {
+                        this.object = {};
                     }
-                    ngModelCtrl.$setViewValue(this.object);
+                    Object.keys(this.object).forEach((key?: any) => {
+                        delete this.object[key];
+                    });
+                    Object.keys(object).forEach((key?: any) => {
+                        this.object[key] = object[key];
+                    });
                 }
-                this.updateValidity();
+                this.onChange(this.object);
             }
-        });
+            this.updateValidity();
+      }
+      this._prevContentBody = newVal;
+    });
     ngModelCtrl.$render = function () {
             this.object = ngModelCtrl.$viewValue;
             var content: any = '';
@@ -104,7 +107,7 @@ export class TbJsonObjectEditDirective {
             }
             this.contentBody = content;
         };
-    this.$on('form-submit', () => {
+    this.formSubmit$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             if (!this.readonly()) {
                 this.cleanupJsonErrors();
                 if (!this.objectValid) {
@@ -112,7 +115,7 @@ export class TbJsonObjectEditDirective {
                 }
             }
         });
-    this.$on('update-ace-editor-size', () => {
+    this.updateAceEditorSize$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.updateEditorSize();
         });
     $compile($(this.element.nativeElement).contents())(this);
@@ -123,7 +126,7 @@ export class TbJsonObjectEditDirective {
   }
 
   beautifyJSON(...rest: any[]): any {
-    this.contentBody = JSON.stringify(this.object, 4);
+    this.contentBody = JSON.stringify(this.object, null, 4);
   }
 
   minifyJSON(...rest: any[]): any {
@@ -142,7 +145,7 @@ export class TbJsonObjectEditDirective {
   }
 
   updateValidity(...rest: any[]): any {
-    ngModelCtrl.$setValidity('objectValid', this.objectValid);
+    this.onValidatorChange();
   }
 
   showError(error?: any, ...rest: any[]): any {

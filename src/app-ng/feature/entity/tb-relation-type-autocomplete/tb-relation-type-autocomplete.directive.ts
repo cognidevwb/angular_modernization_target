@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
-import relationTypeAutocompleteTemplate from '../../../../app/entity/relation/relation-type-autocomplete.tpl.html';
+import relationTypeAutocompleteTemplate from '../../../../app/entity/relation/relation-type-autocomplete.tpl.html?raw';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;

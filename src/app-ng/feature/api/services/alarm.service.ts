@@ -50,7 +50,7 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.get(url, config).then(function success(response?: any) {
+    (this.http.get(url, config) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -65,7 +65,7 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.get(url, config).then(function success(response?: any) {
+    (this.http.get(url, config) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -80,7 +80,7 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.post(url, alarm, config).then(function success(response?: any) {
+    (this.http.post(url, alarm, config) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -95,7 +95,7 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.post(url, null, config).then(function success(response?: any) {
+    (this.http.post(url, null, config) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -110,7 +110,7 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.post(url, null, config).then(function success(response?: any) {
+    (this.http.post(url, null, config) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -125,7 +125,7 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.delete(url, config).then(function success(response?: any) {
+    (this.http.delete(url, config) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -159,7 +159,7 @@ export class AlarmService {
         url += '&ascOrder=' + (ascOrder ? 'true' : 'false');
     }
 
-    this.http.get(url, config).then(function success(response?: any) {
+    (this.http.get(url, config) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -176,7 +176,7 @@ export class AlarmService {
     } else if (alarmStatus) {
         url += '?status=' + alarmStatus;
     }
-    this.http.get(url, config).then(function success(response?: any) {
+    (this.http.get(url, config) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -196,18 +196,19 @@ export class AlarmService {
             if ((leftToLoad !== undefined)) {
                 leftToLoad -= pageLink.limit;
                 if (leftToLoad === 0) {
-                    alarmsList = $filter('orderBy')(alarmsList, ['-createdTime']);
-                    deferred.resolve(alarmsList);
-                    return;
-                }
-                if (leftToLoad < pageLink.limit) {
-                    alarms.nextPageLink.limit = leftToLoad;
-                }
+                alarmsList = alarmsList.sort((a: any, b: any) => b.createdTime - a.createdTime);
+                deferred.resolve(alarmsList);
+                return;
             }
-            if (alarms.hasNext && !alarmsQuery.limit) {
-                this.fetchAlarms(alarmsQuery, alarms.nextPageLink, deferred, leftToLoad, alarmsList);
-            } else {
-                alarmsList = $filter('orderBy')(alarmsList, ['-createdTime']);
+            if (leftToLoad < pageLink.limit) {
+                alarms.nextPageLink.limit = leftToLoad;
+            }
+        }
+        if (alarms.hasNext && !alarmsQuery.limit) {
+            this.fetchAlarms(alarmsQuery, alarms.nextPageLink, deferred, leftToLoad, alarmsList);
+        } else {
+            alarmsList = alarmsList.sort((a: any, b: any) => b.createdTime - a.createdTime);
+            deferred.resolve(alarmsList);
                 deferred.resolve(alarmsList);
             }
         },
@@ -300,7 +301,7 @@ export class AlarmService {
             alarmsMaxCountLoad: alarmSourceListener.alarmsMaxCountLoad,
             alarmsFetchSize: alarmSourceListener.alarmsFetchSize
         };
-        var originatorKeys: any = $filter('filter')(alarmSource.dataKeys, {name: 'originator'});
+        var originatorKeys: any = alarmSource.dataKeys.filter((dk: any) => dk.name === 'originator');
         if (originatorKeys && originatorKeys.length) {
             alarmSourceListener.alarmsQuery.fetchOriginator = true;
         }

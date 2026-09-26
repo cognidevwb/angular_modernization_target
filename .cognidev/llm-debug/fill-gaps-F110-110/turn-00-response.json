@@ -1,0 +1,14 @@
+{
+  "content": "### G2289\n```ts\n// @ts-ignore\nimport dashboardFieldsetTemplate from '../../../../app/dashboard/dashboard-fieldset.tpl.html';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1305,
+    "costMicros": 5874,
+    "inputTokens": 2,
+    "outputTokens": 65
+  }
+}

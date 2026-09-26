@@ -6,6 +6,7 @@ import { TbExpandFullscreenDirective } from '../tb-expand-fullscreen/tb-expand-f
 import { TbJsFuncDirective } from '../tb-js-func/tb-js-func.directive';
 
 import $ from 'jquery';
+// @ts-ignore
 import customActionPrettyEditorTemplate from '../../../../app/components/widget/action/custom-action-pretty-editor.tpl.html';
 import Split from 'split.js';
 import { inject as injectRoot } from '@angular/core';
@@ -26,9 +27,9 @@ declare let element: any;
 declare let ngModelCtrl: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
-const html_beautify: any = beautify.html;
+const html_beautify: any = (window as any).beautify.html;
 
-const css_beautify: any = beautify.css;
+const css_beautify: any = (window as any).beautify.css;
 
 /**
  * Ported from the AngularJS directive `tbCustomActionPrettyEditor` (module `thingsboard.directives.customActionPrettyEditor`) in src/app/components/widget/action/custom-action-pretty-editor.directive.js:33.
@@ -49,7 +50,7 @@ export class TbCustomActionPrettyEditorDirective {
   // TODO(port): '$window' — use window directly, or inject(DOCUMENT).defaultView
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(customActionPrettyEditorTemplate);
+  protected template: any = customActionPrettyEditorTemplate;
   protected ace_editors: any = [];
   fullscreen: any = false;
   htmlEditorOptions: any;
@@ -915,17 +916,20 @@ export class TbCustomActionPrettyEditorDirective {
             '<!--        </md-dialog-actions>-->\n' +
             '<!--    </form>-->\n' +
             '<!--</md-dialog>-->\n';
-    this.$watch('action', () => {
-            ngModelCtrl.$setViewValue(this.action);
-        });
-    ngModelCtrl.$render = function () {
-            this.action = ngModelCtrl.$viewValue;
-            if ((this.action.customHtml === undefined) && (this.action.customCss === undefined) && (this.action.customFunction === undefined)) {
-                this.action.customFunction = this.sampleJsFunction;
-                this.action.customHtml = this.sampleHtmlTemplate;
-                this.action.customCss = this.sampleCss;
-            }
-        };
+    effect(() => {
+      if (this.ngControl && this.ngControl.control) {
+        this.ngControl.control.setValue(this.action, { emitEvent: false });
+      }
+      this.onChange?.(this.action);
+    });
+    this.writeValue = (value: any) => {
+      this.action = value;
+      if ((this.action.customHtml === undefined) && (this.action.customCss === undefined) && (this.action.customFunction === undefined)) {
+        this.action.customFunction = this.sampleJsFunction;
+        this.action.customHtml = this.sampleHtmlTemplate;
+        this.action.customCss = this.sampleCss;
+      }
+    };
     $compile($(this.element.nativeElement).contents())(this);
   }
 
@@ -958,30 +962,24 @@ export class TbCustomActionPrettyEditorDirective {
     this.fullscreen = !this.fullscreen;
     if (this.fullscreen) {
         this.customActionEditorElement = $('.tb-custom-action-editor');
-        $(this.customActionEditorElement[0]).ready(() => {
-            var w: any = this.customActionEditorElement.width();
-            if (w > 0) {
-                this.initSplitLayout();
-            } else {
-                this.$watch(
-                    () => {
-                        return this.customActionEditorElement[0].offsetWidth || parseInt(this.customActionEditorElement.css('width'), 10);
-                    },
-                    (newSize?: any) => {
-                        if (newSize > 0) {
-                            this.initSplitLayout();
-                        }
-                    }
-                );
-            }
-        });
+        const w: any = this.customActionEditorElement.width();
+        if (w > 0) {
+            this.initSplitLayout();
+        } else {
+            effect(() => {
+                const newSize: any = this.customActionEditorElement[0].offsetWidth || parseInt(this.customActionEditorElement.css('width'), 10);
+                if (newSize > 0) {
+                    this.initSplitLayout();
+                }
+            });
+        }
     } else {
         this.layoutInited = false;
     }
   };
 
   onDividerDrag(...rest: any[]): any {
-    this.$broadcast('update-ace-editor-size');
+    this.ace_editors.forEach((editor: any) => editor.resize());
     for (var i: any = 0; i < this.ace_editors.length; i++) {
         var ace: any = this.ace_editors[i];
         ace.resize();
@@ -1004,7 +1002,7 @@ export class TbCustomActionPrettyEditorDirective {
 
         queueMicrotask(() => {
             this.layoutInited = true;
-            var w: any = $($window);
+            var w: any = $(window);
             setTimeout(function () {
                 w.triggerHandler('resize')
             });

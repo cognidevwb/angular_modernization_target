@@ -160,12 +160,14 @@ function () {
               move.apply($scope.$parent.$mdChipsCtrl.items, [droppedItemIndex, newIndex]);
 
               $scope.$apply(function () {
-                $scope.$emit('mdChipDraggable:change', {
+              $scope.$apply(function () {
+                this.chipDraggableChange$Source.next({
                   collection: $scope.$parent.$mdChipsCtrl.items,
                   item: $scope.$parent.$mdChipsCtrl.items[droppedItemIndex],
                   from: droppedItemIndex,
                   to: newIndex,
                 });
+              });
               });
 
               $element.removeClass(droppingClassName);

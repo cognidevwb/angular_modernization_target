@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 2280,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/rulechain/services/rule-node-script-test.service.ts\n\n2 item(s) to handle in this file.\n\n### G2541\nLines to replace: L9–L9\nKind: fix\nTask: Make line 9 of `src/app-ng/feature/rulechain/services/rule-node-script-test.service.ts` type-check without changing what it does.\nBefore: Cannot find module '../../../../app/rulechain/script/node-script-test.tpl.html' or its corresponding type declarations.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n### G2542\nLines to replace: L109–L135\nKind: fix\nTask: Make line 109 of `src/app-ng/feature/rulechain/services/rule-node-script-test.service.ts` type-check without changing what it does.\nBefore: Property 'show' does not exist on type 'MatDialog'.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n\nThe file's lines:\nL3| import { MatDialog } from '@angular/material/dialog';\nL4| import { RuleChainService } from '../../api/services/rule-chain.service';\nL5| import { UtilsService } from '../../common/services/utils.service';\nL6| \nL7| import $ from 'jquery';\nL8| import { bindMethods } from '../../../legacy-injector';\nL9| import nodeScriptTestTemplate from '../../../../app/rulechain/script/node-script-test.tpl.html';\nL10| // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.\nL11| declare let $q: any;\nL12| \nL13| /**\nL14|  * Ported from the AngularJS factory `ruleNodeScriptTest` (module `thingsboard.ruleChain`) in src/app/rulechain/index.js:28.\nL15|  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.\n…\nL103|         script: script,\nL104|         scriptType: scriptType,\nL105|         functionName: functionName,\nL106|         argNames: argNames\nL107|     };\nL108| \nL109|     this.dialog.show({\nL110|         controller: 'NodeScriptTestController',\nL111|         controllerAs: 'vm',\nL112|         templateUrl: nodeScriptTestTemplate,\nL113|         parent: $(this.document.body),\nL114|         locals: {\nL115|             msg: msg,\nL116|             metadata: metadata,\nL117|             msgType: msgType,\nL118|             functionTitle: functionTitle,\nL119|             inputParams: inputParams,\nL120|             onShowingCallback: onShowingCallback\nL121|         },\nL122|         fullscreen: true,\nL123|         multiple: true,\nL124|         targetEvent: $event,\nL125|         onComplete: (...rest: any[]) => {\nL126|             onShowingCallback.onShowed();\nL127|         }\nL128|     }).then(\nL129|         (script?: any) => {\nL130|             deferred.resolve(script);\nL131|         },\nL132|         () => {\nL133|             deferred.reject();\nL134|         }\nL135|     );\nL136|     return deferred.promise;\nL137|   }\nL138| }\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

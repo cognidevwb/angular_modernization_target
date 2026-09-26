@@ -3,7 +3,7 @@ import { ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import widgetsBundleFieldsetTemplate from '../../../../app/widget/widgets-bundle-fieldset.tpl.html';
+import widgetsBundleFieldsetTemplate from '../../../../app/widget/widgets-bundle-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';

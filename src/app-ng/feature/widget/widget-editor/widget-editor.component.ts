@@ -16,6 +16,7 @@ import { TbExpandFullscreenDirective } from '../../components/tb-expand-fullscre
 import { TbCircularProgressDirective } from '../../components/tb-circular-progress/tb-circular-progress.directive';
 import $ from 'jquery';
 import ace from 'brace';
+// @ts-ignore
 import saveWidgetTypeAsTemplate from '../../../../app/widget/save-widget-type-as.tpl.html';
 import Split from 'split.js';
 import { MatButtonModule } from '@angular/material/button';
@@ -37,11 +38,11 @@ declare let $window: any;
 declare let hotkeys: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
-const js_beautify: any = beautify.js;
+const js_beautify: any = (window as any).beautify.js;
 
-const html_beautify: any = beautify.html;
+const html_beautify: any = (window as any).beautify.html;
 
-const css_beautify: any = beautify.css;
+const css_beautify: any = (window as any).beautify.css;
 
 /**
  * Ported from the AngularJS controller `WidgetEditorController` (module `thingsboard.widget-library`) in src/app/widget/index.js:40.

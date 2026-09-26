@@ -1,6 +1,7 @@
 import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+// @ts-expect-error - html template import not typed
 import alarmsTableWidgetTemplate from '../../../../app/widget/lib/alarms-table-widget.tpl.html';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
@@ -111,28 +112,29 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
         }
     });
 
-    $scope.$watch("vm.query.search", function(newVal?: any, prevVal?: any) {
-        if (!angular.equals(newVal, prevVal) && vm.query.search != null) {
+    effect(() => {
+        const newVal = vm.query.search;
+        if (!isEqual(newVal, vm.prevSearch) && vm.query.search != null) {
             updateAlarms();
         }
+        vm.prevSearch = newVal;
     });
 
-    $scope.$on('alarms-table-data-updated', function(event?: any, tableId?: any) {
+    this.alarmsTableDataUpdated$.subscribe((tableId?: any) => {
         if (vm.tableId == tableId) {
             if (vm.subscription) {
                 vm.allAlarms = vm.subscription.alarms || [];
                 updateAlarms(true);
-                $scope.$digest();
             }
         }
     });
 
-    $scope.$watch(function() { return $mdMedia('gt-xs'); }, function(isGtXs?: any) {
-        vm.isGtXs = isGtXs;
+    effect(() => {
+        vm.isGtXs = vm.isGtXsSignal();
     });
 
-    $scope.$watch(function() { return $mdMedia('gt-md'); }, function(isGtMd?: any) {
-        vm.isGtMd = isGtMd;
+    effect(() => {
+        vm.isGtMd = vm.isGtMdSignal();
         if (vm.isGtMd) {
             vm.limitOptions = [vm.defaultPageSize, vm.defaultPageSize*2, vm.defaultPageSize*3];
         } else {
@@ -140,7 +142,8 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
         }
     });
 
-    $scope.$watch('vm.selectedAlarms.length', function (newLength?: any) {
+    effect(() => {
+        var newLength: any = vm.selectedAlarms.length;
         var selectionMode: any = newLength ? true : false;
         if (vm.ctx) {
             if (selectionMode) {
@@ -227,7 +230,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
         }
 
         var origColor: any = vm.widgetConfig.color || 'rgba(0, 0, 0, 0.87)';
-        var defaultColor: any = tinycolor(origColor);
+        var defaultColor: any = (tinycolor as any)(origColor);
         var mdDark: any = defaultColor.setAlpha(0.87).toRgbString();
         var mdDarkSecondary: any = defaultColor.setAlpha(0.54).toRgbString();
         var mdDarkDisabled: any = defaultColor.setAlpha(0.26).toRgbString();
@@ -273,12 +276,12 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
             'color: ' + mdDarkSecondary + ';\n'+
             '}';
 
-        var cssParser: any = new cssjs();
+        var cssParser: any = new (cssjs as any)();
         cssParser.testMode = false;
         var namespace: any = 'ts-table-' + hashCode(cssString);
         cssParser.cssPreviewNamespace = namespace;
         cssParser.createStyleElement(namespace, cssString);
-        $element.addClass(namespace);
+        el.classList.add(namespace);
 
         function hashCode(str?: any) {
             var hash: any = 0;
@@ -382,7 +385,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
             $mdDialog.show({
                 controller: 'AlarmDetailsDialogController',
                 controllerAs: 'vm',
-                templateUrl: alarmDetailsDialogTemplate,
+                templateUrl: (alarmDetailsDialogTemplate as any),
                 locals: {
                     alarmId: alarm.id.id,
                     allowAcknowledgment: vm.allowAcknowledgment,
@@ -516,7 +519,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
         }
         var result: any = $filter('orderBy')(vm.allAlarms, vm.query.order);
         if (vm.query.search != null) {
-            result = $filter('filter')(result, {$: vm.query.search});
+        result = vm.filterPipe.transform(result, {$: vm.query.search});
         }
         vm.alarmsCount = result.length;
 
@@ -534,7 +537,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
                 while (i--) {
                     var selectedAlarm: any = vm.selectedAlarms[i];
                     if (selectedAlarm.id) {
-                        result = $filter('filter')(vm.alarms, {id: {id: selectedAlarm.id.id} });
+                        result = vm.filterPipe.transform(vm.alarms, {id: {id: selectedAlarm.id.id} });
                         if (result && result.length) {
                             newSelectedAlarms.push(result[0]);
                         }
@@ -597,7 +600,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
             var alarmField: any = types.alarmFields[key.name];
             if (alarmField) {
                 if (alarmField.time) {
-                    return $filter('date')(value, 'yyyy-MM-dd HH:mm:ss');
+                    return vm.datePipe.transform(value, 'yyyy-MM-dd HH:mm:ss');
                 } else if (alarmField.value == types.alarmFields.severity.value) {
                     return $translate.instant(types.alarmSeverity[value].name);
                 } else if (alarmField.value == types.alarmFields.status.value) {
@@ -660,7 +663,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
             attachTo: angular.element($document[0].body),
             controller: AlarmStatusFilterPanelController,
             controllerAs: 'vm',
-            templateUrl: alarmStatusFilterPanelTemplate,
+            templateUrl: (alarmStatusFilterPanelTemplate as any),
             panelClass: 'tb-alarm-status-filter-panel',
             position: position,
             fullscreen: false,
@@ -684,7 +687,7 @@ function AlarmsTableWidgetController(this: any, $element?: any, $scope?: any, $f
             attachTo: angular.element($document[0].body),
             controller: DisplayColumnsPanelController,
             controllerAs: 'vm',
-            templateUrl: displayColumnsPanelTemplate,
+            templateUrl: (displayColumnsPanelTemplate as any),
             panelClass: 'tb-display-columns-panel',
             position: position,
             fullscreen: false,

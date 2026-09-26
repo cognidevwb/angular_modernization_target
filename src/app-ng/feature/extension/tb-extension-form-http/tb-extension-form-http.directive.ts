@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { ParseToNullDirective } from '../parse-to-null/parse-to-null.directive';
 
 import $ from 'jquery';
-import extensionFormHttpTemplate from '../../../../app/extension/extensions-forms/extension-form-http.tpl.html';
+import extensionFormHttpTemplate from '../../../../app/extension/extensions-forms/extension-form-http.tpl.html?raw';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -27,7 +27,7 @@ declare let element: any;
 @Directive({
   selector: '[tb-extension-form-http]',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatSelectModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCardModule, MatButtonModule],
+  hostDirectives: [ParseToNullDirective],
 })
 export class TbExtensionFormHttpDirective {
   readonly config = model<any>();

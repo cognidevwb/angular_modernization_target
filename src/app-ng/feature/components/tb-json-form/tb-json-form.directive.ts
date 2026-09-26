@@ -6,8 +6,10 @@ import { MatDialog } from '@angular/material/dialog';
 import $ from 'jquery';
 import tinycolor from 'tinycolor2';
 import inspector from 'schema-inspector';
+// @ts-ignore
 import jsonFormTemplate from '../../../../app/components/json-form.tpl.html';
 import { utils } from 'react-schema-form';
+// @ts-ignore
 import materialIconsDialogTemplate from '../../../../app/components/material-icons-dialog.tpl.html';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
@@ -28,7 +30,7 @@ function selectOrSet(this: any, projection?: any, obj?: any, valueToSet?: any) {
         return false;
     }
 
-    var parts: any = angular.isString(projection) ? ObjectPath.parse(projection) : projection;
+declare let ObjectPath: any;
 
     if (parts.length === 1) {
         return setValue(obj, parts[0], valueToSet);

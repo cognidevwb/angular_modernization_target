@@ -8,6 +8,7 @@ import { helpLinks } from '../../help/constants/help-links';
 import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
+// @ts-ignore
 import activationLinkDialogTemplate from '../../../../app/user/activation-link.dialog.tpl.html';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $q: any;
@@ -55,14 +56,14 @@ export class AddUserComponent {
   constructor() {
     this.tenantId = this.route.snapshot.params['tenantId'];
     this.customerId = this.route.snapshot.params['customerId'];
-    this.usersType = this.router.$current.data.usersType;
+    this.usersType = (this.router as any).$current.data.usersType;
     this.helpLinks = this.helpLinksRef;
     this.add = this.add;
     this.cancel = this.cancel;
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   add = ($event?: any, ...rest: any[]): any => {
@@ -91,13 +92,13 @@ export class AddUserComponent {
                 (activationLink?: any) => {
                     this.displayActivationLink($event, activationLink).then(
                         () => {
-                            this.dialog.hide();
+                            (this.dialog as any).hide();
                         }
                     );
                 }
             );
         } else {
-            this.dialog.hide();
+            (this.dialog as any).hide();
         }
     });
   };
@@ -105,7 +106,7 @@ export class AddUserComponent {
   displayActivationLink($event?: any, activationLink?: any, ...rest: any[]): any {
     let vm = this;
     var deferred: any = $q.defer();
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'ActivationLinkDialogController',
         controllerAs: 'vm',
         templateUrl: activationLinkDialogTemplate,

@@ -1,0 +1,14 @@
+{
+  "content": "### G2277\n```ts\n// @ts-ignore\nimport dashboardStateDialogTemplate from '../../../../app/dashboard/states/dashboard-state-dialog.tpl.html';\n```\n\n### G2278\n```ts\n    (this.dialog as any).show({\n        controller: 'DashboardStateDialogController',\n        controllerAs: 'vm',\n        templateUrl: dashboardStateDialogTemplate,\n        parent: $(this.document.body),\n        locals: {isAdd: isAdd, allStates: this.allStates, state: structuredClone(state)},\n        multiple: true,\n        fullscreen: true,\n        targetEvent: $event\n    }).then((state?: any) => {\n        this.saveState(state, prevStateId);\n        this.updateStates();\n    });\n```\n\n### G2279\n```ts\n        var confirm: any = (this.dialog as any).confirm()\n```\n\n### G2280\n```ts\n        (this.dialog as any).show(confirm).then(() => {\n            var index: any = this.getStateIndex(state.id);\n            if (index > -1) {\n                this.allStates.splice(index, 1);\n            }\n            this.theForm.$setDirty();\n            this.updateStates();\n        });\n```\n\n### G2281\n```ts\n    (this.dialog as any).cancel();\n```\n\n### G2282\n```ts\n    (this.dialog as any).hide(savedStates);\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 3104,
+    "costMicros": 17030,
+    "inputTokens": 2,
+    "outputTokens": 461
+  }
+}

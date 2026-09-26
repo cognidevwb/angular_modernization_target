@@ -1,0 +1,14 @@
+{
+  "content": "### G2342\n```ts\nimport attributeDialogEditJsonTemplate from '../../../../app/entity/attribute/attribute-dialog-edit-json.tpl.html?raw';\n```\n\n### G2343\n```ts\n(this.dialog as any).cancel();\n```\n\n### G2344\n```ts\n(this.dialog as any).hide();\n```\n\n### G2345\n```ts\nreturn (this.dialog as any).show({\n    controller: AttributeDialogEditJsonController,\n    controllerAs: 'vm',\n    templateUrl: attributeDialogEditJsonTemplate,\n    locals: {\n        jsonValue: jsonValue,\n        readOnly: readOnly\n    },\n    targetEvent: $event,\n    fullscreen: true,\n    multiple: true,\n});\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2380,
+    "costMicros": 12124,
+    "inputTokens": 2,
+    "outputTokens": 260
+  }
+}

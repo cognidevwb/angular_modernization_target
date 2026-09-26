@@ -16,10 +16,15 @@ import { TbDashboardDetailsDirective } from '../tb-dashboard-details/tb-dashboar
 import { TbAuditLogTableDirective } from '../../audit/tb-audit-log-table/tb-audit-log-table.directive';
 
 import $ from 'jquery';
+// @ts-ignore
 import addDashboardTemplate from '../../../../app/dashboard/add-dashboard.tpl.html';
+// @ts-ignore
 import dashboardCard from '../../../../app/dashboard/dashboard-card.tpl.html';
+// @ts-ignore
 import addDashboardsToCustomerTemplate from '../../../../app/dashboard/add-dashboards-to-customer.tpl.html';
+// @ts-ignore
 import makeDashboardPublicDialogTemplate from '../../../../app/dashboard/make-dashboard-public-dialog.tpl.html';
+// @ts-ignore
 import manageAssignedCustomersTemplate from '../../../../app/dashboard/manage-assigned-customers.tpl.html';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -119,7 +124,7 @@ export class DashboardsComponent {
     if ((this.route.snapshot.params['topIndex'] !== undefined) && this.route.snapshot.params['topIndex'] > 0) {
         this.dashboardGridConfig.topIndex = this.route.snapshot.params['topIndex'];
     }
-    this.dashboardsScope = this.router.$current.data.dashboardsType;
+    this.dashboardsScope = (this.router as any).$current.data.dashboardsType;
     this.makePublic = this.makePublic;
     this.makePrivate = this.makePrivate;
     this.manageAssignedCustomers = this.manageAssignedCustomers;
@@ -462,7 +467,7 @@ export class DashboardsComponent {
     if ($event) {
         $event.stopPropagation();
     }
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'ManageAssignedCustomersController',
         controllerAs: 'vm',
         templateUrl: manageAssignedCustomersTemplate,
@@ -496,7 +501,7 @@ export class DashboardsComponent {
             if (dashboards.hasNext) {
                 dashboards.nextPageLink.limit = pageSize;
             }
-            this.dialog.show({
+            (this.dialog as any).show({
                 controller: 'AddDashboardsToCustomerController',
                 controllerAs: 'vm',
                 templateUrl: addDashboardsToCustomerTemplate,
@@ -520,14 +525,14 @@ export class DashboardsComponent {
     var title: any = this.translate.instant('dashboard.unassign-dashboard-title', {dashboardTitle: dashboard.title});
     var content: any = this.translate.instant('dashboard.unassign-dashboard-text');
     var label: any = this.translate.instant('dashboard.unassign-dashboard');
-    var confirm: any = this.dialog.confirm()
+    var confirm: any = (this.dialog as any).confirm()
         .targetEvent($event)
         .title(title)
         .htmlContent(content)
         .ariaLabel(label)
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         this.dashboardService.unassignDashboardFromCustomer(customerId, dashboard.id.id).then(() => {
             this.grid.refreshList();
         });
@@ -540,7 +545,7 @@ export class DashboardsComponent {
         $event.stopPropagation();
     }
     this.dashboardService.makeDashboardPublic(dashboard.id.id).then((dashboard?: any) => {
-        this.dialog.show({
+        (this.dialog as any).show({
             controller: 'MakeDashboardPublicDialogController',
             controllerAs: 'vm',
             templateUrl: makeDashboardPublicDialogTemplate,
@@ -561,14 +566,14 @@ export class DashboardsComponent {
     var title: any = this.translate.instant('dashboard.make-private-dashboard-title', {dashboardTitle: dashboard.title});
     var content: any = this.translate.instant('dashboard.make-private-dashboard-text');
     var label: any = this.translate.instant('dashboard.make-private-dashboard');
-    var confirm: any = this.dialog.confirm()
+    var confirm: any = (this.dialog as any).confirm()
         .targetEvent($event)
         .title(title)
         .htmlContent(content)
         .ariaLabel(label)
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         this.dashboardService.makeDashboardPrivate(dashboard.id.id).then(() => {
             this.grid.refreshList();
         });
@@ -581,14 +586,14 @@ export class DashboardsComponent {
   };
 
   unassignDashboardsFromCustomer($event?: any, items?: any, customerId?: any, ...rest: any[]): any {
-    var confirm: any = this.dialog.confirm()
+    var confirm: any = (this.dialog as any).confirm()
         .targetEvent($event)
         .title(this.translate.instant('dashboard.unassign-dashboards-title', {count: items.selectedCount}, 'messageformat'))
         .htmlContent(this.translate.instant('dashboard.unassign-dashboards-text'))
         .ariaLabel(this.translate.instant('dashboard.unassign-dashboards'))
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         var tasks: any = [];
         for (var id in items.selections) {
             tasks.push(this.dashboardService.unassignDashboardFromCustomer(customerId, id));
@@ -604,12 +609,12 @@ export class DashboardsComponent {
         $event.stopPropagation();
     }
     if (this.dashboardsScope === 'customer') {
-        this.router.go('home.customers.dashboards.dashboard', {
+        (this.router as any).go('home.customers.dashboards.dashboard', {
             customerId: this.customerId,
             dashboardId: dashboard.id.id
         });
     } else {
-        this.router.go('home.dashboards.dashboard', {dashboardId: dashboard.id.id});
+        (this.router as any).go('home.dashboards.dashboard', {dashboardId: dashboard.id.id});
     }
   };
 }

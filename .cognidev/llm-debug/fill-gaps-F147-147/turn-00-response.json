@@ -1,0 +1,14 @@
+{
+  "content": "### G2409\n```ts\nimport extensionFormModbusTemplate from '../../../../app/extension/extensions-forms/extension-form-modbus.tpl.html?raw';\n```\n\n### G2410\n```ts\n})\n@Component({\n  selector: '[tb-extension-form-modbus]',\n  standalone: true,\n  imports: [TranslatePipe, MatTooltipModule, MatSelectModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatCardModule, MatButtonModule],\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1804,
+    "costMicros": 9100,
+    "inputTokens": 2,
+    "outputTokens": 188
+  }
+}

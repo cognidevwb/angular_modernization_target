@@ -1,0 +1,14 @@
+{
+  "content": "### G2559\n```ts\nimport addTenantTemplate from '../../../../app/tenant/add-tenant.tpl.html?raw';\n```\n\n### G2560\n```ts\nimport tenantCard from '../../../../app/tenant/tenant-card.tpl.html?raw';\n```\n\n### G2561\n```ts\n    (this.router as any).go('home.tenants.users', {tenantId: tenant.id.id});\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1852,
+    "costMicros": 8792,
+    "inputTokens": 2,
+    "outputTokens": 138
+  }
+}

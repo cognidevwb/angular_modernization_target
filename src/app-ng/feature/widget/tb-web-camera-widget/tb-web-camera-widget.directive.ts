@@ -1,5 +1,5 @@
 import { Component, model } from '@angular/core';
-import webCameraWidgetTemplate from '../../../../app/widget/lib/web-camera-input-widget.tpl.html';
+import webCameraWidgetTemplate from '../../../../app/widget/lib/web-camera-input-widget.tpl.html?raw';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';

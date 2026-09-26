@@ -31,8 +31,8 @@ export class CustomerService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-    this.http.get(url, config).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    this.http.get(url, config).toPromise().then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -42,10 +42,10 @@ export class CustomerService {
   getCustomer(customerId?: any, config?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/' + customerId;
-    this.http.get(url, config).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    this.http.get(url, config).toPromise().then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response);
     });
     return deferred.promise;
   }
@@ -53,10 +53,10 @@ export class CustomerService {
   getShortCustomerInfo(customerId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/' + customerId + '/shortInfo';
-    this.http.get(url, null).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    this.http.get(url, null).toPromise().then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response);
     });
     return deferred.promise;
   }
@@ -136,10 +136,10 @@ export class CustomerService {
   saveCustomer(customer?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/customer';
-    this.http.post(url, customer).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    this.http.post(url, customer).toPromise().then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response);
     });
     return deferred.promise;
   }
@@ -147,10 +147,10 @@ export class CustomerService {
   deleteCustomer(customerId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/' + customerId;
-    this.http.delete(url).then(function success() {
+    this.http.delete(url).toPromise().then(function success() {
         deferred.resolve();
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response);
     });
     return deferred.promise;
   }

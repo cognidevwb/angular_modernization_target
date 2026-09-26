@@ -1,0 +1,14 @@
+{
+  "content": "### G1600,G1601,G1603,G1602\n```ts\n  constructor(private renderer: Renderer2) {\n    this.renderer.setProperty(this.element.nativeElement, '@.disabled', true);\n    effect(() => {\n      this.renderer.setProperty(this.element.nativeElement, '@.disabled', true);\n    });\n  }\n}\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1696,
+    "costMicros": 8008,
+    "inputTokens": 2,
+    "outputTokens": 122
+  }
+}

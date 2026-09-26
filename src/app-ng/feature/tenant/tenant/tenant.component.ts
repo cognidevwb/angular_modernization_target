@@ -12,8 +12,8 @@ import { TbAttributeTableDirective } from '../../entity/tb-attribute-table/tb-at
 import { TbAlarmTableDirective } from '../../alarm/tb-alarm-table/tb-alarm-table.directive';
 import { TbEventTableDirective } from '../../event/tb-event-table/tb-event-table.directive';
 import { TbRelationTableDirective } from '../../entity/tb-relation-table/tb-relation-table.directive';
-import addTenantTemplate from '../../../../app/tenant/add-tenant.tpl.html';
-import tenantCard from '../../../../app/tenant/tenant-card.tpl.html';
+import addTenantTemplate from '../../../../app/tenant/add-tenant.tpl.html?raw';
+import tenantCard from '../../../../app/tenant/tenant-card.tpl.html?raw';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -144,6 +144,6 @@ export class TenantComponent {
     if ($event) {
         $event.stopPropagation();
     }
-    this.router.go('home.tenants.users', {tenantId: tenant.id.id});
+    (this.router as any).go('home.tenants.users', {tenantId: tenant.id.id});
   };
 }

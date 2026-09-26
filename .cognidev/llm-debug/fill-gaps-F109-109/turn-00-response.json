@@ -1,0 +1,14 @@
+{
+  "content": "### G2287\n```ts\nimport defaultStateControllerTemplate from '../../../../app/dashboard/states/default-state-controller.tpl.html?raw';\n```\n\n### G2288\n```ts\nimport entityStateControllerTemplate from '../../../../app/dashboard/states/entity-state-controller.tpl.html?raw';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1428,
+    "costMicros": 6846,
+    "inputTokens": 2,
+    "outputTokens": 113
+  }
+}

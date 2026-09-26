@@ -6,7 +6,7 @@ import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import entityTypeListTemplate from '../../../../app/entity/entity-type-list.tpl.html';
+import entityTypeListTemplate from '../../../../app/entity/entity-type-list.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $filter: any;

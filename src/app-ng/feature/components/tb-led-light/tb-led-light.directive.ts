@@ -93,7 +93,7 @@ export class TbLedLightDirective {
 
     var template: any = '<div id="canvas_container" style="width: ' + this.size() + 'px; height: ' + this.size() + 'px;"></div>';
     $(this.element.nativeElement).html(template);
-    $compile($(this.element.nativeElement).contents())(this);
+    this.element.nativeElement.querySelector('#canvas_container');
     this.paper = new Raphael($('#canvas_container', $(this.element.nativeElement))[0], this.canvasSize, this.canvasSize);
     var center: any = this.canvasSize / 2;
     this.circleElement = this.paper.circle(center, center, this.radius);

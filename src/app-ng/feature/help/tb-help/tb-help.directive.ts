@@ -43,9 +43,9 @@ export class TbHelpDirective {
             var helpContainer: any = $('#' + this.attrs.helpContainerId, $(this.element.nativeElement))[0];
             helpContainer = $(helpContainer);
             helpContainer.append(this.helpButton);
-            $compile(helpContainer.contents())(this);
+            (this.element.nativeElement as HTMLElement).appendChild(helpContainer[0]);
         } else {
-            $compile(this.helpButton)(this);
+            (this.element.nativeElement as HTMLElement).appendChild(this.helpButton[0]);
             $(this.element.nativeElement).append(this.helpButton);
         }
   }
@@ -60,7 +60,7 @@ export class TbHelpDirective {
         helpUrl = this.helpLinkId();
     }
     if (helpUrl) {
-        $window.open(helpUrl, '_blank');
+        window.open(helpUrl, '_blank');
     }
   }
 

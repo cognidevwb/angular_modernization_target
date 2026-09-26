@@ -17,9 +17,9 @@ import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
 import { bindMethods } from '../../../legacy-injector';
-import importDialogTemplate from '../../../../app/import-export/import-dialog.tpl.html';
-import importDialogCSVTemplate from '../../../../app/import-export/import-dialog-csv.tpl.html';
-import entityAliasesTemplate from '../../../../app/entity/alias/entity-aliases.tpl.html';
+import importDialogTemplate from '../../../../app/import-export/import-dialog.tpl.html?raw';
+import importDialogCSVTemplate from '../../../../app/import-export/import-dialog-csv.tpl.html?raw';
+import entityAliasesTemplate from '../../../../app/entity/alias/entity-aliases.tpl.html?raw';
 import * as JSZip from 'jszip';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let angular: any;
@@ -629,11 +629,12 @@ export class ImportExportService {
         var deferred: any = $q.defer();
         var url: any = '/api/plugins/telemetry/DEVICE/' + extensionId;
         this.http.get(url, null)
-            .then(function success(response?: any) {
-                deferred.resolve(response.data);
-            }, function fail() {
-                deferred.reject();
-            });
+    this.http.get(url, null)
+        .toPromise().then(function success(response?: any) {
+            deferred.resolve(response.data);
+        }, function fail() {
+            deferred.reject();
+        });
         return deferred.promise;
     }
 
@@ -738,7 +739,7 @@ export class ImportExportService {
   editMissingAliases($event?: any, widgets?: any, isSingleWidget?: any, customTitle?: any, missingEntityAliases?: any, ...rest: any[]): any {
     let vm = this;
     var deferred: any = $q.defer();
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'EntityAliasesController',
         controllerAs: 'vm',
         templateUrl: entityAliasesTemplate,
@@ -909,7 +910,7 @@ export class ImportExportService {
     }
 
     if (angular.isObject(data)) {
-        data = JSON.stringify(data, 2);
+        data = JSON.stringify(data, null, 2);
     }
 
     var blob: any = new Blob([data], {type: 'text/json'});
@@ -934,7 +935,7 @@ export class ImportExportService {
   openImportDialog($event?: any, importTitle?: any, importFileLabel?: any, ...rest: any[]): any {
     let vm = this;
     var deferred: any = $q.defer();
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'ImportDialogController',
         controllerAs: 'vm',
         templateUrl: importDialogTemplate,
@@ -957,7 +958,7 @@ export class ImportExportService {
   openImportDialogCSV($event?: any, entityType?: any, importTitle?: any, importFileLabel?: any, ...rest: any[]): any {
     let vm = this;
     var deferred: any = $q.defer();
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'ImportDialogCSVController',
         controllerAs: 'vm',
         templateUrl: importDialogCSVTemplate,
@@ -985,7 +986,7 @@ export class ImportExportService {
   };
 
   exportJSZip(data?: any, filename?: any, ...rest: any[]): any {
-    let jsZip: any = new JSZip();
+    let jsZip: any = new (JSZip as any)();
     for (let keyName in data) {
         let valueData: any = data[keyName];
         jsZip.file(keyName, valueData);

@@ -1,0 +1,14 @@
+{
+  "content": "### G1168\n```ts\n              $scope.$apply(function () {\n                this.chipDraggableChange$Source.next({\n                  collection: $scope.$parent.$mdChipsCtrl.items,\n                  item: $scope.$parent.$mdChipsCtrl.items[droppedItemIndex],\n                  from: droppedItemIndex,\n                  to: newIndex,\n                });\n              });\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1297,
+    "costMicros": 6542,
+    "inputTokens": 2,
+    "outputTokens": 135
+  }
+}

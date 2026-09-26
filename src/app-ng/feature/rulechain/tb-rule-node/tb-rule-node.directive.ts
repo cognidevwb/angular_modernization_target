@@ -7,7 +7,7 @@ import { TbRuleNodeConfigDirective } from '../tb-rule-node-config/tb-rule-node-c
 import { TbEntityAutocompleteDirective } from '../../entity/tb-entity-autocomplete/tb-entity-autocomplete.directive';
 
 import $ from 'jquery';
-import ruleNodeFieldsetTemplate from '../../../../app/rulechain/rulenode-fieldset.tpl.html';
+import ruleNodeFieldsetTemplate from '!!raw-loader!../../../../app/rulechain/rulenode-fieldset.tpl.html';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';

@@ -7,7 +7,7 @@ import { TbEntityTypeSelectDirective } from '../tb-entity-type-select/tb-entity-
 import { TbEntityAutocompleteDirective } from '../tb-entity-autocomplete/tb-entity-autocomplete.directive';
 
 import $ from 'jquery';
-import entitySelectTemplate from '../../../../app/entity/entity-select.tpl.html';
+import entitySelectTemplate from '../../../../app/entity/entity-select.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;

@@ -47,7 +47,7 @@ export class $mdColorPickerService {
     options.mdColorHistory = options.mdColorHistory === undefined ? true : options.mdColorHistory;
 
 
-    this.dialog = this.dialogRef.show({
+    this.dialog = (this.dialogRef as any).show({
         templateUrl: 'mdColorPickerDialog.tpl.html',
         hasBackdrop: options.hasBackdrop,
         clickOutsideToClose: options.clickOutsideToClose,
@@ -56,11 +56,11 @@ export class $mdColorPickerService {
             //console.log( "DIALOG CONTROLLER OPEN", Date.now() - dateClick );
             $scope.close = () =>
             {
-                this.dialogRef.cancel();
+                (this.dialogRef as any).cancel();
             };
             $scope.ok = () =>
             {
-                this.dialogRef.hide( $scope.value );
+                (this.dialogRef as any).hide( $scope.value );
             };
             $scope.hide = $scope.ok;
 

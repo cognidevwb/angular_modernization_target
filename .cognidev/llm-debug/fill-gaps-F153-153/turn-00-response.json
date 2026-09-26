@@ -1,0 +1,14 @@
+{
+  "content": "### G2482\n```ts\n    $scope.$watch(() => { return this.breakpoints.isMatched('lg'); }, () => {\n        this.updateColumnCount();\n    });\n```\n\n### G2483\n```ts\n    $scope.$watch(() => { return this.breakpoints.isMatched('gt-lg'); }, () => {\n        this.updateColumnCount();\n    });\n```\n\n### G2484\n```ts\n    if (this.breakpoints.isMatched('lg')) {\n        this.cols = 3;\n    }\n```\n\n### G2485\n```ts\n    if (this.breakpoints.isMatched('gt-lg')) {\n        this.cols = 4;\n    }\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1812,
+    "costMicros": 11562,
+    "inputTokens": 2,
+    "outputTokens": 431
+  }
+}

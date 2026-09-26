@@ -1,0 +1,14 @@
+{
+  "content": "### G2184\n```ts\n// @ts-ignore\nimport materialIconSelectTemplate from '../../../../app/components/material-icon-select.tpl.html';\n```\n\n### G2185\n```ts\n// @ts-ignore\nimport materialIconsDialogTemplate from '../../../../app/components/material-icons-dialog.tpl.html';\n```\n\n### G484,G485,G685,G686\n```ts\n  protected template: any = materialIconSelectTemplate;\n```\n\n### G1585,G1818,G1580,G1823,G1586,G1587,G1819,G1820,G1582,G1821,G1579,G1583,G1816,G1822,G1584,G1817\n```ts\n    // TODO(port): 'ngModelCtrl.$render' — Jev: ControlValueAccessor.writeValue\n    // TODO(port): 'ngModelCtrl.$viewValue' — Jev: the control's value\n    if (!this.icon || !this.icon.length) {\n        this.icon = 'more_horiz';\n    }\n    effect(() => {\n        this.updateView();\n    });\n    // TODO(port): '$compile.call' — Jev: createEmbeddedView\n  }\n\n  updateView(...rest: any[]): any {\n    // TODO(port): 'ngModelCtrl.$setViewValue' — Jev: ControlValueAccessor onChange\n  }\n```\n\n### G2186,G1581,G1824\n```ts\n    (this.dialog as any).show({\n        controller: 'MaterialIconsDialogController',\n        controllerAs: 'vm',\n        templateUrl: materialIconsDialogTemplate,\n        // TODO(port): 'parent' — Jev: inject(ParentClass) (host or ancestor)\n        locals: {icon: this.icon},\n        multiple: true,\n        fullscreen: true,\n        targetEvent: $event\n    }).then((icon?: any) => {\n        this.icon = icon;\n    });\n  }\n}\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 6081,
+    "costMicros": 82148,
+    "inputTokens": 2,
+    "outputTokens": 5782
+  }
+}

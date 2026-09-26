@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import extensionFormOpcTemplate from '../../../../app/extension/extensions-forms/extension-form-opc.tpl.html';
+import extensionFormOpcTemplate from '../../../../app/extension/extensions-forms/extension-form-opc.tpl.html?raw';
 import { LegacyInitDirective } from '../../../legacy-init.directive';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';

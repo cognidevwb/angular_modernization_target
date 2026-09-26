@@ -1,7 +1,7 @@
 import { Component, forwardRef, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TbDashboardDirective } from '../../components/tb-dashboard/tb-dashboard.directive';
-import dashboardLayoutTemplate from '../../../../app/dashboard/layouts/dashboard-layout.tpl.html';
+import dashboardLayoutTemplate from '../../../../app/dashboard/layouts/dashboard-layout.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -143,7 +143,7 @@ function DashboardLayoutController(this: any, $scope?: any, $rootScope?: any, $t
 
     function isHotKeyAllowed(event?: any) {
         var target: any = event.target || event.srcElement;
-        var scope: any = angular.element(target).scope();
+        var scope: any = (window as any).angular.element(target).scope();
         return scope && scope.$parent !== $rootScope;
     }
 

@@ -3,6 +3,7 @@ import { RootState } from '../../../root-state';
 import { TranslateService } from '@ngx-translate/core';
 import { types } from '../constants/types';
 import { bindMethods } from '../../../legacy-injector';
+// @ts-ignore
 import materialIconsCodepoints from 'raw-loader!material-design-icons/iconfont/codepoints';
 import tinycolor from 'tinycolor2';
 import jsonSchemaDefaults from 'json-schema-defaults';
@@ -74,22 +75,22 @@ export class UtilsService {
     for (var func in this.predefinedFunctions) {
         this.predefinedFunctionsList.push(func);
     }
-    angular.forEach($mdColorPalette, (value?: any, key?: any) => {
-        angular.forEach(value, (color?: any, label?: any) => {
+    for (const [key, value] of Object.entries(mdColorPalette)) {
+        for (const [label, color] of Object.entries(value as any)) {
             if (this.colorSpectrum.indexOf(label) > -1) {
-                var rgb: any = 'rgb(' + color.value[0] + ',' + color.value[1] + ',' + color.value[2] + ')';
-                color = tinycolor(rgb);
-                var isDark: any = color.isDark();
+                var rgb: any = 'rgb(' + (color as any).value[0] + ',' + (color as any).value[1] + ',' + (color as any).value[2] + ')';
+                var colorObj: any = tinycolor(rgb);
+                var isDark: any = colorObj.isDark();
                 var colorItem: any = {
-                    value: color.toHexString(),
+                    value: colorObj.toHexString(),
                     group: key,
                     label: label,
                     isDark: isDark
                 };
                 this.materialColors.push(colorItem);
             }
-        });
-    });
+        }
+    }
     this.materialColors.sort((colorItem1?: any, colorItem2?: any) => {
         var spectrumIndex1: any = this.colorSpectrum.indexOf(colorItem1.label);
         var spectrumIndex2: any = this.colorSpectrum.indexOf(colorItem2.label);
@@ -219,10 +220,10 @@ export class UtilsService {
   }
 
   processWidgetException(exception?: any, ...rest: any[]): any {
-    var parentScope: any = $window.parent.angular.element($window.frameElement).scope();
+    var parentScope: any = window.parent.angular.element(window.frameElement).scope();
     var data: any = this.parseException(exception, -5);
     if (this.rootScope.widgetEditMode) {
-        parentScope.$emit('widgetException', data);
+        this.widgetException.emit(data);
         parentScope.$apply();
     }
     return data;
@@ -249,7 +250,7 @@ export class UtilsService {
     for (var propName in obj) {
         if (obj[propName] === null || (obj[propName] === undefined)) {
             delete obj[propName];
-        } else if (angular.isObject(obj[propName])) {
+        } else if (obj[propName] !== null && typeof obj[propName] === 'object') {
             this.deleteNullProperties(obj[propName]);
         } else if (Array.isArray(obj[propName])) {
             for (var i: any=0;i<obj[propName].length;i++) {
@@ -365,7 +366,7 @@ export class UtilsService {
   }
 
   cleanCopy(object?: any, ...rest: any[]): any {
-    var copy: any = structuredClone(object);
+    var copy: any = angular.copy(object);
     for (var prop in copy) {
         if (prop && prop.startsWith('$$')) {
             delete copy[prop];

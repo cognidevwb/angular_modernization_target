@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { TbDashboardAutocompleteDirective } from '../../components/tb-dashboard-autocomplete/tb-dashboard-autocomplete.directive';
 
 import $ from 'jquery';
-import userFieldsetTemplate from '../../../../app/user/user-fieldset.tpl.html';
+import userFieldsetTemplate from '../../../../app/user/user-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';

@@ -1,0 +1,14 @@
+{
+  "content": "### G1682,G1862\n```ts\n    this.locals = this.attrs.locals;\n```\n\n### G1683,G1863\n```ts\n    this.gridsterItemInitialized$.subscribe((item?: any) => {\n                this.gridsterItem = item;\n                if (this.widgetController) {\n                    this.widgetController.gridsterItemInitialized(this.gridsterItem);\n                }\n            });\n```\n\n### G603,G604,G709,G710\n```ts\n    Object.assign(this.locals, {$element: $(this.element.nativeElement), widgetInfo: widgetInfo, widgetType: widgetType});\n```\n\n### G1680,G1684,G1860,G1864\n```ts\n    this.widgetController = this;\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 3475,
+    "costMicros": 16324,
+    "inputTokens": 2,
+    "outputTokens": 242
+  }
+}

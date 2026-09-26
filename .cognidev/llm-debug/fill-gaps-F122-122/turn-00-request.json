@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 660,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/entity-view/tb-entity-view/tb-entity-view.directive.ts\n\n1 item(s) to handle in this file.\n\n### G2341\nLines to replace: L16–L16\nKind: fix\nTask: Make line 16 of `src/app-ng/feature/entity-view/tb-entity-view/tb-entity-view.directive.ts` type-check without changing what it does.\nBefore: Cannot find module '../../../../app/entity-view/entity-view-fieldset.tpl.html' or its corresponding type declarations.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n\nThe file's lines:\nL10| import { CommonModule } from '@angular/common';\nL11| import { FormsModule } from '@angular/forms';\nL12| import { TbEntitySubtypeAutocompleteDirective } from '../../entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive';\nL13| import { TbEntitySelectDirective } from '../../entity/tb-entity-select/tb-entity-select.directive';\nL14| \nL15| import $ from 'jquery';\nL16| import entityViewFieldsetTemplate from '../../../../app/entity-view/entity-view-fieldset.tpl.html';\nL17| import { inject as injectRoot } from '@angular/core';\nL18| import { RootState } from '../../../root-state';\nL19| import { MatButtonModule } from '@angular/material/button';\nL20| import { MatFormFieldModule } from '@angular/material/form-field';\nL21| import { MatIconModule } from '@angular/material/icon';\nL22| import { MatInputModule } from '@angular/material/input';\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

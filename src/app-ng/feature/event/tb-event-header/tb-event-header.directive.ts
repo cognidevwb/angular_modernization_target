@@ -4,10 +4,10 @@ import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
-import eventHeaderLcEventTemplate from '../../../../app/event/event-header-lc-event.tpl.html';
-import eventHeaderStatsTemplate from '../../../../app/event/event-header-stats.tpl.html';
-import eventHeaderErrorTemplate from '../../../../app/event/event-header-error.tpl.html';
-import eventHeaderDebugRuleNodeTemplate from '../../../../app/event/event-header-debug-rulenode.tpl.html';
+import eventHeaderLcEventTemplate from '../../../../app/event/event-header-lc-event.tpl.html?raw';
+import eventHeaderStatsTemplate from '../../../../app/event/event-header-stats.tpl.html?raw';
+import eventHeaderErrorTemplate from '../../../../app/event/event-header-error.tpl.html?raw';
+import eventHeaderDebugRuleNodeTemplate from '../../../../app/event/event-header-debug-rulenode.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;

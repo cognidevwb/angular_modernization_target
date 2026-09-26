@@ -1,0 +1,14 @@
+{
+  "content": "### G2545\n```ts\nimport ruleNodeConfigTemplate from '!raw-loader!../../../../app/rulechain/rulenode-config.tpl.html';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1311,
+    "costMicros": 5848,
+    "inputTokens": 2,
+    "outputTokens": 60
+  }
+}

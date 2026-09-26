@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
+// @ts-ignore
 import dashboardStateDialogTemplate from '../../../../app/dashboard/states/dashboard-state-dialog.tpl.html';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
@@ -129,7 +130,7 @@ export class ManageDashboardStatesComponent {
     if (!isAdd) {
         prevStateId = state.id;
     }
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'DashboardStateDialogController',
         controllerAs: 'vm',
         templateUrl: dashboardStateDialogTemplate,
@@ -179,7 +180,7 @@ export class ManageDashboardStatesComponent {
     if (state) {
         var title: any = this.translate.instant('dashboard.delete-state-title');
         var content: any = this.translate.instant('dashboard.delete-state-text', {stateName: state.name});
-        var confirm: any = this.dialog.confirm()
+        var confirm: any = (this.dialog as any).confirm()
             .targetEvent($event)
             .title(title)
             .htmlContent(content)
@@ -190,7 +191,7 @@ export class ManageDashboardStatesComponent {
         confirm._options.multiple = true;
         confirm._options.fullscreen = true;
 
-        this.dialog.show(confirm).then(() => {
+        (this.dialog as any).show(confirm).then(() => {
             var index: any = this.getStateIndex(state.id);
             if (index > -1) {
                 this.allStates.splice(index, 1);
@@ -202,7 +203,7 @@ export class ManageDashboardStatesComponent {
   };
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   save = (...rest: any[]): any => {
@@ -214,6 +215,6 @@ export class ManageDashboardStatesComponent {
         delete state.id;
         savedStates[id] = state;
     }
-    this.dialog.hide(savedStates);
+    (this.dialog as any).hide(savedStates);
   };
 }

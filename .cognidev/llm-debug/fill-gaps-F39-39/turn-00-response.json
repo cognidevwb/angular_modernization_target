@@ -1,0 +1,14 @@
+{
+  "content": "### G1875\n```ts\n  $get($window?: any, $timeout?: any, ...rest: any[]): any {\n    var requestAnimationFrame: any = $window.requestAnimationFrame ||\n        $window.webkitRequestAnimationFrame;\n\n    var cancelAnimationFrame: any = $window.cancelAnimationFrame ||\n        $window.webkitCancelAnimationFrame ||\n        $window.webkitCancelRequestAnimationFrame;\n\n    var rafSupported: any = !!requestAnimationFrame;\n    var raf: any = rafSupported\n        ? function(fn?: any) {\n        var id: any = requestAnimationFrame(fn);\n        return function() {\n            cancelAnimationFrame(id);\n        };\n    }\n        : function(fn?: any) {\n        var timer: any = setTimeout(fn, 16.66);\n        return function() {\n            clearTimeout(timer);\n        };\n    };\n\n    raf.supported = rafSupported;\n\n    return raf;\n  }\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1771,
+    "costMicros": 13028,
+    "inputTokens": 2,
+    "outputTokens": 594
+  }
+}

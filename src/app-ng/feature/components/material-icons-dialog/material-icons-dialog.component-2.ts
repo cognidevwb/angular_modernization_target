@@ -70,11 +70,11 @@ export class MaterialIconsDialogComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   selectIcon = ($event?: any, icon?: any, ...rest: any[]): any => {
     this.selectedIcon = icon;
-    this.dialog.hide(this.selectedIcon);
+    (this.dialog as any).hide(this.selectedIcon);
   };
 }

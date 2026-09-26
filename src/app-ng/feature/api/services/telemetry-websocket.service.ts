@@ -47,7 +47,7 @@ export class TelemetryWebsocketService {
         };
   private telemetryUri: any;
   private dataStream: any;
-  private location: any = $window.location;
+  private location: any = window.location;
   private socketCloseTimer: any;
   private reconnectTimer: any;
   private port: any;
@@ -70,12 +70,12 @@ export class TelemetryWebsocketService {
     }
     this.telemetryUri += "//" + this.location.hostname + ":" + this.port;
     this.telemetryUri += "/api/ws/plugins/telemetry";
-    this.rootScope.telemetryWsLogoutHandle = this.rootScope.$on('unauthenticated', (event?: any, doLogout?: any) => {
+    this.telemetryWsLogoutSub = this.userService.unauthenticated$.subscribe((doLogout?: any) => {
         if (doLogout) {
             this.reset(true);
         }
     });
-    this.rootScope.telemetryWsLoginHandle = this.rootScope.$on('authenticated', () => {
+    this.telemetryWsLoginSub = this.userService.authenticated$.subscribe(() => {
         this.reset(true);
     });
   }
@@ -203,9 +203,9 @@ export class TelemetryWebsocketService {
     } else {
         message += "error code - " + errorCode + ".";
     }
-    $mdUtil.nextTick(() => {
+    setTimeout(() => {
         this.toast.showError(message);
-    });
+    }, 0);
   }
 
   fetchKeys(subscriptionId?: any, ...rest: any[]): any {
@@ -319,7 +319,7 @@ export class TelemetryWebsocketService {
                     this.openSocket(this.userService.getJwtToken());
                 }, () => {
                     this.isOpening = false;
-                    this.rootScope.$broadcast('unauthenticated');
+                    this.userService.unauthenticated$.next();
                 });
             }
         }
@@ -331,7 +331,7 @@ export class TelemetryWebsocketService {
   };
 
   openSocket(token?: any, ...rest: any[]): any {
-    this.dataStream = $websocket(this.telemetryUri + '?token=' + token);
+    this.dataStream = new WebSocket(this.telemetryUri + '?token=' + token) as any;
     this.dataStream.onError(this.onError);
     this.dataStream.onOpen(this.onOpen);
     this.dataStream.onClose(this.onClose);

@@ -7,6 +7,7 @@ import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
 import fixAceEditor from '../../../../app/components/ace-editor-fix';
+// @ts-ignore
 import widgetConfigTemplate from '../../../../app/components/widget/widget-config.tpl.html';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
@@ -220,11 +221,9 @@ export class TbWidgetConfigDirective {
                 }
             }
         };
-    this.$watch('title + showTitleIcon + titleIcon + iconColor + iconSize + titleTooltip + showTitle + dropShadow + enableFullscreen + backgroundColor + ' +
-            'color + padding + margin + widgetStyle + titleStyle + mobileOrder + mobileHeight + units + decimals + useDashboardTimewindow + ' +
-            'displayTimewindow + alarmSearchStatus + alarmsPollingInterval + alarmsMaxCountLoad + alarmsFetchSize + showLegend', () => {
-            if (ngModelCtrl.$viewValue) {
-                var value: any = ngModelCtrl.$viewValue;
+    effect(() => {
+            if (this.modelValue) {
+                var value: any = this.modelValue;
                 if (value.config) {
                     var config: any = value.config;
                     config.title = this.title;
@@ -265,19 +264,19 @@ export class TbWidgetConfigDirective {
                     layout.mobileOrder = (typeof this.mobileOrder === 'number') ? this.mobileOrder : undefined;
                     layout.mobileHeight = this.mobileHeight;
                 }
-                ngModelCtrl.$setViewValue(value);
+                this.onChange(value);
                 this.updateValidity();
             }
         });
-    this.$watch('currentSettings', () => {
-            if (ngModelCtrl.$viewValue) {
-                var value: any = ngModelCtrl.$viewValue;
+    effect(() => {
+            if (this.modelValue) {
+                var value: any = this.modelValue;
                 if (value.config) {
                     value.config.settings = this.currentSettings;
-                    ngModelCtrl.$setViewValue(value);
+                    this.onChange(value);
                 }
             }
-        }, true);
+        });
     this.$watch('timewindow', () => {
             if (ngModelCtrl.$viewValue) {
                 var value: any = ngModelCtrl.$viewValue;
@@ -317,29 +316,29 @@ export class TbWidgetConfigDirective {
                 this.updateValidity();
             }
         }, true);
-    this.$watch('targetDeviceAlias.value', () => {
-            if (ngModelCtrl.$viewValue && ngModelCtrl.$viewValue.config && this.widgetType() === this.typesRef.widgetType.rpc.value && this.isDataEnabled()) {
-                var value: any = ngModelCtrl.$viewValue;
+    effect(() => {
+            if (this.modelValue && this.modelValue.config && this.widgetType() === this.typesRef.widgetType.rpc.value && this.isDataEnabled()) {
+                var value: any = this.modelValue;
                 var config: any = value.config;
                 if (this.targetDeviceAlias.value) {
                     config.targetDeviceAliasIds = [this.targetDeviceAlias.value.id];
                 } else {
                     config.targetDeviceAliasIds = [];
                 }
-                ngModelCtrl.$setViewValue(value);
+                this.onChange(value);
                 this.updateValidity();
             }
         });
-    this.$watch('alarmSource.value', () => {
-            if (ngModelCtrl.$viewValue && ngModelCtrl.$viewValue.config && this.widgetType() === this.typesRef.widgetType.alarm.value && this.isDataEnabled()) {
-                var value: any = ngModelCtrl.$viewValue;
+    effect(() => {
+            if (this.modelValue && this.modelValue.config && this.widgetType() === this.typesRef.widgetType.alarm.value && this.isDataEnabled()) {
+                var value: any = this.modelValue;
                 var config: any = value.config;
                 if (this.alarmSource.value) {
                     config.alarmSource = this.alarmSource.value;
                 } else {
                     config.alarmSource = null;
                 }
-                ngModelCtrl.$setViewValue(value);
+                this.onChange(value);
                 this.updateValidity();
             }
         });
@@ -437,7 +436,7 @@ export class TbWidgetConfigDirective {
 
   generateDataKey(chip?: any, type?: any, ...rest: any[]): any {
 
-    if (angular.isObject(chip)) {
+    if (chip !== null && typeof chip === 'object') {
         chip._hash = Math.random();
         return chip;
     }

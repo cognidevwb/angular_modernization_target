@@ -1,0 +1,14 @@
+{
+  "content": "### G2178\n```ts\nimport kvMapTemplate from '../../../../app/components/kv-map.tpl.html?raw';\n```\n\n### G418,G1547,G1548\n```ts\nfunction KeyValMapController(this: any) {\n\n    let vm: any = this;\n\n    vm.kvList = [];\n\n    vm.removeKeyVal = removeKeyVal;\n    vm.addKeyVal = addKeyVal;\n\n    vm.ngOnChanges = () => {\n        stopWatchKvList();\n        vm.kvList.length = 0;\n        if (vm.keyValMap) {\n            for (var property in vm.keyValMap) {\n                if (Object.prototype.hasOwnProperty.call(vm.keyValMap, property)) {\n                    vm.kvList.push(\n                        {\n                            key: property + '',\n                            value: vm.keyValMap[property]\n                        }\n                    );\n                }\n            }\n        }\n        watchKvList();\n    };\n\n    let kvListEffectRef: any = null;\n\n    function watchKvList() {\n        kvListEffectRef = effect(() => {\n            const list = vm.kvList;\n            if (!vm.keyValMap) {\n                return;\n            }\n            for (var property in vm.keyValMap) {\n                if (Object.prototype.hasOwnProperty.call(vm.keyValMap, property)) {\n                    delete vm.keyValMap[property];\n                }\n            }\n            for (var i: any = 0; i < list.length; i++) {\n                var entry: any = list[i];\n                vm.keyValMap[entry.key] = entry.value;\n            }\n        });\n    }\n\n    function stopWatchKvList() {\n        if (kvListEffectRef) {\n            kvListEffectRef.destroy();\n            kvListEffectRef = null;\n        }\n    }\n\n\n    function removeKeyVal(index?: any) {\n        if (index > -1) {\n            vm.kvList.splice(index, 1);\n        }\n    }\n\n    function addKeyVal() {\n        if (!vm.kvList) {\n            vm.kvList = [];\n        }\n        vm.kvList.push(\n            {\n                key: '',\n                value: ''\n            }\n        );\n    }\n}\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 3014,
+    "costMicros": 37410,
+    "inputTokens": 2,
+    "outputTokens": 2535
+  }
+}

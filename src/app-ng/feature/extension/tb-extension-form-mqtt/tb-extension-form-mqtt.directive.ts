@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { ParseToNullDirective } from '../parse-to-null/parse-to-null.directive';
 
 import $ from 'jquery';
-import extensionFormMqttTemplate from '../../../../app/extension/extensions-forms/extension-form-mqtt.tpl.html';
+import extensionFormMqttTemplate from '../../../../app/extension/extensions-forms/extension-form-mqtt.tpl.html?raw';
 import { LegacyInitDirective } from '../../../legacy-init.directive';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -30,6 +30,8 @@ declare let element: any;
 @Directive({
   selector: '[tb-extension-form-mqtt]',
   standalone: true,
+})
+@Component({
   imports: [TranslatePipe, MatTooltipModule, MatSelectModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatCardModule, MatButtonModule, LegacyInitDirective],
 })
 export class TbExtensionFormMqttDirective {

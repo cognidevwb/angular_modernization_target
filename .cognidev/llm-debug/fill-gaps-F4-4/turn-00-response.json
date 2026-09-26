@@ -1,0 +1,14 @@
+{
+  "content": "### G1905\n```ts\nconst alarmDetailsDialogTemplate = '../../../../app/alarm/alarm-details-dialog.tpl.html';\n```\n\n### G1906\n```ts\nconst alarmRowTemplate = '../../../../app/alarm/alarm-row.tpl.html';\n```\n\n### G1907\n```ts\nselector: '[tb-alarm-row]',\nstandalone: true,\n```\n\n### G1908\n```ts\n(this.dialog as any).show({\n    controller: 'AlarmDetailsDialogController',\n    controllerAs: 'vm',\n    templateUrl: alarmDetailsDialogTemplate,\n    locals: {\n        alarmId: this.alarm.id.id,\n        allowAcknowledgment: true,\n        allowClear: true,\n        displayDetails: true,\n        showingCallback: onShowingCallback\n    },\n    parent: $(this.document.body),\n    targetEvent: $event,\n    fullscreen: true,\n    multiple: true,\n    onShowing: (scope?: any, element?: any, ...rest: any[]) => {\n        onShowingCallback.onShowing(scope, element);\n    }\n}).then((alarm?: any) => {\n    if (alarm) {\n        this.alarm = alarm;\n    }\n});\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2629,
+    "costMicros": 14760,
+    "inputTokens": 2,
+    "outputTokens": 424
+  }
+}

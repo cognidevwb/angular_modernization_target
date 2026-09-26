@@ -9,8 +9,8 @@ import { FormsModule } from '@angular/forms';
 import { TbWidgetConfigDirective } from '../../components/tb-widget-config/tb-widget-config.directive';
 
 import $ from 'jquery';
-import entityAliasDialogTemplate from '../../../../app/entity/alias/entity-alias-dialog.tpl.html';
-import editWidgetTemplate from '../../../../app/dashboard/edit-widget.tpl.html';
+import entityAliasDialogTemplate from '../../../../app/entity/alias/entity-alias-dialog.tpl.html?raw';
+import editWidgetTemplate from '../../../../app/dashboard/edit-widget.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
@@ -153,7 +153,7 @@ export class TbEditWidgetDirective {
     var deferred: any = $q.defer();
     var singleEntityAlias: any = {id: null, alias: alias, filter: {}};
 
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'EntityAliasDialogController',
         controllerAs: 'vm',
         templateUrl: entityAliasDialogTemplate,

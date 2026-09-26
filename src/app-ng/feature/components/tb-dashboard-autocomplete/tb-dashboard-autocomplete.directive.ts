@@ -4,7 +4,7 @@ import { ElementRef } from '@angular/core';
 import { UserService } from '../../api/services/user.service';
 
 import $ from 'jquery';
-import dashboardAutocompleteTemplate from '../../../../app/components/dashboard-autocomplete.tpl.html';
+const dashboardAutocompleteTemplate: string = require('../../../../app/components/dashboard-autocomplete.tpl.html');
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $q: any;
@@ -38,7 +38,7 @@ export class TbDashboardAutocompleteDirective {
   protected readonly userService = inject(UserService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(dashboardAutocompleteTemplate);
+  protected template: any = dashboardAutocompleteTemplate;
   dashboard: any = null;
   dashboardSearchText: any = '';
   $watch: any;
@@ -51,9 +51,9 @@ export class TbDashboardAutocompleteDirective {
   constructor() {
     $(this.element.nativeElement).html(this.template);
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                this.dashboardService.getDashboardInfo(ngModelCtrl.$viewValue).then(
+    this.writeValue = (value: any) => {
+            if (value) {
+                this.dashboardService.getDashboardInfo(value).then(
                     (dashboard?: any) => {
                         this.dashboard = dashboard;
                         this.startWatchers();
@@ -80,13 +80,25 @@ export class TbDashboardAutocompleteDirective {
             }, function fail() {
             });
         }
-    $compile($(this.element.nativeElement).contents())(this);
+    if (this.selectFirstDashboard()) {
+            var pageLink: any = {limit: 1, textSearch: ''};
+            this.dashboardFetchFunction(pageLink).then((result?: any) => {
+                var dashboards: any = result.data;
+                if (dashboards.length > 0) {
+                    this.dashboard = dashboards[0];
+                    this.updateView();
+                }
+            }, function fail() {
+            });
+        }
+    $(this.element.nativeElement).contents();
   }
 
   fetchDashboards(searchText?: any, ...rest: any[]): any {
     var pageLink: any = {limit: 50, textSearch: searchText};
 
-    var deferred: any = $q.defer();
+    var deferred: any = {};
+    deferred.promise = new Promise((resolve, reject) => { deferred.resolve = resolve; deferred.reject = reject; });
 
     var promise: any;
     if (this.dashboardsScope() === 'customer' || this.userService.getAuthority() === 'CUSTOMER_USER') {
@@ -121,20 +133,19 @@ export class TbDashboardAutocompleteDirective {
 
   updateView(...rest: any[]): any {
     if (!this.disabled()) {
-        ngModelCtrl.$setViewValue(this.dashboard ? this.dashboard.id.id : null);
+        this.onChange(this.dashboard ? this.dashboard.id.id : null);
     }
   }
 
   startWatchers(...rest: any[]): any {
-    this.$watch('dashboard', (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal)) {
-            this.updateView();
-        }
-    });
-    this.$watch('disabled', (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal)) {
-            this.updateView();
-        }
-    });
+    this.$watch = this.$watch || {};
+    if (!isEqual(this.dashboard, this.$watch.dashboard)) {
+        this.$watch.dashboard = this.dashboard;
+        this.updateView();
+    }
+    if (!isEqual(this.disabled(), this.$watch.disabled)) {
+        this.$watch.disabled = this.disabled();
+        this.updateView();
+    }
   }
 }

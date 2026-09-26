@@ -1,0 +1,14 @@
+{
+  "content": "### G2393\n```ts\nimport relationTypeAutocompleteTemplate from '../../../../app/entity/relation/relation-type-autocomplete.tpl.html?raw';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1268,
+    "costMicros": 5706,
+    "inputTokens": 2,
+    "outputTokens": 63
+  }
+}

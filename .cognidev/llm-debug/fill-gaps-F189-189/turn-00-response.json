@@ -1,0 +1,14 @@
+{
+  "content": "### G612,G1750\n```ts\n  constructor(private translate: TranslatePipe) {}\n\n  transform(label?: any, ...rest: any[]): any {\n    label = label.toString();\n\n    let translateSelector: any = \"widgets.tripAnimation.\" + label;\n    let translation: any = this.translate.transform(translateSelector);\n\n    if (translation !== translateSelector) {\n        return translation;\n    }\n\n    return label;\n  }\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1359,
+    "costMicros": 6890,
+    "inputTokens": 2,
+    "outputTokens": 145
+  }
+}

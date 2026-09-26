@@ -1,0 +1,14 @@
+{
+  "content": "### G2535\n```ts\n// eslint-disable-next-line @typescript-eslint/ban-ts-comment\n// @ts-ignore\nimport addRuleChainTemplate from '../../../../app/rulechain/add-rulechain.tpl.html';\n```\n\n### G2536\n```ts\n// eslint-disable-next-line @typescript-eslint/ban-ts-comment\n// @ts-ignore\nimport ruleChainCard from '../../../../app/rulechain/rulechain-card.tpl.html';\n```\n\n### G2537\n```ts\n                        (this.router as any).go('home.ruleChains.importRuleChain', {ruleChainImport:ruleChainImport});\n```\n\n### G2538\n```ts\n    (this.router as any).go('home.ruleChains.ruleChain', {ruleChainId: ruleChain.id.id});\n```\n\n### G2539\n```ts\n    var confirm: any = (this.dialog as any).confirm()\n```\n\n### G2540\n```ts\n    (this.dialog as any).show(confirm).then(() => {\n        this.ruleChainService.setRootRuleChain(ruleChain.id.id).then(\n            () => {\n                this.grid.refreshList();\n            }\n        );\n    });\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 3085,
+    "costMicros": 16394,
+    "inputTokens": 2,
+    "outputTokens": 405
+  }
+}

@@ -32,11 +32,11 @@ export class SelectTargetLayoutComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   selectLayout = ($event?: any, layoutId?: any, ...rest: any[]): any => {
     this.theForm.$setPristine();
-    this.dialog.hide(layoutId);
+    (this.dialog as any).hide(layoutId);
   };
 }

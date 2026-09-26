@@ -4,9 +4,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import $ from 'jquery';
 import { bindMethods } from '../../legacy-injector';
-import infoToast from '../../../app/services/info-toast.tpl.html';
-import successToast from '../../../app/services/success-toast.tpl.html';
-import errorToast from '../../../app/services/error-toast.tpl.html';
+import infoToast from '../../../app/services/info-toast.tpl.html?raw';
+import successToast from '../../../app/services/success-toast.tpl.html?raw';
+import errorToast from '../../../app/services/error-toast.tpl.html?raw';
 
 /**
  * Ported from the AngularJS factory `toast` (module `thingsboard.toast`) in src/app/services/toast.js:21.
@@ -36,7 +36,7 @@ export class ToastService {
     if (!position) {
         position = 'top left';
     }
-    this.snackBar.show({
+    (this.snackBar as any).show({
         hideDelay: delay || 0,
         position: position,
         controller: 'ToastController',
@@ -57,7 +57,7 @@ export class ToastService {
             position = 'top left';
         }
         this.showing = true;
-        this.snackBar.show({
+        (this.snackBar as any).show({
             hideDelay: 0,
             position: position,
             controller: 'ToastController',
@@ -75,7 +75,7 @@ export class ToastService {
 
   hide(...rest: any[]): any {
     if (this.showing) {
-        this.snackBar.hide();
+        (this.snackBar as any).hide();
     }
   }
 }

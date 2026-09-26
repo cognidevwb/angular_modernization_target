@@ -1,0 +1,14 @@
+{
+  "content": "### G2129\n```ts\n// eslint-disable-next-line @typescript-eslint/ban-ts-comment\n// @ts-ignore -- .html template import has no type declaration; content is unused directly (kept for template asset resolution)\nimport contactTemplate from '../../../../app/components/contact.tpl.html';\n```\n\n### G227,G228\n```ts\n  // template now provided via `templateUrl: contactTemplate` on the @Component decorator; $templateCache no longer used\n```\n\n### G1193,G1194\n```ts\n    // Angular already compiles/binds this component's own view via the @Component templateUrl; manual $compile of the injected HTML is no longer needed\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2184,
+    "costMicros": 24670,
+    "inputTokens": 2,
+    "outputTokens": 1593
+  }
+}

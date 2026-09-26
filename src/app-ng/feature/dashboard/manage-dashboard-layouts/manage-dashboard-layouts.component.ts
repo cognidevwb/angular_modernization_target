@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import dashboardSettingsTemplate from '../../../../app/dashboard/dashboard-settings.tpl.html';
+const dashboardSettingsTemplate = '../../../../app/dashboard/dashboard-settings.tpl.html';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -57,7 +57,7 @@ export class ManageDashboardLayoutsComponent {
   openLayoutSettings = ($event?: any, layoutId?: any, ...rest: any[]): any => {
     let vm = this;
     var gridSettings: any = structuredClone(this.layouts[layoutId].gridSettings);
-    this.dialog.show({
+(this.dialog as any).show({
         controller: 'DashboardSettingsController',
         controllerAs: 'vm',
         templateUrl: dashboardSettingsTemplate,
@@ -80,7 +80,7 @@ export class ManageDashboardLayoutsComponent {
   };
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   save = (...rest: any[]): any => {
@@ -92,6 +92,6 @@ export class ManageDashboardLayoutsComponent {
             }
         }
     }
-    this.dialog.hide(this.layouts);
+    (this.dialog as any).hide(this.layouts);
   };
 }

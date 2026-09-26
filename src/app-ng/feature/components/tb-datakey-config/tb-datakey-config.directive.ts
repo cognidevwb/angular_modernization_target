@@ -3,7 +3,7 @@ import { ElementRef } from '@angular/core';
 import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
-import datakeyConfigTemplate from '../../../../app/components/datakey-config.tpl.html';
+import datakeyConfigTemplate from '../../../../app/components/datakey-config.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $q: any;
@@ -32,7 +32,7 @@ export class TbDatakeyConfigDirective {
   protected readonly typesRef: any = types;
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(datakeyConfigTemplate);
+  protected template: any = datakeyConfigTemplate;
   types: any;
   alarmFields: any = [];
   selectedKey: any = null;
@@ -78,31 +78,33 @@ export class TbDatakeyConfigDirective {
     for (var alarmField in this.typesRef.alarmFields) {
             this.alarmFields.push(alarmField);
         }
-    ngModelCtrl.$render = function () {
+    this.writeValue = (value?: any) => {
             this.model = {};
-            if (ngModelCtrl.$viewValue) {
-                this.model.type = ngModelCtrl.$viewValue.type;
-                this.model.name = ngModelCtrl.$viewValue.name;
-                this.model.label = ngModelCtrl.$viewValue.label;
-                this.model.color = ngModelCtrl.$viewValue.color;
-                this.model.units = ngModelCtrl.$viewValue.units;
-                this.model.decimals = ngModelCtrl.$viewValue.decimals;
-                this.model.funcBody = ngModelCtrl.$viewValue.funcBody;
-                this.model.postFuncBody = ngModelCtrl.$viewValue.postFuncBody;
+            if (value) {
+                this.model.type = value.type;
+                this.model.name = value.name;
+                this.model.label = value.label;
+                this.model.color = value.color;
+                this.model.units = value.units;
+                this.model.decimals = value.decimals;
+                this.model.funcBody = value.funcBody;
+                this.model.postFuncBody = value.postFuncBody;
                 this.model.usePostProcessing = this.model.postFuncBody ? true : false;
-                this.model.settings = ngModelCtrl.$viewValue.settings;
+                this.model.settings = value.settings;
             }
         };
-    this.$watch('model', (newVal?: any, oldVal?: any) => {
-            if (newVal.usePostProcessing != oldVal.usePostProcessing) {
+    effect(() => {
+            const newVal = this.model;
+            const oldVal = this._prevModel;
+            if (newVal.usePostProcessing != oldVal?.usePostProcessing) {
                 if (this.model.usePostProcessing && !this.model.postFuncBody) {
                     this.model.postFuncBody = "return value;";
                 } else if (!this.model.usePostProcessing && this.model.postFuncBody) {
                     delete this.model.postFuncBody;
                 }
             }
-            if (ngModelCtrl.$viewValue) {
-                var value: any = ngModelCtrl.$viewValue;
+            if (this._value) {
+                var value: any = this._value;
                 value.type = this.model.type;
                 value.name = this.model.name;
                 value.label = this.model.label;
@@ -115,10 +117,11 @@ export class TbDatakeyConfigDirective {
                 } else {
                     value.postFuncBody = this.model.postFuncBody;
                 }
-                ngModelCtrl.$setViewValue(value);
+                this.onChange(value);
             }
-        }, true);
-    $compile($(this.element.nativeElement).contents())(this);
+            this._prevModel = newVal;
+        });
+    this.viewContainerRef.createComponent(this.componentFactoryResolver.resolveComponentFactory(DatakeyConfig as any));
   }
 
   keysSearch(searchText?: any, ...rest: any[]): any {

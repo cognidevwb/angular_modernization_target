@@ -1,0 +1,14 @@
+{
+  "content": "### G2220\n```ts\nimport customerFieldsetTemplate from '../../../../app/customer/customer-fieldset.tpl.html?raw';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1264,
+    "costMicros": 5590,
+    "inputTokens": 2,
+    "outputTokens": 53
+  }
+}

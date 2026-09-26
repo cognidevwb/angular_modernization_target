@@ -1,0 +1,14 @@
+{
+  "content": "### G2504\n```ts\nimport tableColumnsAssignment from '../../../../app/import-export/table-columns-assignment.tpl.html?raw';\n```\n\n### G2505\n```ts\n                if (typeof vm.columnTypes.accessToken !== 'undefined') {\n                    vm.columnTypes.accessToken.disable = isSelectCredentials;\n                }\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1603,
+    "costMicros": 7676,
+    "inputTokens": 2,
+    "outputTokens": 126
+  }
+}

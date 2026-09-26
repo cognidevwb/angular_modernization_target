@@ -1,0 +1,14 @@
+{
+  "content": "### G2592\n```ts\nimport knobTemplate from '../../../../app/widget/lib/rpc/knob.tpl.html?raw';\n```\n\n### G423,G425,G427\n```ts\n    let knob: any = $(this.knobElementRef.nativeElement).find('.knob'),\n        knobContainer: any = $(this.knobElementRef.nativeElement).find('#knob-container'),\n        knobTopPointerContainer: any = knob.find('.top-pointer-container'),\n        knobTopPointer: any = knob.find('.top-pointer'),\n        knobValueContainer: any = knob.find('.value-container'),\n        knobValue: any = knob.find('.knob-value'),\n        knobErrorContainer: any = knob.find('.error-container'),\n        knobError: any = knob.find('.knob-error'),\n        knobTitleContainer: any = knob.find('.title-container'),\n        knobTitle: any = knob.find('.knob-title'),\n        knobMinmaxContainer: any = knob.find('.minmax-container'),\n        minmaxLabel: any = knob.find('.minmax-label'),\n        textMeasure: any = knob.find('#text-measure'),\n        startDeg: any = -1,\n        currentDeg: any = 0,\n        rotation: any = 0,\n        lastDeg: any = 0,\n        moving: any = false;\n\n    var minDeg: any = -45;\n    var maxDeg: any = 225;\n\n    var canvasBarElement: any = $(this.knobElementRef.nativeElement).find('#canvasBar');\n```\n\n### G1549\n```ts\n    ngOnChanges(changes: SimpleChanges) {\n        if (changes['ctx'] && vm.ctx) {\n            init();\n        }\n    }\n```\n\n### G2593\n```ts\n        canvasBar = new (CanvasDigitalGauge as any)(canvasBarData).draw();\n```\n\n### G2594\n```ts\n        var glowColor: any = (tinycolor as any)(color).brighten(30).toHexString();\n```\n\n### G430\n```ts\n    function onValue(value?: any) {\n        vm.value = formatValue(value);\n        checkValueSize();\n    }\n```\n\n### G429\n```ts\n    function onError(error?: any) {\n        vm.error = error;\n        setFontSize(knobError, vm.error, knobErrorContainer.height(), knobErrorContainer.width());\n    }\n```\n\n### G2595\n```ts\n                if (isNumber(responseBody as any)) {\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 4607,
+    "costMicros": 26712,
+    "inputTokens": 2,
+    "outputTokens": 828
+  }
+}

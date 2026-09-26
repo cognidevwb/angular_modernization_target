@@ -1,0 +1,14 @@
+{
+  "content": "### G2130\n```ts\n// @ts-ignore\nimport customActionPrettyEditorTemplate from '../../../../app/components/widget/action/custom-action-pretty-editor.tpl.html';\n```\n\n### G2131\n```ts\nconst html_beautify: any = (window as any).beautify.html;\n```\n\n### G2132\n```ts\nconst css_beautify: any = (window as any).beautify.css;\n```\n\n### G229,G231\n```ts\n  protected template: any = customActionPrettyEditorTemplate;\n```\n\n### G1198,G1199,G1196,G1201,G1202\n```ts\n    effect(() => {\n      if (this.ngControl && this.ngControl.control) {\n        this.ngControl.control.setValue(this.action, { emitEvent: false });\n      }\n      this.onChange?.(this.action);\n    });\n    this.writeValue = (value: any) => {\n      this.action = value;\n      if ((this.action.customHtml === undefined) && (this.action.customCss === undefined) && (this.action.customFunction === undefined)) {\n        this.action.customFunction = this.sampleJsFunction;\n        this.action.customHtml = this.sampleHtmlTemplate;\n        this.action.customCss = this.sampleCss;\n      }\n    };\n```\n\n### G1195,G1200\n```ts\n    // Template is rendered via Angular component composition; explicit compilation is not needed here.\n```\n\n### G1204,G1205\n```ts\n        const w: any = this.customActionEditorElement.width();\n        if (w > 0) {\n            this.initSplitLayout();\n        } else {\n            effect(() => {\n                const newSize: any = this.customActionEditorElement[0].offsetWidth || parseInt(this.customActionEditorElement.css('width'), 10);\n                if (newSize > 0) {\n                    this.initSplitLayout();\n                }\n            });\n        }\n```\n\n### G1203\n```ts\n    this.ace_editors.forEach((editor: any) => editor.resize());\n```\n\n### G230,G235\n```ts\n            var w: any = $(window);\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 6066,
+    "costMicros": 56148,
+    "inputTokens": 2,
+    "outputTokens": 3188
+  }
+}

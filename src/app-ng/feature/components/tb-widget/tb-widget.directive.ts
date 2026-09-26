@@ -33,9 +33,9 @@ export class TbWidgetDirective {
   // TODO(port): link(scope, elem, attrs) — `elem` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    this.locals = this.$eval(this.attrs.locals);
+    this.locals = this.attrs.locals;
     this.widget = this.locals.widget;
-    this.$on('gridster-item-initialized', (event?: any, item?: any) => {
+    this.gridsterItemInitialized$.subscribe((item?: any) => {
                 this.gridsterItem = item;
                 if (this.widgetController) {
                     this.widgetController.gridsterItemInitialized(this.gridsterItem);
@@ -64,7 +64,7 @@ export class TbWidgetDirective {
 
     Object.assign(this.locals, {$scope: this, $element: $(this.element.nativeElement), widgetInfo: widgetInfo, widgetType: widgetType});
 
-    this.widgetController = $controller('WidgetController', this.locals);
+    this.widgetController = this;
 
     if (this.gridsterItem) {
         this.widgetController.gridsterItemInitialized(this.gridsterItem);

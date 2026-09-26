@@ -1,0 +1,14 @@
+{
+  "content": "### G1904\n```ts\nimport alarmHeaderTemplate from '../../../../app/alarm/alarm-header.tpl.html?raw';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1160,
+    "costMicros": 5164,
+    "inputTokens": 2,
+    "outputTokens": 52
+  }
+}

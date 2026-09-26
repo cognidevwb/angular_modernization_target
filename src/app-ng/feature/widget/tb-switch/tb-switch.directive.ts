@@ -1,7 +1,7 @@
 import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import switchTemplate from '../../../../app/widget/lib/rpc/switch.tpl.html';
+import switchTemplate from '../../../../app/widget/lib/rpc/switch.tpl.html?raw';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
@@ -32,8 +32,8 @@ function SwitchController(this: any, $element?: any, $scope?: any, types?: any, 
 
     vm.valueSubscription = null;
 
-    $scope.$watch('vm.ctx', () => {
-        if (vm.ctx) {
+    effect(() => {
+        if (vm.ctx()) {
             init();
         }
     });
@@ -191,7 +191,7 @@ function SwitchController(this: any, $element?: any, $scope?: any, types?: any, 
                 if (attrValue) {
                     var parsed: any = null;
                     try {
-                        parsed = vm.parseValueFunction(angular.fromJson(attrValue));
+                        parsed = vm.parseValueFunction(JSON.parse(attrValue));
                     } catch (e){/**/}
                     value = parsed ? true : false;
                 }
@@ -199,7 +199,8 @@ function SwitchController(this: any, $element?: any, $scope?: any, types?: any, 
         }
         setValue(value);
         if (apply) {
-            $scope.$digest();
+        if (apply) {
+        }
         }
     }
 
@@ -221,10 +222,10 @@ function SwitchController(this: any, $element?: any, $scope?: any, types?: any, 
     }
 
     function onError(error?: any) {
-        $scope.$applyAsync(() => {
-            vm.error = error;
-            setFontSize(switchError, vm.error, switchErrorContainer.height(), switchErrorContainer.width());
-        });
+    function onError(error?: any) {
+        vm.error = error;
+        setFontSize(switchError, vm.error, switchErrorContainer.height(), switchErrorContainer.width());
+    }
     }
 
     function setFontSize(element?: any, text?: any, fontSize?: any, maxWidth?: any) {

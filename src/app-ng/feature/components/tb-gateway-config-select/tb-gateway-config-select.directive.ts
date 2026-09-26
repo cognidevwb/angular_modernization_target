@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 
 import $ from 'jquery';
+// @ts-ignore
 import gatewaySelectTemplate from '../../../../app/components/gateway/gateway-config-select.tpl.html';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
@@ -36,7 +37,7 @@ export class TbGatewayConfigSelectDirective {
   protected readonly translate = inject(TranslateService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(gatewaySelectTemplate);
+  protected template: any = gatewaySelectTemplate;
   gateway: any = null;
   gatewaySearchText: any = '';
   $watch: any;
@@ -108,14 +109,14 @@ export class TbGatewayConfigSelectDirective {
     }
     var title: any = this.translate.instant('gateway.create-new-gateway');
     var content: any = this.translate.instant('gateway.create-new-gateway-text', {gatewayName: deviceName});
-    var confirm: any = this.dialog.confirm()
+    var confirm: any = (this.dialog as any).confirm()
         .targetEvent($event)
         .title(title)
         .htmlContent(content)
         .ariaLabel(title)
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(
+    (this.dialog as any).show(confirm).then(
         () => {
             let deviceObj: any = {
                 name: deviceName,

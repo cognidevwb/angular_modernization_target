@@ -14,8 +14,11 @@ import { TbUserDirective } from '../tb-user/tb-user.directive';
 import { TbAuditLogTableDirective } from '../../audit/tb-audit-log-table/tb-audit-log-table.directive';
 
 import $ from 'jquery';
+// @ts-ignore
 import addUserTemplate from '../../../../app/user/add-user.tpl.html';
+// @ts-ignore
 import userCard from '../../../../app/user/user-card.tpl.html';
+// @ts-ignore
 import activationLinkDialogTemplate from '../../../../app/user/activation-link.dialog.tpl.html';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -55,7 +58,7 @@ export class UserComponent {
   constructor() {
     this.tenantId = this.route.snapshot.params['tenantId'];
     this.customerId = this.route.snapshot.params['customerId'];
-    this.usersType = this.router.$current.data.usersType;
+this.usersType = (this.router as any).$current.data.usersType;
     this.userActionsList = [
         {
             onAction: ($event?: any, item?: any, ...rest: any[]) => {
@@ -215,7 +218,7 @@ export class UserComponent {
 
   openActivationLinkDialog(event?: any, activationLink?: any, ...rest: any[]): any {
     let vm = this;
-    this.dialog.show({
+(this.dialog as any).show({
         controller: 'ActivationLinkDialogController',
         controllerAs: 'vm',
         templateUrl: activationLinkDialogTemplate,

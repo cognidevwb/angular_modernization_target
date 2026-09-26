@@ -8,7 +8,9 @@ import { WidgetService } from '../../api/services/widget.service';
 import { types } from '../../common/constants/types';
 import { TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
 import { TbWidgetsBundleDirective } from '../tb-widgets-bundle/tb-widgets-bundle.directive';
+// @ts-ignore
 import addWidgetsBundleTemplate from '../../../../app/widget/add-widgets-bundle.tpl.html';
+// @ts-ignore
 import widgetsBundleCard from '../../../../app/widget/widgets-bundle-card.tpl.html';
 
 /**
@@ -192,6 +194,6 @@ export class WidgetsBundleComponent {
     if ($event) {
         $event.stopPropagation();
     }
-    this.router.go('home.widgets-bundles.widget-types', {widgetsBundleId: widgetsBundle.id.id});
+(this.router as any).go('home.widgets-bundles.widget-types', {widgetsBundleId: widgetsBundle.id.id});
   };
 }

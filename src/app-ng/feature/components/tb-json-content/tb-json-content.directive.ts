@@ -10,6 +10,7 @@ import { TbExpandFullscreenDirective } from '../tb-expand-fullscreen/tb-expand-f
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
 import fixAceEditor from '../../../../app/components/ace-editor-fix';
+// @ts-ignore
 import jsonContentTemplate from '../../../../app/components/json-content.tpl.html';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -21,6 +22,7 @@ declare let element: any;
 declare let ngModelCtrl: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
+import * as beautify from 'js-beautify';
 const js_beautify: any = beautify.js;
 
 /**
@@ -46,7 +48,7 @@ export class TbJsonContentDirective {
   protected readonly utils = inject(UtilsService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(jsonContentTemplate);
+  protected template: any;
   label: any;
   validationTriggerArg: any;
   contentValid: any = true;
@@ -86,27 +88,30 @@ export class TbJsonContentDirective {
                 fixAceEditor(_ace);
             }
         };
-    this.$watch('contentType', () => {
-            var mode: any;
-            if (this.contentType()) {
-                mode = types.contentType[this.contentType()].code;
-            } else {
-                mode = 'text';
-            }
-            if (this.json_editor) {
-                this.json_editor.session.setMode('ace/mode/' + mode);
-            }
-        });
-    this.$watch('contentBody', (newContent?: any, oldContent?: any) => {
-            ngModelCtrl.$setViewValue(this.contentBody);
-            if (!angular.equals(newContent, oldContent)) {
-                this.contentValid = this.validate();
-            }
-            this.updateValidity();
-        });
-    ngModelCtrl.$render = function () {
-            this.contentBody = ngModelCtrl.$viewValue;
-        };
+    effect(() => {
+      var mode: any;
+      if (this.contentType()) {
+        mode = types.contentType[this.contentType()].code;
+      } else {
+        mode = 'text';
+      }
+      if (this.json_editor) {
+        this.json_editor.session.setMode('ace/mode/' + mode);
+      }
+    });
+    let contentBodyPrev: any;
+    effect(() => {
+      const newContent = this.contentBody;
+      this.onChange(newContent);
+      if (!isEqual(newContent, contentBodyPrev)) {
+        this.contentValid = this.validate();
+      }
+      contentBodyPrev = newContent;
+      this.updateValidity();
+    });
+    this.writeValue = (value: any) => {
+      this.contentBody = value;
+    };
     this.$on('form-submit', (event?: any, args?: any) => {
             if (!this.readonly()) {
                 if (!args || this.validationTriggerArg && this.validationTriggerArg == args) {
@@ -148,7 +153,7 @@ export class TbJsonContentDirective {
   }
 
   updateValidity(...rest: any[]): any {
-    ngModelCtrl.$setValidity('contentBody', this.contentValid);
+    this.ngControl?.control?.setErrors(this.contentValid ? null : { contentBody: true });
   }
 
   showError(error?: any, ...rest: any[]): any {

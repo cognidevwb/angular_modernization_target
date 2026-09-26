@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 720,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/dashboard/select-target-state/select-target-state.component.ts\n\n2 item(s) to handle in this file.\n\n### G2285\nLines to replace: L44–L44\nKind: fix\nTask: Make line 44 of `src/app-ng/feature/dashboard/select-target-state/select-target-state.component.ts` type-check without changing what it does.\nBefore: Property 'cancel' does not exist on type 'MatDialog'.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n### G2286\nLines to replace: L49–L49\nKind: fix\nTask: Make line 49 of `src/app-ng/feature/dashboard/select-target-state/select-target-state.component.ts` type-check without changing what it does.\nBefore: Property 'hide' does not exist on type 'MatDialog'.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n\nThe file's lines:\nL38|     this.stateId = this.dashboardUtils.getRootStateId(this.states);\nL39|     this.cancel = this.cancel;\nL40|     this.save = this.save;\nL41|   }\nL42| \nL43|   cancel = (...rest: any[]): any => {\nL44|     this.dialog.cancel();\nL45|   };\nL46| \nL47|   save = (...rest: any[]): any => {\nL48|     this.theForm.$setPristine();\nL49|     this.dialog.hide(this.stateId);\nL50|   };\nL51| \nL52|   /** The keys of a `(k, v) in obj` repeat, in the object's own order. */\nL53|   protected __keys(obj: any): string[] {\nL54|     return obj ? Object.keys(obj) : [];\nL55|   }\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

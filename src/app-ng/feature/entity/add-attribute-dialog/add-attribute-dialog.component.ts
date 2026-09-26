@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 import { TbJsonToStringDirective } from '../../components/tb-json-to-string/tb-json-to-string.directive';
-import attributeDialogEditJsonTemplate from '../../../../app/entity/attribute/attribute-dialog-edit-json.tpl.html';
+import attributeDialogEditJsonTemplate from '../../../../app/entity/attribute/attribute-dialog-edit-json.tpl.html?raw';
 import AttributeDialogEditJsonController from '../../../../app/entity/attribute/attribute-dialog-edit-json.controller';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
@@ -66,14 +66,14 @@ export class AddAttributeDialogComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+(this.dialog as any).cancel();
   };
 
   add = (...rest: any[]): any => {
     this.theForm.$setPristine();
     this.attributeService.saveEntityAttributes(this.dialogData.entityType, this.dialogData.entityId, this.dialogData.attributeScope, [this.attribute]).then(
         () => {
-            this.dialog.hide();
+(this.dialog as any).hide();
         }
     );
   };
@@ -89,17 +89,17 @@ export class AddAttributeDialogComponent {
     if ($event) {
         $event.stopPropagation();
     }
-    return this.dialog.show({
-        controller: AttributeDialogEditJsonController,
-        controllerAs: 'vm',
-        templateUrl: attributeDialogEditJsonTemplate,
-        locals: {
-            jsonValue: jsonValue,
-            readOnly: readOnly
-        },
-        targetEvent: $event,
-        fullscreen: true,
-        multiple: true,
-    });
+return (this.dialog as any).show({
+    controller: AttributeDialogEditJsonController,
+    controllerAs: 'vm',
+    templateUrl: attributeDialogEditJsonTemplate,
+    locals: {
+        jsonValue: jsonValue,
+        readOnly: readOnly
+    },
+    targetEvent: $event,
+    fullscreen: true,
+    multiple: true,
+});
   }
 }

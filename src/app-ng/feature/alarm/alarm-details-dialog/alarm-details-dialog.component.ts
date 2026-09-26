@@ -22,6 +22,7 @@ declare let $filter: any;
 declare let scope: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
+declare let beautify: any;
 const js_beautify: any = beautify.js;
 
 /**
@@ -162,6 +163,6 @@ export class AlarmDetailsDialogComponent {
   };
 
   close = (...rest: any[]): any => {
-    this.dialog.hide(this.alarmUpdated ? this.alarm : null);
+(this.dialog as any).hide(this.alarmUpdated ? this.alarm : null);
   };
 }

@@ -46,10 +46,10 @@ export class SaveWidgetTypeAsComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   saveAs = (...rest: any[]): any => {
-    this.dialog.hide({widgetName: this.widgetName, bundleId: this.widgetsBundle.id.id, bundleAlias: this.widgetsBundle.alias});
+    (this.dialog as any).hide({widgetName: this.widgetName, bundleId: this.widgetsBundle.id.id, bundleAlias: this.widgetsBundle.alias});
   };
 }

@@ -7,7 +7,7 @@ import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import entitySubtypeAutocompleteTemplate from '../../../../app/entity/entity-subtype-autocomplete.tpl.html';
+import entitySubtypeAutocompleteTemplate from '../../../../app/entity/entity-subtype-autocomplete.tpl.html?raw';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;

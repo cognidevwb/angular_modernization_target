@@ -4,7 +4,7 @@ import { TimeService } from '../../api/services/time.service';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import timeintervalTemplate from '../../../../app/components/timeinterval.tpl.html';
+import timeintervalTemplate from '../../../../app/components/timeinterval.tpl.html?raw';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -40,7 +40,7 @@ export class TbTimeintervalDirective {
   protected readonly timeService = inject(TimeService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(timeintervalTemplate);
+  protected template: any = timeintervalTemplate;
   rendered: any = false;
   days: any = 0;
   hours: any = 0;
@@ -65,40 +65,30 @@ export class TbTimeintervalDirective {
             }
             this.rendered = true;
         }
-    this.$watch('required', (newRequired?: any, prevRequired?: any) => {
-            if ((newRequired !== undefined) && newRequired !== prevRequired) {
-                this.updateView();
-            }
-        });
-    this.$watch('min', (newMin?: any, prevMin?: any) => {
-            if ((newMin !== undefined) && newMin !== prevMin) {
-                this.updateView();
-            }
-        });
-    this.$watch('max', (newMax?: any, prevMax?: any) => {
-            if ((newMax !== undefined) && newMax !== prevMax) {
-                this.updateView();
-            }
-        });
-    this.$watch('intervalMs', (newIntervalMs?: any, prevIntervalMs?: any) => {
-            if ((newIntervalMs !== undefined) && newIntervalMs !== prevIntervalMs) {
-                this.updateView();
-            }
-        });
-    this.$watch('advanced', (newAdvanced?: any, prevAdvanced?: any) => {
-            if ((newAdvanced !== undefined) && newAdvanced !== prevAdvanced) {
-                if (!this.advanced) {
-                    this.intervalMs = this.calculateIntervalMs();
-                } else {
-                    var intervalMs: any = this.intervalMs;
-                    if (!intervalMs || isNaN(intervalMs)) {
-                        intervalMs = this.calculateIntervalMs();
-                    }
-                    this.setIntervalMs(intervalMs);
-                }
-                this.updateView();
-            }
-        });
+    if (changes['required'] && changes['required'].previousValue !== undefined && changes['required'].currentValue !== changes['required'].previousValue) {
+      this.updateView();
+    }
+    if (changes['min'] && changes['min'].previousValue !== undefined && changes['min'].currentValue !== changes['min'].previousValue) {
+      this.updateView();
+    }
+    if (changes['max'] && changes['max'].previousValue !== undefined && changes['max'].currentValue !== changes['max'].previousValue) {
+      this.updateView();
+    }
+    if (changes['intervalMs'] && changes['intervalMs'].previousValue !== undefined && changes['intervalMs'].currentValue !== changes['intervalMs'].previousValue) {
+      this.updateView();
+    }
+    if (changes['advanced'] && changes['advanced'].previousValue !== undefined && changes['advanced'].currentValue !== changes['advanced'].previousValue) {
+      if (!this.advanced) {
+        this.intervalMs.set(this.calculateIntervalMs());
+      } else {
+        let intervalMs: any = this.intervalMs();
+        if (!intervalMs || isNaN(intervalMs)) {
+          intervalMs = this.calculateIntervalMs();
+        }
+        this.setIntervalMs(intervalMs);
+      }
+      this.updateView();
+    }
     this.$watch('secs', (newSecs?: any) => {
             if ((newSecs === undefined)) {
                 return;
@@ -218,11 +208,11 @@ export class TbTimeintervalDirective {
     }
     if (!isNaN(intervalMs) && intervalMs > 0) {
         value = intervalMs;
-        ngModelCtrl.$setValidity('tb-timeinterval', true);
+      this.ngControl?.control?.setErrors(null);
     } else {
-        ngModelCtrl.$setValidity('tb-timeinterval', !this.required());
+      this.ngControl?.control?.setErrors(this.required() ? { 'tb-timeinterval': true } : null);
     }
-    ngModelCtrl.$setViewValue(value);
+    this.intervalMs.set(value);
     this.boundInterval();
   }
 }

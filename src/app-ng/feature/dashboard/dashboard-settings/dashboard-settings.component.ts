@@ -101,7 +101,7 @@ export class DashboardSettingsComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   imageAdded = ($file?: any, ...rest: any[]): any => {
@@ -133,7 +133,7 @@ export class DashboardSettingsComponent {
     if (this.gridSettings) {
         this.gridSettings.margins = [this.hMargin, this.vMargin];
     }
-    this.dialog.hide(
+    (this.dialog as any).hide(
         {
             settings: this.settings,
             gridSettings: this.gridSettings

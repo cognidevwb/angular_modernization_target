@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { TbEntitySubtypeAutocompleteDirective } from '../../entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive';
 
 import $ from 'jquery';
-import deviceFieldsetTemplate from '../../../../app/device/device-fieldset.tpl.html';
+import deviceFieldsetTemplate from '../../../../app/device/device-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';

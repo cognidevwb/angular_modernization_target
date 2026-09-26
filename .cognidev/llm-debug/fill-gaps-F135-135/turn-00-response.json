@@ -1,0 +1,14 @@
+{
+  "content": "### G2380\n```ts\nimport entitySubtypeListTemplate from '../../../../app/entity/entity-subtype-list.tpl.html?raw';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1245,
+    "costMicros": 5534,
+    "inputTokens": 2,
+    "outputTokens": 55
+  }
+}

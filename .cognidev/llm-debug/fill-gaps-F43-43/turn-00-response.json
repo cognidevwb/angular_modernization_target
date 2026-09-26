@@ -1,0 +1,14 @@
+{
+  "content": "### G650,G655,G651,G656,G648,G653,G2116,G2117,G657,G1778\n```ts\n  dataKey: any;\n  dataKeySettingsSchema: any;\n  entityAlias: any;\n  aliasController: any;\n  theForm: any;\n\n  constructor() {\n    this.dataKey = this.dialogData.dataKey;\n    this.dataKeySettingsSchema = this.dialogData.dataKeySettingsSchema;\n    this.entityAlias = this.dialogData.entityAlias;\n    this.aliasController = this.dialogData.aliasController;\n  }\n\n  hide(...rest: any[]): any {\n    (this.dialog as any).hide();\n  }\n\n  cancel(...rest: any[]): any {\n    (this.dialog as any).cancel();\n  }\n\n  fetchEntityKeys(entityAliasId?: any, query?: any, type?: any, ...rest: any[]): any {\n    return new Promise((resolve, reject) => {\n        this.aliasController.getAliasInfo(entityAliasId).then(\n            (aliasInfo?: any) => {\n                var entity: any = aliasInfo.currentEntity;\n                if (entity) {\n                    this.entityService.getEntityKeys(entity.entityType, entity.id, query, type, {ignoreLoading: true}).then(\n                        (keys?: any) => {\n                            resolve(keys);\n                        },\n                        () => {\n                            resolve([]);\n                        }\n                    );\n                } else {\n                    resolve([]);\n                }\n            },\n            () => {\n                resolve([]);\n            }\n        );\n    });\n  }\n\n  save(...rest: any[]): any {\n```\n\n### G658,G1779\n```ts\n    if (this.theForm.$valid) {\n        this.theForm.$setPristine();\n        (this.dialog as any).hide(this.dataKey);\n    }\n  }\n}\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 3689,
+    "costMicros": 39530,
+    "inputTokens": 2,
+    "outputTokens": 2477
+  }
+}

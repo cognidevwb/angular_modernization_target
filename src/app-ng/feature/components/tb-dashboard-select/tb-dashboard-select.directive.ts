@@ -8,8 +8,8 @@ import { UserService } from '../../api/services/user.service';
 import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
-import dashboardSelectTemplate from '../../../../app/components/dashboard-select.tpl.html';
-import dashboardSelectPanelTemplate from '../../../../app/components/dashboard-select-panel.tpl.html';
+import dashboardSelectTemplate from '../../../../app/components/dashboard-select.tpl.html?raw';
+import dashboardSelectPanelTemplate from '../../../../app/components/dashboard-select-panel.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;
@@ -40,7 +40,11 @@ export class TbDashboardSelectDirective {
   protected readonly userService = inject(UserService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(dashboardSelectTemplate);
+  protected readonly dashboardService = inject(DashboardService);
+  protected readonly userService = inject(UserService);
+  protected readonly element = inject(ElementRef);
+
+  protected template: any = dashboardSelectTemplate;
   dashboardId: any = null;
   protected pageLink: any = {limit: 100};
   protected promise: any;
@@ -90,7 +94,7 @@ export class TbDashboardSelectDirective {
         return;
     }
     var position: any;
-    var panelHeight: any = this.breakpoints('min-height: 350px') ? 250 : 150;
+    var panelHeight: any = window.matchMedia('min-height: 350px').matches ? 250 : 150;
     var panelWidth: any = 300;
     var offset: any = this.element.nativeElement.getBoundingClientRect();
     var bottomY: any = offset.bottom - $(window).scrollTop(); //eslint-disable-line
@@ -107,7 +111,7 @@ export class TbDashboardSelectDirective {
     } else {
         xPosition = this.overlay.xPosition.ALIGN_START;
     }
-    position = this.overlay.newPanelPosition()
+    position = (this.overlay as any).newPanelPosition()
         .relativeTo($(this.element.nativeElement))
         .addPanelPosition(xPosition, yPosition);
     var config: any = {
@@ -133,7 +137,7 @@ export class TbDashboardSelectDirective {
         escapeToClose: true,
         focusOnOpen: false
     };
-    this.overlay.open(config).then((result?: any) => {
+    (this.overlay as any).open(config).then((result?: any) => {
         this.panelRef = result;
     });
   }

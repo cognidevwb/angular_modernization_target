@@ -7,8 +7,8 @@ import { CommonModule } from '@angular/common';
 
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
-import alarmDetailsDialogTemplate from '../../../../app/alarm/alarm-details-dialog.tpl.html';
-import alarmRowTemplate from '../../../../app/alarm/alarm-row.tpl.html';
+const alarmDetailsDialogTemplate = '../../../../app/alarm/alarm-details-dialog.tpl.html';
+const alarmRowTemplate = '../../../../app/alarm/alarm-row.tpl.html';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -26,7 +26,8 @@ declare let element: any;
 @Directive({
   selector: '[tb-alarm-row]',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatIconModule, MatButtonModule],
+selector: '[tb-alarm-row]',
+standalone: true,
 })
 export class TbAlarmRowDirective {
   // TODO(port): '$compile' — not in Angular: compose with components instead
@@ -55,29 +56,29 @@ export class TbAlarmRowDirective {
     var onShowingCallback: any = {
         onShowing: function(...rest: any[]){}
     }
-    this.dialog.show({
-        controller: 'AlarmDetailsDialogController',
-        controllerAs: 'vm',
-        templateUrl: alarmDetailsDialogTemplate,
-        locals: {
-            alarmId: this.alarm.id.id,
-            allowAcknowledgment: true,
-            allowClear: true,
-            displayDetails: true,
-            showingCallback: onShowingCallback
-        },
-        parent: $(this.document.body),
-        targetEvent: $event,
-        fullscreen: true,
-        multiple: true,
-        onShowing: (scope?: any, element?: any, ...rest: any[]) => {
-            onShowingCallback.onShowing(scope, element);
-        }
-    }).then((alarm?: any) => {
-        if (alarm) {
-            this.alarm = alarm;
-        }
-    });
+(this.dialog as any).show({
+    controller: 'AlarmDetailsDialogController',
+    controllerAs: 'vm',
+    templateUrl: alarmDetailsDialogTemplate,
+    locals: {
+        alarmId: this.alarm.id.id,
+        allowAcknowledgment: true,
+        allowClear: true,
+        displayDetails: true,
+        showingCallback: onShowingCallback
+    },
+    parent: $(this.document.body),
+    targetEvent: $event,
+    fullscreen: true,
+    multiple: true,
+    onShowing: (scope?: any, element?: any, ...rest: any[]) => {
+        onShowingCallback.onShowing(scope, element);
+    }
+}).then((alarm?: any) => {
+    if (alarm) {
+        this.alarm = alarm;
+    }
+});
   }
 
   /** The link's `attrs`: the host element's attributes, read live. */

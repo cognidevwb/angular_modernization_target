@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TbExpandFullscreenDirective } from '../tb-expand-fullscreen/tb-expand-fullscreen.directive';
 import { TbTimewindowDirective } from '../tb-timewindow/tb-timewindow.directive';
 import { TbWidgetDirective } from '../tb-widget/tb-widget.directive';
+// @ts-ignore
 import dashboardTemplate from '../../../../app/components/dashboard.tpl.html';
 import { KeyboardShortcutPipe } from '../pipes/keyboard-shortcut.pipe';
 import { MatButtonModule } from '@angular/material/button';
@@ -163,11 +164,13 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
         },
     };
 
+    // @ts-ignore
     addResizeListener(gridsterParent[0], onGridsterParentResize); // eslint-disable-line no-undef
 
-    $scope.$on("$destroy", function () {
+    vm.ngOnDestroy = function () {
+        // @ts-ignore
         removeResizeListener(gridsterParent[0], onGridsterParentResize); // eslint-disable-line no-undef
-    });
+    };
 
     function onGridsterParentResize() {
         if (gridsterParent.height() && autofillHeight()) {
@@ -219,7 +222,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
         return isMobileSize;
     }
 
-    $scope.$watch('vm.columns', function () {
+    effect(() => {
         var columns: any = vm.columns ? vm.columns : 24;
         if (vm.gridsterOpts.columns != columns) {
             vm.gridsterOpts.columns = columns;
@@ -232,22 +235,20 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
         }
     });
 
-    $scope.$watch(function() {
-        return $mdMedia('gt-sm') + ',' + vm.isMobile + ',' + vm.isMobileDisabled;
-    }, function() {
+    effect(() => {
+        $mdMedia('gt-sm') + ',' + vm.isMobile + ',' + vm.isMobileDisabled;
         updateMobileOpts();
         sortWidgets();
     });
 
-    $scope.$watch(function() {
-        return vm.autofillHeight + ',' + vm.mobileAutofillHeight + ',' + vm.mobileRowHeight;
-    }, function () {
+    effect(() => {
+        vm.autofillHeight + ',' + vm.mobileAutofillHeight + ',' + vm.mobileRowHeight;
         updateMobileOpts();
     });
 
-    $scope.$watch('vm.margins', function () {
+    effect(() => {
         var margins: any = vm.margins ? vm.margins : [10, 10];
-        if (!angular.equals(vm.gridsterOpts.margins, margins)) {
+        if (!isEqual(vm.gridsterOpts.margins, margins)) {
             vm.gridsterOpts.margins = margins;
             updateMobileOpts();
             if (vm.gridster) {
@@ -259,19 +260,22 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
         }
     });
 
-    $scope.$watch('vm.isEdit', function () {
+    effect(() => {
         vm.gridsterOpts.resizable.enabled = vm.isEdit;
         vm.gridsterOpts.draggable.enabled = vm.isEdit;
         $scope.$broadcast('toggleDashboardEditMode', vm.isEdit);
     });
 
-    $scope.$watch('vm.isMobileSize', function (newVal?: any, prevVal?: any) {
-        if (!angular.equals(newVal, prevVal)) {
+    effect(() => {
+        var newVal = vm.isMobileSize;
+        var prevVal = vm.prevIsMobileSize;
+        if (!isEqual(newVal, prevVal)) {
             $scope.$broadcast('mobileModeChanged', vm.isMobileSize);
         }
+        vm.prevIsMobileSize = newVal;
     });
 
-    $scope.$watchCollection('vm.widgets', function (this: any) {
+    effect(() => {
         var ids: any = [];
         for (var i: any=0;i<vm.widgets.length;i++) {
             var widget: any = vm.widgets[i];
@@ -284,7 +288,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
             return id1.localeCompare(id2);
         });
         sortWidgets();
-        if (angular.equals(ids, vm.widgetIds)) {
+        if (isEqual(ids, vm.widgetIds)) {
             return;
         }
         vm.widgetIds = ids;
@@ -326,12 +330,13 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
         });
     });
 
-    $scope.$watch('vm.widgetLayouts', function () {
+    effect(() => {
+        vm.widgetLayouts;
         updateMobileOpts();
         sortWidgets();
     });
 
-    $scope.$on('gridster-resized', function (event?: any, sizes?: any, theGridster?: any) {
+    dashboardEventService.gridsterResized$.subscribe(function (sizes?: any, theGridster?: any) {
         if (checkIsLocalGridsterElement(theGridster)) {
             vm.gridster = theGridster;
             setupGridster(vm.gridster);
@@ -341,7 +346,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
         }
     });
 
-    $scope.$on('gridster-mobile-changed', function (event?: any, theGridster?: any) {
+    dashboardEventService.gridsterMobileChanged$.subscribe(function (theGridster?: any) {
         if (checkIsLocalGridsterElement(theGridster)) {
             vm.gridster = theGridster;
             setupGridster(vm.gridster);
@@ -437,7 +442,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
         return order;
     }
 
-    $scope.$on('widgetPositionChanged', function () {
+    dashboardEventService.widgetPositionChanged$.subscribe(function () {
         sortWidgets();
     });
 
@@ -486,7 +491,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
                 vm.gridster.curColWidth = vm.gridster.colWidth;
             }
             vm.gridster.curRowHeight = vm.gridster.rowHeight;
-            if (angular.isString(vm.gridster.rowHeight)) {
+            if (typeof vm.gridster.rowHeight === 'string') {
                 if (vm.gridster.rowHeight === 'match') {
                     vm.gridster.curRowHeight = Math.round(vm.gridster.curColWidth);
                 } else if (vm.gridster.rowHeight.indexOf('*') !== -1) {
@@ -973,7 +978,7 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
     function hasTimewindow(widget?: any) {
         if (widget.type === types.widgetType.timeseries.value || widget.type === types.widgetType.alarm.value) {
             return angular.isDefined(widget.config.useDashboardTimewindow) ?
-                (!widget.config.useDashboardTimewindow && (angular.isUndefined(widget.config.displayTimewindow) || widget.config.displayTimewindow)) : false;
+                (!widget.config.useDashboardTimewindow && (widget.config.displayTimewindow === undefined || widget.config.displayTimewindow)) : false;
         } else {
             return false;
         }
@@ -1002,32 +1007,28 @@ function DashboardController(this: any, $scope?: any, $rootScope?: any, $element
                 vm.dashboardTimewindowWatch();
                 vm.dashboardTimewindowWatch = null;
             }
-            vm.dashboardTimewindowWatch = $scope.$watch('vm.dashboardTimewindow', function () {
+            vm.dashboardTimewindowWatch = effect(() => {
+                vm.dashboardTimewindow;
                 $scope.$broadcast('dashboardTimewindowChanged', vm.dashboardTimewindow);
-            }, true);
+            });
             adoptMaxRows();
             vm.dashboardLoading = false;
             if ($scope.gridsterScopeWatcher) {
                 $scope.gridsterScopeWatcher();
             }
-            $scope.gridsterScopeWatcher = $scope.$watch(
-                function() {
-                    var hasScope: any = gridsterElement.scope() ? true : false;
-                    return hasScope;
-                },
-                function(hasScope?: any) {
-                    if (hasScope) {
-                        $scope.gridsterScopeWatcher();
-                        $scope.gridsterScopeWatcher = null;
-                        var gridsterScope: any = gridsterElement.scope();
-                        vm.gridster = gridsterScope.gridster;
-                        setupGridster(vm.gridster);
-                        if (vm.onInit) {
-                            vm.onInit({dashboard: vm});
-                        }
+            $scope.gridsterScopeWatcher = effect(() => {
+                var hasScope: any = gridsterElement.scope() ? true : false;
+                if (hasScope) {
+                    $scope.gridsterScopeWatcher.destroy();
+                    $scope.gridsterScopeWatcher = null;
+                    var gridsterScope: any = gridsterElement.scope();
+                    vm.gridster = gridsterScope.gridster;
+                    setupGridster(vm.gridster);
+                    if (vm.onInit) {
+                        vm.onInit({dashboard: vm});
                     }
                 }
-            );
+            });
         });
     }
 

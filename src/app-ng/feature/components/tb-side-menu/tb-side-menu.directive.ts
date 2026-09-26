@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { TbMenuLinkDirective } from '../tb-menu-link/tb-menu-link.directive';
 
 import $ from 'jquery';
-import sidemenuTemplate from '../../../../app/components/side-menu.tpl.html';
+import sidemenuTemplate from '../../../../app/components/side-menu.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;
@@ -28,13 +28,13 @@ export class TbSideMenuDirective {
   protected readonly element = inject(ElementRef);
 
   sections: any;
-  protected template: any = $templateCache.get(sidemenuTemplate);
+  protected template: any = sidemenuTemplate;
 
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
     this.sections = this.menu.getSections();
     $(this.element.nativeElement).html(this.template);
-    $compile($(this.element.nativeElement).contents())(this);
+    $(this.element.nativeElement).contents().each((_, el) => (el as any).__ngContext__ = this);
   }
 }

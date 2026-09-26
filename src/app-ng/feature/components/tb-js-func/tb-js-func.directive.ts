@@ -10,7 +10,7 @@ import { linkAttrs } from '../../../legacy-link';
 import ace from 'brace';
 import $ from 'jquery';
 import fixAceEditor from '../../../../app/components/ace-editor-fix';
-import jsFuncTemplate from '../../../../app/components/js-func.tpl.html';
+import jsFuncTemplate from '../../../../app/components/js-func.tpl.html?raw';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -23,7 +23,7 @@ declare let element: any;
 declare let ngModelCtrl: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
-const js_beautify: any = beautify.js;
+import beautify from 'js-beautify';
 
 /**
  * Ported from the AngularJS directive `tbJsFunc` (module `thingsboard.directives.jsFunc`) in src/app/components/js-func.directive.js:40.
@@ -47,7 +47,7 @@ export class TbJsFuncDirective {
   protected readonly utils = inject(UtilsService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(jsFuncTemplate);
+protected template: any = jsFuncTemplate;
   functionName: any;
   functionArgs: any;
   validationArgs: any;
@@ -71,8 +71,8 @@ export class TbJsFuncDirective {
   constructor() {
     $(this.element.nativeElement).html(this.template);
     this.functionName = this.attrs.functionName;
-    this.functionArgs = this.$eval(this.attrs.functionArgs);
-    this.validationArgs = this.$eval(this.attrs.validationArgs);
+this.functionArgs = this.attrs.functionArgs;
+this.validationArgs = this.attrs.validationArgs;
     this.resultType = this.attrs.resultType;
     if (!this.resultType || this.resultType.length === 0) {
             this.resultType = "nocheck";
@@ -111,20 +111,20 @@ export class TbJsFuncDirective {
     ngModelCtrl.$render = function () {
             this.functionBody = ngModelCtrl.$viewValue;
         };
-    this.$on('form-submit', (event?: any, args?: any) => {
-            if (!args || this.validationTriggerArg && this.validationTriggerArg == args) {
-                this.validationArgs = this.$eval(this.attrs.validationArgs);
-                this.cleanupJsErrors();
-                this.functionValid = true;
-                this.updateValidity();
-                this.functionValid = this.validate();
-                this.updateValidity();
-            }
-        });
-    this.$on('update-ace-editor-size', () => {
-            this.updateEditorSize();
-        });
-    $compile($(this.element.nativeElement).contents())(this);
+this.formSubmitSub = this.formSubmitService.on('form-submit', (args?: any) => {
+      if (!args || this.validationTriggerArg && this.validationTriggerArg == args) {
+            this.validationArgs = this.attrs.validationArgs;
+            this.cleanupJsErrors();
+            this.functionValid = true;
+            this.updateValidity();
+            this.functionValid = this.validate();
+            this.updateValidity();
+        }
+    });
+this.updateAceEditorSizeSub = this.formSubmitService.on('update-ace-editor-size', () => {
+      this.updateEditorSize();
+    });
+this.viewContainerRef.createEmbeddedView(this.templateRef);
   }
 
   onFullscreenChanged(...rest: any[]): any {
@@ -158,7 +158,7 @@ export class TbJsFuncDirective {
   }
 
   updateValidity(...rest: any[]): any {
-    ngModelCtrl.$setValidity('functionBody', this.functionValid);
+ngModelCtrl.setErrors(this.functionValid ? null : { functionBody: true });
   }
 
   showError(error?: any, ...rest: any[]): any {

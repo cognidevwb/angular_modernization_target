@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 720,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/dashboard/services/states-controller.service.ts\n\n2 item(s) to handle in this file.\n\n### G2287\nLines to replace: L3–L3\nKind: fix\nTask: Make line 3 of `src/app-ng/feature/dashboard/services/states-controller.service.ts` type-check without changing what it does.\nBefore: Cannot find module '../../../../app/dashboard/states/default-state-controller.tpl.html' or its corresponding type declarations.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n### G2288\nLines to replace: L4–L4\nKind: fix\nTask: Make line 4 of `src/app-ng/feature/dashboard/services/states-controller.service.ts` type-check without changing what it does.\nBefore: Cannot find module '../../../../app/dashboard/states/entity-state-controller.tpl.html' or its corresponding type declarations.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n\nThe file's lines:\nL1| import { Injectable } from '@angular/core';\nL2| import { bindMethods } from '../../../legacy-injector';\nL3| import defaultStateControllerTemplate from '../../../../app/dashboard/states/default-state-controller.tpl.html';\nL4| import entityStateControllerTemplate from '../../../../app/dashboard/states/entity-state-controller.tpl.html';\nL5| import DefaultStateController from '../../../../app/dashboard/states/default-state-controller';\nL6| import EntityStateController from '../../../../app/dashboard/states/entity-state-controller';\nL7| \nL8| /**\nL9|  * Ported from the AngularJS factory `statesControllerService` (module `thingsboard.dashboard.states`) in src/app/dashboard/states/index.js:22.\nL10|  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

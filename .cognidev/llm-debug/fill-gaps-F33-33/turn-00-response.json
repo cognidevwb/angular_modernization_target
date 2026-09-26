@@ -1,0 +1,14 @@
+{
+  "content": "### G2095\n```ts\nimport auditLogHeaderTemplate from '../../../../app/audit/audit-log-header.tpl.html?raw';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1206,
+    "costMicros": 5358,
+    "inputTokens": 2,
+    "outputTokens": 53
+  }
+}

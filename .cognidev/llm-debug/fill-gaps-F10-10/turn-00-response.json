@@ -1,0 +1,14 @@
+{
+  "content": "### G1944\n```ts\nthis.http.get(url, null).toPromise().then(function success(response?: any) {\n    deferred.resolve(response.data);\n}, function fail() {\n    deferred.reject();\n});\n```\n\n### G1945\n```ts\nthis.http.get(url, null).toPromise().then(function success(response?: any) {\n    deferred.resolve(response.data);\n}, function fail() {\n    deferred.reject();\n});\n```\n\n### G1946\n```ts\nthis.http.get(url, null).toPromise().then(function success(response?: any) {\n    deferred.resolve(response.data);\n}, function fail() {\n    deferred.reject();\n});\n```\n\n### G1947\n```ts\nthis.http.get(url, null).toPromise().then(function success(response?: any) {\n    deferred.resolve(response.data);\n}, function fail() {\n    deferred.reject();\n});\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2559,
+    "costMicros": 13090,
+    "inputTokens": 2,
+    "outputTokens": 285
+  }
+}

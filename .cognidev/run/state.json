@@ -2,9 +2,9 @@
   "playbook_id": "modernization-angular-v2",
   "playbook_name": "Modernize Angular V2 — AngularJS / old Angular → Angular 22",
   "status": "running",
-  "phase_id": "gaps",
-  "phase_label": "List what is left",
-  "phase_index": 14,
+  "phase_id": "fill-gaps",
+  "phase_label": "Fill the gaps with the LLM (optional)",
+  "phase_index": 15,
   "phase_total": 15,
-  "updated_at": 1790440514
+  "updated_at": 1790440515
 }

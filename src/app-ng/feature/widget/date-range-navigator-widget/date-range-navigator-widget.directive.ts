@@ -95,7 +95,7 @@ function DateRangeNavigatorWidgetController(this: any, $scope?: any, $window?: a
     $scope.goBack = goBack;
     $scope.triggerChange = triggerChange;
 
-    $scope.$watch('vm.ctx', function () {
+    effect(() => {
         if (vm.ctx && vm.ctx.dashboard.dashboardTimewindow) {
             $scope.settings = vm.ctx.widgetConfig.settings;
             let selection: any;
@@ -124,7 +124,7 @@ function DateRangeNavigatorWidgetController(this: any, $scope?: any, $window?: a
         }
     });
 
-    $scope.$on('dashboardTimewindowChanged', function () {
+    dashboardTimewindowChangedSubscription = dashboardTimewindowService.dashboardTimewindowChanged$.subscribe(() => {
         $scope.dashboardTimewindowChanged = true;
         widgetContextTimewindowSync();
     });
@@ -133,7 +133,7 @@ function DateRangeNavigatorWidgetController(this: any, $scope?: any, $window?: a
         let result: any = {};
 
         words.forEach(function (key?: any) {
-            result[key] = $filter('translate')('widgets.date-range-navigator.localizationMap.' + key);
+            result[key] = translatePipe.transform('widgets.date-range-navigator.localizationMap.' + key);
         });
 
         return result;
@@ -170,14 +170,15 @@ function DateRangeNavigatorWidgetController(this: any, $scope?: any, $window?: a
         let endDate: any = new Date(endTime);
 
         if (getDateDiff(startDate, endDate) === 0) {
-            template = $filter('date')(startDate, 'dd MMM yyyy');
+            template = datePipe.transform(startDate, 'dd MMM yyyy');
         } else {
-            template = $filter('date')(
+            template = datePipe.transform(
                 startDate,
                 'dd' + (startDate.getMonth() !== endDate.getMonth() || startDate.getFullYear() !== endDate.getFullYear() ? ' MMM' : '') + (startDate.getFullYear() !== endDate.getFullYear() ? ' yyyy' : '')
                 )
                 + ' - ' +
-                $filter('date')(
+                + ' - ' +
+                datePipe.transform(
                     endDate,
                     'dd MMM yyyy'
                 );
@@ -192,7 +193,7 @@ function DateRangeNavigatorWidgetController(this: any, $scope?: any, $window?: a
 
     function readFromStorage(itemKey?: any) {
         if ($window.sessionStorage.getItem(itemKey)) {
-            let selection: any = angular.fromJson($window.sessionStorage.getItem(itemKey));
+            let selection: any = JSON.parse($window.sessionStorage.getItem(itemKey));
             selection.start = new Date(parseInt(selection.start));
             selection.end = new Date(parseInt(selection.end));
             return selection;
@@ -270,7 +271,7 @@ function DateRangeNavigatorWidgetController(this: any, $scope?: any, $window?: a
 
     function saveIntoStorage(keyName?: any, selection?: any) {
         if (selection) {
-            $window.sessionStorage.setItem(keyName, angular.toJson(selection));
+            $window.sessionStorage.setItem(keyName, JSON.stringify(selection));
         }
     }
 }

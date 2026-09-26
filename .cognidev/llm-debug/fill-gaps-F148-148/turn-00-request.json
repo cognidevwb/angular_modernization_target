@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 720,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts\n\n2 item(s) to handle in this file.\n\n### G2411\nLines to replace: L10–L10\nKind: fix\nTask: Make line 10 of `src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts` type-check without changing what it does.\nBefore: Cannot find module '../../../../app/extension/extensions-forms/extension-form-mqtt.tpl.html' or its corresponding type declarations.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n### G2412\nLines to replace: L33–L33\nKind: fix\nTask: Make line 33 of `src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts` type-check without changing what it does.\nBefore: Object literal may only specify known properties, and 'imports' does not exist in type 'Directive'.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n\nThe file's lines:\nL4| import { types } from '../../common/constants/types';\nL5| import { CommonModule } from '@angular/common';\nL6| import { FormsModule } from '@angular/forms';\nL7| import { ParseToNullDirective } from '../parse-to-null/parse-to-null.directive';\nL8| \nL9| import $ from 'jquery';\nL10| import extensionFormMqttTemplate from '../../../../app/extension/extensions-forms/extension-form-mqtt.tpl.html';\nL11| import { LegacyInitDirective } from '../../../legacy-init.directive';\nL12| import { MatButtonModule } from '@angular/material/button';\nL13| import { MatCardModule } from '@angular/material/card';\nL14| import { MatCheckboxModule } from '@angular/material/checkbox';\nL15| import { MatFormFieldModule } from '@angular/material/form-field';\nL16| import { MatIconModule } from '@angular/material/icon';\n…\nL27|  * Ported from the AngularJS directive `tbExtensionFormMqtt` (module `thingsboard.extension`) in src/app/extension/index.js:24.\nL28|  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.\nL29|  */\nL30| @Directive({\nL31|   selector: '[tb-extension-form-mqtt]',\nL32|   standalone: true,\nL33|   imports: [TranslatePipe, MatTooltipModule, MatSelectModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatCardModule, MatButtonModule, LegacyInitDirective],\nL34| })\nL35| export class TbExtensionFormMqttDirective {\nL36|   readonly config = model<any>();\nL37|   readonly isAdd = model<any>();\nL38| \nL39|   // TODO(port): '$compile' — not in Angular: compose with components instead\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

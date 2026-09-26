@@ -1,0 +1,14 @@
+{
+  "content": "### G2171\n```ts\n// @ts-ignore\nimport jsonFormTemplate from '../../../../app/components/json-form.tpl.html';\n```\n\n### G2172\n```ts\n// @ts-ignore\nimport materialIconsDialogTemplate from '../../../../app/components/material-icons-dialog.tpl.html';\n```\n\n### G2173\n```ts\ndeclare let ObjectPath: any;\n```\n\n### G1868\nSAME: this.$new()/this.childScope mirror scope.$new()/childScope destroy-and-recompile behavior identically.\n\n### G2174\n```ts\n  openIconDialog(event?: any, ...rest: any[]): any {\n    let vm = this;\n    ($mdDialog as any).show({\n        controller: 'MaterialIconsDialogController',\n        controllerAs: 'vm',\n        templateUrl: materialIconsDialogTemplate,\n        parent: $(this.document.body),\n        locals: {icon: this.icon},\n        multiple: true,\n        fullscreen: true,\n        targetEvent: event\n    }).then(function (icon?: any) {\n        if (event.data && event.data.onValueChanged) {\n            event.data.onValueChanged(icon);\n        }\n    });\n  }\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2688,
+    "costMicros": 14846,
+    "inputTokens": 2,
+    "outputTokens": 409
+  }
+}

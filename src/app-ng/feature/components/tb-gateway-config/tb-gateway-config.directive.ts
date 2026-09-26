@@ -1,7 +1,7 @@
 import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import gatewayConfigTemplate from '../../../../app/components/gateway/gateway-config.tpl.html';
+import gatewayConfigTemplate from '../../../../app/components/gateway/gateway-config.tpl.html?raw';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,7 +15,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 declare let scope: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
-function GatewayConfigController(this: any, $scope?: any, $document?: any, $mdDialog?: any, $mdUtil?: any, $window?: any, types?: any) {
+function GatewayConfigController(this: any, $scope?: any, $document?: any, $mdDialog?: any, $window?: any, types?: any) {
     let vm: any = this;
     vm.types = types;
 
@@ -34,7 +34,7 @@ function GatewayConfigController(this: any, $scope?: any, $document?: any, $mdDi
         });
     };
 
-    vm.openConfigDialog = ($event?: any, index?: any, config?: any, typeName?: any) => {
+    vm.openConfigDialog = ($event?: any, index?: any, config?: any, typeName?: any, elementRef?: any) => {
         if ($event) {
             $event.stopPropagation();
         }
@@ -42,7 +42,7 @@ function GatewayConfigController(this: any, $scope?: any, $document?: any, $mdDi
             controller: GatewayDialogController,
             controllerAs: 'vm',
             templateUrl: gatewayConfigDialogTemplate,
-            parent: angular.element($document[0].body),
+            parent: elementRef ? $(elementRef.nativeElement) : $(document.body),
             locals: {
                 config: config,
                 typeName: typeName
@@ -101,7 +101,7 @@ function GatewayConfigController(this: any, $scope?: any, $document?: any, $mdDi
 
 function GatewayDialogController(this: any, $scope?: any, $mdDialog?: any, $document?: any, $window?: any, config?: any, typeName?: any) {
     let vm: any = this;
-    vm.config = js_beautify(angular.toJson(config), {indent_size: 4});
+    vm.config = js_beautify(JSON.stringify(config), {indent_size: 4});
     vm.typeName = typeName;
     vm.configAreaOptions = {
         useWrapMode: true,
@@ -140,7 +140,7 @@ function GatewayDialogController(this: any, $scope?: any, $mdDialog?: any, $docu
     };
 }
 
-const js_beautify: any = beautify.js;
+const js_beautify: any = (window as any).beautify.js;
 
 /**
  * Ported from the AngularJS directive `tbGatewayConfig` (module `thingsboard.directives.gatewayConfig`) in src/app/components/gateway/gateway-config.directive.js:27.

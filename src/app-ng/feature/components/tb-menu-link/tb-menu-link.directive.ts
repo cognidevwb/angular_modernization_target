@@ -4,8 +4,8 @@ import { MenuService } from '../../services/menu.service';
 import { CommonModule } from '@angular/common';
 
 import $ from 'jquery';
-import menulinkTemplate from '../../../../app/components/menu-link.tpl.html';
-import menutoggleTemplate from '../../../../app/components/menu-toggle.tpl.html';
+import menulinkTemplate from '../../../../app/components/menu-link.tpl.html?raw';
+import menutoggleTemplate from '../../../../app/components/menu-toggle.tpl.html?raw';
 import { NospacePipe } from '../pipes/nospace.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';

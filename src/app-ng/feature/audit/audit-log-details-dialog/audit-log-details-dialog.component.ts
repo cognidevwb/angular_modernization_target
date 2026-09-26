@@ -107,6 +107,6 @@ export class AuditLogDetailsDialogComponent {
   }
 
   close = (...rest: any[]): any => {
-    this.dialog.hide();
+    this.dialogRef.close();
   };
 }

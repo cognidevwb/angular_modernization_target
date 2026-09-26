@@ -41,6 +41,6 @@ export class ActivationLinkDialogComponent {
   };
 
   close = (...rest: any[]): any => {
-    this.dialog.hide();
+    this.dialogRef.close();
   };
 }

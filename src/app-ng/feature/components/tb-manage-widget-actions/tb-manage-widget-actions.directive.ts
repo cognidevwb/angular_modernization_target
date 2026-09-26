@@ -1,6 +1,6 @@
 import { Component, model, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import manageWidgetActionsTemplate from '../../../../app/components/widget/action/manage-widget-actions.tpl.html';
+import manageWidgetActionsTemplate from '../../../../app/components/widget/action/manage-widget-actions.tpl.html?raw';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -42,16 +42,18 @@ function ManageWidgetActionsController(this: any, $rootScope?: any, $scope?: any
         $scope.manageWidgetActionsForm.querySearchInput.$pristine = false;
     });
 
-    $scope.$watch('vm.widgetActions', function() {
-        if (vm.widgetActions) {
+    effect(() => {
+        if (vm.widgetActions()) {
             reloadActions();
         }
     });
 
-    $scope.$watch("vm.query.search", function(newVal?: any, prevVal?: any) {
-        if (!angular.equals(newVal, prevVal) && vm.query.search != null) {
+    effect(() => {
+        const newVal = vm.query.search;
+        if (!isEqual(newVal, prevSearchVal) && vm.query.search != null) {
             updateActions();
         }
+        prevSearchVal = newVal;
     });
 
     function enterFilterMode (event?: any) {
@@ -140,7 +142,7 @@ function ManageWidgetActionsController(this: any, $rootScope?: any, $scope?: any
                 if (!isAdd && action.actionSourceId == id) {
                     availableActionSources[id] = actionSource;
                 } else {
-                    var result: any = $filter('filter')(vm.allActions, {actionSourceId: id});
+                    var result: any = filterFilter(vm.allActions, {actionSourceId: id});
                     if (!result || !result.length) {
                         availableActionSources[id] = actionSource;
                     }
@@ -150,7 +152,7 @@ function ManageWidgetActionsController(this: any, $rootScope?: any, $scope?: any
         $mdDialog.show({
             controller: 'WidgetActionDialogController',
             controllerAs: 'vm',
-            templateUrl: widgetActionDialogTemplate,
+            templateUrl: manageWidgetActionsTemplate,
             parent: angular.element($document[0].body),
             locals: {isAdd: isAdd, fetchDashboardStates: vm.fetchDashboardStates,
                 actionSources: availableActionSources, widgetActions: vm.widgetActions,
@@ -165,7 +167,7 @@ function ManageWidgetActionsController(this: any, $rootScope?: any, $scope?: any
     }
 
     function getActionIndex(id?: any, actions?: any) {
-        var result: any = $filter('filter')(actions, {id: id}, true);
+        var result: any = filterFilter(actions, {id: id}, true);
         if (result && result.length) {
             return actions.indexOf(result[0]);
         }
@@ -231,7 +233,7 @@ function ManageWidgetActionsController(this: any, $rootScope?: any, $scope?: any
     function updateActions () {
         var result: any = $filter('orderBy')(vm.allActions, vm.query.order);
         if (vm.query.search != null) {
-            result = $filter('filter')(result, {$: vm.query.search});
+            result = filterFilter(result, {$: vm.query.search});
         }
         vm.actionsCount = result.length;
         var startIndex: any = vm.query.limit * (vm.query.page - 1);

@@ -1,6 +1,6 @@
 import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import knobTemplate from '../../../../app/widget/lib/rpc/knob.tpl.html';
+import knobTemplate from '../../../../app/widget/lib/rpc/knob.tpl.html?raw';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
@@ -13,8 +13,8 @@ function KnobController(this: any, $element?: any, $scope?: any, $document?: any
     vm.error = '';
     vm.newValue = 0;
 
-    var knob: any = angular.element('.knob', $element),
-        knobContainer: any = angular.element('#knob-container', $element),
+    let knob: any = $(this.knobElementRef.nativeElement).find('.knob'),
+        knobContainer: any = $(this.knobElementRef.nativeElement).find('#knob-container'),
         knobTopPointerContainer: any = knob.find('.top-pointer-container'),
         knobTopPointer: any = knob.find('.top-pointer'),
         knobValueContainer: any = knob.find('.value-container'),
@@ -35,7 +35,7 @@ function KnobController(this: any, $element?: any, $scope?: any, $document?: any
     var minDeg: any = -45;
     var maxDeg: any = 225;
 
-    var canvasBarElement: any = angular.element('#canvasBar', $element);
+    var canvasBarElement: any = $(this.knobElementRef.nativeElement).find('#canvasBar');
 
     var levelColors: any = ['#19ff4b', '#ffff19', '#ff3232'];
 
@@ -69,7 +69,7 @@ function KnobController(this: any, $element?: any, $scope?: any, $document?: any
             animation: false
         };
 
-        canvasBar = new CanvasDigitalGauge(canvasBarData).draw();
+        canvasBar = new (CanvasDigitalGauge as any)(canvasBarData).draw();
 
         knob.on('click', (e?: any) => {
             if (moving) {
@@ -259,7 +259,7 @@ function KnobController(this: any, $element?: any, $scope?: any, $document?: any
     }
 
     function updateColor(color?: any) {
-        var glowColor: any = tinycolor(color).brighten(30).toHexString();
+        var glowColor: any = (tinycolor as any)(color).brighten(30).toHexString();
         knobValue.css({'color': glowColor});
         var textShadow: any = `${color} 1px 1px 10px, ${glowColor} 1px 1px 10px`;
         knobValue.css({'textShadow': textShadow});
@@ -269,17 +269,17 @@ function KnobController(this: any, $element?: any, $scope?: any, $document?: any
     }
 
     function onValue(value?: any) {
-        $scope.$applyAsync(() => {
-            vm.value = formatValue(value);
-            checkValueSize();
-        });
+    function onValue(value?: any) {
+        vm.value = formatValue(value);
+        checkValueSize();
+    }
     }
 
     function onError(error?: any) {
-        $scope.$applyAsync(() => {
-            vm.error = error;
-            setFontSize(knobError, vm.error, knobErrorContainer.height(), knobErrorContainer.width());
-        });
+    function onError(error?: any) {
+        vm.error = error;
+        setFontSize(knobError, vm.error, knobErrorContainer.height(), knobErrorContainer.width());
+    }
     }
 
     function formatValue(value?: any) {

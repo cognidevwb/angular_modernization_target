@@ -26,7 +26,7 @@ export class TbRafService {
         };
     }
         : function(fn?: any) {
-        var timer: any = setTimeout(fn, 16.66, false);
+        var timer: any = setTimeout(fn, 16.66);
         return function() {
             clearTimeout(timer);
         };

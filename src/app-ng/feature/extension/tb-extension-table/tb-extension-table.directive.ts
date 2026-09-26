@@ -1,6 +1,7 @@
 import { Component, input, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+// @ts-ignore
 import extensionTableTemplate from '../../../../app/extension/extension-table.tpl.html';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -66,7 +67,7 @@ function ExtensionTableController(this: any, $scope?: any, $filter?: any, $docum
     });
 
     $scope.$watch("vm.query.search", function(newVal?: any, prevVal?: any) {
-        if (!angular.equals(newVal, prevVal) && vm.query.search != null) {
+        if (!(window as any).angular.equals(newVal, prevVal) && vm.query.search != null) {
             updateExtensions();
         }
     });
@@ -112,7 +113,7 @@ function ExtensionTableController(this: any, $scope?: any, $filter?: any, $docum
     });
 
     function enterFilterMode(event?: any) {
-        let $button: any = angular.element(event.currentTarget);
+        let $button: any = (window as any).angular.element(event.currentTarget);
         let $toolbarsContainer: any = $button.closest('.toolbarsContainer');
 
         vm.query.search = '';
@@ -164,10 +165,10 @@ function ExtensionTableController(this: any, $scope?: any, $filter?: any, $docum
             isAdd = true;
         }
         $mdDialog.show({
-            controller: ExtensionDialogController,
+            controller: (window as any).ExtensionDialogController,
             controllerAs: 'vm',
-            templateUrl: extensionDialogTemplate,
-            parent: angular.element($document[0].body),
+            templateUrl: (window as any).extensionDialogTemplate,
+            parent: (window as any).angular.element($document[0].body),
             locals: {
                 isAdd: isAdd,
                 allExtensions: vm.allExtensions,
@@ -204,7 +205,7 @@ function ExtensionTableController(this: any, $scope?: any, $filter?: any, $docum
                 var editedExtensions: any = vm.allExtensions.filter(function(ext?: any) {
                     return ext.id !== extension.id;
                 });
-                var editedValue: any = angular.toJson(editedExtensions);
+                var editedValue: any = (window as any).angular.toJson(editedExtensions);
                 attributeService.saveEntityAttributes(vm.entityType, vm.entityId, types.attributesScope.shared.value, [{key:"configuration", value:editedValue}]).then(
                     function success() {
                         reloadExtensions();
@@ -230,13 +231,13 @@ function ExtensionTableController(this: any, $scope?: any, $filter?: any, $docum
                 .cancel($translate.instant('action.no'))
                 .ok($translate.instant('action.yes'));
             $mdDialog.show(confirm).then(function () {
-                var editedExtensions: any = angular.copy(vm.allExtensions);
+                var editedExtensions: any = (window as any).angular.copy(vm.allExtensions);
                 for (var i: any = 0; i < vm.selectedExtensions.length; i++) {
                     editedExtensions = editedExtensions.filter(function (ext?: any) {
                         return ext.id !== vm.selectedExtensions[i].id;
                     });
                 }
-                var editedValue: any = angular.toJson(editedExtensions);
+                var editedValue: any = (window as any).angular.toJson(editedExtensions);
                 attributeService.saveEntityAttributes(vm.entityType, vm.entityId, types.attributesScope.shared.value, [{key:"configuration", value:editedValue}]).then(
                     function success() {
                         reloadExtensions();
@@ -254,7 +255,7 @@ function ExtensionTableController(this: any, $scope?: any, $filter?: any, $docum
         vm.extensionsPromise.then(
             function success(data?: any) {
                 if (data.length) {
-                    vm.allExtensions = angular.fromJson(data[0].value);
+                    vm.allExtensions = (window as any).angular.fromJson(data[0].value);
                 } else {
                     vm.allExtensions = [];
                 }
@@ -287,7 +288,7 @@ function ExtensionTableController(this: any, $scope?: any, $filter?: any, $docum
         var startIndex: any = vm.query.limit * (vm.query.page - 1);
         vm.extensions = result.slice(startIndex, startIndex + vm.query.limit);
 
-        vm.extensionsJSON = angular.toJson(vm.extensions);
+        vm.extensionsJSON = (window as any).angular.toJson(vm.extensions);
         checkForSync();
     }
 
@@ -351,9 +352,12 @@ function ExtensionTableController(this: any, $scope?: any, $filter?: any, $docum
         return d;
 
         function addZero(num?: any) {
-            if ((angular.isNumber(num) && num < 10) || (angular.isString(num) && num.length === 1)) {
+        function addZero(num?: any) {
+            if (((window as any).angular.isNumber(num) && num < 10) || ((window as any).angular.isString(num) && num.length === 1)) {
                 num = '0' + num;
             }
+            return num;
+        }
             return num;
         }
         return undefined;

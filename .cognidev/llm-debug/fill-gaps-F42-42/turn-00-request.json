@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 900,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/components/constants/react-schema-form.ts\n\n1 item(s) to handle in this file.\n\n### G20\nLines to replace: L2–L6\nKind: fix\nTask: Create exported constant `ReactSchemaForm` to replace AngularJS value `ReactSchemaForm`.\nBefore: `ReactSchemaForm` is registered at src/app/components/json-form.directive.js:28 with `angular.module('thingsboard.directives.jsonForm').value(…)`.\nAfter: `src/app/components/json-form.directive.ts` exports `ReactSchemaForm`; no AngularJS registration of `ReactSchemaForm` remains.\nDecision already made (follow it): null\n\n\nThe file's lines:\nL1| /**\nL2|  * Ported from the AngularJS value `ReactSchemaForm` (module `thingsboard.directives.jsonForm`) in src/app/components/json-form.directive.js:28.\nL3|  * Scaffolded by the playbook.\nL4|  */\nL5| // TODO(port): `ReactSchemaForm` is a global the legacy side loads as a script; import the package instead.\nL6| export const ReactSchemaForm: any = (globalThis as any).ReactSchemaForm;\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

@@ -1,0 +1,14 @@
+{
+  "content": "### G2507\n```ts\nimport logoSvg from '../../../../svg/logo_title_white.svg?url' assert { };\n```\n\n### G2508\n```ts\nthis.isGtSm = this.breakpoints.isMatched('gt-sm');\n```\n\n### G2509\n```ts\n$scope.$watch(() => { return this.breakpoints.isMatched('gt-sm'); }, (isGtSm?: any) => {\n    this.isGtSm = isGtSm;\n    this.isLockSidenav = isGtSm;\n    this.isShowSidenav = isGtSm;\n    if (!isGtSm) {\n        setTimeout(() => {\n            $animate.enabled(this.siteSideNav, true);\n        }, 0, false);\n    } else {\n        $animate.enabled(this.siteSideNav, false);\n    }\n});\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2119,
+    "costMicros": 11250,
+    "inputTokens": 2,
+    "outputTokens": 277
+  }
+}

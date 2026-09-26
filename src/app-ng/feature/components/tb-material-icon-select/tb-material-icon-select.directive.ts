@@ -4,7 +4,9 @@ import { ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import $ from 'jquery';
+// @ts-ignore
 import materialIconSelectTemplate from '../../../../app/components/material-icon-select.tpl.html';
+// @ts-ignore
 import materialIconsDialogTemplate from '../../../../app/components/material-icons-dialog.tpl.html';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
@@ -30,7 +32,7 @@ export class TbMaterialIconSelectDirective {
   // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(materialIconSelectTemplate);
+  protected template: any = materialIconSelectTemplate;
   icon: any = null;
   $watch: any;
 

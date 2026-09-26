@@ -5,7 +5,7 @@ import { TbRelationTypeAutocompleteDirective } from '../tb-relation-type-autocom
 import { TbEntityTypeListDirective } from '../tb-entity-type-list/tb-entity-type-list.directive';
 
 import $ from 'jquery';
-import relationFiltersTemplate from '../../../../app/entity/relation/relation-filters.tpl.html';
+import relationFiltersTemplate from '../../../../app/entity/relation/relation-filters.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';

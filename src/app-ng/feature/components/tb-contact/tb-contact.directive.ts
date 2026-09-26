@@ -3,6 +3,8 @@ import { ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore -- .html template import has no type declaration; content is unused directly (kept for template asset resolution)
 import contactTemplate from '../../../../app/components/contact.tpl.html';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';

@@ -4,7 +4,7 @@ import { EntityService } from '../../api/services/entity.service';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import entityListTemplate from '../../../../app/entity/entity-list.tpl.html';
+import entityListTemplate from '../../../../app/entity/entity-list.tpl.html?raw';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;

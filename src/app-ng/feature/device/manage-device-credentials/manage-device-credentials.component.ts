@@ -63,7 +63,7 @@ export class ManageDeviceCredentialsComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   valid = (...rest: any[]): any => {
@@ -85,7 +85,7 @@ export class ManageDeviceCredentialsComponent {
     this.deviceService.saveDeviceCredentials(this.deviceCredentials).then((deviceCredentials?: any) => {
         this.deviceCredentials = deviceCredentials;
         this.theForm.$setPristine();
-        this.dialog.hide();
+    (this.dialog as any).hide();
     });
   };
 }

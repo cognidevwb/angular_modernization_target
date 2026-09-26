@@ -271,7 +271,7 @@ export class ImportDialogCsvComponent {
             this.addEntities(this.parseData_local, this.columnsParam);
             break;
         case 6:
-            this.dialog.hide();
+(this.dialog as any).hide();
             break;
     }
 
@@ -279,9 +279,9 @@ export class ImportDialogCsvComponent {
 
   cancel = (...rest: any[]): any => {
     if($mdStepper('import-stepper').currentStep > 2){
-        this.dialog.hide();
+(this.dialog as any).hide();
     } else {
-        this.dialog.cancel();
+(this.dialog as any).cancel();
     }
   };
 }

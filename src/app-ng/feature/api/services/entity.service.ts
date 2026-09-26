@@ -945,14 +945,14 @@ export class EntityService {
     } else if (type === types.dataKeyType.attribute) {
         url += 'attributes';
     }
-    this.http.get(url, config).then(function success(response?: any) {
+    this.http.get(url, config).toPromise().then(function success(response?: any) {
         var result: any = [];
         if (response.data) {
             if (query) {
                 var dataKeys: any = response.data;
-                var lowercaseQuery: any = angular.lowercase(query);
+                var lowercaseQuery: any = query.toLowerCase();
                 for (var i: any=0; i<dataKeys.length;i++) {
-                    if (angular.lowercase(dataKeys[i]).indexOf(lowercaseQuery) === 0) {
+                    if (dataKeys[i].toLowerCase().indexOf(lowercaseQuery) === 0) {
                         result.push(dataKeys[i]);
                     }
                 }
@@ -1511,7 +1511,7 @@ export class EntityService {
   }
 
   updateEntity(entity?: any, relatedEntity?: any, keys?: any, deferred?: any, ...rest: any[]): any {
-    if (!angular.equals(entity.name, relatedEntity.name) || !angular.equals(entity.type, relatedEntity.type)) {
+    if (entity.name !== relatedEntity.name || entity.type !== relatedEntity.type) {
         entity.name = relatedEntity.name;
         entity.type = relatedEntity.type;
         this.saveEntityPromise(entity).then(
@@ -1608,7 +1608,7 @@ export class EntityService {
   }
 
   getAttributeValue(attributes?: any, key?: any, ...rest: any[]): any {
-    var foundAttributes: any = $filter('filter')(attributes, {key: key}, true);
+    var foundAttributes: any = attributes.filter(function (item: any) { return item.key === key; });
     if (foundAttributes.length > 0) {
         return foundAttributes[0].value;
     } else {

@@ -1,0 +1,14 @@
+{
+  "content": "### G2374\n```ts\n// @ts-ignore\nimport entityAutocompleteTemplate from '../../../../app/entity/entity-autocomplete.tpl.html';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1246,
+    "costMicros": 5598,
+    "inputTokens": 2,
+    "outputTokens": 61
+  }
+}

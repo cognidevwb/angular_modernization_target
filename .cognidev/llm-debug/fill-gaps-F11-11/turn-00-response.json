@@ -1,0 +1,14 @@
+{
+  "content": "### G1948\n```ts\n        this.http.get(url, null).toPromise().then((response?: any) => {\n            this.componentsByType[componentType] = response.data;\n            for (var i: any = 0; i < this.componentsByType[componentType].length; i++) {\n                var component: any = this.componentsByType[componentType][i];\n                this.componentsByClazz[component.clazz] = component;\n            }\n            deferred.resolve(this.componentsByType[componentType]);\n        }, function fail() {\n            deferred.reject();\n        });\n```\n\n### G1949\n```ts\n        this.http.get(url, null).toPromise().then((response?: any) => {\n            var components: any = response.data;\n            for (var i: any = 0; i < components.length; i++) {\n                var component: any = components[i];\n                var componentsList: any = this.componentsByType[component.type];\n                if (!componentsList) {\n                    componentsList = [];\n                    this.componentsByType[component.type] = componentsList;\n                }\n                componentsList.push(component);\n                this.componentsByClazz[component.clazz] = component;\n            }\n            result = result.concat(components);\n            deferred.resolve(components);\n        }, function fail() {\n            deferred.reject();\n        });\n```\n\n### G1950\n```ts\n        this.http.get(url, null).toPromise().then((response?: any) => {\n            this.componentsByClazz[componentDescriptorClazz] = response.data;\n            deferred.resolve(this.componentsByClazz[componentDescriptorClazz]);\n        }, function fail() {\n            deferred.reject();\n        });\n```\n\n### G1951\n```ts\n        this.http.get(url, null).toPromise().then((response?: any) => {\n            this.actionsByPlugin[pluginClazz] = response.data;\n            deferred.resolve(this.actionsByPlugin[pluginClazz]);\n        }, function fail() {\n            deferred.reject();\n        });\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2753,
+    "costMicros": 17366,
+    "inputTokens": 2,
+    "outputTokens": 635
+  }
+}

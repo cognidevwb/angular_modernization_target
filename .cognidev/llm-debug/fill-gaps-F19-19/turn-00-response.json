@@ -1,0 +1,14 @@
+{
+  "content": "### G56,G836\n```ts\n  getEvents(entityType?: any, entityId?: any, eventType?: any, tenantId?: any, pageLink?: any, ...rest: any[]): any {\n    return new Promise((resolve, reject) => {\n```\n\n### G2016\n```ts\n    this.http.get(url, null).toPromise().then(function success(response?: any) {\n        resolve(response);\n    }, function fail() {\n        reject();\n    });\n    });\n  }\n}",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1792,
+    "costMicros": 8732,
+    "inputTokens": 2,
+    "outputTokens": 156
+  }
+}

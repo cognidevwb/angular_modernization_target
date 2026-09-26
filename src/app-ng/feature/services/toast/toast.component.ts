@@ -28,6 +28,6 @@ export class ToastComponent {
   }
 
   closeToast = (...rest: any[]): any => {
-    this.snackBar.hide();
+    (this.snackBar as any).hide();
   };
 }

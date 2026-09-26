@@ -573,10 +573,10 @@ export class WidgetComponent {
                 dashboardId: targetDashboardId,
                 state: this.utilsRef.objToBase64([ stateObject ])
             }
-            if (this.router.current.name === 'dashboard') {
-                this.router.go('dashboard', stateParams);
+            if ((this.router as any).current.name === 'dashboard') {
+                (this.router as any).go('dashboard', stateParams);
             } else {
-                this.router.go('home.dashboards.dashboard', stateParams);
+                (this.router as any).go('home.dashboards.dashboard', stateParams);
             }
             break;
         case types.widgetActionTypes.custom.value:
@@ -949,7 +949,7 @@ export class WidgetComponent {
                 this.cafs['resize']();
                 this.cafs['resize'] = null;
             }
-            this.cafs['resize'] = this.tbRafRef(() => {
+            this.cafs['resize'] = (this.tbRafRef as any)(() => {
                 try {
                     if (this.displayWidgetInstance()) {
                         this.widgetTypeInstance.onResize();
@@ -981,7 +981,7 @@ export class WidgetComponent {
                 this.cafs['editMode']();
                 this.cafs['editMode'] = null;
             }
-            this.cafs['editMode'] = this.tbRafRef(() => {
+            this.cafs['editMode'] = (this.tbRafRef as any)(() => {
                 try {
                     if (this.displayWidgetInstance()) {
                         this.widgetTypeInstance.onEditModeChanged();
@@ -1002,7 +1002,7 @@ export class WidgetComponent {
                 this.cafs['mobileMode']();
                 this.cafs['mobileMode'] = null;
             }
-            this.cafs['mobileMode'] = this.tbRafRef(() => {
+            this.cafs['mobileMode'] = (this.tbRafRef as any)(() => {
                 try {
                     if (this.displayWidgetInstance()) {
                         this.widgetTypeInstance.onMobileModeChanged();

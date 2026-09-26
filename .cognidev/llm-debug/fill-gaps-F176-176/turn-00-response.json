@@ -1,0 +1,14 @@
+{
+  "content": "### G2547\n```ts\nimport ruleNodeFieldsetTemplate from '!!raw-loader!../../../../app/rulechain/rulenode-fieldset.tpl.html';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1333,
+    "costMicros": 5996,
+    "inputTokens": 2,
+    "outputTokens": 66
+  }
+}

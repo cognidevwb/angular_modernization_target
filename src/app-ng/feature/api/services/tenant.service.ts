@@ -30,7 +30,7 @@ export class TenantService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-    this.http.get(url, config).then(function success(response?: any) {
+    this.http.get(url, config).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -41,7 +41,7 @@ export class TenantService {
   getTenant(tenantId?: any, config?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/tenant/' + tenantId;
-    this.http.get(url, config).then(function success(response?: any) {
+    this.http.get(url, config).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail(response?: any) {
         deferred.reject(response.data);
@@ -52,7 +52,7 @@ export class TenantService {
   saveTenant(tenant?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/tenant';
-    this.http.post(url, tenant).then(function success(response?: any) {
+    this.http.post(url, tenant).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail(response?: any) {
         deferred.reject(response.data);
@@ -63,7 +63,7 @@ export class TenantService {
   deleteTenant(tenantId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/tenant/' + tenantId;
-    this.http.delete(url).then(function success() {
+    this.http.delete(url).toPromise().then(function success() {
         deferred.resolve();
     }, function fail(response?: any) {
         deferred.reject(response.data);

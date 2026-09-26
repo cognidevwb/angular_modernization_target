@@ -46,6 +46,6 @@ export class MakeDashboardPublicDialogComponent {
   };
 
   close = (...rest: any[]): any => {
-    this.dialog.hide();
+this.dialog.closeAll();
   };
 }

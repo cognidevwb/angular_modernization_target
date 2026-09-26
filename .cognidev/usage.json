@@ -1,0 +1,21 @@
+{
+  "totals": {
+    "inputTokens": 414,
+    "outputTokens": 238155,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 676197,
+    "costMicros": 5087166,
+    "calls": 207
+  },
+  "byModel": {
+    "sonnet": {
+      "inputTokens": 414,
+      "outputTokens": 238155,
+      "cacheReadTokens": 0,
+      "cacheWriteTokens": 676197,
+      "costMicros": 5087166,
+      "calls": 207
+    }
+  },
+  "updatedMs": 1790443413510
+}

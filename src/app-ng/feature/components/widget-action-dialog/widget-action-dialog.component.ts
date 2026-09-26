@@ -212,12 +212,12 @@ export class WidgetActionDialogComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+(this.dialog as any).cancel();
   };
 
   save = (...rest: any[]): any => {
     this.theForm.$setPristine();
-    this.dialog.hide(this.cleanupAction(this.action));
+(this.dialog as any).hide(this.cleanupAction(this.action));
   };
 
   /** The keys of a `(k, v) in obj` repeat, in the object's own order. */

@@ -92,7 +92,7 @@ export class AddEntityViewsToCustomerComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+(this.dialog as any).cancel();
   };
 
   assign = (...rest: any[]): any => {
@@ -101,7 +101,7 @@ export class AddEntityViewsToCustomerComponent {
         tasks.push(this.entityViewService.assignEntityViewToCustomer(this.dialogData.customerId, entityViewId));
     }
     Promise.all(tasks).then(() => {
-        this.dialog.hide();
+(this.dialog as any).hide();
     });
   };
 

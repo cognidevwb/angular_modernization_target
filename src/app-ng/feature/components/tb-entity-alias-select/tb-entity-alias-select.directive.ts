@@ -2,7 +2,7 @@ import { Component, inject, model, output } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import $ from 'jquery';
-import entityAliasSelectTemplate from '../../../../app/components/entity-alias-select.tpl.html';
+const entityAliasSelectTemplate: string = require('../../../../app/components/entity-alias-select.tpl.html');
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
@@ -34,7 +34,7 @@ export class TbEntityAliasSelectDirective {
   protected readonly entityService = inject(EntityService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(entityAliasSelectTemplate);
+protected template: any = entityAliasSelectTemplate;
   ngModelCtrl: any = ngModelCtrl;
   entityAliasList: any = [];
   entityAlias: any = null;
@@ -73,7 +73,7 @@ export class TbEntityAliasSelectDirective {
   updateValidity(...rest: any[]): any {
     var value: any = ngModelCtrl.$viewValue;
     var valid: any = (value !== undefined) && value != null || !this.tbRequired();
-    ngModelCtrl.$setValidity('entityAlias', valid);
+    this.ngControl?.control?.setErrors(valid ? null : { entityAlias: true });
   }
 
   entityAliasSearch(entityAliasSearchText?: any, ...rest: any[]): any {
@@ -82,14 +82,14 @@ export class TbEntityAliasSelectDirective {
   }
 
   createFilterForEntityAlias(query?: any, ...rest: any[]): any {
-    var lowercaseQuery: any = angular.lowercase(query);
+    var lowercaseQuery: any = query.toLowerCase();
     return function filterFn(entityAlias?: any) {
-        return (angular.lowercase(entityAlias.alias).indexOf(lowercaseQuery) === 0);
+        return (entityAlias.alias.toLowerCase().indexOf(lowercaseQuery) === 0);
     };
   }
 
   updateView(...rest: any[]): any {
-    ngModelCtrl.$setViewValue(this.entityAlias);
+    this.onChange?.(this.entityAlias);
     this.updateValidity();
   }
 

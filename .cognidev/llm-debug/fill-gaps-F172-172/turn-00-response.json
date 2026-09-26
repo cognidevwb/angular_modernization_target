@@ -1,0 +1,14 @@
+{
+  "content": "### G2543\n```ts\nimport messageTypeAutocompleteTemplate from '../../../../app/rulechain/message-type-autocomplete.tpl.html?raw';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1262,
+    "costMicros": 5662,
+    "inputTokens": 2,
+    "outputTokens": 61
+  }
+}

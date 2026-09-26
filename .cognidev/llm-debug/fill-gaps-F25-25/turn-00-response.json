@@ -1,0 +1,14 @@
+{
+  "content": "### G2038\n```ts\nconst MAX_INTERVAL: any = 365 * 20 * 24 * 60 * MINUTE;\n```\n\n### G2039\n```ts\nconst DAY: any = 24 * 60 * MINUTE;\n```\n\n### G66,G869\n```ts\nreturn new Promise((resolve: any, reject: any) => {\n```\n\n### G2040\n```ts\n    this.http.get(url, {ignoreLoading: true} as any).then((response?: any) => {\n        this.maxDatapointsLimit = response.data;\n        if (!this.maxDatapointsLimit || this.maxDatapointsLimit <= MIN_LIMIT) {\n            this.maxDatapointsLimit = MIN_LIMIT + 1;\n        }\n        resolve();\n    }, function fail() {\n        reject();\n    });\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2258,
+    "costMicros": 58316,
+    "inputTokens": 2,
+    "outputTokens": 4928
+  }
+}

@@ -22,7 +22,7 @@ export class QueueService {
     let deferred: any = $q.defer();
     let url: any = '/api/tenant/queues?serviceType=' + serviceType;
 
-    this.http.get(url, config).then(function success(data?: any) {
+    this.http.get(url, config).toPromise().then(function success(data?: any) {
         deferred.resolve(data);
     }, function fail() {
         deferred.reject();

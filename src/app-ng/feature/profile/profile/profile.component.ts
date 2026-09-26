@@ -56,7 +56,7 @@ export class ProfileComponent {
             this.profileUser.additionalInfo = {};
         }
         if (!this.profileUser.additionalInfo.lang) {
-            this.profileUser.additionalInfo.lang = this.translate.use();
+            this.profileUser.additionalInfo.lang = (this.translate as any).use();
         }
     });
   }
@@ -71,7 +71,7 @@ export class ProfileComponent {
 
   changePassword = ($event?: any, ...rest: any[]): any => {
     let vm = this;
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'ChangePasswordController',
         controllerAs: 'vm',
         templateUrl: changePasswordTemplate,

@@ -645,7 +645,7 @@ function DatasourceSubscription(this: any, datasourceSubscription?: any, telemet
                         datasourceData[datasourceKey].data = data;
                         for (var i2: any = 0; i2 < listeners.length; i2++) {
                             var listener: any = listeners[i2];
-                            if (angular.isFunction(listener))
+                            if (typeof listener === 'function')
                               continue;
                             listener.dataUpdated(datasourceData[datasourceKey],
                                 listener.datasourceIndex,

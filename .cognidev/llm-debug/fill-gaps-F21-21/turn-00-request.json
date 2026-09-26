@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 960,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/api/services/queue.service.ts\n\n2 item(s) to handle in this file.\n\n### G59,G846\nLines to replace: L22–L22\nKind: fix\nTask: Change `$q` at L22 in `queueService` to Promise, or an Observable.\nBefore: L22 of `src/app/api/queue.service.js` uses `$q`.\nAfter: The code uses Promise, or an Observable; `$q` is gone from `queueService`.\nDecision already made (follow it): null\n\nAlso:\nKind: apply\nTask: Change `$q.defer` at L30 in `getTenantQueuesByServiceType`: Jev picks between new Promise((resolve, reject) => …).\nBefore: L30 of `src/app/api/queue.service.js` uses `$q.defer`.\nAfter: The code uses the option Jev picked; `$q.defer` is gone from `getTenantQueuesByServiceType`.\nDecision already made (follow it): {\"decided_by\":\"jev\",\"option\":\"new_promise\",\"why\":\"Jev: new_promise 0.85, fit 0.45\"}\n\n### G2024\nLines to replace: L25–L29\nKind: fix\nTask: Make line 25 of `src/app-ng/feature/api/services/queue.service.ts` type-check without changing what it does.\nBefore: Property 'then' does not exist on type 'Observable<ArrayBuffer>'.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n\nThe file's lines:\nL16|   // TODO(port): '$q' — use Promise, or an Observable\nL17| \nL18|   // TODO(port): $http — $http: this.http returns an Observable; the response body is the value, not .data\nL19|   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead\nL20| \nL21|   getTenantQueuesByServiceType(serviceType?: any, config?: any, ...rest: any[]): any {\nL22|     let deferred: any = $q.defer();\nL23|     let url: any = '/api/tenant/queues?serviceType=' + serviceType;\nL24| \nL25|     this.http.get(url, config).then(function success(data?: any) {\nL26|         deferred.resolve(data);\nL27|     }, function fail() {\nL28|         deferred.reject();\nL29|     });\nL30|     return deferred.promise;\nL31|   }\nL32| }\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

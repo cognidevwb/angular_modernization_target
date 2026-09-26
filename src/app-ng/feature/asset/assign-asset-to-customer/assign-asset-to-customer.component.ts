@@ -95,7 +95,7 @@ export class AssignAssetToCustomerComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   assign = (...rest: any[]): any => {
@@ -104,7 +104,7 @@ export class AssignAssetToCustomerComponent {
         tasks.push(this.assetService.assignAssetToCustomer(this.customers.selection.id.id, this.dialogData.assetIds[i]));
     }
     Promise.all(tasks).then(() => {
-        this.dialog.hide();
+    (this.dialog as any).hide();
     });
   };
 

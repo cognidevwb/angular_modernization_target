@@ -4,7 +4,9 @@ import { ElementRef } from '@angular/core';
 import { Overlay } from '@angular/cdk/overlay';
 import { types } from '../../common/constants/types';
 import $ from 'jquery';
+// @ts-ignore
 import legendConfigButtonTemplate from '../../../../app/components/legend-config-button.tpl.html';
+// @ts-ignore
 import legendConfigPanelTemplate from '../../../../app/components/legend-config-panel.tpl.html';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
@@ -31,7 +33,7 @@ export class TbLegendConfigDirective {
   // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(legendConfigButtonTemplate);
+  protected template: any = legendConfigButtonTemplate;
   model: any;
 
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit

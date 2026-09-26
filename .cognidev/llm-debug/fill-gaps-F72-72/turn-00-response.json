@@ -1,0 +1,14 @@
+{
+  "content": "### G2175\n```ts\n// @ts-ignore\nimport jsonObjectEditTemplate from '../../../../app/components/json-object-edit.tpl.html';\n```\n\n### G416,G417\n```ts\n\n```\n\n### G1531,G1532,G1533\n```ts\n    effect(() => {\n      const newVal = this.contentBody;\n      if (!isEqual(newVal, this._prevContentBody)) {\n            var object: any = this.validate();\n            if (this.objectValid) {\n                if (object == null) {\n                    this.object = null;\n                } else {\n                    if (this.object == null) {\n                        this.object = {};\n                    }\n                    Object.keys(this.object).forEach((key?: any) => {\n                        delete this.object[key];\n                    });\n                    Object.keys(object).forEach((key?: any) => {\n                        this.object[key] = object[key];\n                    });\n                }\n                this.onChange(this.object);\n            }\n            this.updateValidity();\n      }\n      this._prevContentBody = newVal;\n    });\n```\n\n### G1538,G1539,G2176\n```ts\n  writeValue(value: any): void {\n    this.object = value;\n    var content: any = '';\n    try {\n        if (this.object) {\n            content = JSON.stringify(this.object);\n        }\n    } catch (e: any) {\n        //\n    }\n    this.contentBody = content;\n  }\n```\n\n### G1534\n```ts\n    this.formSubmit$.pipe(takeUntil(this.destroy$)).subscribe(() => {\n            if (!this.readonly()) {\n                this.cleanupJsonErrors();\n                if (!this.objectValid) {\n                    this.showError(this.validationError);\n                }\n            }\n        });\n```\n\n### G1535\n```ts\n    this.updateAceEditorSize$.pipe(takeUntil(this.destroy$)).subscribe(() => {\n            this.updateEditorSize();\n        });\n```\n\n### G1527,G1536\n```ts\n\n```\n\n### G2177\n```ts\n    this.contentBody = JSON.stringify(this.object, null, 4);\n```\n\n### G1895\nSAME: minifyJSON mirrors the original's `angular.toJson(scope.object)` by assigning `JSON.stringify(this.object)` to contentBody.\n\n### G1537\n```ts\n    this.onValidatorChange();\n```\n\n### G1896\nSAME: validate() reproduces the original branching (required check, JSON.parse/fromJson, error info via utils.parseException) with identical return values and side effects.",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 6757,
+    "costMicros": 77362,
+    "inputTokens": 2,
+    "outputTokens": 5033
+  }
+}

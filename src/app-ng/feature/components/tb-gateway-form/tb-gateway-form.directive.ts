@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TbGatewayConfigSelectDirective } from '../tb-gateway-config-select/tb-gateway-config-select.directive';
 import { TbGatewayConfigDirective } from '../tb-gateway-config/tb-gateway-config.directive';
-import gatewayFormTemplate from '../../../../app/components/gateway/gateway-form.tpl.html';
+declare const gatewayFormTemplate: string;
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,7 +16,10 @@ import { TranslatePipe } from '@ngx-translate/core';
 declare let scope: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
-function GatewayFormController(this: any, $scope?: any, $injector?: any, $document?: any, $mdExpansionPanel?: any, toast?: any, importExport?: any, attributeService?: any, deviceService?: any, userService?: any, $mdDialog?: any, $mdUtil?: any, types?: any, $window?: any, $q?: any, entityService?: any, utils?: any, $translate?: any) {
+import { Component, forwardRef, model, Inject, Injector } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+
+function GatewayFormController(this: any, injector?: Injector, document?: Document, $mdExpansionPanel?: any, toast?: any, importExport?: any, attributeService?: any, deviceService?: any, userService?: any, types?: any, $window?: any, entityService?: any, utils?: any, $translate?: any) {
     let vm: any = this;
     const currentConfigurationAttribute: any = "current_configuration";
     const configurationDraftsAttribute: any = "configuration_drafts";
@@ -30,7 +33,13 @@ function GatewayFormController(this: any, $scope?: any, $injector?: any, $docume
     vm.idForm = Math.random().toString(36).replace(/^0\.[0-9]*/, '');
     vm.configurations = {
         gateway: '',
-        host: $document[0].domain,
+        host: document.domain,
+        port: 1883,
+        remoteConfiguration: true,
+        accessToken: '',
+        storageType: "memoryStorage",
+        readRecordsCount: 100,
+        maxRecordsCount: 10000,
         port: 1883,
         remoteConfiguration: true,
         accessToken: '',
@@ -67,20 +76,22 @@ function GatewayFormController(this: any, $scope?: any, $injector?: any, $docume
         value: 'fileStorage'
     }];
 
-    $scope.$watch('vm.ctx', function () {
-        if (vm.ctx) {
-            vm.isStateForm = $scope.isStateForm;
-            vm.settings = vm.ctx.settings;
-            vm.widgetConfig = vm.ctx.widgetConfig;
-            if (vm.ctx.datasources && vm.ctx.datasources.length) {
-                vm.deviceNameForm = vm.ctx.datasources[0].name;
+    vm.ngOnChanges = (changes: any) => {
+        if (changes.ctx) {
+            if (vm.ctx) {
+                vm.isStateForm = vm.isStateForm;
+                vm.settings = vm.ctx.settings;
+                vm.widgetConfig = vm.ctx.widgetConfig;
+                if (vm.ctx.datasources && vm.ctx.datasources.length) {
+                    vm.deviceNameForm = vm.ctx.datasources[0].name;
+                }
             }
+            initializeConfig();
         }
-        initializeConfig();
-    });
+    };
 
 
-    $scope.$on('gateway-form-resize', function (event?: any, formId?: any) {
+    vm.ngOnDestroySub = gatewayFormResizeService.gatewayFormResize$.subscribe((formId?: any) => {
         if (vm.formId == formId) {
             updateWidgetDisplaying();
         }

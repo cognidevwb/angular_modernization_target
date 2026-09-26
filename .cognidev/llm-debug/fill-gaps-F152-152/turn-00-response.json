@@ -1,0 +1,14 @@
+{
+  "content": "### G1477,G1474,G1478\n```ts\n            (this.element.nativeElement as HTMLElement).appendChild(helpContainer[0]);\n        } else {\n            (this.element.nativeElement as HTMLElement).appendChild(this.helpButton[0]);\n```\n\n### G408\n```ts\n        window.open(helpUrl, '_blank');\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2049,
+    "costMicros": 9410,
+    "inputTokens": 2,
+    "outputTokens": 121
+  }
+}

@@ -45,7 +45,7 @@ export class TbDatasourceFuncDirective {
   protected readonly utils = inject(UtilsService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(datasourceFuncTemplate);
+  protected template: any = datasourceFuncTemplate;
   ngModelCtrl: any = ngModelCtrl;
   types: any;
   functionTypes: any;
@@ -69,9 +69,9 @@ export class TbDatasourceFuncDirective {
     for (var alarmField in this.typesRef.alarmFields) {
             this.alarmFields.push(alarmField);
         }
-    this.$watch('funcDataKeys', () => {
+    effect(() => {
             this.updateDataKeys();
-        }, true);
+        });
     this.$watch('alarmDataKeys', () => {
             this.updateDataKeys();
         }, true);

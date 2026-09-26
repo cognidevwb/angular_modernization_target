@@ -22,10 +22,15 @@ import { TbExtensionTableDirective } from '../../extension/tb-extension-table/tb
 import { TbAuditLogTableDirective } from '../../audit/tb-audit-log-table/tb-audit-log-table.directive';
 
 import $ from 'jquery';
+// @ts-ignore
 import addDeviceTemplate from '../../../../app/device/add-device.tpl.html';
+// @ts-ignore
 import deviceCard from '../../../../app/device/device-card.tpl.html';
+// @ts-ignore
 import assignToCustomerTemplate from '../../../../app/device/assign-to-customer.tpl.html';
+// @ts-ignore
 import addDevicesToCustomerTemplate from '../../../../app/device/add-devices-to-customer.tpl.html';
+// @ts-ignore
 import deviceCredentialsTemplate from '../../../../app/device/device-credentials.tpl.html';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -134,7 +139,7 @@ export class DeviceComponent {
     if ((this.route.snapshot.params['topIndex'] !== undefined) && this.route.snapshot.params['topIndex'] > 0) {
         this.deviceGridConfig.topIndex = this.route.snapshot.params['topIndex'];
     }
-    this.devicesScope = this.router.$current.data.devicesType;
+    this.devicesScope = (this.router as any).$current.data.devicesType;
     this.assignToCustomer = this.assignToCustomer;
     this.makePublic = this.makePublic;
     this.unassignFromCustomer = this.unassignFromCustomer;
@@ -448,7 +453,7 @@ export class DeviceComponent {
             if (customers.hasNext) {
                 customers.nextPageLink.limit = pageSize;
             }
-            this.dialog.show({
+            (this.dialog as any).show({
                 controller: 'AssignDeviceToCustomerController',
                 controllerAs: 'vm',
                 templateUrl: assignToCustomerTemplate,
@@ -485,7 +490,7 @@ export class DeviceComponent {
             if (devices.hasNext) {
                 devices.nextPageLink.limit = pageSize;
             }
-            this.dialog.show({
+            (this.dialog as any).show({
                 controller: 'AddDevicesToCustomerController',
                 controllerAs: 'vm',
                 templateUrl: addDevicesToCustomerTemplate,
@@ -526,14 +531,14 @@ export class DeviceComponent {
         content = this.translate.instant('device.unassign-device-text');
         label = this.translate.instant('device.unassign-device');
     }
-    var confirm: any = this.dialog.confirm()
+    var confirm: any = (this.dialog as any).confirm()
         .targetEvent($event)
         .title(title)
         .htmlContent(content)
         .ariaLabel(label)
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         this.deviceService.unassignDeviceFromCustomer(device.id.id).then(() => {
             this.grid.refreshList();
         });
@@ -541,14 +546,14 @@ export class DeviceComponent {
   };
 
   unassignDevicesFromCustomer($event?: any, items?: any, ...rest: any[]): any {
-    var confirm: any = this.dialog.confirm()
+    var confirm: any = (this.dialog as any).confirm()
         .targetEvent($event)
         .title(this.translate.instant('device.unassign-devices-title', {count: items.selectedCount}, 'messageformat'))
         .htmlContent(this.translate.instant('device.unassign-devices-text'))
         .ariaLabel(this.translate.instant('device.unassign-device'))
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         var tasks: any = [];
         for (var id in items.selections) {
             tasks.push(this.deviceService.unassignDeviceFromCustomer(id));
@@ -563,14 +568,14 @@ export class DeviceComponent {
     if ($event) {
         $event.stopPropagation();
     }
-    var confirm: any = this.dialog.confirm()
+    var confirm: any = (this.dialog as any).confirm()
         .targetEvent($event)
         .title(this.translate.instant('device.make-public-device-title', {deviceName: device.name}))
         .htmlContent(this.translate.instant('device.make-public-device-text'))
         .ariaLabel(this.translate.instant('device.make-public'))
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         this.deviceService.makeDevicePublic(device.id.id).then(() => {
             this.grid.refreshList();
         });
@@ -582,7 +587,7 @@ export class DeviceComponent {
     if ($event) {
         $event.stopPropagation();
     }
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'ManageDeviceCredentialsController',
         controllerAs: 'vm',
         templateUrl: deviceCredentialsTemplate,

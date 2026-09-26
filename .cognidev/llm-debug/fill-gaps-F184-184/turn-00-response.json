@@ -1,0 +1,14 @@
+{
+  "content": "### G2562\n```ts\n    this.dialogRef.close();\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1100,
+    "costMicros": 4644,
+    "inputTokens": 2,
+    "outputTokens": 24
+  }
+}

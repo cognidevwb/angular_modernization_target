@@ -1,0 +1,14 @@
+{
+  "content": "### G76\n```ts\n  private location: any = window.location;\n```\n\n### G926\n```ts\n    this.telemetryWsLogoutSub = this.userService.unauthenticated$.subscribe((doLogout?: any) => {\n        if (doLogout) {\n            this.reset(true);\n        }\n    });\n```\n\n### G929\n```ts\n    this.telemetryWsLoginSub = this.userService.authenticated$.subscribe(() => {\n        this.reset(true);\n    });\n```\n\n### G1877\nSAME: onError still logs the warning (via console.warn) and sets isOpening=false exactly like the original, just without $log/AngularJS.\n\n### G74\n```ts\n    setTimeout(() => {\n        this.toast.showError(message);\n    }, 0);\n```\n\n### G931\n```ts\n                    this.userService.unauthenticated$.next();\n```\n\n### G75\n```ts\n    this.dataStream = new WebSocket(this.telemetryUri + '?token=' + token) as any;\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 3688,
+    "costMicros": 40136,
+    "inputTokens": 2,
+    "outputTokens": 2538
+  }
+}

@@ -57,21 +57,23 @@ export class WidgetService {
   // TODO(port): `success` — a named function expression that calls itself; as an arrow it has no name: name it as a method
 
   constructor() {
-    $window.$ = $;
-    $window.jQuery = $;
-    $window.moment = moment;
-    $window.tinycolor = tinycolor;
-    $window.lazyLoad = $ocLazyLoad;
-    $window.TbFlot = TbFlot;
-    $window.TbAnalogueLinearGauge = TbAnalogueLinearGauge;
-    $window.TbAnalogueRadialGauge = TbAnalogueRadialGauge;
-    $window.TbAnalogueCompass = TbAnalogueCompass;
-    $window.TbCanvasDigitalGauge = TbCanvasDigitalGauge;
-    $window.TbMapWidget = TbMapWidget;
-    $window.TbMapWidgetV2 = TbMapWidgetV2;
-    $window.cssjs = cssjs;
+    window.$ = $;
+    window.jQuery = $;
+    window.moment = moment;
+    window.tinycolor = tinycolor;
+    window.lazyLoad = $ocLazyLoad;
+    window.TbFlot = TbFlot;
+    window.TbAnalogueLinearGauge = TbAnalogueLinearGauge;
+    window.TbAnalogueRadialGauge = TbAnalogueRadialGauge;
+    window.TbAnalogueCompass = TbAnalogueCompass;
+    window.TbCanvasDigitalGauge = TbCanvasDigitalGauge;
+    window.TbMapWidget = TbMapWidget;
+    window.TbMapWidgetV2 = TbMapWidgetV2;
+    window.cssjs = cssjs;
     this.cssParser.testMode = false;
-    this.rootScope.widgetServiceStateChangeStartHandle = this.rootScope.$on('$stateChangeStart', () => {
+    this.router.events.pipe(
+        filter((event: any) => event instanceof NavigationStart)
+    ).subscribe(() => {
         this.invalidateWidgetsBundleCache();
     });
     this.initEditingWidgetType();
@@ -367,7 +369,7 @@ export class WidgetService {
     var deferred: any = $q.defer();
     this.loadWidgetsBundleCache().then(
         () => {
-            var widgetsBundles: any = $filter('filter')(this.allWidgetsBundles, {alias: bundleAlias});
+            var widgetsBundles: any = filterFilter(this.allWidgetsBundles, {alias: bundleAlias});
             if (widgetsBundles.length > 0) {
                 deferred.resolve(widgetsBundles[0]);
             } else {
@@ -384,11 +386,11 @@ export class WidgetService {
   saveWidgetsBundle(widgetsBundle?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/widgetsBundle';
-    this.http.post(url, widgetsBundle).then((response?: any) => {
+    firstValueFrom(this.http.post(url, widgetsBundle)).then((response?: any) => {
         this.invalidateWidgetsBundleCache();
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response);
     });
     return deferred.promise;
   }
@@ -397,10 +399,10 @@ export class WidgetService {
     var deferred: any = $q.defer();
 
     var url: any = '/api/widgetsBundle/' + widgetsBundleId;
-    this.http.get(url, null).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response);
     });
 
     return deferred.promise;
@@ -413,13 +415,13 @@ export class WidgetService {
         (response?: any) => {
             var widgetsBundle: any = response;
             var url: any = '/api/widgetsBundle/' + widgetsBundleId;
-            this.http.delete(url).then(() => {
+            firstValueFrom(this.http.delete(url)).then(() => {
                 this.invalidateWidgetsBundleCache();
                 this.deleteWidgetsBundleFromCache(widgetsBundle.alias,
                     widgetsBundle.tenantId.id === types.id.nullUid);
                 deferred.resolve();
             }, function fail(response?: any) {
-                deferred.reject(response.data);
+                deferred.reject(response);
             });
         },
         function fail() {
@@ -456,7 +458,7 @@ export class WidgetService {
     var fetchQueue: any = this.widgetsInfoFetchQueue[key];
     if (fetchQueue) {
         for (var q in fetchQueue) {
-            if (isNaN(q))
+            if (isNaN(Number(q)))
               continue;
             fetchQueue[q].resolve(widgetInfo);
         }
@@ -663,8 +665,8 @@ export class WidgetService {
     var deferred: any = $q.defer();
     var url: any = '/api/widgetType?isSystem=' + (isSystem ? 'true' : 'false') +
         '&bundleAlias='+bundleAlias+'&alias='+widgetTypeAlias;
-    this.http.get(url, null).then(function success(response?: any) {
-        var widgetType: any = response.data;
+    firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
+        var widgetType: any = response;
         deferred.resolve(widgetType);
     }, function fail() {
         deferred.reject();
@@ -675,8 +677,8 @@ export class WidgetService {
   getWidgetTypeById(widgetTypeId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/widgetType/' + widgetTypeId;
-    this.http.get(url, null).then(function success(response?: any) {
-        var widgetType: any = response.data;
+    firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
+        var widgetType: any = response;
         deferred.resolve(widgetType);
     }, function fail() {
         deferred.reject();
@@ -689,7 +691,7 @@ export class WidgetService {
     this.getWidgetType(bundleAlias, widgetTypeAlias, isSystem).then(
         (widgetType?: any) => {
             var url: any = '/api/widgetType/' + widgetType.id.id;
-            this.http.delete(url).then(() => {
+            firstValueFrom(this.http.delete(url)).then(() => {
                 this.deleteWidgetInfoFromCache(bundleAlias, widgetTypeAlias, isSystem);
                 deferred.resolve();
             }, function fail() {
@@ -707,8 +709,8 @@ export class WidgetService {
     var deferred: any = $q.defer();
     var widgetType: any = this.toWidgetType(widgetInfo, id, undefined, bundleAlias);
     var url: any = '/api/widgetType';
-    this.http.post(url, widgetType).then((response?: any) => {
-        var widgetType: any = response.data;
+    firstValueFrom(this.http.post(url, widgetType)).then((response?: any) => {
+        var widgetType: any = response;
         this.deleteWidgetInfoFromCache(widgetType.bundleAlias, widgetType.alias, widgetType.tenantId.id === types.id.nullUid);
         deferred.resolve(widgetType);
     }, function fail() {
@@ -720,8 +722,8 @@ export class WidgetService {
   saveImportedWidgetType(widgetType?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/widgetType';
-    this.http.post(url, widgetType).then((response?: any) => {
-        var widgetType: any = response.data;
+    firstValueFrom(this.http.post(url, widgetType)).then((response?: any) => {
+        var widgetType: any = response;
         this.deleteWidgetInfoFromCache(widgetType.bundleAlias, widgetType.alias, widgetType.tenantId.id === types.id.nullUid);
         deferred.resolve(widgetType);
     }, function fail() {

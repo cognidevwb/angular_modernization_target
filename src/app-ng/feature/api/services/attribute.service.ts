@@ -36,14 +36,14 @@ export class AttributeService {
     } else if (type === types.dataKeyType.attribute) {
         url += 'attributes';
     }
-    this.http.get(url, config).then(function success(response?: any) {
+    this.http.get(url, config).toPromise().then(function success(response?: any) {
         var result: any = [];
         if (response.data) {
             if (query) {
                 var dataKeys: any = response.data;
-                var lowercaseQuery: any = angular.lowercase(query);
+                var lowercaseQuery: any = query.toLowerCase();
                 for (var i: any=0; i<dataKeys.length;i++) {
-                    if (angular.lowercase(dataKeys[i]).indexOf(lowercaseQuery) === 0) {
+                    if (dataKeys[i].toLowerCase().indexOf(lowercaseQuery) === 0) {
                         result.push(dataKeys[i]);
                     }
                 }
@@ -67,7 +67,7 @@ export class AttributeService {
     if ((limit !== undefined)) {
         url += '&limit=' + limit;
     }
-    this.http.get(url, null).then(function success(response?: any) {
+    this.http.get(url, null).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail(response?: any) {
         deferred.reject(response.data);
@@ -81,7 +81,7 @@ export class AttributeService {
     if (keys && keys.length) {
         url += '?keys=' + keys;
     }
-    this.http.get(url, config).then(function success(response?: any) {
+    this.http.get(url, config).toPromise().then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -125,11 +125,11 @@ export class AttributeService {
         }
     } else {
         var url: any = '/api/plugins/telemetry/' + entityType + '/' + entityId + '/values/attributes/' + attributeScope;
-        this.http.get(url, config).then((response?: any) => {
-            this.processAttributes(response.data, query, deferred, successCallback);
-        }, function fail() {
-            deferred.reject();
-        });
+    this.http.get(url, config).toPromise().then((response?: any) => {
+        this.processAttributes(response.data, query, deferred, successCallback);
+    }, function fail() {
+        deferred.reject();
+    });
     }
     return deferred;
   }
@@ -223,22 +223,22 @@ export class AttributeService {
     }
     if (Object.keys(attributesData).length) {
         var url: any = '/api/plugins/telemetry/' + entityType + '/' + entityId + '/' + attributeScope;
-        this.http.post(url, attributesData, config).then((response?: any) => {
-            if (deleteEntityAttributesPromise) {
-                deleteEntityAttributesPromise.then(
-                    function success() {
-                        deferred.resolve(response.data);
-                    },
-                    function fail() {
-                        deferred.reject();
-                    }
-                )
-            } else {
-                deferred.resolve(response.data);
-            }
-        }, function fail() {
-            deferred.reject();
-        });
+    this.http.post(url, attributesData, config).toPromise().then((response?: any) => {
+        if (deleteEntityAttributesPromise) {
+            deleteEntityAttributesPromise.then(
+                function success() {
+                    deferred.resolve(response.data);
+                },
+                function fail() {
+                    deferred.reject();
+                }
+            )
+        } else {
+            deferred.resolve(response.data);
+        }
+    }, function fail() {
+        deferred.reject();
+    });
     } else if (deleteEntityAttributesPromise) {
         deleteEntityAttributesPromise.then(
             function success() {
@@ -272,22 +272,22 @@ export class AttributeService {
     }
     if (Object.keys(timeseriesData).length) {
         var url: any = '/api/plugins/telemetry/' + entityType + '/' + entityId + '/timeseries/' + timeseriesScope;
-        this.http.post(url, timeseriesData, config).then((response?: any) => {
-            if (deleteEntityTimeseriesPromise) {
-                deleteEntityTimeseriesPromise.then(
-                    function success() {
-                        deferred.resolve(response.data);
-                    },
-                    function fail() {
-                        deferred.reject();
-                    }
-                )
-            } else {
-                deferred.resolve(response.data);
-            }
-        }, function fail() {
-            deferred.reject();
-        });
+    this.http.post(url, timeseriesData, config).toPromise().then((response?: any) => {
+        if (deleteEntityTimeseriesPromise) {
+            deleteEntityTimeseriesPromise.then(
+                function success() {
+                    deferred.resolve(response.data);
+                },
+                function fail() {
+                    deferred.reject();
+                }
+            )
+        } else {
+            deferred.resolve(response.data);
+        }
+    }, function fail() {
+        deferred.reject();
+    });
     } else if (deleteEntityTimeseriesPromise) {
         deleteEntityTimeseriesPromise.then(
             function success() {
@@ -314,7 +314,7 @@ export class AttributeService {
         keys += attributes[i].key;
     }
     var url: any = '/api/plugins/telemetry/' + entityType + '/' + entityId + '/' + attributeScope + '?keys=' + keys;
-    this.http.delete(url, config).then(function success() {
+    this.http.delete(url, config).toPromise().then(function success() {
         deferred.resolve();
     }, function fail() {
         deferred.reject();
@@ -336,7 +336,7 @@ export class AttributeService {
     var url: any = '/api/plugins/telemetry/' + entityType + '/' + entityId + '/timeseries/delete' +
         '?keys=' + keys +
         '&deleteAllDataForKeys=' + deleteAllDataForKeys;
-    this.http.delete(url, config).then(function success() {
+    this.http.delete(url, config).toPromise().then(function success() {
         deferred.resolve();
     }, function fail() {
         deferred.reject();

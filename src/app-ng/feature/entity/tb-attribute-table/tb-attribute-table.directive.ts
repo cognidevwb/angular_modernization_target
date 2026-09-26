@@ -18,10 +18,10 @@ import { TbDashboardDirective } from '../../components/tb-dashboard/tb-dashboard
 
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
-import attributeTableTemplate from '../../../../app/entity/attribute/attribute-table.tpl.html';
-import addAttributeDialogTemplate from '../../../../app/entity/attribute/add-attribute-dialog.tpl.html';
-import addWidgetToDashboardDialogTemplate from '../../../../app/entity/attribute/add-widget-to-dashboard-dialog.tpl.html';
-import editAttributeValueTemplate from '../../../../app/entity/attribute/edit-attribute-value.tpl.html';
+const attributeTableTemplate = require('../../../../app/entity/attribute/attribute-table.tpl.html') as any;
+const addAttributeDialogTemplate = require('../../../../app/entity/attribute/add-attribute-dialog.tpl.html') as any;
+const addWidgetToDashboardDialogTemplate = require('../../../../app/entity/attribute/add-widget-to-dashboard-dialog.tpl.html') as any;
+const editAttributeValueTemplate = require('../../../../app/entity/attribute/edit-attribute-value.tpl.html') as any;
 import EditAttributeValueController from '../../../../app/entity/attribute/edit-attribute-value.controller';
 import AliasController from '../../../../app/api/alias-controller';
 import { MatButtonModule } from '@angular/material/button';
@@ -280,7 +280,7 @@ export class TbAttributeTableDirective {
     let vm = this;
     if (!this.attributeScope.clientSide) {
         $event.stopPropagation();
-        this.dialog.show({
+        (this.dialog as any).show({
             controller: 'AddAttributeDialogController',
             controllerAs: 'vm',
             templateUrl: addAttributeDialogTemplate,
@@ -301,14 +301,14 @@ export class TbAttributeTableDirective {
   deleteAttributes($event?: any, ...rest: any[]): any {
     if (!this.attributeScope.clientSide) {
         $event.stopPropagation();
-        var confirm: any = this.dialog.confirm()
+        var confirm: any = (this.dialog as any).confirm()
             .targetEvent($event)
             .title(this.translate.instant('attribute.delete-attributes-title', {count: this.selectedAttributes.length}, 'messageformat'))
             .htmlContent(this.translate.instant('attribute.delete-attributes-text'))
             .ariaLabel(this.translate.instant('attribute.delete-attributes'))
             .cancel(this.translate.instant('action.no'))
             .ok(this.translate.instant('action.yes'));
-        this.dialog.show(confirm).then(() => {
+        (this.dialog as any).show(confirm).then(() => {
             this.attributeService.deleteEntityAttributes(this.entityType, this.entityId(), this.attributeScope.value, this.selectedAttributes).then(
                 () => {
                     this.selectedAttributes = [];
@@ -484,7 +484,7 @@ export class TbAttributeTableDirective {
     if (this.mode === 'widget' && this.widgetsListCache.length > 0) {
         var widget: any = this.widgetsListCache[this.widgetsCarousel.index][0];
         $event.stopPropagation();
-        this.dialog.show({
+        (this.dialog as any).show({
             controller: 'AddWidgetToDashboardDialogController',
             controllerAs: 'vm',
             templateUrl: addWidgetToDashboardDialogTemplate,

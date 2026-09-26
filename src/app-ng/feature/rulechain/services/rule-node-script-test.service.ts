@@ -6,7 +6,7 @@ import { UtilsService } from '../../common/services/utils.service';
 
 import $ from 'jquery';
 import { bindMethods } from '../../../legacy-injector';
-import nodeScriptTestTemplate from '../../../../app/rulechain/script/node-script-test.tpl.html';
+import nodeScriptTestTemplate from '../../../../app/rulechain/script/node-script-test.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $q: any;
 

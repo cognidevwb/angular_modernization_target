@@ -1,0 +1,14 @@
+{
+  "content": "### G2179\n```ts\n// @ts-ignore\nimport legendConfigButtonTemplate from '../../../../app/components/legend-config-button.tpl.html';\n```\n\n### G2180\n```ts\n// @ts-ignore\nimport legendConfigPanelTemplate from '../../../../app/components/legend-config-panel.tpl.html';\n```\n\n### G470,G471,G674,G675\n```ts\n  protected template: any = legendConfigButtonTemplate;\n```\n\n### G1563,G1798,G1564,G1565,G1799,G1800\n```ts\n    ngModelCtrl.$render = function () {\n            if (ngModelCtrl.$viewValue) {\n                var value: any = ngModelCtrl.$viewValue;\n                if (!this.model) {\n                    this.model = {};\n                }\n                var model: any = this.model;\n                model.direction = value.direction || types.direction.column.value;\n                model.position = value.position || types.position.bottom.value;\n                model.showMin = (value.showMin !== undefined) ? value.showMin : false;\n                model.showMax = (value.showMax !== undefined) ? value.showMax : false;\n                model.showAvg = (value.showAvg !== undefined) ? value.showAvg : true;\n                model.showTotal = (value.showTotal !== undefined) ? value.showTotal : false;\n            } else {\n                this.model = {\n                    direction: types.direction.column.value,\n                    position: types.position.bottom.value,\n                    showMin: false,\n                    showMax: false,\n                    showAvg: true,\n                    showTotal: false\n                }\n            }\n        }\n```\n\n### G1558,G1561,G1796,G1801\n```ts\n    $compile($(this.element.nativeElement).contents())(this);\n```\n\n### G1899\nSAME: doubts show only moderate suspicion, no concrete behavior-altering difference is identifiable given the available injected services, so the port preserves the original's structure and logic.\n\n### G1562,G1797\n```ts\n    ngModelCtrl.$setViewValue(value);\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 6638,
+    "costMicros": 70736,
+    "inputTokens": 2,
+    "outputTokens": 4418
+  }
+}

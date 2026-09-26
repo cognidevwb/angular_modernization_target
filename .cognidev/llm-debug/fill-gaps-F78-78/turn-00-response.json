@@ -1,0 +1,14 @@
+{
+  "content": "### G2182\n```ts\nimport manageWidgetActionsTemplate from '../../../../app/components/widget/action/manage-widget-actions.tpl.html?raw';\n```\n\n### G1568,G1849\n```ts\n    effect(() => {\n        if (vm.widgetActions()) {\n            reloadActions();\n        }\n    });\n```\n\n### G1569,G1850,G1570,G1851\n```ts\n    effect(() => {\n        const newVal = vm.query.search;\n        if (!isEqual(newVal, prevSearchVal) && vm.query.search != null) {\n            updateActions();\n        }\n        prevSearchVal = newVal;\n    });\n```\n\n### G1578,G1853\n```ts\n                    var result: any = filterFilter(vm.allActions, {actionSourceId: id});\n```\n\n### G2183\n```ts\n            templateUrl: manageWidgetActionsTemplate,\n```\n\n### G1572,G1855\n```ts\n        var result: any = filterFilter(actions, {id: id}, true);\n```\n\n### G1573,G1574,G1856,G1857\n```ts\n        var result: any = orderByFilter(vm.allActions, vm.query.order);\n```\n\n### G1576,G1859\n```ts\n            result = filterFilter(result, {$: vm.query.search});\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 6315,
+    "costMicros": 29494,
+    "inputTokens": 2,
+    "outputTokens": 423
+  }
+}

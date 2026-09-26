@@ -31,11 +31,11 @@ export class AuditLogService {
     if ((pageLink.idOffset !== undefined) && pageLink.idOffset != null) {
         url += '&offset=' + pageLink.idOffset;
     }
-    this.http.get(url, null).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.get(url, null).toPromise().then(function success(response?: any) {
+    deferred.resolve(response.data);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
@@ -52,11 +52,11 @@ export class AuditLogService {
     if ((pageLink.idOffset !== undefined) && pageLink.idOffset != null) {
         url += '&offset=' + pageLink.idOffset;
     }
-    this.http.get(url, null).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.get(url, null).toPromise().then(function success(response?: any) {
+    deferred.resolve(response.data);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
@@ -73,11 +73,11 @@ export class AuditLogService {
     if ((pageLink.idOffset !== undefined) && pageLink.idOffset != null) {
         url += '&offset=' + pageLink.idOffset;
     }
-    this.http.get(url, null).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.get(url, null).toPromise().then(function success(response?: any) {
+    deferred.resolve(response.data);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
@@ -94,11 +94,11 @@ export class AuditLogService {
     if ((pageLink.idOffset !== undefined) && pageLink.idOffset != null) {
         url += '&offset=' + pageLink.idOffset;
     }
-    this.http.get(url, null).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.get(url, null).toPromise().then(function success(response?: any) {
+    deferred.resolve(response.data);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 }

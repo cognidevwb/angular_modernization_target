@@ -1,0 +1,14 @@
+{
+  "content": "### G1171,G1172\n```ts\n    this.viewContainerRef.createEmbeddedView(this.circularProgressElement);\n```\n\n### G1173\n```ts\n  ngOnChanges(changes: SimpleChanges): void {\n    if (changes['circularProgress'] && changes['circularProgress'].currentValue != changes['circularProgress'].previousValue) {\n      const newCircularProgress = changes['circularProgress'].currentValue;\n      if (newCircularProgress) {\n        if (!this.cssWidth) {\n          $($(this.element.nativeElement)).css('width', '');\n          this.width = $(this.element.nativeElement).prop('offsetWidth');\n          $($(this.element.nativeElement)).css('width', this.width + 'px');\n        }\n        this.children = $($(this.element.nativeElement)).children();\n        $($(this.element.nativeElement)).empty();\n        $($(this.element.nativeElement)).append($(this.circularProgressElement));\n      } else {\n        $($(this.element.nativeElement)).empty();\n        $($(this.element.nativeElement)).append(this.children);\n        if (this.cssWidth) {\n          $($(this.element.nativeElement)).css('width', this.cssWidth);\n        } else {\n          $($(this.element.nativeElement)).css('width', '');\n        }\n      }\n    }\n  }\n}\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2107,
+    "costMicros": 13022,
+    "inputTokens": 2,
+    "outputTokens": 459
+  }
+}

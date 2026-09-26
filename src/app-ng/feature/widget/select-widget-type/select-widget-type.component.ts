@@ -34,10 +34,10 @@ export class SelectWidgetTypeComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   typeSelected = (widgetType?: any, ...rest: any[]): any => {
-    this.dialog.hide(widgetType);
+    (this.dialog as any).hide(widgetType);
   };
 }

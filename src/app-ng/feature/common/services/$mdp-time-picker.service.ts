@@ -34,7 +34,7 @@ function TimePickerCtrl(this: any, $scope?: any, $mdDialog?: any, time?: any, au
     };
 
     this.cancel = function() {
-        $mdDialog.cancel();
+        return $mdDialog.cancel();
     };
 
     this.confirm = function(this: any) {

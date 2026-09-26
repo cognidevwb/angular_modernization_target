@@ -44,7 +44,7 @@ export class ResetPasswordComponent {
 
   constructor() {
     this.resetPassword = this.resetPassword;
-    this.isExpiredPassword = this.router.$current.data.expiredPassword === true;
+    this.isExpiredPassword = (this.router as any).$current.data.expiredPassword === true;
   }
 
   resetPassword = (...rest: any[]): any => {

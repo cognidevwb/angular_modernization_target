@@ -43,7 +43,7 @@ export class ChangePasswordComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   changePassword = (...rest: any[]): any => {
@@ -52,7 +52,7 @@ export class ChangePasswordComponent {
     } else {
         this.loginService.changePassword(this.currentPassword, this.newPassword).then(() => {
             this.theForm.$setPristine();
-            this.dialog.hide();
+    (this.dialog as any).hide();
         });
     }
   };

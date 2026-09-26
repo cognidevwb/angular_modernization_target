@@ -5,7 +5,7 @@ import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import extensionFormModbusTemplate from '../../../../app/extension/extensions-forms/extension-form-modbus.tpl.html';
+import extensionFormModbusTemplate from '../../../../app/extension/extensions-forms/extension-form-modbus.tpl.html?raw';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -26,6 +26,10 @@ declare let element: any;
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Directive({
+  selector: '[tb-extension-form-modbus]',
+  standalone: true,
+})
+@Component({
   selector: '[tb-extension-form-modbus]',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatSelectModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatCardModule, MatButtonModule],

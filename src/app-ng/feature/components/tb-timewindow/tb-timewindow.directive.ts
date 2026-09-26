@@ -7,9 +7,9 @@ import { TimeService } from '../../api/services/time.service';
 import { TranslateService } from '@ngx-translate/core';
 import { linkAttrs } from '../../../legacy-link';
 import $ from 'jquery';
-import timewindowButtonTemplate from '../../../../app/components/timewindow-button.tpl.html';
-import timewindowTemplate from '../../../../app/components/timewindow.tpl.html';
-import timewindowPanelTemplate from '../../../../app/components/timewindow-panel.tpl.html';
+import timewindowButtonTemplate from '../../../../app/components/timewindow-button.tpl.html' with { loader: 'text' };
+import timewindowTemplate from '../../../../app/components/timewindow.tpl.html' with { loader: 'text' };
+import timewindowPanelTemplate from '../../../../app/components/timewindow-panel.tpl.html' with { loader: 'text' };
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
@@ -62,10 +62,10 @@ export class TbTimewindowDirective {
   constructor() {
     this.historyOnly = (this.attrs.historyOnly !== undefined);
     // TODO(port): `isEdit` is an input; a value assigned here belongs in the template or a computed()
-  this.isEdit = this.attrs.isEdit === 'true';
+  this.isEdit = (this.attrs.isEdit === 'true') as any;
     this.aggregation = this.$eval(this.attrs.aggregation);
     this.isToolbar = (this.attrs.isToolbar !== undefined);
-    this.translate.onReady(() => {
+    (this.translate as any).onReady(() => {
             if (this.translationPending) {
                 this.updateDisplayValue();
                 this.translationPending = false;
@@ -122,7 +122,7 @@ export class TbTimewindowDirective {
   }
 
   hideLabel(...rest: any[]): any {
-    return this.isToolbar && !this.breakpoints('gt-md');
+    return this.isToolbar && !(this.breakpoints as any)('gt-md');
   }
 
   openEditMode(event?: any, ...rest: any[]): any {
@@ -221,7 +221,7 @@ export class TbTimewindowDirective {
   }
 
   updateDisplayValue(...rest: any[]): any {
-    if (this.translate.isReady()) {
+    if ((this.translate as any).isReady()) {
         if (this.model.selectedTab === 0 && !this.historyOnly) {
             this.model.displayValue = this.translate.instant('timewindow.realtime') + ' - ' +
                 this.translate.instant('timewindow.last-prefix') + ' ' +
@@ -243,7 +243,7 @@ export class TbTimewindowDirective {
   }
 
   isTimewindowDisabled(...rest: any[]): any {
-    return this.disabled() || (!true && this.model.hideInterval && this.model.hideAggregation && this.model.hideAggInterval);
+    return this.disabled() || (!this.isEdit && this.model.hideInterval && this.model.hideAggregation && this.model.hideAggInterval);
   }
 
   /** The link's `attrs`: the host element's attributes, read live. */

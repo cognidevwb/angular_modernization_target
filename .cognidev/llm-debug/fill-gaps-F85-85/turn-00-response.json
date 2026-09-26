@@ -1,0 +1,14 @@
+{
+  "content": "### G2191\n```ts\nimport relatedEntityAutocompleteTemplate from '../../../../app/components/related-entity-autocomplete.tpl.html?raw';\n```\n\n### G508,G509\n```ts\n  protected template: any = relatedEntityAutocompleteTemplate;\n```\n\n### G1617,G1618,G1619\n```ts\n    this.writeValue = (value: any) => {\n            if (value) {\n                this.entityService.getRelatedEntity(value).then(\n                    (entity?: any) => {\n                        this.entity = entity;\n                    },\n                    () => {\n                        this.entity = null;\n                    }\n                );\n            } else {\n                this.entity = null;\n            }\n        };\n```\n\n### G1610\n```ts\n    this.$watch('entity', () => {\n            this.updateView();\n        });\n```\n\n### G1611\n```ts\n  ngOnChanges(changes: any): void {\n    if (changes.disabled) {\n            this.updateView();\n        }\n  }\n```\n\n### G1606,G1612\n```ts\n    // $compile removed: template contents compiled via component composition\n```\n\n### G507,G1615\n```ts\n  fetchEntities(searchText?: any, ...rest: any[]): any {\n    return new Promise((resolve, reject) => {\n```\n\n### G1613,G1607,G1614\n```ts\n  filterEntities(searchText?: any, deferred?: any, ...rest: any[]): any {\n    var result: any = this.allEntities.filter((entity: any) => entity.name && entity.name.indexOf(searchText) !== -1);\n    deferred.resolve(result);\n  }\n```\n\n### G1616\n```ts\n        this.onChange(this.entity ? this.entity.id : null);\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 5396,
+    "costMicros": 27198,
+    "inputTokens": 2,
+    "outputTokens": 561
+  }
+}

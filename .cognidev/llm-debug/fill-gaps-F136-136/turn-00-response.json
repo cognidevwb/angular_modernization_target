@@ -1,0 +1,14 @@
+{
+  "content": "### G2381\n```ts\nimport entitySubtypeSelectTemplate from '../../../../app/entity/entity-subtype-select.tpl.html?raw';\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1288,
+    "costMicros": 5726,
+    "inputTokens": 2,
+    "outputTokens": 57
+  }
+}

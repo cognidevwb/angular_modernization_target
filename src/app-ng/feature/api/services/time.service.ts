@@ -17,9 +17,9 @@ const MIN_INTERVAL: any = SECOND;
 
 const MINUTE: any = 60 * SECOND;
 
-const MAX_INTERVAL: any = 365 * 20 * DAY;
+const MAX_INTERVAL: any = 365 * 20 * 24 * 60 * MINUTE;
 
-const DAY: any = 24 * HOUR;
+const DAY: any = 24 * 60 * MINUTE;
 
 const HOUR: any = 60 * MINUTE;
 
@@ -51,14 +51,14 @@ export class TimeService {
   loadMaxDatapointsLimit(...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/dashboard/maxDatapointsLimit';
-    this.http.get(url, {ignoreLoading: true}).then((response?: any) => {
+    this.http.get(url, {ignoreLoading: true} as any).then((response?: any) => {
         this.maxDatapointsLimit = response.data;
         if (!this.maxDatapointsLimit || this.maxDatapointsLimit <= MIN_LIMIT) {
             this.maxDatapointsLimit = MIN_LIMIT + 1;
         }
-        deferred.resolve();
+        resolve();
     }, function fail() {
-        deferred.reject();
+        reject();
     });
     return deferred.promise;
   }

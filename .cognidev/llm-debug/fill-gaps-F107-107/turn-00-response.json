@@ -1,0 +1,14 @@
+{
+  "content": "### G2283\n```ts\n    (this.dialog as any).cancel();\n```\n\n### G2284\n```ts\n    (this.dialog as any).hide(layoutId);\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1280,
+    "costMicros": 5694,
+    "inputTokens": 2,
+    "outputTokens": 57
+  }
+}

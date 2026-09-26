@@ -1,0 +1,14 @@
+{
+  "content": "### G2517\n```ts\nimport changePasswordTemplate from '../../../../app/profile/change-password.tpl.html' as any;\n```\n\n### G2518\n```ts\n            this.profileUser.additionalInfo.lang = (this.translate as any).use();\n```\n\n### G2519\n```ts\n    (this.dialog as any).show({\n        controller: 'ChangePasswordController',\n        controllerAs: 'vm',\n        templateUrl: changePasswordTemplate,\n        parent: $(this.document.body),\n        fullscreen: true,\n        targetEvent: $event\n    }).then(function () {\n    }, function () {\n    });\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1964,
+    "costMicros": 9960,
+    "inputTokens": 2,
+    "outputTokens": 210
+  }
+}

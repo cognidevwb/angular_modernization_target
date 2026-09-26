@@ -1,0 +1,14 @@
+{
+  "content": "### G2570\n```ts\n// @ts-ignore\nimport addUserTemplate from '../../../../app/user/add-user.tpl.html';\n```\n\n### G2571\n```ts\n// @ts-ignore\nimport userCard from '../../../../app/user/user-card.tpl.html';\n```\n\n### G2572\n```ts\n// @ts-ignore\nimport activationLinkDialogTemplate from '../../../../app/user/activation-link.dialog.tpl.html';\n```\n\n### G2573\n```ts\nthis.usersType = (this.router as any).$current.data.usersType;\n```\n\n### G2574\n```ts\n(this.dialog as any).show({\n        controller: 'ActivationLinkDialogController',\n        controllerAs: 'vm',\n        templateUrl: activationLinkDialogTemplate,\n        locals: {\n            activationLink: activationLink\n        },\n        parent: $(this.document.body),\n        fullscreen: true,\n        multiple: true,\n        targetEvent: event\n    });\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2505,
+    "costMicros": 13294,
+    "inputTokens": 2,
+    "outputTokens": 327
+  }
+}

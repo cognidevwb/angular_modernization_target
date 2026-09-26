@@ -1,0 +1,14 @@
+{
+  "content": "### G158,G1096,G1097\n```ts\ncontactShort = this.translatePipe.transform('contact.no-address');\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1432,
+    "costMicros": 6162,
+    "inputTokens": 2,
+    "outputTokens": 43
+  }
+}

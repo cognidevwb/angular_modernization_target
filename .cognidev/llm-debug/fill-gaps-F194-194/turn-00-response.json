@@ -1,0 +1,14 @@
+{
+  "content": "### G2586\n```ts\n// @ts-expect-error - no type declarations for html template import\nimport entitiesTableWidgetTemplate from '../../../../app/widget/lib/entities-table-widget.tpl.html';\n```\n\n### G1380\n```ts\n    effect(() => {\n        const ctx = vm.ctxSignal();\n        if (ctx && ctx.defaultSubscription) {\n            vm.settings = ctx.settings;\n            vm.widgetConfig = ctx.widgetConfig;\n            vm.subscription = ctx.defaultSubscription;\n            vm.datasources = vm.subscription.datasources;\n            initializeConfig();\n            updateDatasources();\n            updateEntities();\n        }\n    });\n```\n\n### G1381,G1382\n```ts\n    effect(() => {\n        const newVal = vm.querySearchSignal();\n        if (!isEqual(newVal, vm.prevQuerySearch) && vm.query.search != null) {\n            updateEntities();\n        }\n        vm.prevQuerySearch = newVal;\n    });\n```\n\n### G1383,G325\n```ts\n    entitiesTableDataUpdated$.subscribe((tableId?: any) => {\n        if (vm.tableId == tableId) {\n            if (vm.subscription) {\n                updateEntitiesData(vm.subscription.data);\n                updateEntities();\n            }\n        }\n    });\n\n    ngOnDestroy() {\n    }\n```\n\n### G1384\n```ts\n    effect(() => {\n        vm.isGtXs = mdMediaSignal('gt-xs')();\n    });\n```\n\n### G1385\n```ts\n    effect(() => {\n        vm.isGtMd = mdMediaSignal('gt-md')();\n        if (vm.isGtMd) {\n            vm.limitOptions = [vm.defaultPageSize, vm.defaultPageSize*2, vm.defaultPageSize*3];\n        } else {\n            vm.limitOptions = null;\n        }\n    });\n```\n\n### G333\n```ts\n        if (angular.isDefined(pageSize) && typeof pageSize === 'number' && pageSize > 0) {\n```\n\n### G2587\n```ts\n        var defaultColor: any = (tinycolor as any)(origColor);\n```\n\n### G2588\n```ts\n        var cssParser: any = new (cssjs as any)();\n```\n\n### G334\n```ts\n        el.classList.add(namespace);\n```\n\n### G1386,G1387\n```ts\n        var result: any = orderByPipe.transform(vm.allEntities, vm.query.order);\n```\n\n### G1389\n```ts\n            result = filterPipe.transform(result, {$: vm.query.search});\n```\n\n### G2589\n```ts\n                style = defaultStyle(key, value);\n```\n\n### G2590\n```ts\n            templateUrl: (displayColumnsPanelTemplate as any),\n```\n\n### G339\n```ts\n            dataKey = structuredClone(datasource.dataKeys[d]);\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7625,
+    "costMicros": 40304,
+    "inputTokens": 2,
+    "outputTokens": 980
+  }
+}

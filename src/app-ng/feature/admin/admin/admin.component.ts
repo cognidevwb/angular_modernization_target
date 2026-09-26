@@ -44,21 +44,18 @@ export class AdminComponent {
   constructor() {
     this.save = this.save;
     this.sendTestMail = this.sendTestMail;
-    this.translate('admin.test-mail-sent').then((translation?: any) => {
-        this.testMailSent = translation;
-    }, (translationId?: any) => {
-        this.testMailSent = translationId;
-    });
+this.translate.instant('admin.test-mail-sent');
+this.testMailSent = this.translate.instant('admin.test-mail-sent');
     this.loadSettings();
   }
 
   loadSettings(...rest: any[]): any {
-    this.adminService.getAdminSettings(this.router.$current.data.key).then((settings?: any) => {
-        this.settings = settings;
-        if(this.settings.jsonValue && this.settings.jsonValue.enableTls && (typeof this.settings.jsonValue.enableTls === 'string')){
-            this.settings.jsonValue.enableTls = this.settings.jsonValue.enableTls === 'true';
-        }
-    });
+this.adminService.getAdminSettings(this.router.routerState.snapshot.root.data.key).then((settings?: any) => {
+    this.settings = settings;
+    if(this.settings.jsonValue && this.settings.jsonValue.enableTls && (typeof this.settings.jsonValue.enableTls === 'string')){
+        this.settings.jsonValue.enableTls = this.settings.jsonValue.enableTls === 'true';
+    }
+});
   }
 
   save = (...rest: any[]): any => {

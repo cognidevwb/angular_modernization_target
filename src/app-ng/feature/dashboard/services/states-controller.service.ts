@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { bindMethods } from '../../../legacy-injector';
-import defaultStateControllerTemplate from '../../../../app/dashboard/states/default-state-controller.tpl.html';
-import entityStateControllerTemplate from '../../../../app/dashboard/states/entity-state-controller.tpl.html';
+import defaultStateControllerTemplate from '../../../../app/dashboard/states/default-state-controller.tpl.html?raw';
+import entityStateControllerTemplate from '../../../../app/dashboard/states/entity-state-controller.tpl.html?raw';
 import DefaultStateController from '../../../../app/dashboard/states/default-state-controller';
 import EntityStateController from '../../../../app/dashboard/states/entity-state-controller';
 

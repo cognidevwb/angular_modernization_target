@@ -4,6 +4,7 @@ import { QueueService } from '../../api/services/queue.service';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
+// @ts-ignore
 import queueTypeListTemplate from '../../../../app/components/queue/queue-type-list.tpl.html';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.

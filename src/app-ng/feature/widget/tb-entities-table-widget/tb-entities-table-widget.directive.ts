@@ -1,6 +1,7 @@
 import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+// @ts-expect-error - no type declarations for html template import
 import entitiesTableWidgetTemplate from '../../../../app/widget/lib/entities-table-widget.tpl.html';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
@@ -83,11 +84,12 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
 
     vm.editColumnsToDisplay = editColumnsToDisplay;
 
-    $scope.$watch('vm.ctx', function() {
-        if (vm.ctx && vm.ctx.defaultSubscription) {
-            vm.settings = vm.ctx.settings;
-            vm.widgetConfig = vm.ctx.widgetConfig;
-            vm.subscription = vm.ctx.defaultSubscription;
+    effect(() => {
+        const ctx = vm.ctxSignal();
+        if (ctx && ctx.defaultSubscription) {
+            vm.settings = ctx.settings;
+            vm.widgetConfig = ctx.widgetConfig;
+            vm.subscription = ctx.defaultSubscription;
             vm.datasources = vm.subscription.datasources;
             initializeConfig();
             updateDatasources();
@@ -95,10 +97,12 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
         }
     });
 
-    $scope.$watch("vm.query.search", function(newVal?: any, prevVal?: any) {
-        if (!angular.equals(newVal, prevVal) && vm.query.search != null) {
+    effect(() => {
+        const newVal = vm.querySearchSignal();
+        if (!isEqual(newVal, vm.prevQuerySearch) && vm.query.search != null) {
             updateEntities();
         }
+        vm.prevQuerySearch = newVal;
     });
 
     $scope.$on('entities-table-data-updated', function(event?: any, tableId?: any) {
@@ -111,12 +115,12 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
         }
     });
 
-    $scope.$watch(function() { return $mdMedia('gt-xs'); }, function(isGtXs?: any) {
-        vm.isGtXs = isGtXs;
+    effect(() => {
+        vm.isGtXs = mdMediaSignal('gt-xs')();
     });
 
-    $scope.$watch(function() { return $mdMedia('gt-md'); }, function(isGtMd?: any) {
-        vm.isGtMd = isGtMd;
+    effect(() => {
+        vm.isGtMd = mdMediaSignal('gt-md')();
         if (vm.isGtMd) {
             vm.limitOptions = [vm.defaultPageSize, vm.defaultPageSize*2, vm.defaultPageSize*3];
         } else {
@@ -181,7 +185,7 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
         }
 
         var origColor: any = vm.widgetConfig.color || 'rgba(0, 0, 0, 0.87)';
-        var defaultColor: any = tinycolor(origColor);
+        var defaultColor: any = (tinycolor as any)(origColor);
         var mdDark: any = defaultColor.setAlpha(0.87).toRgbString();
         var mdDarkSecondary: any = defaultColor.setAlpha(0.54).toRgbString();
         var mdDarkDisabled: any = defaultColor.setAlpha(0.26).toRgbString();
@@ -229,12 +233,12 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
             'color: ' + mdDarkSecondary + ';\n'+
             '}';
 
-        var cssParser: any = new cssjs();
+        var cssParser: any = new (cssjs as any)();
         cssParser.testMode = false;
         var namespace: any = 'entities-table-' + hashCode(cssString);
         cssParser.cssPreviewNamespace = namespace;
         cssParser.createStyleElement(namespace, cssString);
-        $element.addClass(namespace);
+        el.classList.add(namespace);
 
         function hashCode(str?: any) {
             var hash: any = 0;
@@ -312,7 +316,7 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
     function updateEntities() {
         var result: any = $filter('orderBy')(vm.allEntities, vm.query.order);
         if (vm.query.search != null) {
-            result = $filter('filter')(result, {$: vm.query.search});
+            result = filterPipe.transform(result, {$: vm.query.search});
         }
         vm.entitiesCount = result.length;
 
@@ -417,7 +421,7 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
             attachTo: angular.element($document[0].body),
             controller: DisplayColumnsPanelController,
             controllerAs: 'vm',
-            templateUrl: displayColumnsPanelTemplate,
+            templateUrl: (displayColumnsPanelTemplate as any),
             panelClass: 'tb-display-columns-panel',
             position: position,
             fullscreen: false,
@@ -503,7 +507,7 @@ function EntitiesTableWidgetController(this: any, $element?: any, $scope?: any, 
         }
 
         for (var d: any = 0; d < datasource.dataKeys.length; d++ ) {
-            dataKey = angular.copy(datasource.dataKeys[d]);
+            dataKey = structuredClone(datasource.dataKeys[d]);
             if (dataKey.type == types.dataKeyType.function) {
                 dataKey.name = dataKey.label;
             }

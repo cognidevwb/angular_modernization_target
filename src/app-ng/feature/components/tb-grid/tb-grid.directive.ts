@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TbScopeElementDirective } from '../tb-scope-element/tb-scope-element.directive';
 import { TbGridCardContentDirective } from '../tb-grid-card-content/tb-grid-card-content.directive';
 import { TbDetailsSidenavDirective } from '../tb-details-sidenav/tb-details-sidenav.directive';
-import gridTemplate from '../../../../app/components/grid.tpl.html';
+import gridTemplate from '../../../../app/components/grid.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { RangePipe } from '../pipes/range.pipe';
@@ -394,7 +394,7 @@ function GridController(this: any, $scope?: any, $state?: any, $mdDialog?: any, 
             controller: vm.addItemController,
             controllerAs: 'vm',
             templateUrl: vm.addItemTemplateUrl,
-            parent: angular.element($document[0].body),
+            parent: (window as any).angular.element($document[0].body),
             locals: {saveItemFunction: vm.saveItemFunc},
             fullscreen: true,
             targetEvent: $event
@@ -448,7 +448,7 @@ function GridController(this: any, $scope?: any, $state?: any, $mdDialog?: any, 
             return vm.detailsConfig.currentItem;
         } else {
             if (!vm.detailsConfig.editingItem) {
-                vm.detailsConfig.editingItem = angular.copy(vm.detailsConfig.currentItem);
+                vm.detailsConfig.editingItem = (window as any).angular.copy(vm.detailsConfig.currentItem);
             }
             return vm.detailsConfig.editingItem;
         }
@@ -515,7 +515,7 @@ function GridController(this: any, $scope?: any, $state?: any, $mdDialog?: any, 
 
     function toggleItemSelection($event?: any, item?: any) {
         $event.stopPropagation();
-        var selected: any = angular.isDefined(item.selected) && item.selected;
+        var selected: any = (window as any).angular.isDefined(item.selected) && item.selected;
         item.selected = !selected;
         if (item.selected) {
             vm.items.selections[item.id.id] = true;
@@ -527,7 +527,7 @@ function GridController(this: any, $scope?: any, $state?: any, $mdDialog?: any, 
     }
 
     function triggerResize() {
-        var w: any = angular.element($window);
+        var w: any = (window as any).angular.element($window);
         w.triggerHandler('resize');
     }
 

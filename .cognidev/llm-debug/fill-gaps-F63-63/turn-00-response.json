@@ -1,0 +1,14 @@
+{
+  "content": "### G2152\n```ts\nconst entityAliasSelectTemplate: string = require('../../../../app/components/entity-alias-select.tpl.html');\n```\n\n### G344,G345\n```ts\nprotected template: any = entityAliasSelectTemplate;\n```\n\n### G1394\n```ts\n  }\n\n  ngOnChanges(changes: any): void {\n    if (changes.aliasController) {\n        this.entityAliasList = [];\n        var entityAliases: any = this.aliasController().getEntityAliases();\n        for (var aliasId in entityAliases) {\n            if (this.allowedEntityTypes()) {\n                if (!this.entityService.filterAliasByEntityTypes(entityAliases[aliasId], this.allowedEntityTypes())) {\n                    continue;\n                }\n            }\n            this.entityAliasList.push(entityAliases[aliasId]);\n        }\n    }\n  }\n```\n\n### G1395\n```ts\n  }\n\n  private _entityAlias: any = null;\n\n  get entityAlias(): any {\n    return this._entityAlias;\n  }\n\n  set entityAlias(value: any) {\n    this._entityAlias = value;\n    this.updateView();\n  }\n```\n\n### G1402,G1397,G1403,G1404,G1391,G1396\n```ts\n  }\n\n  writeValue(value: any): void {\n    if (value) {\n        this.entityAlias = value;\n    }\n  }\n```\n\n### G1398\n```ts\n    this.ngControl?.control?.setErrors(valid ? null : { entityAlias: true });\n```\n\n### G1399,G1400\n```ts\n    var lowercaseQuery: any = query.toLowerCase();\n    return function filterFn(entityAlias?: any) {\n        return (entityAlias.alias.toLowerCase().indexOf(lowercaseQuery) === 0);\n    };\n```\n\n### G1401\n```ts\n    this.onChange?.(this.entityAlias);\n```\n\n### G343\n```ts\n  entityAliasEnter($event?: any, ...rest: any[]): any {\n    if ($event.keyCode === ENTER) {\n        $event.preventDefault();\n        if (!this.entityAlias) {\n            var found: any = this.entityAliasSearch(this.entityAliasSearchText);\n            found = found.length > 0;\n            if (!found) {\n                this.createEntityAlias($event, this.entityAliasSearchText);\n            }\n        }\n    }\n  }\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 5641,
+    "costMicros": 113258,
+    "inputTokens": 2,
+    "outputTokens": 9069
+  }
+}

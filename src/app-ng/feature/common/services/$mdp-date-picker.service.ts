@@ -9,9 +9,9 @@ declare let $scope: any;
 function DatePickerCtrl(this: any, $scope?: any, $mdDialog?: any, $mdMedia?: any, $timeout?: any, currentDate?: any, options?: any) {
     var self: any = this;
 
-    this.date = moment(currentDate);
-    this.minDate = options.minDate && moment(options.minDate).isValid() ? moment(options.minDate) : null;
-    this.maxDate = options.maxDate && moment(options.maxDate).isValid() ? moment(options.maxDate) : null;
+    this.date = (window as any).moment(currentDate);
+    this.minDate = options.minDate && (window as any).moment(options.minDate).isValid() ? (window as any).moment(options.minDate) : null;
+    this.maxDate = options.maxDate && (window as any).moment(options.maxDate).isValid() ? (window as any).moment(options.maxDate) : null;
     this.displayFormat = options.displayFormat || "ddd, MMM DD";
     this.dateFilter = angular.isFunction(options.dateFilter) ? options.dateFilter : null;
     this.selectingYear = false;
@@ -19,19 +19,19 @@ function DatePickerCtrl(this: any, $scope?: any, $mdDialog?: any, $mdMedia?: any
     // validate min and max date
     if (this.minDate && this.maxDate) {
         if (this.maxDate.isBefore(this.minDate)) {
-            this.maxDate = moment(this.minDate).add(1, 'days');
+            this.maxDate = (window as any).moment(this.minDate).add(1, 'days');
         }
     }
 
     if (this.date) {
         // check min date
         if (this.minDate && this.date.isBefore(this.minDate)) {
-            this.date = moment(this.minDate);
+            this.date = (window as any).moment(this.minDate);
         }
 
         // check max date
         if (this.maxDate && this.date.isAfter(this.maxDate)) {
-            this.date = moment(this.maxDate);
+            this.date = (window as any).moment(this.maxDate);
         }
     }
 
@@ -82,11 +82,11 @@ function DatePickerCtrl(this: any, $scope?: any, $mdDialog?: any, $mdMedia?: any
         var date: any = this.date;
 
         if (this.minDate && this.date.isBefore(this.minDate)) {
-            date = moment(this.minDate);
+            date = (window as any).moment(this.minDate);
         }
 
         if (this.maxDate && this.date.isAfter(this.maxDate)) {
-            date = moment(this.maxDate);
+            date = (window as any).moment(this.maxDate);
         }
 
         $mdDialog.hide(date.toDate());

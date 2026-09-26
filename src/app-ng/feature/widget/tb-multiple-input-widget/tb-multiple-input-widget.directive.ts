@@ -1,7 +1,7 @@
 import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import multipleInputWidgetTemplate from '../../../../app/widget/lib/multiple-input-widget.tpl.html';
+import multipleInputWidgetTemplate from '../../../../app/widget/lib/multiple-input-widget.tpl.html' with { loader: 'text' };
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -39,14 +39,13 @@ function MultipleInputWidgetController(this: any, $q?: any, $scope?: any, $trans
         }
     });
 
-    $scope.$on('multiple-input-data-updated', function (event?: any, formId?: any) {
+    this.multipleInputDataUpdatedSub = this.sharedService.multipleInputDataUpdated$.subscribe(({ formId }: any) => {
         if (vm.formId == formId) {
             updateWidgetData(vm.subscription.data);
-            $scope.$digest();
         }
     });
 
-    $scope.$on('multiple-input-resize', function (event?: any, formId?: any) {
+    this.multipleInputResizeSub = this.sharedService.multipleInputResize$.subscribe(({ formId }: any) => {
         if (vm.formId == formId) {
             updateWidgetDisplaying();
         }
@@ -63,13 +62,17 @@ function MultipleInputWidgetController(this: any, $q?: any, $scope?: any, $trans
 
     function inputChanged(source?: any, key?: any) {
         if (!vm.settings.showActionButtons) {
-            if (!key.settings.required || (key.settings.required && key.data && angular.isDefined(key.data.currentValue))) {
+    function inputChanged(source?: any, key?: any) {
+        if (!vm.settings.showActionButtons) {
+            if (!key.settings.required || (key.settings.required && key.data && key.data.currentValue !== undefined)) {
                 var dataToSave: any = {
                     datasource: source.datasource,
                     keys: [key]
                 };
                 vm.save(dataToSave);
             }
+        }
+    }
         }
     }
 
@@ -99,7 +102,7 @@ function MultipleInputWidgetController(this: any, $q?: any, $scope?: any, $trans
                                 attribute.value = key.data.currentValue.getTime();
                                 break;
                             case 'time':
-                                attribute.value = key.data.currentValue.getTime() - moment().startOf('day').valueOf();//eslint-disable-line
+                                attribute.value = key.data.currentValue.getTime() - (moment as any)().startOf('day').valueOf();//eslint-disable-line
                                 break;
                             default:
                                 attribute.value = key.data.currentValue;
@@ -151,19 +154,23 @@ function MultipleInputWidgetController(this: any, $q?: any, $scope?: any, $trans
         }
 
         if (tasks.length) {
-            $q.all(tasks).then(
+        if (tasks.length) {
+            Promise.all(tasks).then(
                 function success() {
                     $scope.multipleInputForm.$setPristine();
                     if (vm.settings.showResultMessage) {
-                        toast.showSuccess($translate.instant('widgets.input-widgets.update-successful'), 1000, angular.element(vm.ctx.$container), 'bottom left');
+                        toast.showSuccess($translate.instant('widgets.input-widgets.update-successful'), 1000, $(vm.ctx.$container), 'bottom left');
                     }
                 },
                 function fail() {
                     if (vm.settings.showResultMessage) {
-                        toast.showError($translate.instant('widgets.input-widgets.update-failed'), angular.element(vm.ctx.$container), 'bottom left');
+                        toast.showError($translate.instant('widgets.input-widgets.update-failed'), $(vm.ctx.$container), 'bottom left');
                     }
                 }
             );
+        } else {
+            $scope.multipleInputForm.$setPristine();
+        }
         } else {
             $scope.multipleInputForm.$setPristine();
         }
@@ -268,10 +275,10 @@ function MultipleInputWidgetController(this: any, $q?: any, $scope?: any, $trans
                     switch (key.settings.dataKeyValueType) {
                         case 'dateTime':
                         case 'date':
-                            value = moment(keyData[0][1]).toDate(); // eslint-disable-line
+                            value = (moment as any)(keyData[0][1]).toDate(); // eslint-disable-line
                             break;
                         case 'time':
-                            value = moment().startOf('day').add(keyData[0][1], 'ms').toDate(); // eslint-disable-line
+                            value = (moment as any)().startOf('day').add(keyData[0][1], 'ms').toDate(); // eslint-disable-line
                             break;
                         case 'booleanCheckbox':
                         case 'booleanSwitch':

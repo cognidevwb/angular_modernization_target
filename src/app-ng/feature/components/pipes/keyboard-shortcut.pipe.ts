@@ -9,7 +9,7 @@ export class KeyboardShortcutPipe implements PipeTransform {
   transform(str?: any, ...rest: any[]): any {
     if (!str) return undefined;
     var keys: any = str.split('-');
-    var isOSX: any = /Mac OS X/.test($window.navigator.userAgent);
+    var isOSX: any = /Mac OS X/.test(window.navigator.userAgent);
 
     var seperator: any = (!isOSX || keys.length > 2) ? '+' : '';
 

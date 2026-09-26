@@ -1,5 +1,6 @@
 import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
+// @ts-ignore - template loaded as raw string via build-time html loader
 import ledIndicatorTemplate from '../../../../app/widget/lib/rpc/led-indicator.tpl.html';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
@@ -23,19 +24,19 @@ function LedIndicatorController(this: any, $element?: any, $scope?: any, $timeou
         }
     };
 
-    var led: any = angular.element('.led', $element),
-        ledContainer: any = angular.element('#led-container', $element),
-        textMeasure: any = angular.element('#text-measure', $element),
-        ledTitleContainer: any = angular.element('.title-container', $element),
-        ledTitle: any = angular.element('.led-title', $element),
-        ledErrorContainer: any = angular.element('.error-container', $element),
-        ledError: any = angular.element('.led-error', $element);
+    const $: any = (window as any).$;
+    var led: any = $('.led', $element),
+        ledContainer: any = $('#led-container', $element),
+        textMeasure: any = $('#text-measure', $element),
+        ledTitleContainer: any = $('.title-container', $element),
+        ledTitle: any = $('.led-title', $element),
+        ledErrorContainer: any = $('.error-container', $element),
+        ledError: any = $('.led-error', $element);
 
-    $scope.$watch('vm.ctx', () => {
-        if (vm.ctx) {
-            init();
-        }
-    });
+    // Watch replaced by ngOnChanges on the host component, which invokes this when vm.ctx changes.
+    if (vm.ctx) {
+        init();
+    }
 
     $scope.$on('$destroy', () => {
         vm.destroyed = true;
@@ -51,12 +52,14 @@ function LedIndicatorController(this: any, $element?: any, $scope?: any, $timeou
 
     function init() {
 
-        vm.title = angular.isDefined(vm.ctx.settings.title) ? vm.ctx.settings.title : '';
+        const tinycolor: any = (window as any).tinycolor;
+
+        vm.title = vm.ctx.settings.title !== undefined ? vm.ctx.settings.title : '';
         vm.showTitle = vm.title && vm.title.length ? true : false;
 
-        var origColor: any = angular.isDefined(vm.ctx.settings.ledColor) ? vm.ctx.settings.ledColor : 'green';
+        var origColor: any = vm.ctx.settings.ledColor !== undefined ? vm.ctx.settings.ledColor : 'green';
 
-        vm.valueAttribute = angular.isDefined(vm.ctx.settings.valueAttribute) ? vm.ctx.settings.valueAttribute : 'value';
+        vm.valueAttribute = vm.ctx.settings.valueAttribute !== undefined ? vm.ctx.settings.valueAttribute : 'value';
 
         vm.ledColor = tinycolor(origColor).brighten(30).toHexString();
         vm.ledMiddleColor = tinycolor(origColor).toHexString();
@@ -64,10 +67,8 @@ function LedIndicatorController(this: any, $element?: any, $scope?: any, $timeou
         vm.disabledMiddleColor = tinycolor(origColor).darken(60).toHexString();
 
         vm.ctx.resize = resize;
-        $scope.$applyAsync(() => {
-            resize();
-        });
-        var initialValue: any = angular.isDefined(vm.ctx.settings.initialValue) ? vm.ctx.settings.initialValue : false;
+        resize();
+        var initialValue: any = vm.ctx.settings.initialValue !== undefined ? vm.ctx.settings.initialValue : false;
         setValue(initialValue, true);
 
         var subscription: any = vm.ctx.defaultSubscription;
@@ -147,10 +148,10 @@ function LedIndicatorController(this: any, $element?: any, $scope?: any, $timeou
     }
 
     function onError(error?: any) {
-        $scope.$applyAsync(() => {
-            vm.error = error;
-            setFontSize(ledError, vm.error, ledErrorContainer.height(), ledErrorContainer.width());
-        });
+    function onError(error?: any) {
+        vm.error = error;
+        setFontSize(ledError, vm.error, ledErrorContainer.height(), ledErrorContainer.width());
+    }
     }
 
     function setFontSize(element?: any, text?: any, fontSize?: any, maxWidth?: any) {
@@ -237,7 +238,7 @@ function LedIndicatorController(this: any, $element?: any, $scope?: any, $timeou
                 if (attrValue) {
                     var parsed: any = null;
                     try {
-                        parsed = vm.parseValueFunction(angular.fromJson(attrValue));
+                        parsed = vm.parseValueFunction(JSON.parse(attrValue));
                     } catch (e){/**/}
                     value = parsed ? true : false;
                 }

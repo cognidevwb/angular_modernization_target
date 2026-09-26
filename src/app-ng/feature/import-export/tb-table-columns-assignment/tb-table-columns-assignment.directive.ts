@@ -1,6 +1,6 @@
 import { Component, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import tableColumnsAssignment from '../../../../app/import-export/table-columns-assignment.tpl.html';
+import tableColumnsAssignment from '../../../../app/import-export/table-columns-assignment.tpl.html?raw';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -84,7 +84,7 @@ function TableColumnsAssignmentController(this: any, $scope?: any, types?: any, 
                 vm.columnTypes.label.disable = isSelectLabel;
                 vm.columnTypes.gateway.disable = isSelectGateway;
                 vm.columnTypes.description.disable = isSelectDescription;
-                if (angular.isDefined(vm.columnTypes.accessToken)) {
+                if (typeof vm.columnTypes.accessToken !== 'undefined') {
                     vm.columnTypes.accessToken.disable = isSelectCredentials;
                 }
             });

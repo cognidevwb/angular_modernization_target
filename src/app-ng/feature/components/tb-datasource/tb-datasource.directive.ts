@@ -7,7 +7,7 @@ import { TbDatasourceFuncDirective } from '../tb-datasource-func/tb-datasource-f
 import { TbDatasourceEntityDirective } from '../tb-datasource-entity/tb-datasource-entity.directive';
 
 import $ from 'jquery';
-import datasourceTemplate from '../../../../app/components/datasource.tpl.html';
+import datasourceTemplate from '../../../../app/components/datasource.tpl.html'; // @ts-ignore
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -46,7 +46,7 @@ export class TbDatasourceDirective {
   protected readonly element = inject(ElementRef);
   // TODO(port): template: 1 × ng-switch-when left in place
 
-  protected template: any = $templateCache.get(datasourceTemplate);
+  protected template: any = datasourceTemplate;
   types: any;
   $watch: any;
   datasourceTypes: any;

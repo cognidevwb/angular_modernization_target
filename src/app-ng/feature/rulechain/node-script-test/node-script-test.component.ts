@@ -29,6 +29,7 @@ declare let $scope: any;
 declare let $window: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
+declare let beautify: any;
 const js_beautify: any = beautify.js;
 
 /**
@@ -200,13 +201,13 @@ export class NodeScriptTestComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+(this.dialog as any).cancel();
   };
 
   save = (...rest: any[]): any => {
     this.testNodeScript().then(() => {
         this.theForm.funcBodyForm.$setPristine();
-        this.dialog.hide(this.inputParams.script);
+(this.dialog as any).hide(this.inputParams.script);
     });
   };
 }

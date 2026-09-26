@@ -1,7 +1,7 @@
 import { Component, forwardRef, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TbNavTreeDirective } from '../../components/tb-nav-tree/tb-nav-tree.directive';
-import entitiesHierarchyWidgetTemplate from '../../../../app/widget/lib/entities-hierarchy-widget.tpl.html';
+import entitiesHierarchyWidgetTemplate from '../../../../app/widget/lib/entities-hierarchy-widget.tpl.html?raw';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -56,13 +56,14 @@ function EntitiesHierarchyWidgetController(this: any, $element?: any, $scope?: a
         }
     });
 
-    $scope.$watch("vm.query.search", function(newVal?: any, prevVal?: any) {
-        if (!angular.equals(newVal, prevVal) && vm.query.search != null) {
+    searchEffect = effect(() => {
+        const newVal = vm.query.search;
+        if (vm.query.search != null) {
             updateSearchNodes();
         }
     });
 
-    $scope.$on('entities-hierarchy-data-updated', function(event?: any, hierarchyId?: any) {
+    entitiesHierarchyDataUpdatedService.subject.subscribe((hierarchyId?: any) => {
         if (vm.hierarchyId == hierarchyId) {
             if (vm.subscription) {
                 updateNodeData(vm.subscription.data);
@@ -85,7 +86,7 @@ function EntitiesHierarchyWidgetController(this: any, $element?: any, $scope?: a
             data: {},
             level: 2
         };
-        var parentNodeCtx: any = angular.copy(testNodeCtx);
+        var parentNodeCtx: any = structuredClone(testNodeCtx);
         parentNodeCtx.level = 1;
         testNodeCtx.parentNodeCtx = parentNodeCtx;
 
@@ -96,7 +97,8 @@ function EntitiesHierarchyWidgetController(this: any, $element?: any, $scope?: a
         var nodeOpenedFunction: any = loadNodeCtxFunction(vm.settings.nodeOpenedFunction, 'nodeCtx', testNodeCtx);
         var nodeHasChildrenFunction: any = loadNodeCtxFunction(vm.settings.nodeHasChildrenFunction, 'nodeCtx', testNodeCtx);
 
-        var testNodeCtx2: any = angular.copy(testNodeCtx);
+        var testNodeCtx2: any = structuredClone(testNodeCtx);
+        testNodeCtx2.entity.name = 'TEST DEV2';
         testNodeCtx2.entity.name = 'TEST DEV2';
 
         var nodesSortFunction: any = loadNodeCtxFunction(vm.settings.nodesSortFunction, 'nodeCtx1,nodeCtx2', testNodeCtx, testNodeCtx2);
@@ -112,17 +114,21 @@ function EntitiesHierarchyWidgetController(this: any, $element?: any, $scope?: a
 
     function loadNodeCtxFunction(functionBody?: any, argNames?: any, ...args: any[]) {
         var nodeCtxFunction: any = null;
-        if (angular.isDefined(functionBody) && functionBody.length) {
+    function loadNodeCtxFunction(functionBody?: any, argNames?: any, ...args: any[]) {
+        var nodeCtxFunction: any = null;
+        if (functionBody !== undefined && functionBody.length) {
             try {
                 nodeCtxFunction = new Function(argNames, functionBody);
                 var res: any = nodeCtxFunction.apply(null, args);
-                if (angular.isUndefined(res)) {
+                if (res === undefined) {
                     nodeCtxFunction = null;
                 }
             } catch (e) {
                 nodeCtxFunction = null;
             }
         }
+        return nodeCtxFunction;
+    }
         return nodeCtxFunction;
     }
 

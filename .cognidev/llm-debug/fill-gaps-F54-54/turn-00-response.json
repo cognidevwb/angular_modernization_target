@@ -1,0 +1,14 @@
+{
+  "content": "### G2133\n```ts\nconst dashboardAutocompleteTemplate: string = require('../../../../app/components/dashboard-autocomplete.tpl.html');\n```\n\n### G271,G272\n```ts\n  protected template: any = dashboardAutocompleteTemplate;\n```\n\n### G1242,G1243,G1244\n```ts\n    this.writeValue = (value: any) => {\n            if (value) {\n                this.dashboardService.getDashboardInfo(value).then(\n                    (dashboard?: any) => {\n                        this.dashboard = dashboard;\n                        this.startWatchers();\n                    },\n                    () => {\n                        this.dashboard = null;\n                        this.updateView();\n                        this.startWatchers();\n                    }\n                );\n            } else {\n                this.dashboard = null;\n                this.startWatchers();\n            }\n        }\n    if (this.selectFirstDashboard()) {\n            var pageLink: any = {limit: 1, textSearch: ''};\n            this.dashboardFetchFunction(pageLink).then((result?: any) => {\n                var dashboards: any = result.data;\n                if (dashboards.length > 0) {\n                    this.dashboard = dashboards[0];\n                    this.updateView();\n                }\n            }, function fail() {\n            });\n        }\n```\n\n### G1232,G1235\n```ts\n    $(this.element.nativeElement).contents();\n```\n\n### G270,G1236\n```ts\n    var deferred: any = {};\n    deferred.promise = new Promise((resolve, reject) => { deferred.resolve = resolve; deferred.reject = reject; });\n```\n\n### G1237\n```ts\n        this.onChange(this.dashboard ? this.dashboard.id.id : null);\n```\n\n### G1238,G1239,G1241,G1240\n```ts\n    this.$watch = this.$watch || {};\n    if (!isEqual(this.dashboard, this.$watch.dashboard)) {\n        this.$watch.dashboard = this.dashboard;\n        this.updateView();\n    }\n    if (!isEqual(this.disabled(), this.$watch.disabled)) {\n        this.$watch.disabled = this.disabled();\n        this.updateView();\n    }\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 5358,
+    "costMicros": 68226,
+    "inputTokens": 2,
+    "outputTokens": 4679
+  }
+}

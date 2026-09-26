@@ -16,7 +16,11 @@ import { TbAlarmTableDirective } from '../../alarm/tb-alarm-table/tb-alarm-table
 import { TbEventTableDirective } from '../../event/tb-event-table/tb-event-table.directive';
 import { TbRelationTableDirective } from '../../entity/tb-relation-table/tb-relation-table.directive';
 import { TbAuditLogTableDirective } from '../../audit/tb-audit-log-table/tb-audit-log-table.directive';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import addRuleChainTemplate from '../../../../app/rulechain/add-rulechain.tpl.html';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import ruleChainCard from '../../../../app/rulechain/rulechain-card.tpl.html';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -101,7 +105,7 @@ export class RuleChainsComponent {
             onAction: ($event?: any, ...rest: any[]) => {
                 this.importExport.importRuleChain($event).then(
                     (ruleChainImport?: any) => {
-                        this.router.go('home.ruleChains.importRuleChain', {ruleChainImport:ruleChainImport});
+                        (this.router as any).go('home.ruleChains.importRuleChain', {ruleChainImport:ruleChainImport});
                     }
                 );
             },
@@ -190,7 +194,7 @@ export class RuleChainsComponent {
     if ($event) {
         $event.stopPropagation();
     }
-    this.router.go('home.ruleChains.ruleChain', {ruleChainId: ruleChain.id.id});
+    (this.router as any).go('home.ruleChains.ruleChain', {ruleChainId: ruleChain.id.id});
   };
 
   deleteRuleChain = (ruleChainId?: any, ...rest: any[]): any => {
@@ -216,14 +220,14 @@ export class RuleChainsComponent {
 
   setRootRuleChain = ($event?: any, ruleChain?: any, ...rest: any[]): any => {
     $event.stopPropagation();
-    var confirm: any = this.dialog.confirm()
+    var confirm: any = (this.dialog as any).confirm()
         .targetEvent($event)
         .title(this.translate.instant('rulechain.set-root-rulechain-title', {ruleChainName: ruleChain.name}))
         .htmlContent(this.translate.instant('rulechain.set-root-rulechain-text'))
         .ariaLabel(this.translate.instant('rulechain.set-root'))
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         this.ruleChainService.setRootRuleChain(ruleChain.id.id).then(
             () => {
                 this.grid.refreshList();

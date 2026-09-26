@@ -1,0 +1,14 @@
+{
+  "content": "### G2015,G991,G992\n```ts\n    this.http.get(url, config).toPromise().then(function success(response?: any) {\n        var result: any = [];\n        if (response.data) {\n            if (query) {\n                var dataKeys: any = response.data;\n                var lowercaseQuery: any = query.toLowerCase();\n                for (var i: any=0; i<dataKeys.length;i++) {\n                    if (dataKeys[i].toLowerCase().indexOf(lowercaseQuery) === 0) {\n                        result.push(dataKeys[i]);\n                    }\n                }\n            } else {\n                result = response.data;\n            }\n        }\n        deferred.resolve(result);\n    }, function fail() {\n        deferred.reject();\n    });\n```\n\n### G999\n```ts\n    if (entity.name !== relatedEntity.name || entity.type !== relatedEntity.type) {\n        entity.name = relatedEntity.name;\n        entity.type = relatedEntity.type;\n        this.saveEntityPromise(entity).then(\n            (entity?: any) => {\n                this.updateEntityAttributes(entity, relatedEntity, keys, deferred);\n            },\n            function fail() {\n                deferred.reject();\n            }\n        );\n    } else {\n        this.updateEntityAttributes(entity, relatedEntity, keys, deferred);\n    }\n```\n\n### G977,G1002\n```ts\n    var foundAttributes: any = attributes.filter(function (item: any) { return item.key === key; });\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2984,
+    "costMicros": 16910,
+    "inputTokens": 2,
+    "outputTokens": 497
+  }
+}

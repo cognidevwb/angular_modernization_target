@@ -13,8 +13,8 @@ import { TbAlarmTableDirective } from '../../alarm/tb-alarm-table/tb-alarm-table
 import { TbEventTableDirective } from '../../event/tb-event-table/tb-event-table.directive';
 import { TbRelationTableDirective } from '../../entity/tb-relation-table/tb-relation-table.directive';
 import { TbAuditLogTableDirective } from '../../audit/tb-audit-log-table/tb-audit-log-table.directive';
-import addCustomerTemplate from '../../../../app/customer/add-customer.tpl.html';
-import customerCard from '../../../../app/customer/customer-card.tpl.html';
+import addCustomerTemplate from '../../../../app/customer/add-customer.tpl.html?raw';
+import customerCard from '../../../../app/customer/customer-card.tpl.html?raw';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -212,27 +212,27 @@ export class CustomerComponent {
     if ($event) {
         $event.stopPropagation();
     }
-    this.router.go('home.customers.users', {customerId: customer.id.id});
+    (this.router as any).go('home.customers.users', {customerId: customer.id.id});
   };
 
   openCustomerAssets = ($event?: any, customer?: any, ...rest: any[]): any => {
     if ($event) {
         $event.stopPropagation();
     }
-    this.router.go('home.customers.assets', {customerId: customer.id.id});
+    (this.router as any).go('home.customers.assets', {customerId: customer.id.id});
   };
 
   openCustomerDevices = ($event?: any, customer?: any, ...rest: any[]): any => {
     if ($event) {
         $event.stopPropagation();
     }
-    this.router.go('home.customers.devices', {customerId: customer.id.id});
+    (this.router as any).go('home.customers.devices', {customerId: customer.id.id});
   };
 
   openCustomerDashboards = ($event?: any, customer?: any, ...rest: any[]): any => {
     if ($event) {
         $event.stopPropagation();
     }
-    this.router.go('home.customers.dashboards', {customerId: customer.id.id});
+    (this.router as any).go('home.customers.dashboards', {customerId: customer.id.id});
   };
 }

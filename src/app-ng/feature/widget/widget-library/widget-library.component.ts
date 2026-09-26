@@ -15,7 +15,8 @@ import { TbDashboardDirective } from '../../components/tb-dashboard/tb-dashboard
 
 import $ from 'jquery';
 import AliasController from '../../../../app/api/alias-controller';
-import selectWidgetTypeTemplate from '../../../../app/widget/select-widget-type.tpl.html';
+declare const require: any;
+const selectWidgetTypeTemplate = require('../../../../app/widget/select-widget-type.tpl.html');
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -208,7 +209,7 @@ export class WidgetLibraryComponent {
         this.router.go('home.widgets-bundles.widget-types.widget-type',
             {widgetTypeId: widget.typeId.id});
     } else {
-        this.dialog.show({
+        (this.dialog as any).show({
             controller: 'SelectWidgetTypeController',
             controllerAs: 'vm',
             templateUrl: selectWidgetTypeTemplate,
@@ -216,7 +217,7 @@ export class WidgetLibraryComponent {
             fullscreen: true,
             targetEvent: event
         }).then((widgetType?: any) => {
-            this.router.go('home.widgets-bundles.widget-types.widget-type',
+            (this.router as any).go('home.widgets-bundles.widget-types.widget-type',
                 {widgetType: widgetType});
         }, function () {
         });
@@ -232,14 +233,14 @@ export class WidgetLibraryComponent {
     $event.stopPropagation();
     this.importExport.importWidgetType($event, this.widgetsBundle.alias).then(
         () => {
-            this.router.go(this.router.current, this.router.params, {reload: true});
+            (this.router as any).go(this.router.current, this.router.params, {reload: true});
         },
         function fail() {}
     );
   };
 
   removeWidgetType = (event?: any, widget?: any, ...rest: any[]): any => {
-    var confirm: any = this.dialog.confirm()
+    var confirm: any = (this.dialog as any).confirm()
         .targetEvent(event)
         .title(this.translate.instant('widget.remove-widget-type-title', {widgetName: widget.config.title}))
         .htmlContent(this.translate.instant('widget.remove-widget-type-text'))

@@ -1,0 +1,14 @@
+{
+  "content": "### G2096\n```ts\n// @ts-ignore\nimport auditLogDetailsDialogTemplate from '../../../../app/audit/audit-log-details-dialog.tpl.html';\n```\n\n### G2097\n```ts\n// @ts-ignore\nimport auditLogRowTemplate from '../../../../app/audit/audit-log-row.tpl.html';\n```\n\n### G2098\n```ts\n  standalone: true,\n```\n\n### G2099\n```ts\n    (this.dialog as any).show({\n        controller: 'AuditLogDetailsDialogController',\n        controllerAs: 'vm',\n        templateUrl: auditLogDetailsDialogTemplate,\n        locals: {\n            auditLog: this.auditLog,\n            showingCallback: onShowingCallback\n        },\n        parent: $(this.document.body),\n        targetEvent: $event,\n        fullscreen: true,\n        multiple: true,\n        onShowing: (scope?: any, element?: any, ...rest: any[]) => {\n            onShowingCallback.onShowing(scope, element);\n        }\n    });\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2546,
+    "costMicros": 13778,
+    "inputTokens": 2,
+    "outputTokens": 359
+  }
+}

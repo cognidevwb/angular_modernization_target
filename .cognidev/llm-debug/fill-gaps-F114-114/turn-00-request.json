@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 720,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/device/add-devices-to-customer/add-devices-to-customer.component.ts\n\n2 item(s) to handle in this file.\n\n### G2302\nLines to replace: L95–L95\nKind: fix\nTask: Make line 95 of `src/app-ng/feature/device/add-devices-to-customer/add-devices-to-customer.component.ts` type-check without changing what it does.\nBefore: Property 'cancel' does not exist on type 'MatDialog'.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n### G2303\nLines to replace: L104–L104\nKind: fix\nTask: Make line 104 of `src/app-ng/feature/device/add-devices-to-customer/add-devices-to-customer.component.ts` type-check without changing what it does.\nBefore: Property 'hide' does not exist on type 'MatDialog'.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n\nThe file's lines:\nL89|             }\nL90|         }\nL91|     };\nL92|   }\nL93| \nL94|   cancel = (...rest: any[]): any => {\nL95|     this.dialog.cancel();\nL96|   };\nL97| \nL98|   assign = (...rest: any[]): any => {\nL99|     var tasks: any = [];\nL100|     for (var deviceId in this.devices.selections) {\nL101|         tasks.push(this.deviceService.assignDeviceToCustomer(this.dialogData.customerId, deviceId));\nL102|     }\nL103|     Promise.all(tasks).then(() => {\nL104|         this.dialog.hide();\nL105|     });\nL106|   };\nL107| \nL108|   noData = (...rest: any[]): any => {\nL109|     return this.devices.data.length == 0 && !this.devices.hasNext;\nL110|   };\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

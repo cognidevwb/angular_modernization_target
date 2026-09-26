@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { TbEntitySubtypeAutocompleteDirective } from '../../entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive';
 
 import $ from 'jquery';
-import assetFieldsetTemplate from '../../../../app/asset/asset-fieldset.tpl.html';
+import assetFieldsetTemplate from '../../../../app/asset/asset-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';

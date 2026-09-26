@@ -7,11 +7,11 @@ import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
-import eventErrorDialogTemplate from '../../../../app/event/event-content-dialog.tpl.html';
-import eventRowLcEventTemplate from '../../../../app/event/event-row-lc-event.tpl.html';
-import eventRowStatsTemplate from '../../../../app/event/event-row-stats.tpl.html';
-import eventRowErrorTemplate from '../../../../app/event/event-row-error.tpl.html';
-import eventRowDebugRuleNodeTemplate from '../../../../app/event/event-row-debug-rulenode.tpl.html';
+import eventErrorDialogTemplate from '../../../../app/event/event-content-dialog.tpl.html?raw';
+import eventRowLcEventTemplate from '../../../../app/event/event-row-lc-event.tpl.html?raw';
+import eventRowStatsTemplate from '../../../../app/event/event-row-stats.tpl.html?raw';
+import eventRowErrorTemplate from '../../../../app/event/event-row-error.tpl.html?raw';
+import eventRowDebugRuleNodeTemplate from '../../../../app/event/event-row-debug-rulenode.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;

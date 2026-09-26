@@ -1,4 +1,5 @@
 import { Component, model } from '@angular/core';
+// @ts-expect-error - no type declarations exist for the raw .html template import
 import userMenuTemplate from '../../../../app/layout/user-menu.tpl.html';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';

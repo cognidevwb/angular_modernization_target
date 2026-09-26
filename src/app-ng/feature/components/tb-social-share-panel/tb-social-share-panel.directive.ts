@@ -1,4 +1,6 @@
 import { Component, input } from '@angular/core';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import socialsharePanelTemplate from '../../../../app/components/socialshare-panel.tpl.html';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';

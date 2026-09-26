@@ -1,0 +1,14 @@
+{
+  "content": "### G2514\n```ts\n    this.isExpiredPassword = (this.router as any).$current.data.expiredPassword === true;\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1156,
+    "costMicros": 5088,
+    "inputTokens": 2,
+    "outputTokens": 46
+  }
+}

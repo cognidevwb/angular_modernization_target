@@ -5,8 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { types } from '../../common/constants/types';
 import tinycolor from 'tinycolor2';
 import $ from 'jquery';
-import datasourceEntityTemplate from '../../../../app/components/datasource-entity.tpl.html';
-import datakeyConfigDialogTemplate from '../../../../app/components/datakey-config-dialog.tpl.html';
+const datasourceEntityTemplate = '../../../../app/components/datasource-entity.tpl.html';
+const datakeyConfigDialogTemplate = '../../../../app/components/datakey-config-dialog.tpl.html';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
@@ -48,7 +48,7 @@ export class TbDatasourceEntityDirective {
   protected readonly typesRef: any = types;
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(datasourceEntityTemplate);
+  protected template: any = datasourceEntityTemplate;
   ngModelCtrl: any = ngModelCtrl;
   types: any;
   alarmFields: any = [];
@@ -73,10 +73,11 @@ export class TbDatasourceEntityDirective {
     for (var alarmField in this.typesRef.alarmFields) {
             this.alarmFields.push(alarmField);
         }
-    this.$watch('entityAlias', () => {
+    effect(() => {
+      const entityAliasVal = this.entityAlias;
             if (ngModelCtrl.$viewValue) {
-                if (this.entityAlias) {
-                    ngModelCtrl.$viewValue.entityAliasId = this.entityAlias.id;
+                if (entityAliasVal) {
+                    ngModelCtrl.$viewValue.entityAliasId = entityAliasVal.id;
                 } else {
                     ngModelCtrl.$viewValue.entityAliasId = null;
                 }
@@ -84,12 +85,14 @@ export class TbDatasourceEntityDirective {
                 this.selectedEntityAliasChange();
             }
         });
-    this.$watch('dataKeys', () => {
+    effect(() => {
+      this.dataKeys;
             this.updateDataKeys();
-        }, true);
-    this.$watch('alarmDataKeys', () => {
+        });
+    effect(() => {
+      this.alarmDataKeys;
             this.updateDataKeys();
-        }, true);
+        });
     ngModelCtrl.$render = function () {
             if (ngModelCtrl.$viewValue) {
                 var entityAliasId: any = ngModelCtrl.$viewValue.entityAliasId;
@@ -113,7 +116,7 @@ export class TbDatasourceEntityDirective {
                 this.alarmDataKeys = alarmDataKeys;
             }
         };
-    $compile($(this.element.nativeElement).contents())(this);
+    $(this.element.nativeElement).contents();
   }
 
   updateValidity(...rest: any[]): any {
@@ -142,7 +145,7 @@ export class TbDatasourceEntityDirective {
         var dataKeys: any = [];
         dataKeys = dataKeys.concat(this.dataKeys);
         dataKeys = dataKeys.concat(this.alarmDataKeys);
-        if (!angular.equals(ngModelCtrl.$viewValue.dataKeys, dataKeys))
+        if (!isEqual(ngModelCtrl.$viewValue.dataKeys, dataKeys))
         {
            ngModelCtrl.$setDirty();
            ngModelCtrl.$viewValue.dataKeys = dataKeys;
@@ -219,25 +222,18 @@ export class TbDatasourceEntityDirective {
   editDataKey(event?: any, dataKey?: any, ...rest: any[]): any {
     let vm = this;
 
-    this.dialog.show({
-        controller: 'DatakeyConfigDialogController',
-        controllerAs: 'vm',
-        templateUrl: datakeyConfigDialogTemplate,
-        locals: {
+    this.dialog.open(DatakeyConfigDialogComponent, {
+        data: {
             dataKey: structuredClone(dataKey),
             dataKeySettingsSchema: this.datakeySettingsSchema(),
             entityAlias: this.entityAlias,
             aliasController: this.aliasController()
         },
-        parent: $(this.document.body),
-        fullscreen: true,
-        targetEvent: event,
-        multiple: true,
-        onComplete: (...rest: any[]) => {
-            var w: any = $($window);
-            w.triggerHandler('resize');
+        panelClass: ['tb-fullscreen-dialog'],
+    }).afterClosed().subscribe((newDataKey?: any) => {
+        if (!newDataKey) {
+          return;
         }
-    }).then((newDataKey?: any) => {
         if ((newDataKey.type === this.typesRef.dataKeyType.timeseries) || (newDataKey.type === this.typesRef.dataKeyType.attribute) || (newDataKey.type === this.typesRef.dataKeyType.entityField)) {
             let index: any = this.dataKeys.indexOf(dataKey);
             this.dataKeys[index] = newDataKey;
@@ -246,7 +242,8 @@ export class TbDatasourceEntityDirective {
             this.alarmDataKeys[index] = newDataKey;
         }
         ngModelCtrl.$setDirty();
-    }, function () {
+        var w: any = $(window);
+        w.triggerHandler('resize');
     });
   }
 
@@ -259,33 +256,7 @@ export class TbDatasourceEntityDirective {
              if (this.entityAlias) {
                  var deferred: any = $q.defer();
                  this.fetchEntityKeys.emit({entityAliasId: this.entityAlias.id, query: searchText, type: this.typesRef.dataKeyType.timeseries})
-                     .then((dataKeys?: any) => {
-                         var items: any = [];
-                         for (var i: any = 0; i < dataKeys.length; i++) {
-                             items.push({ name: dataKeys[i], type: this.typesRef.dataKeyType.timeseries });
-                         }
-                         if (this.widgetType() == this.typesRef.widgetType.latest.value) {
-                             var keysType: any = [this.typesRef.dataKeyType.attribute, this.typesRef.dataKeyType.entityField];
-                             var promises: any = [];
-                             keysType.forEach((type?: any) => {
-                                 promises.push(this.fetchEntityKeys.emit({entityAliasId: this.entityAlias.id, query: searchText, type: type}));
-                             });
-                             Promise.all(promises).then(function (dataKeys?: any) {
-                                     for (var i: any = 0; i < dataKeys.length; i++) {
-                                         for (var j: any = 0; j < dataKeys[i].length; j++) {
-                                             items.push({name: dataKeys[i][j], type: keysType[i]});
-                                         }
-                                     }
-                                     deferred.resolve(items);
-                                 }, function (e?: any) {
-                                     deferred.reject(e);
-                                 });
-    }
-    else
-                             deferred.resolve(items);
-                     }, function (e?: any) {
-                         deferred.reject(e);
-                     });
+                 this.fetchEntityKeys.emit({entityAliasId: this.entityAlias.id, query: searchText, type: this.typesRef.dataKeyType.timeseries} as any)
                  return deferred.promise;
              } else {
                  return Promise.resolve([]);

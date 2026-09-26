@@ -1,7 +1,7 @@
 import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import timeseriesTableWidgetTemplate from '../../../../app/widget/lib/timeseries-table-widget.tpl.html';
+import timeseriesTableWidgetTemplate from '../../../../app/widget/lib/timeseries-table-widget.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -40,7 +40,9 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
         vm.query.search = '';
         vm.ctx.hideTitlePanel = true;
         $timeout(()=>{
-            angular.element(vm.ctx.$container).find('.searchInput').focus();
+        $timeout(()=>{
+            $(vm.ctx.$container).find('.searchInput').focus();
+        })
         })
     }
 
@@ -58,7 +60,7 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
         icon: 'search'
     };
 
-    $scope.$watch('vm.ctx', function() {
+    effect(() => {
        if (vm.ctx) {
            vm.settings = vm.ctx.settings;
            vm.widgetConfig = vm.ctx.widgetConfig;
@@ -74,7 +76,7 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
         vm.showTimestamp = vm.settings.showTimestamp !== false;
         dateFormatFilter = (vm.settings.showMilliseconds !== true) ? 'yyyy-MM-dd HH:mm:ss' :  'yyyy-MM-dd HH:mm:ss.sss';
         var origColor: any = vm.widgetConfig.color || 'rgba(0, 0, 0, 0.87)';
-        var defaultColor: any = tinycolor(origColor);
+        var defaultColor: any = (window as any).tinycolor(origColor);
         var mdDark: any = defaultColor.setAlpha(0.87).toRgbString();
         var mdDarkSecondary: any = defaultColor.setAlpha(0.54).toRgbString();
         var mdDarkDisabled: any = defaultColor.setAlpha(0.26).toRgbString();
@@ -111,12 +113,12 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
             'color: ' + mdDarkSecondary + ';\n'+
             '}';
 
-        var cssParser: any = new cssjs();
+        var cssParser: any = new (window as any).cssjs();
         cssParser.testMode = false;
         var namespace: any = 'ts-table-' + hashCode(cssString);
         cssParser.cssPreviewNamespace = namespace;
         cssParser.createStyleElement(namespace, cssString);
-        $element.addClass(namespace);
+        el.nativeElement.classList.add(namespace);
 
         vm.displayPagination = angular.isDefined(vm.settings.displayPagination) ? vm.settings.displayPagination : true;
 
@@ -134,7 +136,7 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
         updateDatasources();
     }
 
-    $scope.$on('timeseries-table-data-updated', function(event?: any, tableId?: any) {
+    timeseriesTableService.timeseriesTableDataUpdated$.pipe(takeUntil(this.destroy$)).subscribe(({tableId}: any) => {
         if (vm.tableId == tableId) {
             dataUpdated();
         }
@@ -146,7 +148,13 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
             source.rawData = vm.data.slice(source.keyStartIndex, source.keyEndIndex);
         }
         updateSourceData(vm.sources[vm.sourceIndex]);
-        $scope.$digest();
+    function dataUpdated() {
+        for (var s: any=0; s < vm.sources.length; s++) {
+            var source: any = vm.sources[s];
+            source.rawData = vm.data.slice(source.keyStartIndex, source.keyEndIndex);
+        }
+        updateSourceData(vm.sources[vm.sourceIndex]);
+    }
     }
 
     vm.onPaginate = function(source?: any) {
@@ -199,7 +207,7 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
 
     vm.cellContent = function(source?: any, index?: any, row?: any, value?: any) {
         if (index === 0) {
-            return $filter('date')(value, dateFormatFilter);
+            return datePipe.transform(value, dateFormatFilter);
         } else {
             var strContent: any = '';
             if (angular.isDefined(value)) {
@@ -229,11 +237,13 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
         return undefined;
     }
 
-    $scope.$watch('vm.sourceIndex', function(newIndex?: any, oldIndex?: any) {
+    effect(() => {
+        const newIndex = vm.sourceIndex;
         if (newIndex != oldIndex) {
             updateSourceData(vm.sources[vm.sourceIndex]);
             updateActiveEntityInfo();
         }
+        oldIndex = newIndex;
     });
 
     function updateActiveEntityInfo() {
@@ -355,7 +365,7 @@ function TimeseriesTableWidgetController(this: any, $element?: any, $scope?: any
                 for (let i: any = 0; i < item.length; i++) {
                     if (vm.showTimestamp) {
                         if (i === 0) {
-                            if (searchRegExp.test($filter('date')(item[i], dateFormatFilter))) {
+                            if (searchRegExp.test(datePipe.transform(item[i], dateFormatFilter))) {
                                 return true;
                             }
                         } else {

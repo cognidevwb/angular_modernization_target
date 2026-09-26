@@ -81,7 +81,7 @@ export class UserService {
         }
     }
     if (!valid && notify) {
-        this.rootScope.$broadcast('unauthenticated');
+        (this.rootScope as any).$broadcast('unauthenticated');
     }
   }
 
@@ -101,16 +101,16 @@ export class UserService {
     if (!jwtToken) {
         this.clearTokenData();
         if (notify) {
-            this.rootScope.$broadcast('unauthenticated', doLogout);
+            (this.rootScope as any).$broadcast('unauthenticated', doLogout);
         }
     } else {
         this.updateAndValidateToken(jwtToken, 'jwt_token', true);
         this.updateAndValidateToken(refreshToken, 'refresh_token', true);
         if (notify) {
             this.loadUser(false).then(() => {
-                this.rootScope.$broadcast('authenticated');
+                (this.rootScope as any).$broadcast('authenticated');
             }, () => {
-                this.rootScope.$broadcast('unauthenticated');
+                (this.rootScope as any).$broadcast('unauthenticated');
             });
         } else {
             this.loadUser(false);
@@ -127,7 +127,7 @@ export class UserService {
   }
 
   logout(...rest: any[]): any {
-    this.http.post('/api/auth/logout', null, {ignoreErrors: true}).then(() => {
+    (this.http.post('/api/auth/logout', null, {ignoreErrors: true} as any) as any).then(() => {
         this.clearJwtToken(true);
     }, () => {
         this.clearJwtToken(true);
@@ -197,7 +197,7 @@ export class UserService {
             var refreshTokenRequest: any = {
                 refreshToken: refreshToken
             };
-            this.http.post('/api/auth/token', refreshTokenRequest).then((response?: any) => {
+            (this.http.post('/api/auth/token', refreshTokenRequest) as any).then((response?: any) => {
                 var token: any = response.data.token;
                 var refreshToken: any = response.data.refreshToken;
                 this.setUserFromJwtToken(token, refreshToken, false);
@@ -343,7 +343,7 @@ export class UserService {
     }
 
     if (!this.currentUser) {
-        var locationSearch: any = this.router.search();
+        var locationSearch: any = (this.router as any).search();
         if (locationSearch.publicId) {
             this.loginService.publicLogin(locationSearch.publicId).then((response?: any) => {
                 var token: any = response.data.token;
@@ -408,13 +408,13 @@ export class UserService {
   }
 
   showLoginErrorDialog(loginError?: any, ...rest: any[]): any {
-    this.translate(['login.error',
+    (this.translate as any)(['login.error',
       'action.close']).then((translations?: any) => {
-      var alert: any = this.dialog.alert()
+      var alert: any = (this.dialog as any).alert()
         .title(translations['login.error'])
         .htmlContent(loginError)
         .ok(translations['action.close']);
-      this.dialog.show(alert);
+      (this.dialog as any).show(alert);
     });
   }
 
@@ -422,7 +422,7 @@ export class UserService {
     var deferred: any = $q.defer();
     if (this.currentUser.authority === 'SYS_ADMIN' || this.currentUser.authority === 'TENANT_ADMIN') {
         var url: any = '/api/user/tokenAccessEnabled';
-        this.http.get(url).then((response?: any) => {
+        (this.http.get(url) as any).then((response?: any) => {
             this.userTokenAccessEnabled = response.data;
             deferred.resolve(response.data);
         }, () => {
@@ -446,7 +446,7 @@ export class UserService {
   notifyUserLoaded(...rest: any[]): any {
     if (!this.userLoaded) {
         this.userLoaded = true;
-        this.rootScope.$broadcast('userLoaded');
+        (this.rootScope as any).$broadcast('userLoaded');
     }
   }
 
@@ -478,7 +478,7 @@ export class UserService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-    this.http.get(url, null).then(function success(response?: any) {
+    (this.http.get(url, null) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -498,7 +498,7 @@ export class UserService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-    this.http.get(url, null).then(function success(response?: any) {
+    (this.http.get(url, null) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -512,7 +512,7 @@ export class UserService {
     if ((sendActivationMail !== undefined)) {
         url += '?sendActivationMail=' + sendActivationMail;
     }
-    this.http.post(url, user).then(function success(response?: any) {
+    (this.http.post(url, user) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -526,7 +526,7 @@ export class UserService {
     if ((userCredentialsEnabled !== undefined)) {
         url += '?userCredentialsEnabled=' + userCredentialsEnabled;
     }
-    this.http.post(url, null).then(function success() {
+    (this.http.post(url, null) as any).then(function success() {
         deferred.resolve();
     }, function fail() {
         deferred.reject();
@@ -541,7 +541,7 @@ export class UserService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.get(url, config).then(function success(response?: any) {
+    (this.http.get(url, config) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -552,7 +552,7 @@ export class UserService {
   deleteUser(userId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/user/' + userId;
-    this.http.delete(url).then(function success() {
+    (this.http.delete(url) as any).then(function success() {
         deferred.resolve();
     }, function fail() {
         deferred.reject();
@@ -563,7 +563,7 @@ export class UserService {
   sendActivationEmail(email?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/user/sendActivationMail?email=' + email;
-    this.http.post(url, null).then(function success(response?: any) {
+    (this.http.post(url, null) as any).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -574,7 +574,7 @@ export class UserService {
   getActivationLink(userId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = `/api/user/${userId}/activationLink`
-    this.http.get(url).then(function success(response?: any) {
+    (this.http.get(url) as any).then(function success(response?: any) {
         deferred.resolve(response.data);
     }, function fail() {
         deferred.reject();
@@ -630,7 +630,7 @@ export class UserService {
                 }
             );
         }
-        this.router.go(place, params, {reload: true});
+        (this.router as any).go(place, params, {reload: true});
     } else {
         this.router.go('login', params);
     }

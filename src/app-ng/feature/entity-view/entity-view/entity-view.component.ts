@@ -20,10 +20,10 @@ import { TbRelationTableDirective } from '../../entity/tb-relation-table/tb-rela
 import { TbAuditLogTableDirective } from '../../audit/tb-audit-log-table/tb-audit-log-table.directive';
 
 import $ from 'jquery';
-import addEntityViewTemplate from '../../../../app/entity-view/add-entity-view.tpl.html';
-import entityViewCard from '../../../../app/entity-view/entity-view-card.tpl.html';
-import assignToCustomerTemplate from '../../../../app/entity-view/assign-to-customer.tpl.html';
-import addEntityViewsToCustomerTemplate from '../../../../app/entity-view/add-entity-views-to-customer.tpl.html';
+import addEntityViewTemplate from '../../../../app/entity-view/add-entity-view.tpl.html?raw';
+import entityViewCard from '../../../../app/entity-view/entity-view-card.tpl.html?raw';
+import assignToCustomerTemplate from '../../../../app/entity-view/assign-to-customer.tpl.html?raw';
+import addEntityViewsToCustomerTemplate from '../../../../app/entity-view/add-entity-views-to-customer.tpl.html?raw';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
@@ -107,7 +107,7 @@ export class EntityViewComponent {
     if ((this.route.snapshot.params['topIndex'] !== undefined) && this.route.snapshot.params['topIndex'] > 0) {
         this.entityViewGridConfig.topIndex = this.route.snapshot.params['topIndex'];
     }
-    this.entityViewsScope = this.router.$current.data.entityViewsType;
+    this.entityViewsScope = (this.router as any).$current.data.entityViewsType;
     this.assignToCustomer = this.assignToCustomer;
     this.makePublic = this.makePublic;
     this.unassignFromCustomer = this.unassignFromCustomer;
@@ -373,7 +373,7 @@ export class EntityViewComponent {
             if (customers.hasNext) {
                 customers.nextPageLink.limit = pageSize;
             }
-            this.dialog.show({
+            (this.dialog as any).show({
                 controller: 'AssignEntityViewToCustomerController',
                 controllerAs: 'vm',
                 templateUrl: assignToCustomerTemplate,
@@ -410,7 +410,7 @@ export class EntityViewComponent {
             if (entityViews.hasNext) {
                 entityViews.nextPageLink.limit = pageSize;
             }
-            this.dialog.show({
+            (this.dialog as any).show({
                 controller: 'AddEntityViewsToCustomerController',
                 controllerAs: 'vm',
                 templateUrl: addEntityViewsToCustomerTemplate,
@@ -451,14 +451,14 @@ export class EntityViewComponent {
         content = this.translate.instant('entity-view.unassign-entity-view-text');
         label = this.translate.instant('entity-view.unassign-entity-view');
     }
-    var confirm: any = this.dialog.confirm()
+    var confirm: any = (this.dialog as any).confirm()
         .targetEvent($event)
         .title(title)
         .htmlContent(content)
         .ariaLabel(label)
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         this.entityViewService.unassignEntityViewFromCustomer(entityView.id.id).then(() => {
             this.grid.refreshList();
         });
@@ -466,14 +466,14 @@ export class EntityViewComponent {
   };
 
   unassignEntityViewsFromCustomer($event?: any, items?: any, ...rest: any[]): any {
-    var confirm: any = this.dialog.confirm()
+    var confirm: any = (this.dialog as any).confirm()
         .targetEvent($event)
         .title(this.translate.instant('entity-view.unassign-entity-views-title', {count: items.selectedCount}, 'messageformat'))
         .htmlContent(this.translate.instant('entity-view.unassign-entity-views-text'))
         .ariaLabel(this.translate.instant('entity-view.unassign-entity-view'))
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         var tasks: any = [];
         for (var id in items.selections) {
             tasks.push(this.entityViewService.unassignEntityViewFromCustomer(id));
@@ -488,14 +488,14 @@ export class EntityViewComponent {
     if ($event) {
         $event.stopPropagation();
     }
-    var confirm: any = this.dialog.confirm()
+    var confirm: any = (this.dialog as any).confirm()
         .targetEvent($event)
         .title(this.translate.instant('entity-view.make-public-entity-view-title', {entityViewName: entityView.name}))
         .htmlContent(this.translate.instant('entity-view.make-public-entity-view-text'))
         .ariaLabel(this.translate.instant('entity-view.make-public'))
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         this.entityViewService.makeEntityViewPublic(entityView.id.id).then(() => {
             this.grid.refreshList();
         });

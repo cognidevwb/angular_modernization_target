@@ -1,0 +1,14 @@
+{
+  "content": "### G2223\n```ts\n// @ts-ignore\nimport entityAliasDialogTemplate from '../../../../app/entity/alias/entity-alias-dialog.tpl.html';\n```\n\n### G2224\n```ts\n    (this.dialog as any).cancel();\n```\n\n### G2225\n```ts\n        (this.dialog as any).hide({widget: this.widget});\n```\n\n### G2226\n```ts\n    (this.dialog as any).show({\n        controller: 'EntityAliasDialogController',\n        controllerAs: 'vm',\n        templateUrl: entityAliasDialogTemplate,\n        locals: {\n            isAdd: true,\n            allowedEntityTypes: allowedEntityTypes,\n            entityAliases: this.dashboard.configuration.entityAliases,\n            alias: singleEntityAlias\n        },\n        parent: $(this.document.body),\n        fullscreen: true,\n        multiple: true,\n        targetEvent: event\n    }).then((singleEntityAlias?: any) => {\n        this.dashboard.configuration.entityAliases[singleEntityAlias.id] = singleEntityAlias;\n        this.aliasController.updateEntityAliases(this.dashboard.configuration.entityAliases);\n        deferred.resolve(singleEntityAlias);\n    }, function () {\n        deferred.reject();\n    });\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2599,
+    "costMicros": 20270,
+    "inputTokens": 2,
+    "outputTokens": 987
+  }
+}

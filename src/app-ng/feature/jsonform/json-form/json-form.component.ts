@@ -101,7 +101,7 @@ export class JsonFormComponent {
   }
 
   pretty = (...rest: any[]): any => {
-    return (typeof this.model === 'string') ? this.model : JSON.stringify(this.model, true);
+    return (typeof this.model === 'string') ? this.model : JSON.stringify(this.model, null, 2);
   };
 
   resetModel = (...rest: any[]): any => {

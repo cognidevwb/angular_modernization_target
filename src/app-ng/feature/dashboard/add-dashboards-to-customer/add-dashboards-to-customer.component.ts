@@ -92,7 +92,7 @@ export class AddDashboardsToCustomerComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   assign = (...rest: any[]): any => {
@@ -101,7 +101,7 @@ export class AddDashboardsToCustomerComponent {
         tasks.push(this.dashboardService.assignDashboardToCustomer(this.dialogData.customerId, dashboardId));
     }
     Promise.all(tasks).then(() => {
-        this.dialog.hide();
+    (this.dialog as any).hide();
     });
   };
 

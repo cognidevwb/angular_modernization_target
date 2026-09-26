@@ -3,7 +3,7 @@ import { ElementRef } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 
 import $ from 'jquery';
-import relatedEntityAutocompleteTemplate from '../../../../app/components/related-entity-autocomplete.tpl.html';
+import relatedEntityAutocompleteTemplate from '../../../../app/components/related-entity-autocomplete.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $filter: any;
@@ -40,7 +40,7 @@ export class TbRelatedEntityAutocompleteDirective {
   protected readonly entityService = inject(EntityService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(relatedEntityAutocompleteTemplate);
+  protected template: any = relatedEntityAutocompleteTemplate;
   entity: any = null;
   entitySearchText: any = '';
   allEntities: any = null;
@@ -52,9 +52,9 @@ export class TbRelatedEntityAutocompleteDirective {
   constructor() {
     $(this.element.nativeElement).html(this.template);
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                this.entityService.getRelatedEntity(ngModelCtrl.$viewValue).then(
+    this.writeValue = (value: any) => {
+            if (value) {
+                this.entityService.getRelatedEntity(value).then(
                     (entity?: any) => {
                         this.entity = entity;
                     },
@@ -65,7 +65,7 @@ export class TbRelatedEntityAutocompleteDirective {
             } else {
                 this.entity = null;
             }
-        }
+        };
     this.$watch('entity', () => {
             this.updateView();
         });
@@ -112,7 +112,7 @@ export class TbRelatedEntityAutocompleteDirective {
 
   updateView(...rest: any[]): any {
     if (!this.disabled()) {
-        ngModelCtrl.$setViewValue(this.entity ? this.entity.id : null);
+        this.onChange(this.entity ? this.entity.id : null);
     }
   }
 }

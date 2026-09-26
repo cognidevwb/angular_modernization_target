@@ -1,0 +1,14 @@
+{
+  "content": "### G2273\n```ts\nconst dashboardSettingsTemplate = '../../../../app/dashboard/dashboard-settings.tpl.html';\n```\n\n### G2274\n```ts\n(this.dialog as any).show({\n        controller: 'DashboardSettingsController',\n        controllerAs: 'vm',\n        templateUrl: dashboardSettingsTemplate,\n        locals: {\n            settings: null,\n            gridSettings: gridSettings\n        },\n        parent: $(this.document.body),\n        multiple: true,\n        fullscreen: true,\n        targetEvent: $event\n    }).then((data?: any) => {\n        var gridSettings: any = data.gridSettings;\n        if (gridSettings) {\n            this.dashboardUtils.updateLayoutSettings(this.layouts[layoutId], gridSettings);\n        }\n        this.theForm.$setDirty();\n    }, function () {\n    });\n```\n\n### G2275\n```ts\n    (this.dialog as any).cancel();\n```\n\n### G2276\n```ts\n    (this.dialog as any).hide(this.layouts);\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2383,
+    "costMicros": 13166,
+    "inputTokens": 2,
+    "outputTokens": 363
+  }
+}

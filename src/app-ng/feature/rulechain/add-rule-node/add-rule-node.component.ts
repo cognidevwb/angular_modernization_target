@@ -44,11 +44,11 @@ export class AddRuleNodeComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   add = (...rest: any[]): any => {
     this.theForm.$setPristine();
-    this.dialog.hide(this.ruleNode);
+    (this.dialog as any).hide(this.ruleNode);
   };
 }

@@ -7,38 +7,7 @@ import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TbTimewindowDirective } from '../../components/tb-timewindow/tb-timewindow.directive';
-import { TbAuditLogHeaderDirective } from '../tb-audit-log-header/tb-audit-log-header.directive';
-import { TbScopeElementDirective } from '../../components/tb-scope-element/tb-scope-element.directive';
-import { TbAuditLogRowDirective } from '../tb-audit-log-row/tb-audit-log-row.directive';
-
-import $ from 'jquery';
-import auditLogTableTemplate from '../../../../app/audit/audit-log-table.tpl.html';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $filter: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
-
-/**
- * Ported from the AngularJS directive `tbAuditLogTable` (module `thingsboard.auditLog`) in src/app/audit/index.js:23.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
- */
-@Component({
-  selector: 'tb-audit-log-table',
-  standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbTimewindowDirective), forwardRef(() => TbAuditLogHeaderDirective), forwardRef(() => TbScopeElementDirective), forwardRef(() => TbAuditLogRowDirective)],
-  templateUrl: './tb-audit-log-table.directive.html',
-})
+import auditLogTableTemplate from '../../../../app/audit/audit-log-table.tpl.html?raw';
 export class TbAuditLogTableDirective {
   readonly entityType = model<any>();
   readonly entityId = model<any>();
@@ -156,7 +125,7 @@ export class TbAuditLogTableDirective {
             auditLog.entityTypeText = this.translate.instant(this.typesRef.entityTypeTranslations[auditLog.entityId.entityType].type);
             auditLog.actionTypeText = this.translate.instant(this.typesRef.auditLogActionType[auditLog.actionType].name);
             auditLog.actionStatusText = this.translate.instant(this.typesRef.auditLogActionStatus[auditLog.actionStatus].name);
-            auditLog.actionDataText = auditLog.actionData ? JSON.stringify(auditLog.actionData, true) : '';
+            auditLog.actionDataText = auditLog.actionData ? JSON.stringify(auditLog.actionData, null, 2) : '';
         }
     );
     return data;

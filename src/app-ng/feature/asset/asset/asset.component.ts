@@ -21,9 +21,13 @@ import { TbRelationTableDirective } from '../../entity/tb-relation-table/tb-rela
 import { TbAuditLogTableDirective } from '../../audit/tb-audit-log-table/tb-audit-log-table.directive';
 
 import $ from 'jquery';
+// @ts-ignore
 import addAssetTemplate from '../../../../app/asset/add-asset.tpl.html';
+// @ts-ignore
 import assetCard from '../../../../app/asset/asset-card.tpl.html';
+// @ts-ignore
 import assignToCustomerTemplate from '../../../../app/asset/assign-to-customer.tpl.html';
+// @ts-ignore
 import addAssetsToCustomerTemplate from '../../../../app/asset/add-assets-to-customer.tpl.html';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -133,7 +137,7 @@ export class AssetComponent {
     if ((this.route.snapshot.params['topIndex'] !== undefined) && this.route.snapshot.params['topIndex'] > 0) {
         this.assetGridConfig.topIndex = this.route.snapshot.params['topIndex'];
     }
-    this.assetsScope = this.router.$current.data.assetsType;
+    this.assetsScope = (this.router as any).$current.data.assetsType;
     this.assignToCustomer = this.assignToCustomer;
     this.makePublic = this.makePublic;
     this.unassignFromCustomer = this.unassignFromCustomer;
@@ -414,7 +418,7 @@ export class AssetComponent {
             if (customers.hasNext) {
                 customers.nextPageLink.limit = pageSize;
             }
-            this.dialog.show({
+            (this.dialog as any).show({
                 controller: 'AssignAssetToCustomerController',
                 controllerAs: 'vm',
                 templateUrl: assignToCustomerTemplate,
@@ -451,7 +455,7 @@ export class AssetComponent {
             if (assets.hasNext) {
                 assets.nextPageLink.limit = pageSize;
             }
-            this.dialog.show({
+            (this.dialog as any).show({
                 controller: 'AddAssetsToCustomerController',
                 controllerAs: 'vm',
                 templateUrl: addAssetsToCustomerTemplate,
@@ -499,7 +503,7 @@ export class AssetComponent {
         .ariaLabel(label)
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         this.assetService.unassignAssetFromCustomer(asset.id.id).then(() => {
             this.grid.refreshList();
         });
@@ -514,7 +518,7 @@ export class AssetComponent {
         .ariaLabel(this.translate.instant('asset.unassign-asset'))
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         var tasks: any = [];
         for (var id in items.selections) {
             tasks.push(this.assetService.unassignAssetFromCustomer(id));
@@ -536,7 +540,7 @@ export class AssetComponent {
         .ariaLabel(this.translate.instant('asset.make-public'))
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         this.assetService.makeAssetPublic(asset.id.id).then(() => {
             this.grid.refreshList();
         });

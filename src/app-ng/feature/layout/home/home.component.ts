@@ -115,23 +115,23 @@ export class HomeComponent {
         }
         this.watchEntitySubtype(this.searchConfig.searchByEntitySubtype);
     });
-    this.isGtSm = this.breakpoints('gt-sm');
+this.isGtSm = this.breakpoints.isMatched('gt-sm');
     if (this.isGtSm) {
         this.isLockSidenav = true;
         $animate.enabled(this.siteSideNav, false);
     }
-    $scope.$watch(() => { return this.breakpoints('gt-sm'); }, (isGtSm?: any) => {
-        this.isGtSm = isGtSm;
-        this.isLockSidenav = isGtSm;
-        this.isShowSidenav = isGtSm;
-        if (!isGtSm) {
-            setTimeout(() => {
-                $animate.enabled(this.siteSideNav, true);
-            }, 0, false);
-        } else {
-            $animate.enabled(this.siteSideNav, false);
-        }
-    });
+$scope.$watch(() => { return this.breakpoints.isMatched('gt-sm'); }, (isGtSm?: any) => {
+    this.isGtSm = isGtSm;
+    this.isLockSidenav = isGtSm;
+    this.isShowSidenav = isGtSm;
+    if (!isGtSm) {
+        setTimeout(() => {
+            $animate.enabled(this.siteSideNav, true);
+        }, 0, false);
+    } else {
+        $animate.enabled(this.siteSideNav, false);
+    }
+});
   }
 
   watchEntitySubtype(enableWatch?: any, ...rest: any[]): any {

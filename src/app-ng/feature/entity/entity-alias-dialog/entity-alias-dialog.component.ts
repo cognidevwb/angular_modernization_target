@@ -123,7 +123,7 @@ export class EntityAliasDialogComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   save = (...rest: any[]): any => {
@@ -133,7 +133,7 @@ export class EntityAliasDialogComponent {
             if (this.isAdd) {
                 this.alias.id = this.utils.guid();
             }
-            this.dialog.hide(this.alias);
+            (this.dialog as any).hide(this.alias);
         },
         () => {
             this.theForm.$setValidity('entityFilter', false);

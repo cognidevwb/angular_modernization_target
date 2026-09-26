@@ -21,7 +21,7 @@ export class TbOnFinishRenderDirective {
   constructor() {
     if (this.$last === true) {
                 setTimeout(() => {
-                    this.$emit(this.attrs.tbOnFinishRender);
+                    this.finishRender.next(this.attrs.tbOnFinishRender);
                 });
             }
   }

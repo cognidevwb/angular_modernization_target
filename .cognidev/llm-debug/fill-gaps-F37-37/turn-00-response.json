@@ -1,0 +1,14 @@
+{
+  "content": "### G2105\n```ts\n    this.date = (window as any).moment(currentDate);\n```\n\n### G2106\n```ts\n    this.minDate = options.minDate && (window as any).moment(options.minDate).isValid() ? (window as any).moment(options.minDate) : null;\n```\n\n### G2107\n```ts\n    this.maxDate = options.maxDate && (window as any).moment(options.maxDate).isValid() ? (window as any).moment(options.maxDate) : null;\n```\n\n### G2108\n```ts\n            this.maxDate = (window as any).moment(this.minDate).add(1, 'days');\n```\n\n### G2109\n```ts\n            this.date = (window as any).moment(this.minDate);\n```\n\n### G2110\n```ts\n            this.date = (window as any).moment(this.maxDate);\n```\n\n### G2111\n```ts\n            date = (window as any).moment(this.minDate);\n```\n\n### G2112\n```ts\n            date = (window as any).moment(this.maxDate);\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2817,
+    "costMicros": 14502,
+    "inputTokens": 2,
+    "outputTokens": 323
+  }
+}

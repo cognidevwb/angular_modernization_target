@@ -1,0 +1,14 @@
+{
+  "content": "### G2527\n```ts\n// @ts-ignore\nimport addRuleNodeTemplate from '../../../../app/rulechain/add-rulenode.tpl.html';\n```\n\n### G2528\n```ts\n// @ts-ignore\nimport addRuleNodeLinkTemplate from '../../../../app/rulechain/add-link.tpl.html';\n```\n\n### G2529,G2530\n```ts\n    if ((this.router as any).current.data.import && !ruleChain) {\n        (this.router as any).go('home.ruleChains');\n        return;\n    }\n```\n\n### G2531\n```ts\n    this.isImport = (this.router as any).current.data.import;\n```\n\n### G2532\n```ts\n                            (this.router as any).go('home.ruleChains.ruleChain', {ruleChainId: this.ruleChain.id.id});\n```\n\n### G2533\n```ts\n    (this.dialog as any).show({\n        controller: 'AddRuleNodeController',\n        controllerAs: 'vm',\n        templateUrl: addRuleNodeTemplate,\n        parent: $(this.document.body),\n        locals: {ruleNode: ruleNode, ruleChainId: ruleChainId},\n        fullscreen: true,\n        targetEvent: $event\n    }).then((ruleNode?: any) => {\n        ruleNode.id = 'rule-chain-node-' + this.nextNodeID++;\n        ruleNode.connectors = [];\n        if (ruleNode.component.configurationDescriptor.nodeDefinition.inEnabled) {\n            ruleNode.connectors.push(\n                {\n                    id: this.nextConnectorID++,\n                    type: flowchartConstants.leftConnectorType\n                }\n            );\n        }\n        if (ruleNode.component.configurationDescriptor.nodeDefinition.outEnabled) {\n            ruleNode.connectors.push(\n                {\n                    id: this.nextConnectorID++,\n                    type: flowchartConstants.rightConnectorType\n                }\n            );\n        }\n        this.ruleChainModel.nodes.push(ruleNode);\n        this.updateRuleNodesHighlight();\n        this.enableHotKeys = true;\n    }, () => {\n        this.enableHotKeys = true;\n    });\n```\n\n### G2534\n```ts\n    return (this.dialog as any).show({\n        controller: 'AddRuleNodeLinkController',\n        controllerAs: 'vm',\n        templateUrl: addRuleNodeLinkTemplate,\n        parent: $(this.document.body),\n        locals: {link: link, labels: labels, allowCustomLabels: allowCustomLabels},\n        fullscreen: true,\n        targetEvent: $event\n    });\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 3975,
+    "costMicros": 34104,
+    "inputTokens": 2,
+    "outputTokens": 1820
+  }
+}

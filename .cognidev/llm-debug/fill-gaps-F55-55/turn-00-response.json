@@ -1,0 +1,14 @@
+{
+  "content": "### G2134\n```ts\nimport dashboardSelectTemplate from '../../../../app/components/dashboard-select.tpl.html?raw';\n```\n\n### G2135\n```ts\nimport dashboardSelectPanelTemplate from '../../../../app/components/dashboard-select-panel.tpl.html?raw';\n```\n\n### G277,G278,G644,G645\n```ts\n  protected readonly dashboardService = inject(DashboardService);\n  protected readonly userService = inject(UserService);\n  protected readonly element = inject(ElementRef);\n\n  protected template: any = dashboardSelectTemplate;\n```\n\n### G1251,G1771,G1246,G1776,G1252,G1253,G1772,G1773,G1248,G1774,G1245,G1249,G1769,G1775,G1250,G1770\n```ts\n    this.writeValue = (value: any) => {\n            if (value) {\n                this.dashboardId = value;\n            } else {\n                this.dashboardId = null;\n            }\n        }\n    this.$watch('dashboardId', () => {\n            this.updateView();\n        });\n    $compile($(this.element.nativeElement).contents())(this);\n  }\n\n  updateView(...rest: any[]): any {\n    this.onChange(this.dashboardId);\n  }\n```\n\n### G2136\n```ts\n    var panelHeight: any = window.matchMedia('min-height: 350px').matches ? 250 : 150;\n```\n\n### G2137\n```ts\n    position = (this.overlay as any).newPanelPosition()\n```\n\n### G2138\n```ts\n    (this.overlay as any).open(config).then((result?: any) => {\n        this.panelRef = result;\n    });\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 6537,
+    "costMicros": 31662,
+    "inputTokens": 2,
+    "outputTokens": 551
+  }
+}

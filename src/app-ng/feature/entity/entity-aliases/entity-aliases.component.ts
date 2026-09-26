@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { TbEntityFilterViewDirective } from '../tb-entity-filter-view/tb-entity-filter-view.directive';
 
 import $ from 'jquery';
+// @ts-ignore
 import entityAliasDialogTemplate from '../../../../app/entity/alias/entity-alias-dialog.tpl.html';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
@@ -144,7 +145,7 @@ export class EntityAliasesComponent {
     if (!isAdd) {
         aliasIndex = this.entityAliases.indexOf(entityAlias);
     }
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'EntityAliasDialogController',
         controllerAs: 'vm',
         templateUrl: entityAliasDialogTemplate,
@@ -180,7 +181,7 @@ export class EntityAliasesComponent {
             for (var t in widgetsTitleList) {
                 widgetsListHtml += '<br/>\'' + widgetsTitleList[t] + '\'';
             }
-            var alert: any = this.dialog.alert()
+            var alert: any = (this.dialog as any).alert()
                 .parent($(this.document.body))
                 .clickOutsideToClose(true)
                 .title(this.translate.instant('entity.unable-delete-entity-alias-title'))
@@ -191,7 +192,7 @@ export class EntityAliasesComponent {
             alert._options.multiple = true;
             alert._options.fullscreen = true;
 
-            this.dialog.show(alert);
+            (this.dialog as any).show(alert);
         } else {
             this.entityAliases.splice(index, 1);
             if (this.theForm) {
@@ -202,7 +203,7 @@ export class EntityAliasesComponent {
   };
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   save = (...rest: any[]): any => {
@@ -232,7 +233,7 @@ export class EntityAliasesComponent {
     }
     if (valid) {
         this.theForm.$setPristine();
-        this.dialog.hide(entityAliases);
+        (this.dialog as any).hide(entityAliases);
     } else {
         this.toast.showError(message);
     }

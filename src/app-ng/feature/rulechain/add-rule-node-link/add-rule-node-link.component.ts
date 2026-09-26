@@ -46,11 +46,11 @@ export class AddRuleNodeLinkComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   add = (...rest: any[]): any => {
     this.theForm.$setPristine();
-    this.dialog.hide(this.link);
+    (this.dialog as any).hide(this.link);
   };
 }

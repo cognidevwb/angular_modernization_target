@@ -1,0 +1,14 @@
+{
+  "content": "### G1902\n```ts\ndeclare let beautify: any;\nconst js_beautify: any = beautify.js;\n```\n\n### G1903\n```ts\n(this.dialog as any).hide(this.alarmUpdated ? this.alarm : null);\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1464,
+    "costMicros": 6670,
+    "inputTokens": 2,
+    "outputTokens": 81
+  }
+}

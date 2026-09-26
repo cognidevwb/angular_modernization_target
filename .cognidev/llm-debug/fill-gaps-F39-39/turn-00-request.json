@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 2220,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/common/services/tb-raf.service.ts\n\n1 item(s) to handle in this file.\n\n### G1875\nLines to replace: L12–L38\nKind: review\nTask: Check that `$get` behaves like the original `this.$get`; fix it if it does not.\nThe original AngularJS function:\n```js\n    this.$get = function($window, $timeout) {\n        var requestAnimationFrame = $window.requestAnimationFrame ||\n            $window.webkitRequestAnimationFrame;\n\n        var cancelAnimationFrame = $window.cancelAnimationFrame ||\n            $window.webkitCancelAnimationFrame ||\n            $window.webkitCancelRequestAnimationFrame;\n\n        var rafSupported = !!requestAnimationFrame;\n        var raf = rafSupported\n            ? function(fn) {\n            var id = requestAnimationFrame(fn);\n            return function() {\n                cancelAnimationFrame(id);\n            };\n        }\n            : function(fn) {\n            var timer = $timeout(fn, 16.66, false);\n            return function() {\n                $timeout.cancel(timer);\n            };\n        };\n\n        raf.supported = rafSupported;\n\n        return raf;\n    };\n```\nJev's doubts (yes-probabilities, low = doubt): [[\"same_behaviour\",0.11],[\"nothing_missing\",0.08],[\"nothing_added\",0.48],[\"same_errors\",0.74]]\n\n\nThe file's lines:\nL6|  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.\nL7|  */\nL8| @Injectable({ providedIn: 'root' })\nL9| export class TbRafService {\nL10|   private readonly __bound = bindMethods(this);\nL11| \nL12|   $get($window?: any, $timeout?: any, ...rest: any[]): any {\nL13|     var requestAnimationFrame: any = $window.requestAnimationFrame ||\nL14|         $window.webkitRequestAnimationFrame;\nL15| \nL16|     var cancelAnimationFrame: any = $window.cancelAnimationFrame ||\nL17|         $window.webkitCancelAnimationFrame ||\nL18|         $window.webkitCancelRequestAnimationFrame;\nL19| \nL20|     var rafSupported: any = !!requestAnimationFrame;\nL21|     var raf: any = rafSupported\nL22|         ? function(fn?: any) {\nL23|         var id: any = requestAnimationFrame(fn);\nL24|         return function() {\nL25|             cancelAnimationFrame(id);\nL26|         };\nL27|     }\nL28|         : function(fn?: any) {\nL29|         var timer: any = setTimeout(fn, 16.66, false);\nL30|         return function() {\nL31|             clearTimeout(timer);\nL32|         };\nL33|     };\nL34| \nL35|     raf.supported = rafSupported;\nL36| \nL37|     return raf;\nL38|   }\nL39| }\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

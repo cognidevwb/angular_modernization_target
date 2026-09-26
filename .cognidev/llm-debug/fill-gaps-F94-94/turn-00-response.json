@@ -1,0 +1,14 @@
+{
+  "content": "### G2208,G2209,G2210\n```ts\n            if ((this.router as any).current.name === 'dashboard') {\n                (this.router as any).go('dashboard', stateParams);\n            } else {\n                (this.router as any).go('home.dashboards.dashboard', stateParams);\n            }\n```\n\n### G2211\n```ts\n            this.cafs['resize'] = (this.tbRafRef as any)(() => {\n                try {\n                    if (this.displayWidgetInstance()) {\n                        this.widgetTypeInstance.onResize();\n                    }\n                } catch (e: any) {\n                    this.handleWidgetException(e);\n                }\n            });\n```\n\n### G2212\n```ts\n            this.cafs['editMode'] = (this.tbRafRef as any)(() => {\n                try {\n                    if (this.displayWidgetInstance()) {\n                        this.widgetTypeInstance.onEditModeChanged();\n                    }\n                } catch (e: any) {\n                    this.handleWidgetException(e);\n                }\n            });\n```\n\n### G2213\n```ts\n            this.cafs['mobileMode'] = (this.tbRafRef as any)(() => {\n                try {\n                    if (this.displayWidgetInstance()) {\n                        this.widgetTypeInstance.onMobileModeChanged();\n                    }\n                } catch (e: any) {\n                    this.handleWidgetException(e);\n                }\n            });\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2793,
+    "costMicros": 15866,
+    "inputTokens": 2,
+    "outputTokens": 469
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "content": "### G2486\n```ts\n(this.dialog as any).hide();\n```\n\n### G2487\n```ts\n(this.dialog as any).hide();\n```\n\n### G2488\n```ts\n(this.dialog as any).cancel();\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1464,
+    "costMicros": 6600,
+    "inputTokens": 2,
+    "outputTokens": 74
+  }
+}

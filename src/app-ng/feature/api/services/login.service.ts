@@ -30,11 +30,11 @@ export class LoginService {
         username: user.name,
         password: user.password
     };
-    this.http.post('/api/auth/login', loginRequest).then(function success(response?: any) {
-        deferred.resolve(response);
-    }, function fail(response?: any) {
-        deferred.reject(response);
-    });
+this.http.post('/api/auth/login', loginRequest).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail(response?: any) {
+    deferred.reject(response);
+});
     return deferred.promise;
   }
 
@@ -43,33 +43,33 @@ export class LoginService {
     var pubilcLoginRequest: any = {
         publicId: publicId
     };
-    this.http.post('/api/auth/login/public', pubilcLoginRequest).then(function success(response?: any) {
-        deferred.resolve(response);
-    }, function fail(response?: any) {
-        deferred.reject(response);
-    });
+this.http.post('/api/auth/login/public', pubilcLoginRequest).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail(response?: any) {
+    deferred.reject(response);
+});
     return deferred.promise;
   }
 
   sendResetPasswordLink(email?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/noauth/resetPasswordByEmail';
-    this.http.post(url, {email: email}).then(function success(response?: any) {
-        deferred.resolve(response);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.post(url, {email: email}).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
   resetPassword(resetToken?: any, password?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/noauth/resetPassword';
-    this.http.post(url, {resetToken: resetToken, password: password}).then(function success(response?: any) {
-        deferred.resolve(response);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.post(url, {resetToken: resetToken, password: password}).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
@@ -79,34 +79,34 @@ export class LoginService {
     if(sendActivationMail === true || sendActivationMail === false) {
         url += '?sendActivationMail=' + sendActivationMail;
     }
-    this.http.post(url, {activateToken: activateToken, password: password}).then(function success(response?: any) {
-        deferred.resolve(response);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.post(url, {activateToken: activateToken, password: password}).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
   changePassword(currentPassword?: any, newPassword?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/auth/changePassword';
-    this.http.post(url, {currentPassword: currentPassword, newPassword: newPassword}).then(function success(response?: any) {
-        deferred.resolve(response);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.post(url, {currentPassword: currentPassword, newPassword: newPassword}).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
   loadOAuth2Clients(...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/noauth/oauth2Clients';
-    this.http.post(url).then((response?: any) => {
-        this.rootScope.oauth2Clients = response.data;
-        deferred.resolve();
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.post(url, {}).toPromise().then((response?: any) => {
+    this.rootScope.oauth2Clients = response.data;
+    deferred.resolve();
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 }

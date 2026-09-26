@@ -14,7 +14,7 @@ import { TbRelationTypeAutocompleteDirective } from '../tb-relation-type-autocom
 import { TbEntitySubtypeListDirective } from '../tb-entity-subtype-list/tb-entity-subtype-list.directive';
 
 import $ from 'jquery';
-import entityFilterTemplate from '../../../../app/entity/entity-filter.tpl.html';
+import entityFilterTemplate from '../../../../app/entity/entity-filter.tpl.html?raw';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';

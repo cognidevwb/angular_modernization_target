@@ -66,14 +66,14 @@ export class TbDetailsSidenavDirective {
             this.isEdit.set(true);
         }
     if (Object.prototype.hasOwnProperty.call(this.attrs,'tbEnableBackdrop')) {
-            this.backdrop = $mdUtil.createBackdrop(this, "md-sidenav-backdrop md-opaque ng-enter");
+this.backdrop = $('<div class="md-sidenav-backdrop md-opaque ng-enter"></div>');
             $(this.element.nativeElement).on('$destroy', () => {
                 this.backdrop && this.backdrop.remove();
             });
             this.destroyRef.onDestroy(() =>{
                 this.backdrop && this.backdrop.remove();
             });
-            this.$watch('isOpen', this.updateIsOpen);
+effect(() => { this.updateIsOpen(this.isOpen()); });
         }
   }
 
@@ -86,9 +86,35 @@ export class TbDetailsSidenavDirective {
     var parent: any = $(this.element.nativeElement).parent();
     var restorePositioning: any = this.updateContainerPositions(parent, isOpen);
 
+    const animateEnter = (el: any, p: any): Promise<void> => {
+        p[0].appendChild(el[0]);
+        const factory = this.animationBuilder.build([
+            style({ opacity: 0 }),
+            animate('300ms ease-in', style({ opacity: 1 }))
+        ]);
+        const player = factory.create(el[0]);
+        return new Promise<void>((resolve) => {
+            player.onDone(() => resolve());
+            player.play();
+        });
+    };
+    const animateLeave = (el: any): Promise<void> => {
+        const factory = this.animationBuilder.build([
+            animate('300ms ease-out', style({ opacity: 0 }))
+        ]);
+        const player = factory.create(el[0]);
+        return new Promise<void>((resolve) => {
+            player.onDone(() => {
+                el[0].parentNode && el[0].parentNode.removeChild(el[0]);
+                resolve();
+            });
+            player.play();
+        });
+    };
+
     return Promise.all([
-        isOpen && this.backdrop ? $animate.enter(this.backdrop, parent) : this.backdrop ?
-            $animate.leave(this.backdrop) : Promise.resolve(true)
+        isOpen && this.backdrop ? animateEnter(this.backdrop, parent) : this.backdrop ?
+            animateLeave(this.backdrop) : Promise.resolve(true)
     ]).then(function() {
         restorePositioning && restorePositioning();
     });

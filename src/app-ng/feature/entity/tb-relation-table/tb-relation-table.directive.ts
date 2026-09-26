@@ -1,6 +1,6 @@
 import { Component, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import relationTableTemplate from '../../../../app/entity/relation/relation-table.tpl.html';
+import relationTableTemplate from '../../../../app/entity/relation/relation-table.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -66,7 +66,7 @@ function RelationTableController(this: any, $scope?: any, $q?: any, $mdDialog?: 
     });
 
     function enterFilterMode (event?: any) {
-        let $button: any = angular.element(event.currentTarget);
+        let $button: any = (window as any).angular.element(event.currentTarget);
         let $toolbarsContainer: any = $button.closest('.toolbarsContainer');
 
         vm.query.search = '';
@@ -125,10 +125,10 @@ function RelationTableController(this: any, $scope?: any, $q?: any, $mdDialog?: 
             onShowing: function(){}
         }
         $mdDialog.show({
-            controller: RelationController,
+            controller: (window as any).RelationController,
             controllerAs: 'vm',
-            templateUrl: relationTemplate,
-            parent: angular.element($document[0].body),
+            templateUrl: (relationTemplate as any),
+            parent: (window as any).angular.element($document[0].body),
             locals: { isAdd: isAdd,
                       direction: vm.direction,
                       relation: relation,

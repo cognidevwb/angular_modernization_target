@@ -3,6 +3,7 @@ import { ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
+// @ts-ignore - html template imported as raw string via bundler loader
 import datetimePeriodTemplate from '../../../../app/components/datetime-period.tpl.html';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
@@ -29,7 +30,7 @@ export class TbDatetimePeriodDirective {
   protected readonly element = inject(ElementRef);
   // TODO(port): elements not resolved to a component: mdp-date-picker, mdp-time-picker
 
-  protected template: any = $templateCache.get(datetimePeriodTemplate);
+  protected template: any = datetimePeriodTemplate;
   $watch: any;
   endDate: any;
   maxEndDate: any;
@@ -41,42 +42,39 @@ export class TbDatetimePeriodDirective {
 
   constructor() {
     $(this.element.nativeElement).html(this.template);
-    ngModelCtrl.$render = function () {
+    this.writeValue = (value: any) => {
             var date: any = new Date();
             this.startDate = new Date(
                 date.getFullYear(),
                 date.getMonth(),
                 date.getDate() - 1);
             this.endDate = date;
-            if (ngModelCtrl.$viewValue) {
-                var value: any = ngModelCtrl.$viewValue;
+            if (value) {
                 this.startDate = new Date(value.startTimeMs);
                 this.endDate = new Date(value.endTimeMs);
             }
+        };
+    this.ngOnChanges = (changes: any) => {
+        if (changes['required']) {
+            this.updateView();
         }
-    this.$watch('required', () => {
-            this.updateView();
-        });
-    this.$watch('startDate', (newDate?: any) => {
-            if (newDate) {
-                if (newDate.getTime() > this.maxStartDate) {
-                    this.startDate = structuredClone(this.maxStartDate);
-                }
-                this.updateMinMaxDates();
+        if (changes['startDate'] && this.startDate) {
+            if (this.startDate.getTime() > this.maxStartDate) {
+                this.startDate = structuredClone(this.maxStartDate);
             }
+            this.updateMinMaxDates();
             this.updateView();
-        });
-    this.$watch('endDate', (newDate?: any) => {
-            if (newDate) {
-                if (newDate.getTime() < this.minEndDate) {
-                    this.endDate = structuredClone(this.minEndDate);
-                } else if (newDate.getTime() > this.maxEndDate) {
-                    this.endDate = structuredClone(this.maxEndDate);
-                }
-                this.updateMinMaxDates();
+        }
+        if (changes['endDate'] && this.endDate) {
+            if (this.endDate.getTime() < this.minEndDate) {
+                this.endDate = structuredClone(this.minEndDate);
+            } else if (this.endDate.getTime() > this.maxEndDate) {
+                this.endDate = structuredClone(this.maxEndDate);
             }
+            this.updateMinMaxDates();
             this.updateView();
-        });
+        }
+    };
     $compile($(this.element.nativeElement).contents())(this);
   }
 
@@ -93,10 +91,10 @@ export class TbDatetimePeriodDirective {
             startTimeMs: this.startDate.getTime(),
             endTimeMs: this.endDate.getTime()
         };
-        ngModelCtrl.$setValidity('datetimePeriod', true);
+        this.ngControl?.control?.setErrors(null);
     } else {
-        ngModelCtrl.$setValidity('datetimePeriod', !this.required());
+        this.ngControl?.control?.setErrors(this.required() ? { datetimePeriod: true } : null);
     }
-    ngModelCtrl.$setViewValue(value);
+    this.onChange?.(value);
   }
 }

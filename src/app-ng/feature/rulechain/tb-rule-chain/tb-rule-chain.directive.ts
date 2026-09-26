@@ -8,7 +8,7 @@ import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import ruleChainFieldsetTemplate from '../../../../app/rulechain/rulechain-fieldset.tpl.html';
+import ruleChainFieldsetTemplate from '../../../../app/rulechain/rulechain-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';

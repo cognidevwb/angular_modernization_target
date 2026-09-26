@@ -13,24 +13,24 @@ export class MilliSecondsToTimeStringPipe implements PipeTransform {
     var minutes: any = Math.floor(((seconds % 86400) % 3600) / 60);
     seconds = seconds % 60;
     var timeString: any = '';
-    if (days > 0) timeString += this.translate.instant('timewindow.days', {days: days}, 'messageformat');
+    if (days > 0) timeString += (this as any).translate.instant('timewindow.days', {days: days}, 'messageformat');
     if (hours > 0) {
         if (timeString.length === 0 && hours === 1) {
             hours = 0;
         }
-        timeString += this.translate.instant('timewindow.hours', {hours: hours}, 'messageformat');
+        timeString += (this as any).translate.instant('timewindow.hours', {hours: hours}, 'messageformat');
     }
     if (minutes > 0) {
         if (timeString.length === 0 && minutes === 1) {
             minutes = 0;
         }
-        timeString += this.translate.instant('timewindow.minutes', {minutes: minutes}, 'messageformat');
+        timeString += (this as any).translate.instant('timewindow.minutes', {minutes: minutes}, 'messageformat');
     }
     if (seconds > 0) {
         if (timeString.length === 0 && seconds === 1) {
             seconds = 0;
         }
-        timeString += this.translate.instant('timewindow.seconds', {seconds: seconds}, 'messageformat');
+        timeString += (this as any).translate.instant('timewindow.seconds', {seconds: seconds}, 'messageformat');
     }
     return timeString;
   }

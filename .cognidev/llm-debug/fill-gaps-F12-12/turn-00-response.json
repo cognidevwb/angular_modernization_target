@@ -1,0 +1,14 @@
+{
+  "content": "### G1952\n```ts\n    this.http.get(url, config).toPromise().then(function success(response?: any) {\n        deferred.resolve(response);\n    }, function fail() {\n        deferred.reject();\n    });\n```\n\n### G1953\n```ts\n    this.http.get(url, config).toPromise().then(function success(response?: any) {\n        deferred.resolve(response);\n    }, function fail(response?: any) {\n        deferred.reject(response);\n    });\n```\n\n### G1954\n```ts\n    this.http.get(url, null).toPromise().then(function success(response?: any) {\n        deferred.resolve(response);\n    }, function fail(response?: any) {\n        deferred.reject(response);\n    });\n```\n\n### G1955\n```ts\n    this.http.post(url, customer).toPromise().then(function success(response?: any) {\n        deferred.resolve(response);\n    }, function fail(response?: any) {\n        deferred.reject(response);\n    });\n```\n\n### G1956\n```ts\n    this.http.delete(url).toPromise().then(function success() {\n        deferred.resolve();\n    }, function fail(response?: any) {\n        deferred.reject(response);\n    });\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2481,
+    "costMicros": 13748,
+    "inputTokens": 2,
+    "outputTokens": 382
+  }
+}

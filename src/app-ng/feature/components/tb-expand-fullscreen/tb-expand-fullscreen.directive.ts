@@ -64,43 +64,45 @@ export class TbExpandFullscreenDirective {
             this.fullscreenParent.remove();
         });
     // TODO(port): `fullscreenZindex` is an input; a value assigned here belongs in the template or a computed()
-  this.fullscreenZindex = this.fullscreenZindex.emit(undefined);
+  this.fullscreenZindex = (this.fullscreenZindex as any).emit(undefined);
     if (!true) {
             this.fullscreenZindex = '70';
         }
-    this.$watch('expanded', (newExpanded?: any, prevExpanded?: any) => {
-            if (newExpanded != prevExpanded) {
-                if (this.expanded) {
-                    this.elementParent = $(this.element.nativeElement).parent();
-                    $(this.element.nativeElement).detach();
-                    if (this.backgroundStyle()) {
-                        this.fullscreenParent.attr("ng-style","backgroundStyle");
-                        $compile(this.fullscreenParent)(this);
-                    }
-                    this.fullscreenParent.append($(this.element.nativeElement));
-                    this.fullscreenParent.css('display', '');
-                    this.fullscreenParent.css('z-index', this.fullscreenZindex);
-                    $(this.element.nativeElement).addClass('tb-fullscreen');
-                } else {
-                    if (this.elementParent) {
-                        $(this.element.nativeElement).detach();
-                        this.elementParent.append($(this.element.nativeElement));
-                        this.elementParent = null;
-                    }
-                    $(this.element.nativeElement).removeClass('tb-fullscreen');
-                    this.fullscreenParent.css('display', 'none');
-                    this.fullscreenParent.css('z-index', '');
-                }
-                if (true) {
-                    this.onFullscreenChanged.emit({expanded: this.expanded});
-                }
-            }
-        });
-    this.$watch(() => {
-            return this.expand.emit(undefined);
-        }, (newExpanded?: any) => {
-            this.expanded = newExpanded;
-        });
+    let prevExpanded: any;
+    effect(() => {
+      const newExpanded: any = this.expanded;
+      if (newExpanded != prevExpanded) {
+        prevExpanded = newExpanded;
+        if (this.expanded) {
+          this.elementParent = $(this.element.nativeElement).parent();
+          $(this.element.nativeElement).detach();
+          if (this.backgroundStyle()) {
+            this.fullscreenParent.attr("ng-style","backgroundStyle");
+            $compile(this.fullscreenParent)(this);
+          }
+          this.fullscreenParent.append($(this.element.nativeElement));
+          this.fullscreenParent.css('display', '');
+          this.fullscreenParent.css('z-index', this.fullscreenZindex);
+          $(this.element.nativeElement).addClass('tb-fullscreen');
+        } else {
+          if (this.elementParent) {
+            $(this.element.nativeElement).detach();
+            this.elementParent.append($(this.element.nativeElement));
+            this.elementParent = null;
+          }
+          $(this.element.nativeElement).removeClass('tb-fullscreen');
+          this.fullscreenParent.css('display', 'none');
+          this.fullscreenParent.css('z-index', '');
+        }
+        if (true) {
+          this.onFullscreenChanged.emit({expanded: this.expanded});
+        }
+      }
+    });
+    effect(() => {
+      const newExpanded: any = this.expand.emit(undefined);
+      this.expanded = newExpanded;
+    });
     if (this.attrs.expandButtonSize) {
             this.buttonSize = this.attrs.expandButtonSize;
         }
@@ -131,7 +133,7 @@ export class TbExpandFullscreenDirective {
   renderExpandButton(expandButton?: any, ...rest: any[]): any {
     if (expandButton) {
         expandButton = $(expandButton);
-        if (this.hideExpandButton.emit(undefined)) {
+        if (this.hideExpandButton()) {
             expandButton.remove();
         } else {
             expandButton.attr('md-ink-ripple', 'false');
@@ -141,7 +143,7 @@ export class TbExpandFullscreenDirective {
 
             expandButton.on("click", this.toggleExpand);
         }
-    } else if (!this.hideExpandButton.emit(undefined)) {
+    } else if (!this.hideExpandButton()) {
         var button: any = $('<md-button class="tb-fullscreen-button-style tb-fullscreen-button-pos md-icon-button" ' +
             'md-ink-ripple="false" ng-click="toggleExpand($event)">' +
             this.html +

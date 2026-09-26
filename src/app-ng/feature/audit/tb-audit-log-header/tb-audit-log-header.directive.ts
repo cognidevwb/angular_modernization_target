@@ -4,7 +4,7 @@ import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
-import auditLogHeaderTemplate from '../../../../app/audit/audit-log-header.tpl.html';
+import auditLogHeaderTemplate from '../../../../app/audit/audit-log-header.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;

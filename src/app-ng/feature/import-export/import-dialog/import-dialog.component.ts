@@ -47,7 +47,7 @@ export class ImportDialogComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   fileAdded = ($file?: any, ...rest: any[]): any => {
@@ -82,6 +82,6 @@ export class ImportDialogComponent {
 
   importFromJson = (...rest: any[]): any => {
     this.theForm.$setPristine();
-    this.dialog.hide(this.importData);
+    (this.dialog as any).hide(this.importData);
   };
 }

@@ -1,0 +1,14 @@
+{
+  "content": "### G2400\n```ts\nimport eventErrorDialogTemplate from '../../../../app/event/event-content-dialog.tpl.html?raw';\n```\n\n### G2401\n```ts\nimport eventRowLcEventTemplate from '../../../../app/event/event-row-lc-event.tpl.html?raw';\n```\n\n### G2402\n```ts\nimport eventRowStatsTemplate from '../../../../app/event/event-row-stats.tpl.html?raw';\n```\n\n### G2403\n```ts\nimport eventRowErrorTemplate from '../../../../app/event/event-row-error.tpl.html?raw';\n```\n\n### G2404\n```ts\nimport eventRowDebugRuleNodeTemplate from '../../../../app/event/event-row-debug-rulenode.tpl.html?raw';\n```\n\n### G2405\n```ts\n    (this.dialog as any).show({\n        controller: 'EventContentDialogController',\n        controllerAs: 'vm',\n        templateUrl: eventErrorDialogTemplate,\n        locals: {content: sortedContent, title: title, contentType: contentType, showingCallback: onShowingCallback},\n        parent: $(this.document.body),\n        fullscreen: true,\n        targetEvent: $event,\n        multiple: true,\n        onShowing: (scope?: any, element?: any, ...rest: any[]) => {\n            onShowingCallback.onShowing(scope, element);\n        }\n    });\n  }\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2569,
+    "costMicros": 15090,
+    "inputTokens": 2,
+    "outputTokens": 481
+  }
+}

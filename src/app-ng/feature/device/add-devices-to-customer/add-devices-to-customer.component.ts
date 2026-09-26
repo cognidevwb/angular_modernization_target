@@ -92,7 +92,7 @@ export class AddDevicesToCustomerComponent {
   }
 
   cancel = (...rest: any[]): any => {
-    this.dialog.cancel();
+    (this.dialog as any).cancel();
   };
 
   assign = (...rest: any[]): any => {
@@ -101,7 +101,7 @@ export class AddDevicesToCustomerComponent {
         tasks.push(this.deviceService.assignDeviceToCustomer(this.dialogData.customerId, deviceId));
     }
     Promise.all(tasks).then(() => {
-        this.dialog.hide();
+    (this.dialog as any).hide();
     });
   };
 

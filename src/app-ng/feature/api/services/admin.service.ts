@@ -21,66 +21,66 @@ export class AdminService {
   getAdminSettings(key?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/admin/settings/' + key;
-    this.http.get(url, null).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.get(url, null).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
   saveAdminSettings(settings?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/admin/settings';
-    this.http.post(url, settings).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail(response?: any) {
-        deferred.reject(response.data);
-    });
+this.http.post(url, settings).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail(response?: any) {
+    deferred.reject(response);
+});
     return deferred.promise;
   }
 
   getSecuritySettings(...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/admin/securitySettings';
-    this.http.get(url, null).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.get(url, null).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
   saveSecuritySettings(securitySettings?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/admin/securitySettings';
-    this.http.post(url, securitySettings).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail(response?: any) {
-        deferred.reject(response.data);
-    });
+this.http.post(url, securitySettings).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail(response?: any) {
+    deferred.reject(response);
+});
     return deferred.promise;
   }
 
   sendTestMail(settings?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/admin/settings/testMail';
-    this.http.post(url, settings).then(function success() {
-        deferred.resolve();
-    }, function fail(response?: any) {
-        deferred.reject(response.data);
-    });
+this.http.post(url, settings).toPromise().then(function success() {
+    deferred.resolve();
+}, function fail(response?: any) {
+    deferred.reject(response);
+});
     return deferred.promise;
   }
 
   checkUpdates(...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/admin/updates';
-    this.http.get(url, null).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.get(url, null).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 }

@@ -1,0 +1,14 @@
+{
+  "content": "### G303\n```ts\nthis.backdrop = $('<div class=\"md-sidenav-backdrop md-opaque ng-enter\"></div>');\n```\n\n### G304\n```ts\n```\n\n### G1366\n```ts\neffect(() => { this.updateIsOpen(this.isOpen()); });\n```\n\n### G1891,G1367,G1360,G1368\n```ts\n  updateIsOpen = (isOpen?: any, ...rest: any[]): any => {\n    this.backdrop[isOpen ? 'on' : 'off']('click', (ev?: any)=>{\n        ev.preventDefault();\n        this.isOpen.set(false);\n\n    });\n    var parent: any = $(this.element.nativeElement).parent();\n    var restorePositioning: any = this.updateContainerPositions(parent, isOpen);\n\n    const animateEnter = (el: any, p: any): Promise<void> => {\n        p[0].appendChild(el[0]);\n        const factory = this.animationBuilder.build([\n            style({ opacity: 0 }),\n            animate('300ms ease-in', style({ opacity: 1 }))\n        ]);\n        const player = factory.create(el[0]);\n        return new Promise<void>((resolve) => {\n            player.onDone(() => resolve());\n            player.play();\n        });\n    };\n    const animateLeave = (el: any): Promise<void> => {\n        const factory = this.animationBuilder.build([\n            animate('300ms ease-out', style({ opacity: 0 }))\n        ]);\n        const player = factory.create(el[0]);\n        return new Promise<void>((resolve) => {\n            player.onDone(() => {\n                el[0].parentNode && el[0].parentNode.removeChild(el[0]);\n                resolve();\n            });\n            player.play();\n        });\n    };\n\n    return Promise.all([\n        isOpen && this.backdrop ? animateEnter(this.backdrop, parent) : this.backdrop ?\n            animateLeave(this.backdrop) : Promise.resolve(true)\n    ]).then(function() {\n        restorePositioning && restorePositioning();\n    });\n  };\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2977,
+    "costMicros": 46502,
+    "inputTokens": 2,
+    "outputTokens": 3459
+  }
+}

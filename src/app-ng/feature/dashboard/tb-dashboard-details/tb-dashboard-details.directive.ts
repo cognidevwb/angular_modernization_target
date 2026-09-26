@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { TbSocialSharePanelDirective } from '../../components/tb-social-share-panel/tb-social-share-panel.directive';
 
 import $ from 'jquery';
+// @ts-ignore
 import dashboardFieldsetTemplate from '../../../../app/dashboard/dashboard-fieldset.tpl.html';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';

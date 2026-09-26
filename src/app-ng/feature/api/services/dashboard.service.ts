@@ -46,10 +46,12 @@ export class DashboardService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-    this.http.get(url, config).then((response?: any) => {
-        deferred.resolve(this.prepareDashboards(response.data));
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      this.http.get(url, config).subscribe((response: any) => {
+        resolve(this.prepareDashboards(response));
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }
@@ -66,10 +68,12 @@ export class DashboardService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-    this.http.get(url, config).then((response?: any) => {
-        deferred.resolve(this.prepareDashboards(response.data));
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      this.http.get(url, config).subscribe((response: any) => {
+        resolve(this.prepareDashboards(response));
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }
@@ -100,13 +104,15 @@ export class DashboardService {
         this.stDiffPromise = deferred.promise;
         var url: any = '/api/dashboard/serverTime';
         var ct1: any = Date.now();
-        this.http.get(url, {ignoreLoading: true}).then(function success(response?: any) {
+        return new Promise((resolve, reject) => {
+          this.http.get(url, {params: {ignoreLoading: true} as any}).subscribe((response: any) => {
             var ct2: any = Date.now();
-            var st: any = response.data;
+            var st: any = response;
             var stDiff: any = Math.ceil(st - (ct1 + ct2) / 2);
-            deferred.resolve(stDiff);
-        }, function fail() {
-            deferred.reject();
+            resolve(stDiff);
+          }, () => {
+            reject();
+          });
         });
     }
     return this.stDiffPromise;
@@ -115,10 +121,12 @@ export class DashboardService {
   getDashboard(dashboardId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/dashboard/' + dashboardId;
-    this.http.get(url, null).then((response?: any) => {
-        deferred.resolve(this.prepareDashboard(response.data));
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      this.http.get(url, null as any).subscribe((response: any) => {
+        resolve(this.prepareDashboard(response));
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }
@@ -126,10 +134,12 @@ export class DashboardService {
   getDashboardInfo(dashboardId?: any, config?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/dashboard/info/' + dashboardId;
-    this.http.get(url, config).then((response?: any) => {
-        deferred.resolve(this.prepareDashboard(response.data));
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      this.http.get(url, config).subscribe((response: any) => {
+        resolve(this.prepareDashboard(response));
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }
@@ -137,10 +147,12 @@ export class DashboardService {
   saveDashboard(dashboard?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/dashboard';
-    this.http.post(url, this.cleanDashboard(dashboard)).then((response?: any) => {
-        deferred.resolve(this.prepareDashboard(response.data));
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      this.http.post(url, this.cleanDashboard(dashboard)).subscribe((response: any) => {
+        resolve(this.prepareDashboard(response));
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }
@@ -148,10 +160,12 @@ export class DashboardService {
   deleteDashboard(dashboardId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/dashboard/' + dashboardId;
-    this.http.delete(url).then(function success() {
-        deferred.resolve();
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      this.http.delete(url).subscribe(() => {
+        resolve(undefined);
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }
@@ -159,10 +173,12 @@ export class DashboardService {
   assignDashboardToCustomer(customerId?: any, dashboardId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/' + customerId + '/dashboard/' + dashboardId;
-    this.http.post(url, null).then((response?: any) => {
-        deferred.resolve(this.prepareDashboard(response.data));
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      this.http.post(url, null).subscribe((response: any) => {
+        resolve(this.prepareDashboard(response));
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }
@@ -170,10 +186,12 @@ export class DashboardService {
   unassignDashboardFromCustomer(customerId?: any, dashboardId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/' + customerId + '/dashboard/' + dashboardId;
-    this.http.delete(url).then((response?: any) => {
-        deferred.resolve(this.prepareDashboard(response.data));
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      this.http.delete(url).subscribe((response: any) => {
+        resolve(this.prepareDashboard(response));
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }
@@ -181,10 +199,12 @@ export class DashboardService {
   updateDashboardCustomers(dashboardId?: any, customerIds?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/dashboard/' + dashboardId + '/customers';
-    this.http.post(url, customerIds).then((response?: any) => {
-        deferred.resolve(this.prepareDashboard(response.data));
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      this.http.post(url, customerIds).subscribe((response: any) => {
+        resolve(this.prepareDashboard(response));
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }
@@ -192,10 +212,12 @@ export class DashboardService {
   addDashboardCustomers(dashboardId?: any, customerIds?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/dashboard/' + dashboardId + '/customers/add';
-    this.http.post(url, customerIds).then((response?: any) => {
-        deferred.resolve(this.prepareDashboard(response.data));
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      this.http.post(url, customerIds).subscribe((response: any) => {
+        resolve(this.prepareDashboard(response));
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }
@@ -203,10 +225,12 @@ export class DashboardService {
   removeDashboardCustomers(dashboardId?: any, customerIds?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/dashboard/' + dashboardId + '/customers/remove';
-    this.http.post(url, customerIds).then((response?: any) => {
-        deferred.resolve(this.prepareDashboard(response.data));
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      this.http.post(url, customerIds).subscribe((response: any) => {
+        resolve(this.prepareDashboard(response));
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }
@@ -214,10 +238,12 @@ export class DashboardService {
   makeDashboardPublic(dashboardId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/public/dashboard/' + dashboardId;
-    this.http.post(url, null).then((response?: any) => {
-        deferred.resolve(this.prepareDashboard(response.data));
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      this.http.post(url, null).subscribe((response: any) => {
+        resolve(this.prepareDashboard(response));
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }
@@ -225,17 +251,19 @@ export class DashboardService {
   makeDashboardPrivate(dashboardId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/public/dashboard/' + dashboardId;
-    this.http.delete(url).then((response?: any) => {
-        deferred.resolve(this.prepareDashboard(response.data));
-    }, function fail() {
-        deferred.reject();
+    return new Promise((resolve, reject) => {
+      this.http.delete(url).subscribe((response: any) => {
+        resolve(this.prepareDashboard(response));
+      }, () => {
+        reject();
+      });
     });
     return deferred.promise;
   }
 
   getPublicDashboardLink(dashboard?: any, ...rest: any[]): any {
-    var url: any = this.router.protocol() + '://' + this.router.host();
-    var port: any = this.router.port();
+    var url: any = (window.location.protocol) + '://' + window.location.hostname;
+    var port: any = window.location.port;
     if (port != 80 && port != 443) {
         url += ":" + port;
     }

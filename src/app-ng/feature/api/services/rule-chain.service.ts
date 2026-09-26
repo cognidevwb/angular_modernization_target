@@ -41,77 +41,77 @@ export class RuleChainService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-    this.http.get(url, config).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.get(url, config).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
   getRuleChain(ruleChainId?: any, config?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/ruleChain/' + ruleChainId;
-    this.http.get(url, config).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.get(url, config).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
   saveRuleChain(ruleChain?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/ruleChain';
-    this.http.post(url, ruleChain).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.post(url, ruleChain).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
   setRootRuleChain(ruleChainId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/ruleChain/' + ruleChainId + '/root';
-    this.http.post(url).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.post(url, {}).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
   deleteRuleChain(ruleChainId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/ruleChain/' + ruleChainId;
-    this.http.delete(url).then(function success() {
-        deferred.resolve();
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.delete(url).toPromise().then(function success() {
+    deferred.resolve();
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
   getRuleChainMetaData(ruleChainId?: any, config?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/ruleChain/' + ruleChainId + '/metadata';
-    this.http.get(url, config).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.get(url, config).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
   saveRuleChainMetaData(ruleChainMetaData?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/ruleChain/metadata';
-    this.http.post(url, ruleChainMetaData).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.post(url, ruleChainMetaData).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
@@ -194,7 +194,7 @@ export class RuleChainService {
         var tasks: any = [];
         for (var i: any=0;i<uiResources.length;i++) {
             var uiResource: any = uiResources[i];
-            tasks.push($ocLazyLoad.load(uiResource));
+            tasks.push(import(/* webpackIgnore: true */ uiResource));
         }
         Promise.all(tasks).then(
             () => {
@@ -269,22 +269,22 @@ export class RuleChainService {
   testScript(inputParams?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/ruleChain/testScript';
-    this.http.post(url, inputParams).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.post(url, inputParams).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 
   getLatestRuleNodeDebugInput(ruleNodeId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/ruleNode/' + ruleNodeId + '/debugIn';
-    this.http.get(url).then(function success(response?: any) {
-        deferred.resolve(response.data);
-    }, function fail() {
-        deferred.reject();
-    });
+this.http.get(url).toPromise().then(function success(response?: any) {
+    deferred.resolve(response);
+}, function fail() {
+    deferred.reject();
+});
     return deferred.promise;
   }
 }

@@ -6,7 +6,7 @@ import { UserService } from '../../api/services/user.service';
 import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import logoSvg from '../../../../svg/logo_title_white.svg';
+const logoSvg = 'assets/svg/logo_title_white.svg';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -64,7 +64,7 @@ export class LoginComponent {
         }*/
         if (response && response.data && response.data.errorCode) {
             if (response.data.errorCode === types.serverErrorCode.credentialsExpired) {
-                this.router.go('login.resetExpiredPassword', {resetToken: response.data.resetToken});
+this.router.navigate(['/login/resetExpiredPassword'], {queryParams: {resetToken: response.data.resetToken}});
             }
         }
     });

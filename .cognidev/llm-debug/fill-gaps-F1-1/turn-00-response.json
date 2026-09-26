@@ -1,0 +1,14 @@
+{
+  "content": "### G1900\n```ts\nthis.translate.instant('admin.test-mail-sent');\nthis.testMailSent = this.translate.instant('admin.test-mail-sent');\n```\n\nWait, correcting to match original structure (promise-based `.then` usage replaced with `get`):\n\n```ts\nthis.translate.get('admin.test-mail-sent').subscribe((translation?: any) => {\n    this.testMailSent = translation;\n}, (translationId?: any) => {\n    this.testMailSent = translationId;\n});\n```\n\n### G1901\n```ts\nthis.adminService.getAdminSettings(this.router.routerState.snapshot.root.data.key).then((settings?: any) => {\n    this.settings = settings;\n    if(this.settings.jsonValue && this.settings.jsonValue.enableTls && (typeof this.settings.jsonValue.enableTls === 'string')){\n        this.settings.jsonValue.enableTls = this.settings.jsonValue.enableTls === 'true';\n    }\n});\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1528,
+    "costMicros": 9476,
+    "inputTokens": 2,
+    "outputTokens": 336
+  }
+}

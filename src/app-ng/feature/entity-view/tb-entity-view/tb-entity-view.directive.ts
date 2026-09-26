@@ -13,7 +13,7 @@ import { TbEntitySubtypeAutocompleteDirective } from '../../entity/tb-entity-sub
 import { TbEntitySelectDirective } from '../../entity/tb-entity-select/tb-entity-select.directive';
 
 import $ from 'jquery';
-import entityViewFieldsetTemplate from '../../../../app/entity-view/entity-view-fieldset.tpl.html';
+import entityViewFieldsetTemplate from '../../../../app/entity-view/entity-view-fieldset.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';

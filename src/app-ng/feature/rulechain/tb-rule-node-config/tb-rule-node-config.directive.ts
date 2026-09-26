@@ -6,7 +6,7 @@ import { TbRuleNodeDefinedConfigDirective } from '../tb-rule-node-defined-config
 import { TbJsonObjectEditDirective } from '../../components/tb-json-object-edit/tb-json-object-edit.directive';
 
 import $ from 'jquery';
-import ruleNodeConfigTemplate from '../../../../app/rulechain/rulenode-config.tpl.html';
+import ruleNodeConfigTemplate from '!raw-loader!../../../../app/rulechain/rulenode-config.tpl.html';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;

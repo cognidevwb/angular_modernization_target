@@ -1,0 +1,14 @@
+{
+  "content": "### G2025\n```ts\nthis.http.get(url, config).toPromise().then(function success(response?: any) {\n    deferred.resolve(response);\n}, function fail() {\n    deferred.reject();\n});\n```\n\n### G2026\n```ts\nthis.http.get(url, config).toPromise().then(function success(response?: any) {\n    deferred.resolve(response);\n}, function fail() {\n    deferred.reject();\n});\n```\n\n### G2027\n```ts\nthis.http.post(url, ruleChain).toPromise().then(function success(response?: any) {\n    deferred.resolve(response);\n}, function fail() {\n    deferred.reject();\n});\n```\n\n### G2028\n```ts\nthis.http.post(url, {}).toPromise().then(function success(response?: any) {\n    deferred.resolve(response);\n}, function fail() {\n    deferred.reject();\n});\n```\n\n### G2029\n```ts\nthis.http.delete(url).toPromise().then(function success() {\n    deferred.resolve();\n}, function fail() {\n    deferred.reject();\n});\n```\n\n### G2030\n```ts\nthis.http.get(url, config).toPromise().then(function success(response?: any) {\n    deferred.resolve(response);\n}, function fail() {\n    deferred.reject();\n});\n```\n\n### G2031\n```ts\nthis.http.post(url, ruleChainMetaData).toPromise().then(function success(response?: any) {\n    deferred.resolve(response);\n}, function fail() {\n    deferred.reject();\n});\n```\n\n### G61\n```ts\n            tasks.push(import(/* webpackIgnore: true */ uiResource));\n```\n\n### G847,G857,G858\n```ts\n    var res: any = this.ruleNodeComponents.filter((item: any) => item.clazz === clazz);\n```\n\n### G2032\n```ts\nthis.http.post(url, inputParams).toPromise().then(function success(response?: any) {\n    deferred.resolve(response);\n}, function fail() {\n    deferred.reject();\n});\n```\n\n### G2033\n```ts\nthis.http.get(url).toPromise().then(function success(response?: any) {\n    deferred.resolve(response);\n}, function fail() {\n    deferred.reject();\n});\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 4996,
+    "costMicros": 27178,
+    "inputTokens": 2,
+    "outputTokens": 719
+  }
+}

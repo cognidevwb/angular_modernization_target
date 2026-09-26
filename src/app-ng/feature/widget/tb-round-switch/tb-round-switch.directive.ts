@@ -1,6 +1,6 @@
 import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import roundSwitchTemplate from '../../../../app/widget/lib/rpc/round-switch.tpl.html';
+import roundSwitchTemplate from '../../../../app/widget/lib/rpc/round-switch.tpl.html' with { loader: 'text' };
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
@@ -15,14 +15,14 @@ function RoundSwitchController(this: any, $element?: any, $scope?: any, utils?: 
 
     vm.checkboxId = 'onoff-' + utils.guid();
 
-    var switchElement: any = angular.element('.switch', $element),
-        switchContainer: any = angular.element('#switch-container', $element),
-        onoff: any = angular.element('input', $element),
-        textMeasure: any = angular.element('#text-measure', $element),
-        switchTitleContainer: any = angular.element('.title-container', $element),
-        switchTitle: any = angular.element('.switch-title', $element),
-        switchErrorContainer: any = angular.element('.error-container', $element),
-        switchError: any = angular.element('.switch-error', $element);
+    var switchElement: any = $('.switch', $element),
+        switchContainer: any = $('#switch-container', $element),
+        onoff: any = $('input', $element),
+        textMeasure: any = $('#text-measure', $element),
+        switchTitleContainer: any = $('.title-container', $element),
+        switchTitle: any = $('.switch-title', $element),
+        switchErrorContainer: any = $('.error-container', $element),
+        switchError: any = $('.switch-error', $element);
 
     onoff.bind('change', () => {
         vm.value = onoff.prop('checked') === false;
@@ -47,13 +47,12 @@ function RoundSwitchController(this: any, $element?: any, $scope?: any, utils?: 
 
     function init() {
 
-        vm.title = angular.isDefined(vm.ctx.settings.title) ? vm.ctx.settings.title : '';
+        vm.title = vm.ctx.settings.title !== undefined ? vm.ctx.settings.title : '';
         vm.showTitle = vm.title && vm.title.length ? true : false;
         vm.ctx.resize = resize;
-        $scope.$applyAsync(() => {
-            resize();
-        });
-        var initialValue: any = angular.isDefined(vm.ctx.settings.initialValue) ? vm.ctx.settings.initialValue : false;
+        resize();
+        var initialValue: any = vm.ctx.settings.initialValue !== undefined ? vm.ctx.settings.initialValue : false;
+        setValue(initialValue);
         setValue(initialValue);
 
         var subscription: any = vm.ctx.defaultSubscription;
@@ -172,7 +171,7 @@ function RoundSwitchController(this: any, $element?: any, $scope?: any, utils?: 
                 if (attrValue) {
                     var parsed: any = null;
                     try {
-                        parsed = vm.parseValueFunction(angular.fromJson(attrValue));
+                    parsed = vm.parseValueFunction(JSON.parse(attrValue));
                     } catch (e){/**/}
                     value = parsed ? true : false;
                 }
@@ -203,10 +202,10 @@ function RoundSwitchController(this: any, $element?: any, $scope?: any, utils?: 
     }
 
     function onError(error?: any) {
-        $scope.$applyAsync(() => {
-            vm.error = error;
-            setFontSize(switchError, vm.error, switchErrorContainer.height(), switchErrorContainer.width());
-        });
+    function onError(error?: any) {
+        vm.error = error;
+        setFontSize(switchError, vm.error, switchErrorContainer.height(), switchErrorContainer.width());
+    }
     }
 
     function setFontSize(element?: any, text?: any, fontSize?: any, maxWidth?: any) {

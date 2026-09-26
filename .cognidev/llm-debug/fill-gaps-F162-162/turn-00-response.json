@@ -1,0 +1,14 @@
+{
+  "content": "### G2512\n```ts\nconst logoSvg = 'assets/svg/logo_title_white.svg';\n```\n\n### G2513\n```ts\nthis.router.navigate(['/login/resetExpiredPassword'], {queryParams: {resetToken: response.data.resetToken}});\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1556,
+    "costMicros": 7178,
+    "inputTokens": 2,
+    "outputTokens": 95
+  }
+}

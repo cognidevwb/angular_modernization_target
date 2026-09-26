@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 720,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/import-export/import-dialog/import-dialog.component.ts\n\n2 item(s) to handle in this file.\n\n### G2489\nLines to replace: L50–L50\nKind: fix\nTask: Make line 50 of `src/app-ng/feature/import-export/import-dialog/import-dialog.component.ts` type-check without changing what it does.\nBefore: Property 'cancel' does not exist on type 'MatDialog'.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n### G2490\nLines to replace: L85–L85\nKind: fix\nTask: Make line 85 of `src/app-ng/feature/import-export/import-dialog/import-dialog.component.ts` type-check without changing what it does.\nBefore: Property 'hide' does not exist on type 'MatDialog'.\nAfter: tsc reports no error on this line; the code does the same as before\nDecision already made (follow it): null\n\n\nThe file's lines:\nL44|     this.clearFile = this.clearFile;\nL45|     this.importTitle = this.dialogData.importTitle;\nL46|     this.importFileLabel = this.dialogData.importFileLabel;\nL47|   }\nL48| \nL49|   cancel = (...rest: any[]): any => {\nL50|     this.dialog.cancel();\nL51|   };\nL52| \nL53|   fileAdded = ($file?: any, ...rest: any[]): any => {\nL54|     if ($file.getExtension() === 'json') {\nL55|         var reader: any = new FileReader();\nL56|         reader.onload = (event?: any) => {\n…\nL79|     this.fileName = null;\nL80|     this.importData = null;\nL81|   };\nL82| \nL83|   importFromJson = (...rest: any[]): any => {\nL84|     this.theForm.$setPristine();\nL85|     this.dialog.hide(this.importData);\nL86|   };\nL87| }\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

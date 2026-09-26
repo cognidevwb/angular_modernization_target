@@ -1,0 +1,22 @@
+{
+  "cache_breakpoints": [],
+  "max_tokens": 840,
+  "messages": [
+    {
+      "content": "File: src/app-ng/feature/components/tb-no-animate/tb-no-animate.directive.ts\n\n1 item(s) to handle in this file.\n\n### G1600,G1601,G1603,G1602\nLines to replace: L26–L29\nKind: fix\nTask: Change `$animate` at L23 in `NoAnimate`: Jev picks between @angular/animations, or AnimationBuilder.\nBefore: L23 of `src/app/components/no-animate.directive.js` uses `$animate`.\nAfter: The code uses the option Jev picked; `$animate` is gone from `NoAnimate`.\nDecision already made (follow it): {\"jev\":null}\n\nAlso:\nKind: fix\nTask: Change `$animate.enabled` at L27 in `link`: Jev picks between @.disabled binding.\nBefore: L27 of `src/app/components/no-animate.directive.js` uses `$animate.enabled`.\nAfter: The code uses the option Jev picked; `$animate.enabled` is gone from `link`.\nDecision already made (follow it): {\"jev\":null}\n\nAlso:\nKind: fix\nTask: Change `$animate.enabled` at L29 in `link`: Jev picks between @.disabled binding.\nBefore: L29 of `src/app/components/no-animate.directive.js` uses `$animate.enabled`.\nAfter: The code uses the option Jev picked; `$animate.enabled` is gone from `link`.\nDecision already made (follow it): {\"jev\":null}\n\nAlso:\nKind: fix\nTask: Change `$scope.$watch` at L28 in `link`: Jev picks between effect() over a signal, or ngOnChanges for an input.\nBefore: L28 of `src/app/components/no-animate.directive.js` uses `$scope.$watch`.\nAfter: The code uses the option Jev picked; `$scope.$watch` is gone from `link`.\nDecision already made (follow it): {\"jev\":{\"confidence\":0.43,\"fits\":{\"effect\":0.19,\"mutation_observer\":0.14,\"on_changes\":0.1,\"setter\":0.26},\"probabilities\":{\"effect\":0.42,\"mutation_observer\":0.01,\"none\":0.55,\"on_changes\":0.02,\"setter\":0.0}}}\n\n\nThe file's lines:\nL20| \nL21|   $watch: any;\nL22| \nL23|   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit\nL24| \nL25|   constructor() {\nL26|     $animate.enabled($(this.element.nativeElement), false);\nL27|     this.$watch(() => {\nL28|                 $animate.enabled($(this.element.nativeElement), false)\nL29|             });\nL30|   }\nL31| }\n",
+      "role": "user",
+      "tool_calls": []
+    },
+    {
+      "content": "[loop control] You have 1 turn(s) left. Stop calling tools and write the final answer NOW with the citations you have. If you genuinely cannot answer, say so explicitly and explain which file you would have needed.",
+      "role": "user",
+      "tool_calls": []
+    }
+  ],
+  "reasoning": "default",
+  "response_schema": null,
+  "stop_sequences": [],
+  "system": "You port small pieces of an AngularJS app to Angular, several in one file. For each item (### <ids>) you get the task, the lines to replace, the state before and after, and any decision already made (follow it); for a review you get the original AngularJS function and doubts about the port. Keep behaviour exactly (no improvements) and use only names that exist in the file. Answer every item, in order, as:\n### <ids>\n```ts\n<the replacement for exactly that item's lines>\n```\nFor a review whose port already behaves like the original, answer `SAME: <one-line reason>` instead of a code block. Nothing else.",
+  "temperature": 0.20000000298023224,
+  "tools": []
+}

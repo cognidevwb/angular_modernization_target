@@ -35,11 +35,17 @@ import { TbWidgetsBundleSelectDirective } from '../../components/tb-widgets-bund
 import { TbDashboardDirective } from '../../components/tb-dashboard/tb-dashboard.directive';
 
 import $ from 'jquery';
+// @ts-ignore
 import entityAliasesTemplate from '../../../../app/entity/alias/entity-aliases.tpl.html';
+// @ts-ignore
 import dashboardSettingsTemplate from '../../../../app/dashboard/dashboard-settings.tpl.html';
+// @ts-ignore
 import manageDashboardLayoutsTemplate from '../../../../app/dashboard/layouts/manage-dashboard-layouts.tpl.html';
+// @ts-ignore
 import manageDashboardStatesTemplate from '../../../../app/dashboard/states/manage-dashboard-states.tpl.html';
+// @ts-ignore
 import addWidgetTemplate from '../../../../app/dashboard/add-widget.tpl.html';
+// @ts-ignore
 import selectTargetLayoutTemplate from '../../../../app/dashboard/layouts/select-target-layout.tpl.html';
 import AliasController from '../../../../app/api/alias-controller';
 import { MatButtonModule } from '@angular/material/button';
@@ -161,7 +167,7 @@ export class DashboardComponent {
   constructor() {
     let vm = this;
     this.user = this.userService.getCurrentUser();
-    this.widgetEditMode = this.router.$current.data.widgetEditMode;
+    this.widgetEditMode = (this.router as any).$current.data.widgetEditMode;
     this.iframeMode = this.rootScope.iframeMode;
     this.currentDashboardId = this.route.snapshot.params['dashboardId'];
     if (this.route.snapshot.params['customerId']) {
@@ -183,8 +189,8 @@ export class DashboardComponent {
         set: function(...rest: any[]) { }
     });
     this.toolbarAlwaysOpen = this.toolbarAlwaysOpen;
-    this.isMobile = !this.breakpoints('gt-sm');
-    $scope.$watch(() => { return this.breakpoints('gt-sm'); }, (isGtSm?: any) => {
+    this.isMobile = !(this.breakpoints as any)('gt-sm');
+    $scope.$watch(() => { return (this.breakpoints as any)('gt-sm'); }, (isGtSm?: any) => {
         this.isMobile = !isGtSm;
     });
     this.addWidget = this.addWidget;
@@ -267,15 +273,15 @@ export class DashboardComponent {
     $scope.$watch('vm.currentDashboardId', (newVal?: any, prevVal?: any) => {
         if (newVal !== prevVal && !this.widgetEditMode) {
             if (this.currentDashboardScope === 'customer' && this.user.authority === 'TENANT_ADMIN') {
-                this.router.go('home.customers.dashboards.dashboard', {
+                (this.router as any).go('home.customers.dashboards.dashboard', {
                     customerId: this.currentCustomerId,
                     dashboardId: this.currentDashboardId
                 });
             } else {
-                if (this.router.current.name === 'dashboard') {
-                    this.router.go('dashboard', {dashboardId: this.currentDashboardId});
+                if ((this.router as any).current.name === 'dashboard') {
+                    (this.router as any).go('dashboard', {dashboardId: this.currentDashboardId});
                 } else {
-                    this.router.go('home.dashboards.dashboard', {dashboardId: this.currentDashboardId});
+                    (this.router as any).go('home.dashboards.dashboard', {dashboardId: this.currentDashboardId});
                 }
             }
         }
@@ -531,7 +537,7 @@ export class DashboardComponent {
 
   openEntityAliases = ($event?: any, ...rest: any[]): any => {
     let vm = this;
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'EntityAliasesController',
         controllerAs: 'vm',
         templateUrl: entityAliasesTemplate,
@@ -561,7 +567,7 @@ export class DashboardComponent {
     if (layoutKeys) {
         gridSettings = structuredClone(this.dashboard.configuration.states[layoutKeys.state].layouts[layoutKeys.layout].gridSettings)
     }
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'DashboardSettingsController',
         controllerAs: 'vm',
         templateUrl: dashboardSettingsTemplate,
@@ -585,7 +591,7 @@ export class DashboardComponent {
 
   manageDashboardLayouts = ($event?: any, ...rest: any[]): any => {
     let vm = this;
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'ManageDashboardLayoutsController',
         controllerAs: 'vm',
         templateUrl: manageDashboardLayoutsTemplate,
@@ -607,7 +613,7 @@ export class DashboardComponent {
     var dashboardConfiguration: any = this.dashboard.configuration;
     var states: any = structuredClone(dashboardConfiguration.states);
 
-    this.dialog.show({
+    (this.dialog as any).show({
         controller: 'ManageDashboardStatesController',
         controllerAs: 'vm',
         templateUrl: manageDashboardStatesTemplate,
@@ -905,7 +911,7 @@ export class DashboardComponent {
   };
 
   hideFullscreenButton = (...rest: any[]): any => {
-    return this.widgetEditMode || this.iframeMode || this.rootScope.forceFullscreen || this.router.current.name === 'dashboard';
+    return this.widgetEditMode || this.iframeMode || this.rootScope.forceFullscreen || (this.router as any).current.name === 'dashboard';
   };
 
   onRevertWidgetEdit = (widgetForm?: any, ...rest: any[]): any => {
@@ -963,7 +969,7 @@ export class DashboardComponent {
     var layouts: any = this.dashboardConfiguration.states[this.dashboardCtx.state].layouts;
     var layoutIds: any = Object.keys(layouts);
     if (layoutIds.length > 1) {
-        this.dialog.show({
+        (this.dialog as any).show({
             controller: 'SelectTargetLayoutController',
             controllerAs: 'vm',
             templateUrl: selectTargetLayoutTemplate,
@@ -1026,7 +1032,7 @@ export class DashboardComponent {
             if (widgetTypeInfo.typeParameters.useCustomDatasources) {
                 addWidget(newWidget);
             } else {
-                this.dialog.show({
+                (this.dialog as any).show({
                     controller: 'AddWidgetController',
                     controllerAs: 'vm',
                     templateUrl: addWidgetTemplate,
@@ -1059,14 +1065,14 @@ export class DashboardComponent {
     if (!title || title.length === 0) {
         title = this.widgetService.getInstantWidgetInfo(widget).widgetName;
     }
-    var confirm: any = this.dialog.confirm()
+    var confirm: any = (this.dialog as any).confirm()
         .targetEvent(event)
         .title(this.translate.instant('widget.remove-widget-title', {widgetTitle: title}))
         .htmlContent(this.translate.instant('widget.remove-widget-text'))
         .ariaLabel(this.translate.instant('widget.remove'))
         .cancel(this.translate.instant('action.no'))
         .ok(this.translate.instant('action.yes'));
-    this.dialog.show(confirm).then(() => {
+    (this.dialog as any).show(confirm).then(() => {
         var index: any = layoutCtx.widgets.indexOf(widget);
         if (index > -1) {
             layoutCtx.widgets.splice(index, 1);

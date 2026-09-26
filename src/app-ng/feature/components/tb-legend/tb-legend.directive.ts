@@ -4,7 +4,7 @@ import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
 
 import $ from 'jquery';
-import legendTemplate from '../../../../app/components/legend.tpl.html';
+import legendTemplate from '../../../../app/components/legend.tpl.html?raw';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
@@ -29,7 +29,7 @@ export class TbLegendDirective {
   // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(legendTemplate);
+  protected template: any = legendTemplate;
   isHorizontal: any;
   isRowDirection: any;
 

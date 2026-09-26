@@ -1,0 +1,14 @@
+{
+  "content": "### G2292\n```ts\n// @ts-ignore\nimport dashboardToolbarTemplate from '../../../../app/dashboard/dashboard-toolbar.tpl.html';\n```\n\n### G2293\n```ts\n    declare const angular: any;\n    vm.mdFabToolbarElement = angular.element($element[0].querySelector('md-fab-toolbar'));\n```\n\n### G2294\n```ts\n            vm.mdFabBackgroundElement = angular.element(vm.mdFabToolbarElement[0].querySelector('.md-fab-toolbar-background'));\n```\n\n### G2295\n```ts\n            vm.mdFabTriggerElement = angular.element(vm.mdFabToolbarElement[0].querySelector('md-fab-trigger button'));\n```\n\n### G2296\n```ts\n    declare const addResizeListener: any;\n    addResizeListener(vm.mdFabToolbarElement[0], triggerFabResize); // eslint-disable-line no-undef\n```\n\n### G2297\n```ts\n        declare const removeResizeListener: any;\n        removeResizeListener(vm.mdFabToolbarElement[0], triggerFabResize); // eslint-disable-line no-undef\n```\n\n### G2298\n```ts\n                if (!transform || !angular.equals(transform, targetTransform)) {\n                    vm.mdFabBackgroundElement[0].style.transform = targetTransform;\n                }\n```",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2982,
+    "costMicros": 35832,
+    "inputTokens": 2,
+    "outputTokens": 2390
+  }
+}

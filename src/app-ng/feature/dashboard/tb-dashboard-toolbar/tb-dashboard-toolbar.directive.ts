@@ -1,5 +1,6 @@
 import { Component, model, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+// @ts-ignore
 import dashboardToolbarTemplate from '../../../../app/dashboard/dashboard-toolbar.tpl.html';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +16,7 @@ function DashboardToolbarController(this: any, $scope?: any, $element?: any, $ti
 
     let vm: any = this;
 
+    declare const angular: any;
     vm.mdFabToolbarElement = angular.element($element[0].querySelector('md-fab-toolbar'));
 
     function initElements() {
@@ -29,9 +31,11 @@ function DashboardToolbarController(this: any, $scope?: any, $element?: any, $ti
         });
     }
 
+    declare const addResizeListener: any;
     addResizeListener(vm.mdFabToolbarElement[0], triggerFabResize); // eslint-disable-line no-undef
 
     $scope.$on("$destroy", function () {
+        declare const removeResizeListener: any;
         removeResizeListener(vm.mdFabToolbarElement[0], triggerFabResize); // eslint-disable-line no-undef
     });
 

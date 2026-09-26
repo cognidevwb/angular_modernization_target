@@ -1,0 +1,14 @@
+{
+  "content": "### G2169\n```ts\n// @ts-ignore\nimport jsonContentTemplate from '../../../../app/components/json-content.tpl.html';\n```\n\n### G2170\n```ts\nimport * as beautify from 'js-beautify';\nconst js_beautify: any = beautify.js;\n```\n\n### G412,G413\n```ts\n  protected template: any;\n```\n\n### G1505\n```ts\n    effect(() => {\n      var mode: any;\n      if (this.contentType()) {\n        mode = types.contentType[this.contentType()].code;\n      } else {\n        mode = 'text';\n      }\n      if (this.json_editor) {\n        this.json_editor.session.setMode('ace/mode/' + mode);\n      }\n    });\n```\n\n### G1506,G1507,G1508\n```ts\n    let contentBodyPrev: any;\n    effect(() => {\n      const newContent = this.contentBody;\n      this.onChange(newContent);\n      if (!isEqual(newContent, contentBodyPrev)) {\n        this.contentValid = this.validate();\n      }\n      contentBodyPrev = newContent;\n      this.updateValidity();\n    });\n```\n\n### G1513,G1514\n```ts\n    this.writeValue = (value: any) => {\n      this.contentBody = value;\n    };\n```\n\n### G1509\n```ts\n  onFormSubmit(args?: any): void {\n    if (!this.readonly()) {\n      if (!args || this.validationTriggerArg && this.validationTriggerArg == args) {\n        this.cleanupJsonErrors();\n        this.contentValid = true;\n        this.updateValidity();\n        this.contentValid = this.validate();\n        this.updateValidity();\n      }\n    }\n  }\n```\n\n### G1510\n```ts\n  onUpdateAceEditorSize(): void {\n    this.updateEditorSize();\n  }\n```\n\n### G1500,G1511\n```ts\n  // TODO(port): removed $compile — composition is done via component templates/inputs instead\n```\n\n### G1512\n```ts\n    this.ngControl?.control?.setErrors(this.contentValid ? null : { contentBody: true });\n```\n\n### G1894\nSAME: the ported `validate` reproduces the same try/catch flow, parsing with JSON.parse, checking `hideErrorToast`, building `errorInfo` the same way, and returning true/false identically; the trailing unreachable `return undefined;` is dead code and doesn't change behaviour.",
+  "model": "claude-sonnet-5",
+  "reasoning": "",
+  "stop_reason": "end_turn",
+  "tool_calls": [],
+  "usage": {
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 6138,
+    "costMicros": 102956,
+    "inputTokens": 2,
+    "outputTokens": 7840
+  }
+}

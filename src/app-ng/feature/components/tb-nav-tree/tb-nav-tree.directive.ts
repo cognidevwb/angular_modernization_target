@@ -1,5 +1,5 @@
 import { Component, input, model, output } from '@angular/core';
-import navTreeTemplate from '../../../../app/components/nav-tree.tpl.html';
+import navTreeTemplate from '../../../../app/components/nav-tree.tpl.html?raw';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
@@ -10,9 +10,14 @@ function NavTreeController(this: any, $scope?: any, $element?: any, types?: any)
     var vm: any = this;
     vm.types = types;
 
-    $scope.$watch('vm.loadNodes', (newVal?: any) => {
-        if (newVal) {
-            initTree();
+    $scope.$onChanges = ($scope.$onChanges || function () {});
+    Object.defineProperty(vm, 'loadNodes', {
+        get: function () { return vm._loadNodes; },
+        set: function (newVal: any) {
+            vm._loadNodes = newVal;
+            if (newVal) {
+                initTree();
+            }
         }
     });
 
