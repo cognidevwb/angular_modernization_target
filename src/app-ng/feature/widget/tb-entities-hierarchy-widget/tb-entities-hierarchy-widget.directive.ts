@@ -16,7 +16,7 @@ declare let scope: any;
 declare let entitiesHierarchyDataUpdatedService: any;
 
 // Type-only augmentation exposing the legacy vm properties/methods the template binds to.
-interface TbEntitiesHierarchyWidgetDirective {
+export interface TbEntitiesHierarchyWidgetDirective {
     showData: any;
     query: any;
     loadNodes: any;
@@ -549,7 +549,6 @@ export class TbEntitiesHierarchyWidgetDirective {
         };
   controller: any = EntitiesHierarchyWidgetController;
   controllerAs: any;
-  templateUrl: any = entitiesHierarchyWidgetTemplate;
 
   constructor() {
     let vm = this;

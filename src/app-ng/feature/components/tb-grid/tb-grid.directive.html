@@ -16,35 +16,35 @@
     limitations under the License.
 
 -->
-<span layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill" [hidden]="!(noData())">{{noItemsText()}}</span>
+<span layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill" [hidden]="!($any(this).noData())">{{$any(this).noItemsText()}}</span>
 <section layout="row" flex style="height: 100%;" flex layout-wrap>
     <div layout="column" style="height: 100%;" flex layout-wrap>
-        <!-- TODO(port): md-virtual-repeat-container: a cdk-virtual-scroll-viewport with *cdkVirtualFor --><md-virtual-repeat-container [hidden]="!(hasData())" tb-scope-element="repeatContainer" id="tb-vertical-container" md-top-index="vm.topIndex" flex>
+        <!-- TODO(port): md-virtual-repeat-container: a cdk-virtual-scroll-viewport with *cdkVirtualFor --><div [hidden]="!($any(this).hasData())" tb-scope-element="repeatContainer" id="tb-vertical-container" md-top-index="vm.topIndex" flex>
             <div class="md-padding" layout="column">
                 <section layout="row" md-virtual-repeat="rowItem in vm.itemRows" md-on-demand md-item-size="vm.itemHeight">
-                    @for (n of [] | range:columns; track $index) {
-                      @if (rowItem?.[n]) {
-                      <div flex [ngStyle]="{'height':itemHeight+'px'}">
-                        <mat-card [ngClass]="{'tb-current-item': isCurrentItem(rowItem?.[n])}" class="repeated-item tb-card-item" [ngStyle]="{'height':(itemHeight-16)+'px','cursor':'pointer'}" (click)="clickItemFunc($event, rowItem[n])">
+                    @for (n of [] | range:$any(this).columns; track $index) {
+                      @if ($any(this).rowItem?.[n]) {
+                      <div flex [ngStyle]="{'height':$any(this).itemHeight+'px'}">
+                        <mat-card [ngClass]="{'tb-current-item': $any(this).isCurrentItem($any(this).rowItem?.[n])}" class="repeated-item tb-card-item" [ngStyle]="{'height':($any(this).itemHeight-16)+'px','cursor':'pointer'}" (click)="$any(this).clickItemFunc($event, $any(this).rowItem[n])">
                             <section layout="row" layout-wrap>
                                 <mat-card-header layout="row">
                                     <section layout="column" layout-wrap>
-                                        @if (isSelectionEnabled(rowItem?.[n])) {
-                                          <mat-checkbox (click)="toggleItemSelection($event, rowItem[n])" layout-align="start start" attr.aria-label="{{ 'item.selected' | translate }}" [checked]="rowItem?.[n]?.selected">
+                                        @if ($any(this).isSelectionEnabled($any(this).rowItem?.[n])) {
+                                          <mat-checkbox (click)="$any(this).toggleItemSelection($event, $any(this).rowItem[n])" layout-align="start start" attr.aria-label="{{ 'item.selected' | translate }}" [checked]="$any(this).rowItem?.[n]?.selected">
                                         </mat-checkbox>
                                         }
                                         <span flex></span>
                                     </section>
                                     <mat-card-title>
-                                        <span class="md-headline">{{getItemTitleFunc(rowItem?.[n])}}</span>
+                                        <span class="md-headline">{{$any(this).getItemTitleFunc($any(this).rowItem?.[n])}}</span>
                                     </mat-card-title>
                                 </mat-card-header>
                             </section>
                             <mat-card-content flex>
-                                <tb-grid-card-content flex [(gridCtl)]="vm" [(parentCtl)]="parentCtl" [(itemController)]="itemCardController" [(itemTemplate)]="itemCardTemplate" [(item)]="rowItem[n]"></tb-grid-card-content>
+                                <tb-grid-card-content flex [(gridCtl)]="$any(this).vm" [(parentCtl)]="$any(this).parentCtl" [(itemController)]="$any(this).itemCardController" [(itemTemplate)]="$any(this).itemCardTemplate" [(item)]="$any(this).rowItem[n]"></tb-grid-card-content>
                             </mat-card-content>
                             <mat-card-actions layout="row" layout-align="end end">
-                                @for (action of actionsList; track $index) {
+                                @for (action of $any(this).actionsList; track $index) {
                                   @if (action?.isEnabled?.($any(this).rowItem?.[n])) {
                                   <button mat-icon-button color="primary" [disabled]="rootScope?.loading" (click)="action.onAction($event, $any(this).rowItem[n])" attr.aria-label="{{ action?.name?.() }}" attr.matTooltip="{{ action?.details?.( $any(this).rowItem?.[n] ) }}" matTooltipPosition="above">
                                     
@@ -65,7 +65,7 @@
                     }
                 </section>
             </div>
-        </md-virtual-repeat-container>
+        </div>
     </div>
     <tb-details-sidenav headerTitle="{{$any(this).getItemTitleFunc($any(this).operatingItem())}}" headerSubtitle="{{$any(this).itemDetailsText($any(this).operatingItem())}}" [isReadOnly]="$any(this).isDetailsReadOnly($any(this).operatingItem())" [(isOpen)]="$any(this).detailsConfig.isDetailsOpen" [(isEdit)]="$any(this).detailsConfig.isDetailsEditMode" (onCloseDetails)="$any(this).onCloseDetails()" (onToggleDetailsEditMode)="$any(this).onToggleDetailsEditMode($any(this).detailsForm)" (onApplyDetails)="$any(this).saveItem($any(this).detailsForm)" [(theForm)]="$any(this).detailsForm">
         <div details-buttons>

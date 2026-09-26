@@ -131,13 +131,13 @@ export class CustomerComponent {
 
         getItemTitleFunc: this.getCustomerTitle,
 
-        itemCardTemplateUrl: customerCard,
+        itemCardTemplateUrl: '', // TODO(port): customer-card.tpl.html
 
         actionsList: this.customerActionsList,
 
         onGridInited: this.gridInited,
 
-        addItemTemplateUrl: addCustomerTemplate,
+        addItemTemplateUrl: '', // TODO(port): add-customer.tpl.html
 
         addItemText: (...rest: any[]) => { return this.translate.instant('customer.add-customer-text') },
         noItemsText: (...rest: any[]) => { return this.translate.instant('customer.no-customers-text') },

@@ -17,16 +17,16 @@
 
 -->
 @if (dashboard) {
-  <div style="padding-top: 150px;" flex (tbExpandFullscreen)="widgetEditMode || iframeMode || forceFullscreen" expand-button-id="dashboard-expand-button" (hideExpandButton)="hideFullscreenButton()" expand-tooltip-direction="bottom" class="md-content">
-    <section class="tb-dashboard-toolbar" [hidden]="!(showDashboardToolbar())" [ngClass]="{ 'tb-dashboard-toolbar-opened': toolbarOpened, 'tb-dashboard-toolbar-closed': !toolbarOpened }">
-        <tb-dashboard-toolbar [hidden]="!(!widgetEditMode)" [(forceFullscreen)]="forceFullscreen" [(toolbarOpened)]="toolbarOpened" (onTriggerClick)="openToolbar()">
+  <div style="padding-top: 150px;" flex (tbExpandFullscreen)="widgetEditMode || iframeMode || $any(this).forceFullscreen" expand-button-id="dashboard-expand-button" (hideExpandButton)="hideFullscreenButton()" expand-tooltip-direction="bottom" class="md-content">
+    <section class="tb-dashboard-toolbar" [hidden]="!(showDashboardToolbar())" [ngClass]="{ 'tb-dashboard-toolbar-opened': isToolbarOpened, 'tb-dashboard-toolbar-closed': !isToolbarOpened }">
+        <tb-dashboard-toolbar [hidden]="!(!widgetEditMode)" [(forceFullscreen)]="$any(this).forceFullscreen" [(toolbarOpened)]="isToolbarOpened" (onTriggerClick)="openToolbar()">
             <div class="tb-dashboard-action-panels" layout-sm="column" layout-xs="column" layout-align-gt-sm="space-between center" layout="row" layout-align="center stretch">
                 <div class="tb-dashboard-action-panel" flex-md="30" layout="row" layout-align-gt-sm="start center" layout-align="space-between center">
                     <button mat-icon-button [hidden]="!(showCloseToolbar())" aria-label="close-toolbar" class="close-action" (click)="closeToolbar()" attr.matTooltip="{{ 'dashboard.close-toolbar' | translate }}" matTooltipPosition="below">
                         
                         <mat-icon aria-label="close-toolbar" class="material-icons">arrow_forward</mat-icon>
                     </button>
-                    @if (!isPublicUser() && forceFullscreen) {
+                    @if (!isPublicUser() && $any(this).forceFullscreen) {
                       <tb-user-menu hide-xs hide-sm [displayUserInfo]="true">
                     </tb-user-menu>
                     }
@@ -56,7 +56,7 @@
                     </tb-dashboard-select>
                 </div>
                 <div class="tb-dashboard-action-panel" flex-md="70" layout="row" layout-align-gt-sm="end center" layout-align="space-between center">
-                    @if (!isPublicUser() && forceFullscreen) {
+                    @if (!isPublicUser() && $any(this).forceFullscreen) {
                       <tb-user-menu hide-gt-sm [displayUserInfo]="true">
                     </tb-user-menu>
                     }
@@ -71,18 +71,18 @@
                         </button>
                     </div>
                     @if (isEdit) {
-                      <tb-states-component flex-xs flex-sm [statesControllerId]="'default'" [(dashboardCtrl)]="vm" [(states)]="dashboardConfiguration.states">
+                      <tb-states-component flex-xs flex-sm [statesControllerId]="'default'" [(dashboardCtrl)]="$any(this).vm" [(states)]="dashboardConfiguration.states">
                     </tb-states-component>
                     }
                     @if (!isEdit) {
-                      <tb-states-component flex-xs flex-sm [(statesControllerId)]="dashboardConfiguration.settings.stateControllerId" [(dashboardCtrl)]="vm" [(states)]="dashboardConfiguration.states">
+                      <tb-states-component flex-xs flex-sm [(statesControllerId)]="dashboardConfiguration.settings.stateControllerId" [(dashboardCtrl)]="$any(this).vm" [(states)]="dashboardConfiguration.states">
                     </tb-states-component>
                     }
                  </div>
             </div>
         </tb-dashboard-toolbar>
     </section>
-    <section class="tb-dashboard-container tb-absolute-fill" [ngClass]="{ 'is-fullscreen': forceFullscreen, 'tb-dashboard-toolbar-opened': toolbarOpened, 'tb-dashboard-toolbar-closed': !toolbarOpened }">
+    <section class="tb-dashboard-container tb-absolute-fill" [ngClass]="{ 'is-fullscreen': $any(this).forceFullscreen, 'tb-dashboard-toolbar-opened': isToolbarOpened, 'tb-dashboard-toolbar-closed': !isToolbarOpened }">
         <section [hidden]="!(!rootScope?.loading && dashboardConfigurationError())" layout-align="center center" [ngStyle]="{'color': dashboard?.configuration?.settings?.titleColor}" [ngClass]="{'tb-padded' : !widgetEditMode}" style="text-transform: uppercase; display: flex; z-index: 1;" class="md-headline tb-absolute-fill">
             <span translate>
                 dashboard.configuration-error
@@ -113,13 +113,13 @@
             </md-sidenav>
             }
         </div>
-        <tb-details-sidenav class="tb-widget-details-sidenav" headerTitle="{{editingWidget?.config?.title}}" headerSubtitle="{{editingWidgetSubtitle}}" [isReadOnly]="false" [(isOpen)]="isEditingWidget" [isAlwaysEdit]="true" (onCloseDetails)="onEditWidgetClosed()" (onToggleDetailsEditMode)="onRevertWidgetEdit(widgetForm)" (onApplyDetails)="saveWidget(widgetForm)" [(theForm)]="widgetForm">
-            <details-buttons [tbHelp]="helpLinkIdForWidgetType()" help-container-id="help-container">
+        <tb-details-sidenav class="tb-widget-details-sidenav" headerTitle="{{editingWidget?.config?.title}}" headerSubtitle="{{editingWidgetSubtitle}}" [isReadOnly]="false" [(isOpen)]="isEditingWidget" [isAlwaysEdit]="true" (onCloseDetails)="onEditWidgetClosed()" (onToggleDetailsEditMode)="onRevertWidgetEdit($any(this).widgetForm)" (onApplyDetails)="saveWidget($any(this).widgetForm)" [(theForm)]="$any(this).widgetForm">
+            <tb-details-buttons [tbHelp]="helpLinkIdForWidgetType()" help-container-id="help-container">
                 <div id="help-container"></div>
-            </details-buttons>
+            </tb-details-buttons>
             @if (isEditingWidget) {
               <form name="vm.widgetForm">
-                <tb-edit-widget [(dashboard)]="dashboard" [(aliasController)]="dashboardCtx.aliasController" [(widgetEditMode)]="widgetEditMode" [(widget)]="editingWidget" [(widgetLayout)]="editingWidgetLayout" [(theForm)]="widgetForm">
+                <tb-edit-widget [(dashboard)]="dashboard" [(aliasController)]="dashboardCtx.aliasController" [(widgetEditMode)]="widgetEditMode" [(widget)]="editingWidget" [(widgetLayout)]="editingWidgetLayout" [(theForm)]="$any(this).widgetForm">
                 </tb-edit-widget>
             </form>
             }
@@ -127,13 +127,13 @@
         @if (!widgetEditMode) {
           <tb-details-sidenav class="tb-select-widget-sidenav" headerTitle="{{'dashboard.select-widget-title' | translate}}" headerHeightPx="120" [isReadOnly]="true" [(isOpen)]="isAddingWidget" [isEdit]="false" (onCloseDetails)="onAddWidgetClosed()">
             @if (isAddingWidget) {
-              <header-pane>
+              <tb-header-pane>
                 <div layout="row">
                     <span class="tb-details-subtitle">{{ 'widgets-bundle.current' | translate }}</span>
                     <tb-widgets-bundle-select flex-offset="5" flex [(ngModel)]="widgetsBundle" [tbRequired]="true" [selectFirstBundle]="false">
                     </tb-widgets-bundle-select>
                 </div>
-            </header-pane>
+            </tb-header-pane>
             }
             @if (isAddingWidget) {
               <div>

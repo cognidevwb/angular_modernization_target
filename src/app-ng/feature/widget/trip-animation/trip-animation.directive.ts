@@ -637,7 +637,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
                 if (label.length > -1 && currentNormalizedValue[label] !== undefined) {
                     let varData: any = currentNormalizedValue[label];
                     if (isNumber(varData)) {
-                        txtVal = padValue(varData, variableInfo.valDec, 0);
+                        txtVal = padValue(varData, variableInfo.valDec);
                     } else {
                         txtVal = varData;
                     }
@@ -849,7 +849,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
     function mapPolygonArray(rawArray?: any) {
         return rawArray.map(function (el?: any) {
             if (el.length === 2) {
-                if (!angular.isNumber(el[0]) && !angular.isNumber(el[1])) {
+                if (!isNumber(el[0]) && !isNumber(el[1])) {
                     return el.map(function (subEl?: any) {
                         return mapPolygonArray(subEl);
                     })
@@ -867,8 +867,8 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
 
     function moveMarker(trip?: any) {
         let postionMarker: any = calculateCurrentDate(trip.timeRange, vm.index);
-        if (angular.isDefined(postionMarker)) {
-            if (angular.isDefined(trip.marker)) {
+        if (postionMarker !== undefined) {
+            if (trip.marker !== undefined) {
                 trip.markerAngleIsSet = true;
                 trip.marker.setLatLng(postionMarker.latLng);
                 trip.marker.setRotationAngle(postionMarker.angle);
@@ -952,6 +952,13 @@ export class TripAnimationDirective {
   readonly ctx = model<any>();
   readonly self = model<any>();
 
+  speed: any;
+  speeds: any;
+  isPlaying: any;
+  stopPlay: any;
+  staticSettings: any;
+  animationTime: any;
+
   // TODO(port): elements not resolved to a component: md-slider-container
   // TODO(port): AngularJS built-in filters in the template: date — use Angular pipes
 
@@ -960,7 +967,6 @@ export class TripAnimationDirective {
   bindToController: any;
   controller: any = tripAnimationController;
   controllerAs: any;
-  templateUrl: any = template;
 
   constructor() {
     let vm = this;

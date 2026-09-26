@@ -1,13 +1,4 @@
-src/app-ng/feature/api/services/time.service.ts:54:7 - TS2304: Cannot find name 'firstValueFrom'.
-src/app-ng/feature/api/services/widget.service.ts:76:12 - TS2304: Cannot find name 'Router'.
-src/app-ng/feature/api/services/widget.service.ts:76:20 - TS2339: Property 'events' does not exist on type 'unknown'.
-src/app-ng/feature/import-export/services/import-export.service.ts:742:22 - TS2304: Cannot find name 'entityAliasesTemplate'.
-src/app-ng/feature/import-export/services/import-export.service.ts:938:22 - TS2304: Cannot find name 'importDialogTemplate'.
-src/app-ng/feature/import-export/services/import-export.service.ts:961:22 - TS2304: Cannot find name 'importDialogCSVTemplate'.
-src/app-ng/feature/components/tb-dashboard-select/tb-dashboard-select.directive.ts:41:29 - TS2304: Cannot find name 'dashboardSelectTemplate'.
 src/app-ng/feature/components/tb-details-sidenav/tb-details-sidenav.directive.ts:16:50 - TS2307: Cannot find module '@angular/animations' or its corresponding type declarations.
-src/app-ng/feature/components/tb-details-sidenav/tb-details-sidenav.directive.ts:94:47 - TS2339: Property 'build' does not exist on type 'unknown'.
-src/app-ng/feature/components/tb-details-sidenav/tb-details-sidenav.directive.ts:105:47 - TS2339: Property 'build' does not exist on type 'unknown'.
 src/app-ng/feature/components/tb-widget-config/tb-widget-config.directive.ts:225:22 - TS2339: Property 'modelValue' does not exist on type 'TbWidgetConfigDirective'.
 src/app-ng/feature/components/tb-widget-config/tb-widget-config.directive.ts:226:39 - TS2339: Property 'modelValue' does not exist on type 'TbWidgetConfigDirective'.
 src/app-ng/feature/components/tb-widget-config/tb-widget-config.directive.ts:267:22 - TS2339: Property 'onChange' does not exist on type 'TbWidgetConfigDirective'.
@@ -22,53 +13,25 @@ src/app-ng/feature/components/tb-widget-config/tb-widget-config.directive.ts:333
 src/app-ng/feature/components/tb-widget-config/tb-widget-config.directive.ts:333:41 - TS2339: Property 'modelValue' does not exist on type 'TbWidgetConfigDirective'.
 src/app-ng/feature/components/tb-widget-config/tb-widget-config.directive.ts:334:39 - TS2339: Property 'modelValue' does not exist on type 'TbWidgetConfigDirective'.
 src/app-ng/feature/components/tb-widget-config/tb-widget-config.directive.ts:341:22 - TS2339: Property 'onChange' does not exist on type 'TbWidgetConfigDirective'.
-src/app-ng/feature/components/tb-side-menu/tb-side-menu.directive.ts:8:30 - TS2307: Cannot find module '../../../../app/components/side-menu.tpl.html?raw' or its corresponding type declarations.
 src/app-ng/feature/components/tb-side-menu/tb-side-menu.directive.ts:38:62 - TS2322: Type 'this' is not assignable to type 'false | void'.   Type 'TbSideMenuDirective' is not assignable to type 'false | void'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:6:26 - TS2307: Cannot find module '../../../../app/components/grid.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/alarm/tb-alarm-header/tb-alarm-header.directive.ts:5:33 - TS2307: Cannot find module '../../../../app/alarm/alarm-header.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:7:40 - TS2307: Cannot find module '../../../../app/event/event-header-lc-event.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:8:38 - TS2307: Cannot find module '../../../../app/event/event-header-stats.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:9:38 - TS2307: Cannot find module '../../../../app/event/event-header-error.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:10:46 - TS2307: Cannot find module '../../../../app/event/event-header-debug-rulenode.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/event/tb-event-row/tb-event-row.directive.ts:12:37 - TS2307: Cannot find module '../../../../app/event/event-row-lc-event.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/event/tb-event-row/tb-event-row.directive.ts:13:35 - TS2307: Cannot find module '../../../../app/event/event-row-stats.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/event/tb-event-row/tb-event-row.directive.ts:14:35 - TS2307: Cannot find module '../../../../app/event/event-row-error.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/event/tb-event-row/tb-event-row.directive.ts:15:43 - TS2307: Cannot find module '../../../../app/event/event-row-debug-rulenode.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/event/tb-event-row/tb-event-row.directive.ts:17:16 - TS2664: Invalid module name in augmentation, module '*.tpl.html?raw' cannot be found.
+src/app-ng/feature/event/tb-event-row/tb-event-row.directive.ts:19:3 - TS2666: Exports and export assignments are not permitted in module augmentations.
+src/app-ng/feature/event/tb-event-row/tb-event-row.directive.ts:19:18 - TS2300: Duplicate identifier 'src'.
 src/app-ng/feature/event/tb-event-table/tb-event-table.directive.ts:15:32 - TS2307: Cannot find module '../../../../app/event/event-table.tpl.html' or its corresponding type declarations.
-src/app-ng/feature/entity/tb-relation-table/tb-relation-table.directive.ts:3:35 - TS2307: Cannot find module '../../../../app/entity/relation/relation-table.tpl.html?raw' or its corresponding type declarations.
 src/app-ng/feature/entity/tb-relation-table/tb-relation-table.directive.ts:51:24 - TS2304: Cannot find name 'angular'.
 src/app-ng/feature/entity/tb-relation-table/tb-relation-table.directive.ts:57:24 - TS2304: Cannot find name 'angular'.
 src/app-ng/feature/entity/tb-relation-table/tb-relation-table.directive.ts:63:14 - TS2304: Cannot find name 'angular'.
 src/app-ng/feature/entity/tb-relation-table/tb-relation-table.directive.ts:130:27 - TS2552: Cannot find name 'relationTemplate'. Did you mean 'relationTableTemplate'?
-src/app-ng/feature/audit/tb-audit-log-table/tb-audit-log-table.directive.ts:5:10 - TS2724: '"@ngx-translate/core"' has no exported member named 'TranslateModule'. Did you mean 'TranslateLoader'?
-src/app-ng/feature/customer/customer/customer.component.ts:16:33 - TS2307: Cannot find module '../../../../app/customer/add-customer.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/customer/customer/customer.component.ts:17:26 - TS2307: Cannot find module '../../../../app/customer/customer-card.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/rulechain/tb-rule-node/tb-rule-node.directive.ts:10:38 - TS2307: Cannot find module '!!raw-loader!../../../../app/rulechain/rulenode-fieldset.tpl.html' or its corresponding type declarations.
-src/app-ng/feature/tenant/tenant/tenant.component.ts:15:31 - TS2307: Cannot find module '../../../../app/tenant/add-tenant.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/tenant/tenant/tenant.component.ts:16:24 - TS2307: Cannot find module '../../../../app/tenant/tenant-card.tpl.html?raw' or its corresponding type declarations.
 src/app-ng/feature/widget/widget-editor/widget-editor.component.ts:306:10 - TS2349: This expression is not callable.   Type 'TranslateService' has no call signatures.
 src/app-ng/feature/widget/widget-editor/widget-editor.component.ts:653:17 - TS2339: Property 'show' does not exist on type 'MatDialog'.
 src/app-ng/feature/widget/widget-editor/widget-editor.component.ts:672:29 - TS2339: Property 'go' does not exist on type 'Router'.
 src/app-ng/feature/api/services/datasource.service.ts:46:32 - TS2304: Cannot find name 'angular'.
 src/app-ng/feature/api/services/datasource.service.ts:80:34 - TS2304: Cannot find name 'angular'.
 src/app-ng/feature/api/services/datasource.service.ts:398:37 - TS2304: Cannot find name 'angular'.
-src/app-ng/feature/api/services/datasource.service.ts:407:20 - TS2304: Cannot find name 'DataAggregator'.
+src/app-ng/feature/api/services/datasource.service.ts:407:20 - TS2552: Cannot find name 'DataAggregator'. Did you mean 'dataAggregator'?
 src/app-ng/feature/api/services/datasource.service.ts:718:24 - TS2350: Only a void function can be called with the 'new' keyword.
 src/app-ng/feature/components/tb-on-finish-render/tb-on-finish-render.directive.ts:24:26 - TS2339: Property 'finishRender' does not exist on type 'TbOnFinishRenderDirective'.
-src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:14:28 - TS2307: Cannot find module '../../../../app/components/js-func.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:114:6 - TS2339: Property 'formSubmitSub' does not exist on type 'TbJsFuncDirective'.
-src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:114:27 - TS2339: Property 'rootScope' does not exist on type 'TbJsFuncDirective'.
-src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:124:6 - TS2551: Property 'updateAceEditorSizeSub' does not exist on type 'TbJsFuncDirective'. Did you mean 'updateEditorSize'?
-src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:124:36 - TS2339: Property 'rootScope' does not exist on type 'TbJsFuncDirective'.
 src/app-ng/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts:5:43 - TS2591: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
-src/app-ng/feature/components/tb-nav-tree/tb-nav-tree.directive.ts:48:14 - TS2339: Property 'jstree' does not exist on type 'JQuery<HTMLElement>'.
-src/app-ng/feature/entity/add-attribute-dialog/add-attribute-dialog.component.ts:8:45 - TS2307: Cannot find module '../../../../app/entity/attribute/attribute-dialog-edit-json.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts:9:36 - TS2307: Cannot find module '../../../../app/entity/entity-type-list.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/extension/tb-extension-form-modbus/tb-extension-form-modbus.directive.ts:8:41 - TS2307: Cannot find module '../../../../app/extension/extensions-forms/extension-form-modbus.tpl.html?raw' or its corresponding type declarations.
 src/app-ng/feature/extension/tb-extension-form-modbus/tb-extension-form-modbus.directive.ts:32:2 - TS2304: Cannot find name 'Component'.
-src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:10:39 - TS2307: Cannot find module '../../../../app/extension/extensions-forms/extension-form-mqtt.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:34:2 - TS2304: Cannot find name 'Component'.
 src/app-ng/feature/rulechain/services/rule-node-script-test.service.ts:10:41 - TS2307: Cannot find module '../script/node-script-test.component' or its corresponding type declarations.
 src/app-ng/feature/widget/date-range-navigator-widget/date-range-navigator-widget.directive.ts:4:23 - TS2307: Cannot find module '../../../../app/widget/lib/date-range-navigator/date-range-navigator.tpl.html' or its corresponding type declarations.
 src/app-ng/feature/widget/date-range-navigator-widget/date-range-navigator-widget.directive.ts:127:5 - TS2304: Cannot find name 'dashboardTimewindowChangedSubscription'.
@@ -78,93 +41,28 @@ src/app-ng/feature/widget/date-range-navigator-widget/date-range-navigator-widge
 src/app-ng/feature/widget/date-range-navigator-widget/date-range-navigator-widget.directive.ts:175:24 - TS2304: Cannot find name 'datePipe'.
 src/app-ng/feature/widget/date-range-navigator-widget/date-range-navigator-widget.directive.ts:181:17 - TS2304: Cannot find name 'datePipe'.
 src/app-ng/feature/widget/tb-alarms-table-widget/tb-alarms-table-widget.directive.ts:767:19 - TS2307: Cannot find module 'cssjs' or its corresponding type declarations.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:19:11 - TS2395: Individual declarations in merged declaration 'TbEntitiesHierarchyWidgetDirective' must be all exported or all local.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:540:14 - TS2395: Individual declarations in merged declaration 'TbEntitiesHierarchyWidgetDirective' must be all exported or all local.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:552:22 - TS2304: Cannot find name 'entitiesHierarchyWidgetTemplate'.
-src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:125:16 - TS2304: Cannot find name 'signal'.
 src/app-ng/feature/widget/tb-multiple-input-widget/tb-multiple-input-widget.directive.ts:5:41 - TS2307: Cannot find module '../../../../app/widget/lib/multiple-input-widget.tpl.html' or its corresponding type declarations.
-src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:4:43 - TS2307: Cannot find module '../../../../app/widget/lib/timeseries-table-widget.tpl.html?raw' or its corresponding type declarations.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.ts:640:73 - TS2554: Expected 2 arguments, but got 3.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.ts:852:22 - TS2304: Cannot find name 'angular'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.ts:852:50 - TS2304: Cannot find name 'angular'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.ts:870:13 - TS2304: Cannot find name 'angular'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.ts:871:17 - TS2304: Cannot find name 'angular'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.ts:963:22 - TS2304: Cannot find name 'template'.
-src/app-ng/feature/audit/tb-audit-log-table/tb-audit-log-table.directive.ts:36:5 - NG1010: 'imports' must be an array of components, directives, pipes, or NgModules.   Value could not be determined statically.
 src/app-ng/feature/layout/tb-user-menu/tb-user-menu.directive.html:23:50 - TS2339: Property 'userDisplayName' does not exist on type 'TbUserMenuDirective'.
 src/app-ng/feature/layout/tb-user-menu/tb-user-menu.directive.html:24:47 - TS2339: Property 'authorityName' does not exist on type 'TbUserMenuDirective'.
 src/app-ng/feature/layout/tb-user-menu/tb-user-menu.directive.html:33:48 - TS2339: Property 'openProfile' does not exist on type 'TbUserMenuDirective'.
 src/app-ng/feature/layout/tb-user-menu/tb-user-menu.directive.html:39:48 - TS2339: Property 'logout' does not exist on type 'TbUserMenuDirective'.
 src/app-ng/feature/components/tb-dashboard/tb-dashboard.directive.html:131:2 - NG5002: Unexpected closing tag "mat-menu". It may happen when the tag has already been closed by another tag. For more info see https://www.w3.org/TR/html5/syntax.html#closing-elements-that-have-implied-end-tags
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:20:95 - TS2339: Property 'forceFullscreen' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:21:124 - TS2551: Property 'toolbarOpened' does not exist on type 'DashboardComponent'. Did you mean 'isToolbarOpened'?
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:21:171 - TS2551: Property 'toolbarOpened' does not exist on type 'DashboardComponent'. Did you mean 'isToolbarOpened'?
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:22:82 - TS2339: Property 'forceFullscreen' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:22:118 - TS2551: Property 'toolbarOpened' does not exist on type 'DashboardComponent'. Did you mean 'isToolbarOpened'?
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:22:82 - TS2339: Property 'forceFullscreen' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:22:118 - TS2551: Property 'toolbarOpened' does not exist on type 'DashboardComponent'. Did you mean 'isToolbarOpened'?
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:29:45 - TS2339: Property 'forceFullscreen' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:59:45 - TS2339: Property 'forceFullscreen' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:74:112 - TS2339: Property 'vm' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:74:112 - TS2339: Property 'vm' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:78:154 - TS2339: Property 'vm' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:78:154 - TS2339: Property 'vm' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:85:92 - TS2339: Property 'forceFullscreen' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:85:140 - TS2551: Property 'toolbarOpened' does not exist on type 'DashboardComponent'. Did you mean 'isToolbarOpened'?
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:85:187 - TS2551: Property 'toolbarOpened' does not exist on type 'DashboardComponent'. Did you mean 'isToolbarOpened'?
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:116:379 - TS2339: Property 'widgetForm' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:116:311 - TS2339: Property 'widgetForm' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:116:353 - TS2339: Property 'widgetForm' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:116:379 - TS2339: Property 'widgetForm' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:122:225 - TS2339: Property 'widgetForm' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:122:225 - TS2339: Property 'widgetForm' does not exist on type 'DashboardComponent'.
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:117:13 - NG8001: 'details-buttons' is not a known element:
-1. If 'details-buttons' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:117:30 - NG8002: Can't bind to 'tbHelp' since it isn't a known property of 'details-buttons'.
-1. If 'details-buttons' is an Angular component and it has 'tbHelp' input, then verify that it is included in the '@Component.imports' of this component.
-2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+src/app-ng/feature/dashboard/dashboard/dashboard.component.html:117:13 - NG8001: 'tb-details-buttons' is not a known element:
+1. If 'tb-details-buttons' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'tb-details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/dashboard/dashboard/dashboard.component.html:117:33 - NG8002: Can't bind to 'tbHelp' since it isn't a known property of 'tb-details-buttons'.
+1. If 'tb-details-buttons' is an Angular component and it has 'tbHelp' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'tb-details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
 3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
-src/app-ng/feature/dashboard/dashboard/dashboard.component.html:130:15 - NG8001: 'header-pane' is not a known element:
-1. If 'header-pane' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'header-pane' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/dashboard/dashboard/dashboard.component.html:130:15 - NG8001: 'tb-header-pane' is not a known element:
+1. If 'tb-header-pane' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'tb-header-pane' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
 src/app-ng/feature/components/tb-side-menu/tb-side-menu.directive.html:21:67 - TS2339: Property 'isOpen' does not exist on type 'TbSideMenuDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:19:135 - TS2339: Property 'noData' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:19:148 - TS2339: Property 'noItemsText' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:22:149 - TS2339: Property 'hasData' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:25:43 - TS2339: Property 'columns' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:26:28 - TS2339: Property 'rowItem' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:27:54 - TS2339: Property 'itemHeight' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:28:66 - TS2339: Property 'isCurrentItem' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:28:80 - TS2339: Property 'rowItem' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:28:153 - TS2339: Property 'itemHeight' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:28:203 - TS2339: Property 'clickItemFunc' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:28:225 - TS2339: Property 'rowItem' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:32:46 - TS2339: Property 'isSelectionEnabled' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:32:65 - TS2339: Property 'rowItem' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:33:197 - TS2339: Property 'rowItem' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:33:66 - TS2339: Property 'toggleItemSelection' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:33:94 - TS2339: Property 'rowItem' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:39:69 - TS2339: Property 'getItemTitleFunc' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:39:86 - TS2339: Property 'rowItem' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:44:73 - TS2339: Property 'vm' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:44:92 - TS2339: Property 'parentCtl' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:44:123 - TS2339: Property 'itemCardController' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:44:161 - TS2339: Property 'itemCardTemplate' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:44:189 - TS2339: Property 'rowItem' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:44:73 - TS2339: Property 'vm' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:44:92 - TS2339: Property 'parentCtl' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:44:123 - TS2339: Property 'itemCardController' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:44:161 - TS2339: Property 'itemCardTemplate' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:44:189 - TS2339: Property 'rowItem' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:47:49 - TS2339: Property 'actionsList' does not exist on type 'TbGridDirective'.
-src/app-ng/feature/components/tb-grid/tb-grid.directive.html:22:108 - NG8001: 'md-virtual-repeat-container' is not a known element:
-1. If 'md-virtual-repeat-container' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-virtual-repeat-container' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
 src/app-ng/feature/alarm/tb-alarm-table/tb-alarm-table.directive.html:46:105 - NG8002: Can't bind to 'alarm' since it isn't a known property of 'mat-list'.
 1. If 'mat-list' is an Angular component and it has 'alarm' input, then verify that it is included in the '@Component.imports' of this component.
 2. If 'mat-list' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
 3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
+src/app-ng/feature/alarm/tb-alarm-table/tb-alarm-table.directive.html:39:14 - NG8023: Multiple components match node with tagname mat-list: 'MatList', 'TbAlarmHeaderDirective'. Find more at https://next.angular.dev/errors/NG8023
 src/app-ng/feature/event/tb-event-table/tb-event-table.directive.html:43:9 - NG8001: 'cdk-virtual-scroll-viewport' is not a known element:
 1. If 'cdk-virtual-scroll-viewport' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
 2. If 'cdk-virtual-scroll-viewport' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
@@ -233,7 +131,45 @@ src/app-ng/feature/entity/tb-relation-table/tb-relation-table.directive.html:131
 1. If 'mat-paginator' is an Angular component and it has 'pageIndex' input, then verify that it is included in the '@Component.imports' of this component.
 2. If 'mat-paginator' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
 3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
+src/app-ng/feature/audit/tb-audit-log-table/tb-audit-log-table.directive.html:51:172 - TS2551: Property 'auditLog' does not exist on type 'TbAuditLogTableDirective'. Did you mean 'auditLogs'?
+src/app-ng/feature/asset/asset/asset.component.html:25:206 - TS2339: Property 'event' does not exist on type 'AssetComponent'.
+src/app-ng/feature/asset/asset/asset.component.html:25:283 - TS2339: Property 'event' does not exist on type 'AssetComponent'.
+src/app-ng/feature/asset/asset/asset.component.html:25:370 - TS2339: Property 'event' does not exist on type 'AssetComponent'.
+src/app-ng/feature/asset/asset/asset.component.html:25:409 - TS2339: Property 'isPublic' does not exist on type 'AssetComponent'.
+src/app-ng/feature/asset/asset/asset.component.html:25:453 - TS2339: Property 'event' does not exist on type 'AssetComponent'.
+src/app-ng/feature/asset/asset/asset.component.html:20:5 - NG8001: 'details-buttons' is not a known element:
+1. If 'details-buttons' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/asset/asset/asset.component.html:20:22 - NG8002: Can't bind to 'tbHelp' since it isn't a known property of 'details-buttons'.
+1. If 'details-buttons' is an Angular component and it has 'tbHelp' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
+src/app-ng/feature/customer/customer/customer.component.html:25:170 - TS2339: Property 'event' does not exist on type 'CustomerComponent'.
+src/app-ng/feature/customer/customer/customer.component.html:25:247 - TS2339: Property 'event' does not exist on type 'CustomerComponent'.
+src/app-ng/feature/customer/customer/customer.component.html:25:326 - TS2339: Property 'event' does not exist on type 'CustomerComponent'.
+src/app-ng/feature/customer/customer/customer.component.html:25:411 - TS2339: Property 'event' does not exist on type 'CustomerComponent'.
+src/app-ng/feature/customer/customer/customer.component.html:25:487 - TS2339: Property 'event' does not exist on type 'CustomerComponent'.
+src/app-ng/feature/customer/customer/customer.component.html:20:2 - NG8001: 'details-buttons' is not a known element:
+1. If 'details-buttons' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/customer/customer/customer.component.html:20:19 - NG8002: Can't bind to 'tbHelp' since it isn't a known property of 'details-buttons'.
+1. If 'details-buttons' is an Angular component and it has 'tbHelp' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
 src/app-ng/feature/components/tb-social-share-panel/tb-social-share-panel.directive.html:19:32 - TS2339: Property 'isShareLinkLocal' does not exist on type 'TbSocialSharePanelDirective'.
+src/app-ng/feature/dashboard/dashboards/dashboards.component.html:25:237 - TS2339: Property 'event' does not exist on type 'DashboardsComponent'.
+src/app-ng/feature/dashboard/dashboards/dashboards.component.html:25:306 - TS2339: Property 'event' does not exist on type 'DashboardsComponent'.
+src/app-ng/feature/dashboard/dashboards/dashboards.component.html:25:399 - TS2339: Property 'event' does not exist on type 'DashboardsComponent'.
+src/app-ng/feature/dashboard/dashboards/dashboards.component.html:25:486 - TS2339: Property 'event' does not exist on type 'DashboardsComponent'.
+src/app-ng/feature/dashboard/dashboards/dashboards.component.html:25:575 - TS2339: Property 'event' does not exist on type 'DashboardsComponent'.
+src/app-ng/feature/dashboard/dashboards/dashboards.component.html:25:652 - TS2339: Property 'event' does not exist on type 'DashboardsComponent'.
+src/app-ng/feature/dashboard/dashboards/dashboards.component.html:20:2 - NG8001: 'details-buttons' is not a known element:
+1. If 'details-buttons' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/dashboard/dashboards/dashboards.component.html:20:19 - NG8002: Can't bind to 'tbHelp' since it isn't a known property of 'details-buttons'.
+1. If 'details-buttons' is an Angular component and it has 'tbHelp' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
 src/app-ng/feature/extension/tb-extension-table/tb-extension-table.directive.html:22:73 - TS2339: Property 'selectedExtensions' does not exist on type 'TbExtensionTableDirective'.
 src/app-ng/feature/extension/tb-extension-table/tb-extension-table.directive.html:23:90 - TS2339: Property 'query' does not exist on type 'TbExtensionTableDirective'.
 src/app-ng/feature/extension/tb-extension-table/tb-extension-table.directive.html:28:50 - TS2339: Property 'importExtensions' does not exist on type 'TbExtensionTableDirective'.
@@ -266,6 +202,31 @@ src/app-ng/feature/extension/tb-extension-table/tb-extension-table.directive.htm
 src/app-ng/feature/extension/tb-extension-table/tb-extension-table.directive.html:131:66 - NG8001: 'md-table-pagination' is not a known element:
 1. If 'md-table-pagination' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
 2. If 'md-table-pagination' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/device/device/device.component.html:25:210 - TS2339: Property 'event' does not exist on type 'DeviceComponent'.
+src/app-ng/feature/device/device/device.component.html:25:287 - TS2339: Property 'event' does not exist on type 'DeviceComponent'.
+src/app-ng/feature/device/device/device.component.html:25:374 - TS2339: Property 'event' does not exist on type 'DeviceComponent'.
+src/app-ng/feature/device/device/device.component.html:25:413 - TS2339: Property 'isPublic' does not exist on type 'DeviceComponent'.
+src/app-ng/feature/device/device/device.component.html:25:465 - TS2339: Property 'event' does not exist on type 'DeviceComponent'.
+src/app-ng/feature/device/device/device.component.html:25:539 - TS2339: Property 'event' does not exist on type 'DeviceComponent'.
+src/app-ng/feature/device/device/device.component.html:20:5 - NG8001: 'details-buttons' is not a known element:
+1. If 'details-buttons' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/device/device/device.component.html:20:22 - NG8002: Can't bind to 'tbHelp' since it isn't a known property of 'details-buttons'.
+1. If 'details-buttons' is an Angular component and it has 'tbHelp' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
+src/app-ng/feature/entity-view/entity-view/entity-view.component.html:25:227 - TS2339: Property 'event' does not exist on type 'EntityViewComponent'.
+src/app-ng/feature/entity-view/entity-view/entity-view.component.html:25:304 - TS2339: Property 'event' does not exist on type 'EntityViewComponent'.
+src/app-ng/feature/entity-view/entity-view/entity-view.component.html:25:391 - TS2339: Property 'event' does not exist on type 'EntityViewComponent'.
+src/app-ng/feature/entity-view/entity-view/entity-view.component.html:25:430 - TS2339: Property 'isPublic' does not exist on type 'EntityViewComponent'.
+src/app-ng/feature/entity-view/entity-view/entity-view.component.html:25:479 - TS2339: Property 'event' does not exist on type 'EntityViewComponent'.
+src/app-ng/feature/entity-view/entity-view/entity-view.component.html:20:5 - NG8001: 'details-buttons' is not a known element:
+1. If 'details-buttons' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/entity-view/entity-view/entity-view.component.html:20:22 - NG8002: Can't bind to 'tbHelp' since it isn't a known property of 'details-buttons'.
+1. If 'details-buttons' is an Angular component and it has 'tbHelp' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
 src/app-ng/feature/rulechain/rule-chain/rule-chain.component.html:29:90 - NG8001: 'md-sidenav' is not a known element:
 1. If 'md-sidenav' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
 2. If 'md-sidenav' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
@@ -313,176 +274,65 @@ src/app-ng/feature/rulechain/rule-chain/rule-chain.component.html:150:30 - NG800
 1. If 'details-buttons' is an Angular component and it has 'tbHelp' input, then verify that it is included in the '@Component.imports' of this component.
 2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
 3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
+src/app-ng/feature/rulechain/rule-chains/rule-chains.component.html:23:91 - TS2339: Property 'isRuleChainEditable' does not exist on type 'RuleChainsComponent'.
+src/app-ng/feature/rulechain/rule-chains/rule-chains.component.html:25:252 - TS2339: Property 'event' does not exist on type 'RuleChainsComponent'.
+src/app-ng/feature/rulechain/rule-chains/rule-chains.component.html:25:329 - TS2339: Property 'event' does not exist on type 'RuleChainsComponent'.
+src/app-ng/feature/rulechain/rule-chains/rule-chains.component.html:25:406 - TS2339: Property 'event' does not exist on type 'RuleChainsComponent'.
+src/app-ng/feature/rulechain/rule-chains/rule-chains.component.html:28:57 - TS2339: Property 'isRuleChainEditable' does not exist on type 'RuleChainsComponent'.
+src/app-ng/feature/rulechain/rule-chains/rule-chains.component.html:34:57 - TS2339: Property 'isRuleChainEditable' does not exist on type 'RuleChainsComponent'.
+src/app-ng/feature/rulechain/rule-chains/rule-chains.component.html:40:57 - TS2339: Property 'isRuleChainEditable' does not exist on type 'RuleChainsComponent'.
+src/app-ng/feature/rulechain/rule-chains/rule-chains.component.html:46:57 - TS2339: Property 'isRuleChainEditable' does not exist on type 'RuleChainsComponent'.
+src/app-ng/feature/rulechain/rule-chains/rule-chains.component.html:52:57 - TS2339: Property 'isRuleChainEditable' does not exist on type 'RuleChainsComponent'.
+src/app-ng/feature/rulechain/rule-chains/rule-chains.component.html:58:57 - TS2339: Property 'isRuleChainEditable' does not exist on type 'RuleChainsComponent'.
+src/app-ng/feature/rulechain/rule-chains/rule-chains.component.html:20:5 - NG8001: 'details-buttons' is not a known element:
+1. If 'details-buttons' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/rulechain/rule-chains/rule-chains.component.html:20:22 - NG8002: Can't bind to 'tbHelp' since it isn't a known property of 'details-buttons'.
+1. If 'details-buttons' is an Angular component and it has 'tbHelp' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
 src/app-ng/feature/tenant/tenant/tenant.component.html:20:7 - NG8002: Can't bind to 'tbHelp' since it isn't a known property of 'div'. Find more at https://next.angular.dev/errors/NG8002
-src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.html:65:90 - NG5002: Empty expressions are not allowed
-src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.html:76:90 - NG5002: Empty expressions are not allowed
-src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.html:123:94 - NG5002: Empty expressions are not allowed
-src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.html:134:94 - NG5002: Empty expressions are not allowed
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:26:119 - TS2339: Property 'idForm' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:33:133 - TS2339: Property 'collapsePanel' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:33:147 - TS2339: Property 'idForm' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:40:123 - TS2339: Property 'gatewayConfiguration' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:40:162 - TS2339: Property 'gateways' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:40:227 - TS2339: Property 'createDevice' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:40:123 - TS2339: Property 'gatewayConfiguration' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:40:162 - TS2339: Property 'gateways' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:40:227 - TS2339: Property 'createDevice' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:51:42 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'string | boolean'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:52:55 - TS2339: Property 'securityTypes' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:62:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'BooleanInput'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:62:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'string | boolean'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:72:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'BooleanInput'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:72:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'string | boolean'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:90:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'BooleanInput'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:90:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'string | boolean'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:94:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'BooleanInput'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:94:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'string | boolean'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:98:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'BooleanInput'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:98:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'string | boolean'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:108:46 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'string | boolean'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:118:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'BooleanInput'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:118:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'string | boolean'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:129:119 - TS2339: Property 'idForm' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:136:133 - TS2339: Property 'collapsePanel' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:136:147 - TS2339: Property 'idForm' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:144:42 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'string | boolean'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:145:54 - TS2339: Property 'storageTypes' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:156:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'BooleanInput'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:156:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'string | boolean'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:170:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'BooleanInput'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:170:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'string | boolean'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:187:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'BooleanInput'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:187:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'string | boolean'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:200:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'BooleanInput'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:200:50 - TS2322: Type 'ModelSignal<any>' is not assignable to type 'string | boolean'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:212:119 - TS2339: Property 'idForm' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:219:133 - TS2339: Property 'collapsePanel' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:219:147 - TS2339: Property 'idForm' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:225:103 - TS2339: Property 'gatewayConfiguration' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:225:103 - TS2339: Property 'gatewayConfiguration' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:233:94 - TS2339: Property 'gatewayConfiguration' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:233:129 - TS2339: Property 'gatewayConfiguration' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:233:66 - TS2339: Property 'exportConfig' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:239:101 - TS2339: Property 'gatewayConfiguration' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:239:136 - TS2339: Property 'gatewayConfiguration' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:239:66 - TS2339: Property 'saveAttributeConfig' does not exist on type 'TbGatewayFormDirective'.
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:25:107 - NG8001: 'md-expansion-panel-group' is not a known element:
-1. If 'md-expansion-panel-group' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-group' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:26:75 - NG8001: 'md-expansion-panel' is not a known element:
-1. If 'md-expansion-panel' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:27:98 - NG8001: 'md-expansion-panel-collapsed' is not a known element:
-1. If 'md-expansion-panel-collapsed' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-collapsed' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:30:107 - NG8001: 'md-expansion-panel-icon' is not a known element:
-1. If 'md-expansion-panel-icon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-icon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:32:86 - NG8001: 'md-expansion-panel-expanded' is not a known element:
-1. If 'md-expansion-panel-expanded' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-expanded' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:33:97 - NG8001: 'md-expansion-panel-header' is not a known element:
-1. If 'md-expansion-panel-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:36:111 - NG8001: 'md-expansion-panel-icon' is not a known element:
-1. If 'md-expansion-panel-icon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-icon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:38:89 - NG8001: 'md-expansion-panel-content' is not a known element:
-1. If 'md-expansion-panel-content' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-content' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:129:75 - NG8001: 'md-expansion-panel' is not a known element:
-1. If 'md-expansion-panel' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:130:98 - NG8001: 'md-expansion-panel-collapsed' is not a known element:
-1. If 'md-expansion-panel-collapsed' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-collapsed' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:133:107 - NG8001: 'md-expansion-panel-icon' is not a known element:
-1. If 'md-expansion-panel-icon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-icon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:135:86 - NG8001: 'md-expansion-panel-expanded' is not a known element:
-1. If 'md-expansion-panel-expanded' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-expanded' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:136:97 - NG8001: 'md-expansion-panel-header' is not a known element:
-1. If 'md-expansion-panel-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:139:111 - NG8001: 'md-expansion-panel-icon' is not a known element:
-1. If 'md-expansion-panel-icon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-icon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:141:89 - NG8001: 'md-expansion-panel-content' is not a known element:
-1. If 'md-expansion-panel-content' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-content' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:212:75 - NG8001: 'md-expansion-panel' is not a known element:
-1. If 'md-expansion-panel' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:213:98 - NG8001: 'md-expansion-panel-collapsed' is not a known element:
-1. If 'md-expansion-panel-collapsed' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-collapsed' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:216:107 - NG8001: 'md-expansion-panel-icon' is not a known element:
-1. If 'md-expansion-panel-icon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-icon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:218:86 - NG8001: 'md-expansion-panel-expanded' is not a known element:
-1. If 'md-expansion-panel-expanded' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-expanded' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:219:97 - NG8001: 'md-expansion-panel-header' is not a known element:
-1. If 'md-expansion-panel-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:222:111 - NG8001: 'md-expansion-panel-icon' is not a known element:
-1. If 'md-expansion-panel-icon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-icon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:224:89 - NG8001: 'md-expansion-panel-content' is not a known element:
-1. If 'md-expansion-panel-content' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'md-expansion-panel-content' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/user/user/user.component.html:25:176 - TS2339: Property 'event' does not exist on type 'UserComponent'.
+src/app-ng/feature/user/user/user.component.html:25:382 - TS2339: Property 'event' does not exist on type 'UserComponent'.
+src/app-ng/feature/user/user/user.component.html:25:511 - TS2551: Property 'userCredentialsEnabled' does not exist on type 'UserComponent'. Did you mean 'setUserCredentialsEnabled'?
+src/app-ng/feature/user/user/user.component.html:20:2 - NG8001: 'details-buttons' is not a known element:
+1. If 'details-buttons' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/user/user/user.component.html:20:19 - NG8002: Can't bind to 'tbHelp' since it isn't a known property of 'details-buttons'.
+1. If 'details-buttons' is an Angular component and it has 'tbHelp' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'details-buttons' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
+src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:27:9 - NG8001: 'mat-accordion' is not a known element:
+1. If 'mat-accordion' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-accordion' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:28:13 - NG8001: 'mat-expansion-panel' is not a known element:
+1. If 'mat-expansion-panel' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-expansion-panel' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:29:17 - NG8001: 'mat-expansion-panel-header' is not a known element:
+1. If 'mat-expansion-panel-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-expansion-panel-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:30:21 - NG8001: 'mat-panel-title' is not a known element:
+1. If 'mat-panel-title' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-panel-title' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:120:13 - NG8001: 'mat-expansion-panel' is not a known element:
+1. If 'mat-expansion-panel' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-expansion-panel' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:121:17 - NG8001: 'mat-expansion-panel-header' is not a known element:
+1. If 'mat-expansion-panel-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-expansion-panel-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:122:21 - NG8001: 'mat-panel-title' is not a known element:
+1. If 'mat-panel-title' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-panel-title' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:192:13 - NG8001: 'mat-expansion-panel' is not a known element:
+1. If 'mat-expansion-panel' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-expansion-panel' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:193:17 - NG8001: 'mat-expansion-panel-header' is not a known element:
+1. If 'mat-expansion-panel-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-expansion-panel-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/components/tb-gateway-form/tb-gateway-form.directive.html:194:21 - NG8001: 'mat-panel-title' is not a known element:
+1. If 'mat-panel-title' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-panel-title' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
 src/app-ng/feature/dashboard/add-widget/add-widget.component.html:19:77 - NG8002: Can't bind to 'tb-help' since it isn't a known property of 'div'. Find more at https://next.angular.dev/errors/NG8002
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:23:42 - TS2339: Property 'remove' does not exist on type 'TbEntityTypeListDirective'.
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:34:33 - TS2339: Property 'entityTypeSearchText' does not exist on type 'TbEntityTypeListDirective'.
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:34:33 - TS2339: Property 'entityTypeSearchText' does not exist on type 'TbEntityTypeListDirective'.
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:36:28 - TS2339: Property 'onBlur' does not exist on type 'TbEntityTypeListDirective'.
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:38:87 - TS2339: Property 'selected' does not exist on type 'TbEntityTypeListDirective'.
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:39:44 - TS2339: Property 'entityTypeSearchText' does not exist on type 'TbEntityTypeListDirective'.
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:45:91 - TS2339: Property 'entityTypeSearchText' does not exist on type 'TbEntityTypeListDirective'.
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:20:5 - NG8001: 'mat-form-field' is not a known element:
-1. If 'mat-form-field' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'mat-form-field' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:21:9 - NG8001: 'mat-chip-grid' is not a known element:
-1. If 'mat-chip-grid' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'mat-chip-grid' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:21:44 - NG8002: Can't bind to 'disabled' since it isn't a known property of 'mat-chip-grid'.
-1. If 'mat-chip-grid' is an Angular component and it has 'disabled' input, then verify that it is included in the '@Component.imports' of this component.
-2. If 'mat-chip-grid' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
-3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:23:17 - NG8001: 'mat-chip-row' is not a known element:
-1. If 'mat-chip-row' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'mat-chip-row' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:23:62 - NG8002: Can't bind to 'disabled' since it isn't a known property of 'mat-chip-row'.
-1. If 'mat-chip-row' is an Angular component and it has 'disabled' input, then verify that it is included in the '@Component.imports' of this component.
-2. If 'mat-chip-row' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
-3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:26:25 - NG8001: 'mat-icon' is not a known element:
-1. If 'mat-icon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'mat-icon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:32:20 - NG8002: Can't bind to 'matChipInputFor' since it isn't a known property of 'input'. Find more at https://next.angular.dev/errors/NG8002
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:33:20 - NG8002: Can't bind to 'matAutocomplete' since it isn't a known property of 'input'. Find more at https://next.angular.dev/errors/NG8002
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:38:9 - NG8001: 'mat-autocomplete' is not a known element:
-1. If 'mat-autocomplete' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'mat-autocomplete' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:40:17 - NG8001: 'mat-option' is not a known element:
-1. If 'mat-option' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'mat-option' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:40:29 - NG8002: Can't bind to 'value' since it isn't a known property of 'mat-option'.
-1. If 'mat-option' is an Angular component and it has 'value' input, then verify that it is included in the '@Component.imports' of this component.
-2. If 'mat-option' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
-3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:44:17 - NG8001: 'mat-option' is not a known element:
-1. If 'mat-option' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'mat-option' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:44:29 - NG8002: Can't bind to 'disabled' since it isn't a known property of 'mat-option'.
-1. If 'mat-option' is an Angular component and it has 'disabled' input, then verify that it is included in the '@Component.imports' of this component.
-2. If 'mat-option' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
-3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. Find more at https://next.angular.dev/errors/NG8002
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:38:52 - NG8003: No directive found with exportAs 'matAutocomplete'. Find more at https://next.angular.dev/errors/NG8003
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:45:66 - NG8004: No pipe found with name 'translate'.
-src/app-ng/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html:53:78 - NG8004: No pipe found with name 'translate'.
-src/app-ng/feature/import-export/import-dialog-csv/import-dialog-csv.component.html:19:90 - NG8002: Can't bind to 'tbHelp' since it isn't a known property of 'div'. Find more at https://next.angular.dev/errors/NG8002
 src/app-ng/feature/import-export/import-dialog-csv/import-dialog-csv.component.html:74:53 - NG8001: 'md-step' is not a known element:
 1. If 'md-step' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
 2. If 'md-step' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
@@ -548,63 +398,21 @@ src/app-ng/feature/widget/tb-alarms-table-widget/tb-alarms-table-widget.directiv
 src/app-ng/feature/widget/tb-alarms-table-widget/tb-alarms-table-widget.directive.html:95:11 - NG8001: 'md-table-pagination' is not a known element:
 1. If 'md-table-pagination' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
 2. If 'md-table-pagination' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:20:22 - TS2339: Property 'showData' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:21:70 - TS2339: Property 'query' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:29:50 - TS2339: Property 'query' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:29:50 - TS2339: Property 'query' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:31:69 - TS2339: Property 'exitFilterMode' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:38:41 - TS2339: Property 'loadNodes' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:38:169 - TS2339: Property 'nodeEditCallbacks' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:38:41 - TS2339: Property 'loadNodes' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:38:70 - TS2339: Property 'onNodeSelected' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:38:85 - TS2339: Property 'node' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:38:91 - TS2339: Property 'event' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:38:118 - TS2339: Property 'onNodesInserted' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:38:134 - TS2339: Property 'nodes' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:38:141 - TS2339: Property 'parent' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:38:169 - TS2339: Property 'nodeEditCallbacks' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:38:226 - TS2339: Property 'searchCallback' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:38:241 - TS2339: Property 'searchText' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
-src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html:38:253 - TS2339: Property 'node' does not exist on type 'TbEntitiesHierarchyWidgetDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:19:110 - TS2339: Property 'widgetConfig' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:21:11 - TS2339: Property 'trips' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:21:19 - TS2339: Property 'activeTripIndex' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:26:78 - TS2339: Property 'staticSettings' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:26:120 - TS2339: Property 'showHideTooltip' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:30:90 - TS2339: Property 'staticSettings' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:30:214 - TS2339: Property 'staticSettings' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:30:255 - TS2339: Property 'staticSettings' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:30:296 - TS2339: Property 'staticSettings' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:30:169 - TS2339: Property 'mainTooltip' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:35:65 - TS2339: Property 'moveStart' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:36:71 - TS2339: Property 'staticSettings' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:38:68 - TS2339: Property 'movePrev' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:39:71 - TS2339: Property 'staticSettings' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:41:52 - TS2339: Property 'minTimeIndex' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:41:75 - TS2339: Property 'maxTimeIndex' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:41:38 - TS2339: Property 'index' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:41:38 - TS2339: Property 'index' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:41:108 - TS2339: Property 'recalculateTrips' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:42:64 - TS2339: Property 'moveNext' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:43:71 - TS2339: Property 'staticSettings' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:45:63 - TS2339: Property 'moveEnd' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:46:71 - TS2339: Property 'staticSettings' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:48:92 - TS2339: Property 'isPlaying' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:48:64 - TS2339: Property 'playMove' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:49:71 - TS2339: Property 'isPlaying' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:49:83 - TS2339: Property 'staticSettings' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:49:121 - TS2339: Property 'staticSettings' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:53:38 - TS2339: Property 'speed' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:53:38 - TS2339: Property 'speed' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:54:32 - TS2339: Property 'speeds' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:59:97 - TS2339: Property 'isPlaying' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:59:72 - TS2339: Property 'stopPlay' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:60:71 - TS2339: Property 'isPlaying' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:60:83 - TS2339: Property 'staticSettings' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:60:113 - TS2339: Property 'staticSettings' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:66:31 - TS2339: Property 'animationTime' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:66:50 - TS2339: Property 'animationTime' does not exist on type 'TripAnimationDirective'.
-src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:67:29 - TS2339: Property 'animationTime' does not exist on type 'TripAnimationDirective'.
 src/app-ng/feature/widget/trip-animation/trip-animation.directive.html:34:9 - NG8001: 'md-slider-container' is not a known element:
 1. If 'md-slider-container' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
 2. If 'md-slider-container' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
@@ -620,10 +428,17 @@ src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:628:154 - warning NG8
 src/app-ng/feature/alarm/tb-alarm-table/tb-alarm-table.directive.ts:38:330 - warning NG8113: TbScopeElementDirective is not used within the template of TbAlarmTableDirective
 src/app-ng/feature/event/tb-event-table/tb-event-table.directive.ts:39:313 - warning NG8113: TbScopeElementDirective is not used within the template of TbEventTableDirective
 src/app-ng/feature/event/tb-event-table/tb-event-table.directive.html:44:28 - warning NG8116: NG8116: A structural directive `cdkVirtualFor` was used in the template without a corresponding import in the component. Make sure that the directive is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8116
+src/app-ng/feature/asset/asset/asset.component.ts:44:74 - warning NG8113: TbHelpDirective is not used within the template of AssetComponent
+src/app-ng/feature/customer/customer/customer.component.ts:28:109 - warning NG8113: TbHelpDirective is not used within the template of CustomerComponent
+src/app-ng/feature/dashboard/dashboards/dashboards.component.ts:41:109 - warning NG8113: TbHelpDirective is not used within the template of DashboardsComponent
+src/app-ng/feature/device/device/device.component.ts:47:109 - warning NG8113: TbHelpDirective is not used within the template of DeviceComponent
+src/app-ng/feature/entity-view/entity-view/entity-view.component.ts:43:109 - warning NG8113: TbHelpDirective is not used within the template of EntityViewComponent
 src/app-ng/feature/rulechain/rule-chain/rule-chain.component.ts:61:232 - warning NG8113: TbExpandFullscreenDirective is not used within the template of RuleChainComponent
 src/app-ng/feature/rulechain/rule-chain/rule-chain.component.ts:61:368 - warning NG8113: TbHelpDirective is not used within the template of RuleChainComponent
 src/app-ng/feature/rulechain/rule-chain/rule-chain.component.html:55:23 - warning NG8112: NG8112: @let typeModel is declared but its value is never read. Find more at https://v22.angular.dev/extended-diagnostics/NG8112
+src/app-ng/feature/rulechain/rule-chains/rule-chains.component.ts:35:109 - warning NG8113: TbHelpDirective is not used within the template of RuleChainsComponent
 src/app-ng/feature/tenant/tenant/tenant.component.ts:27:109 - warning NG8113: TbHelpDirective is not used within the template of TenantComponent
+src/app-ng/feature/user/user/user.component.ts:33:74 - warning NG8113: TbHelpDirective is not used within the template of UserComponent
 src/app-ng/feature/widget/widget-editor/widget-editor.component.ts:54:279 - warning NG8113: TbExpandFullscreenDirective is not used within the template of WidgetEditorComponent
 src/app-ng/feature/widget/widget-editor/widget-editor.component.ts:54:326 - warning NG8113: TbCircularProgressDirective is not used within the template of WidgetEditorComponent
 src/app-ng/feature/asset/add-assets-to-customer/add-assets-to-customer.component.ts:28:234 - warning NG8113: TbScopeElementDirective is not used within the template of AddAssetsToCustomerComponent
@@ -639,4 +454,4 @@ src/app-ng/feature/entity-view/add-entity-views-to-customer/add-entity-views-to-
 src/app-ng/feature/entity-view/assign-entity-view-to-customer/assign-entity-view-to-customer.component.ts:29:234 - warning NG8113: TbScopeElementDirective is not used within the template of AssignEntityViewToCustomerComponent
 src/app-ng/feature/import-export/import-dialog-csv/import-dialog-csv.component.ts:36:238 - warning NG8113: TbHelpDirective is not used within the template of ImportDialogCsvComponent
 src/app-ng/feature/rulechain/add-rule-node/add-rule-node.component.ts:24:147 - warning NG8113: TbHelpDirective is not used within the template of AddRuleNodeComponent
-src/app-ng/feature/rulechain/add-rule-node-link/add-rule-node-link.component.ts:24:147 - warning NG8113: TbHelpDirective is not used within the template of AddRuleNodeLinkComponent
+src/app-ng/feature/rulechain/add-rule-node-link/add-rule-node-link.component.ts:24:130 - warning NG8113: TbHelpDirective is not used within the template of AddRuleNodeLinkComponent

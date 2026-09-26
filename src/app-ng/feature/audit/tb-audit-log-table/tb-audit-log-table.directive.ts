@@ -2,7 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, forwardRef, inject, input, model } f
 import { AuditLogService } from '../../api/services/audit-log.service';
 import { ElementRef } from '@angular/core';
 import { RootState } from '../../../root-state';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -33,7 +33,7 @@ import { isEqual } from 'lodash-es';
     MatProgressBarModule,
     MatDividerModule,
     MatTooltipModule,
-    TranslateModule
+    TranslatePipe
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

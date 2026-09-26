@@ -38,7 +38,6 @@ export class TbDashboardSelectDirective {
   protected readonly userService = inject(UserService);
   protected readonly element = inject(ElementRef);
 
-  protected template: any = dashboardSelectTemplate;
   dashboardId: any = null;
   protected pageLink: any = {limit: 100};
   protected promise: any;
@@ -49,7 +48,6 @@ export class TbDashboardSelectDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
     if (this.dashboardsScope() === 'customer' || this.userService.getAuthority() === 'CUSTOMER_USER') {
             if (this.customerId() && this.customerId() != types.id.nullUid) {

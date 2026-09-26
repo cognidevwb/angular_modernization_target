@@ -91,27 +91,25 @@ effect(() => { this.updateIsOpen(this.isOpen()); });
 
     const animateEnter = (el: any, p: any): Promise<void> => {
         p[0].appendChild(el[0]);
-        const factory = this.animationBuilder.build([
-            style({ opacity: 0 }),
-            animate('300ms ease-in', style({ opacity: 1 }))
-        ]);
-        const player = factory.create(el[0]);
+        el[0].style.opacity = '0';
+        const animation = el[0].animate(
+            [{ opacity: 0 }, { opacity: 1 }],
+            { duration: 300, easing: 'ease-in', fill: 'forwards' }
+        );
         return new Promise<void>((resolve) => {
-            player.onDone(() => resolve());
-            player.play();
+            animation.onfinish = () => resolve();
         });
     };
     const animateLeave = (el: any): Promise<void> => {
-        const factory = this.animationBuilder.build([
-            animate('300ms ease-out', style({ opacity: 0 }))
-        ]);
-        const player = factory.create(el[0]);
+        const animation = el[0].animate(
+            [{ opacity: 1 }, { opacity: 0 }],
+            { duration: 300, easing: 'ease-out', fill: 'forwards' }
+        );
         return new Promise<void>((resolve) => {
-            player.onDone(() => {
+            animation.onfinish = () => {
                 el[0].parentNode && el[0].parentNode.removeChild(el[0]);
                 resolve();
-            });
-            player.play();
+            };
         });
     };
 

@@ -21,7 +21,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'add-rule-node-link',
   standalone: true,
-  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, forwardRef(() => TbHelpDirective), forwardRef(() => TbRuleNodeLinkDirective)],
+  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, TbHelpDirective, forwardRef(() => TbRuleNodeLinkDirective)],
   templateUrl: './add-rule-node-link.component.html',
 })
 export class AddRuleNodeLinkComponent {

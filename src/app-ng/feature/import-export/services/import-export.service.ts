@@ -739,7 +739,7 @@ export class ImportExportService {
     (this.dialog as any).show({
         controller: 'EntityAliasesController',
         controllerAs: 'vm',
-        templateUrl: entityAliasesTemplate,
+        templateUrl: 'entity-aliases.tpl.html',
         locals: {
             config: {
                 entityAliases: missingEntityAliases,
@@ -935,7 +935,7 @@ export class ImportExportService {
     (this.dialog as any).show({
         controller: 'ImportDialogController',
         controllerAs: 'vm',
-        templateUrl: importDialogTemplate,
+        templateUrl: 'import-dialog.tpl.html',
         locals: {
             importTitle: importTitle,
             importFileLabel: importFileLabel
@@ -958,7 +958,7 @@ export class ImportExportService {
     (this.dialog as any).show({
         controller: 'ImportDialogCSVController',
         controllerAs: 'vm',
-        templateUrl: importDialogCSVTemplate,
+        templateUrl: 'import-dialog-csv.tpl.html',
         locals: {
             importTitle: importTitle,
             importFileLabel: importFileLabel,

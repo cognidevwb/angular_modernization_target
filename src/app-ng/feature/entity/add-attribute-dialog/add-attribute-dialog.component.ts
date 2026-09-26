@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 import { TbJsonToStringDirective } from '../../components/tb-json-to-string/tb-json-to-string.directive';
-import attributeDialogEditJsonTemplate from '../../../../app/entity/attribute/attribute-dialog-edit-json.tpl.html?raw';
 import AttributeDialogEditJsonController from '../../../../app/entity/attribute/attribute-dialog-edit-json.controller';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
@@ -92,7 +91,6 @@ export class AddAttributeDialogComponent {
 return (this.dialog as any).show({
     controller: AttributeDialogEditJsonController,
     controllerAs: 'vm',
-    templateUrl: attributeDialogEditJsonTemplate,
     locals: {
         jsonValue: jsonValue,
         readOnly: readOnly

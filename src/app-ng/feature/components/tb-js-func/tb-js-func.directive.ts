@@ -47,8 +47,8 @@ export class TbJsFuncDirective {
   protected readonly toast = inject(ToastService);
   protected readonly utils = inject(UtilsService);
   protected readonly element = inject(ElementRef);
+  protected readonly rootScope = inject(RootState);
 
-protected template: any = jsFuncTemplate;
   functionName: any;
   functionArgs: any;
   validationArgs: any;
@@ -65,6 +65,8 @@ protected template: any = jsFuncTemplate;
   errorAnnotationId: any;
   functionBody: any;
   js_editor: any;
+  formSubmitSub: any;
+  updateAceEditorSizeSub: any;
 
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit

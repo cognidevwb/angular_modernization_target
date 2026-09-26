@@ -31,9 +31,6 @@ declare let element: any;
   selector: '[tb-extension-form-mqtt]',
   standalone: true,
 })
-@Component({
-  imports: [TranslatePipe, MatTooltipModule, MatSelectModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatCardModule, MatButtonModule, LegacyInitDirective],
-})
 export class TbExtensionFormMqttDirective {
   readonly config = model<any>();
   readonly isAdd = model<any>();

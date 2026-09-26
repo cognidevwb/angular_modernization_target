@@ -44,7 +44,7 @@ function NavTreeController(this: any, $scope?: any, $element?: any, types?: any)
             }
         }
 
-        vm.treeElement = $('.tb-nav-tree-container', $element)
+        vm.treeElement = ($('.tb-nav-tree-container', $element) as any)
             .jstree(config);
 
         vm.treeElement.on("changed.jstree", function (e?: any, data?: any) {

@@ -19,6 +19,7 @@ import cssjs from '../../../../vendor/css.js/css';
 
 import { filter } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
+import { Router } from '@angular/router';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let vm: any;
 declare let $filter: any;

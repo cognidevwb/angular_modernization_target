@@ -5,6 +5,7 @@ import { types } from '../../common/constants/types';
 
 import moment from 'moment';
 import { bindMethods } from '../../../bind-methods';
+import { firstValueFrom } from 'rxjs';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $q: any;
 

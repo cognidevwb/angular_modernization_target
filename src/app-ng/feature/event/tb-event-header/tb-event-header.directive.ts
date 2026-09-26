@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { Directive, inject } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { types } from '../../common/constants/types';

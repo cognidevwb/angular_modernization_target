@@ -20,26 +20,19 @@
     @let configurations = $any(this).configurations;
     @let types = $any(this).types;
     @let changeAlignment = $any(this).changeAlignment;
-    @let isReadOnlyForm = isReadOnly;
+    @let isReadOnlyForm = isReadOnly();
+    @let idForm = $any(this).idForm;
+    @let securityTypes = $any(this).securityTypes;
     <form name="gatewayConfiguration">
-         <!-- TODO(port): md-expansion-panel-group (angular-material-expansion-panel): a mat-accordion --><md-expansion-panel-group>
-            <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><md-expansion-panel attr.md-component-id="{{idForm}}thingsboardPanelId">
-                <!-- TODO(port): md-expansion-panel-collapsed: the mat-expansion-panel-header --><md-expansion-panel-collapsed>
-                    <div class="tb-panel-title">{{ 'gateway.thingsboard' | translate | uppercase }}</div>
-                    <span flex></span>
-                    <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                </md-expansion-panel-collapsed>
-                <!-- TODO(port): md-expansion-panel-expanded: the panel's content --><md-expansion-panel-expanded>
-                    <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><md-expansion-panel-header (click)="collapsePanel(idForm + 'thingsboardPanelId')">
-                        <div class="tb-panel-title">{{ 'gateway.thingsboard' | translate | uppercase }}</div>
-                        <span flex></span>
-                        <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                    </md-expansion-panel-header>
-                    <!-- TODO(port): md-expansion-panel-content: the panel's content --><md-expansion-panel-content>
-                        @if (!isStateForm()) {
-                          <tb-gateway-config-select [tbRequired]="true" [(ngModel)]="configurations.gateway" [(theForm)]="gatewayConfiguration" [(gatewayList)]="gateways" get_access_token="vm.getAccessToken" [(createDevice)]="createDevice">
-                        </tb-gateway-config-select>
-                        }
+        <mat-accordion>
+            <mat-expansion-panel [id]="idForm + 'thingsboardPanelId'">
+                <mat-expansion-panel-header (click)="$any(this).collapsePanel(idForm + 'thingsboardPanelId')">
+                    <mat-panel-title>{{ 'gateway.thingsboard' | translate | uppercase }}</mat-panel-title>
+                </mat-expansion-panel-header>
+                @if (!isStateForm()) {
+                  <tb-gateway-config-select [tbRequired]="true" [(ngModel)]="configurations.gateway" [(theForm)]="$any(this).gatewayConfiguration" [(gatewayList)]="$any(this).gateways" get_access_token="vm.getAccessToken" [(createDevice)]="$any(this).createDevice">
+                </tb-gateway-config-select>
+                }
                         @if (isStateForm()) {
                           <mat-form-field class="md-block">
                             <mat-label>{{'gateway.gateway-name' | translate }}</mat-label>
@@ -123,26 +116,15 @@
                                 </div>
                             </mat-form-field>
                         </div>
-                    </md-expansion-panel-content>
-                </md-expansion-panel-expanded>
-            </md-expansion-panel>
-            <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><md-expansion-panel attr.md-component-id="{{idForm}}storagePanelId">
-                <!-- TODO(port): md-expansion-panel-collapsed: the mat-expansion-panel-header --><md-expansion-panel-collapsed>
-                    <div class="tb-panel-title">{{ 'gateway.storage' | translate | uppercase }}</div>
-                    <span flex></span>
-                    <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                </md-expansion-panel-collapsed>
-                <!-- TODO(port): md-expansion-panel-expanded: the panel's content --><md-expansion-panel-expanded>
-                    <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><md-expansion-panel-header (click)="collapsePanel(idForm + 'storagePanelId')">
-                        <div class="tb-panel-title">{{ 'gateway.storage' | translate | uppercase }}</div>
-                        <span flex></span>
-                        <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                    </md-expansion-panel-header>
-                    <!-- TODO(port): md-expansion-panel-content: the panel's content --><md-expansion-panel-content>
+            </mat-expansion-panel>
+            <mat-expansion-panel [id]="idForm + 'storagePanelId'">
+                <mat-expansion-panel-header (click)="$any(this).collapsePanel(idForm + 'storagePanelId')">
+                    <mat-panel-title>{{ 'gateway.storage' | translate | uppercase }}</mat-panel-title>
+                </mat-expansion-panel-header>
                         <mat-form-field class="md-block" flex>
                             <mat-label>{{'gateway.storage-type' | translate }}</mat-label>
                             <mat-select [disabled]="isReadOnlyForm" required [(ngModel)]="configurations.storageType">
-                                @for (storageType of storageTypes; track $index) {
+                                @for (storageType of types?.storageTypes; track $index) {
                                   <mat-option [value]="storageType?.value">
                                     {{storageType?.name | translate}}
                                 </mat-option>
@@ -206,37 +188,24 @@
                             </mat-form-field>
                         </div>
                         }
-                    </md-expansion-panel-content>
-                </md-expansion-panel-expanded>
-            </md-expansion-panel>
-            <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><md-expansion-panel attr.md-component-id="{{idForm}}connectorsPanelId">
-                <!-- TODO(port): md-expansion-panel-collapsed: the mat-expansion-panel-header --><md-expansion-panel-collapsed>
-                    <div class="tb-panel-title">{{ 'gateway.connectors' | translate | uppercase }}</div>
-                    <span flex></span>
-                    <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                </md-expansion-panel-collapsed>
-                <!-- TODO(port): md-expansion-panel-expanded: the panel's content --><md-expansion-panel-expanded>
-                    <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><md-expansion-panel-header (click)="collapsePanel(idForm + 'connectorsPanelId')">
-                        <div class="tb-panel-title">{{ 'gateway.connectors' | translate | uppercase }}</div>
-                        <span flex></span>
-                        <!-- TODO(port): md-expansion-panel-icon: the header's toggle indicator (built in) --><md-expansion-panel-icon></md-expansion-panel-icon>
-                    </md-expansion-panel-header>
-                    <!-- TODO(port): md-expansion-panel-content: the panel's content --><md-expansion-panel-content>
-                        <tb-gateway-config [(gatewayConfig)]="configurations.connectors" [(theForm)]="gatewayConfiguration" [(changeAlignment)]="$any(this).changeAlignment" [(isReadOnly)]="isReadOnly">
-                        </tb-gateway-config>
-                    </md-expansion-panel-content>
-                </md-expansion-panel-expanded>
-            </md-expansion-panel>
-        </md-expansion-panel-group>
+            </mat-expansion-panel>
+            <mat-expansion-panel [id]="idForm + 'connectorsPanelId'">
+                <mat-expansion-panel-header (click)="$any(this).collapsePanel(idForm + 'connectorsPanelId')">
+                    <mat-panel-title>{{ 'gateway.connectors' | translate | uppercase }}</mat-panel-title>
+                </mat-expansion-panel-header>
+                <tb-gateway-config [(gatewayConfig)]="configurations.connectors" [(theForm)]="$any(this).gatewayConfiguration" [(changeAlignment)]="$any(this).changeAlignment" [(isReadOnly)]="isReadOnly">
+                </tb-gateway-config>
+            </mat-expansion-panel>
+        </mat-accordion>
         <section [hidden]="!(!isReadOnlyForm)" layout="row" layout-align="end center" class="form-action-buttons">
             @if (!configurations?.remoteConfiguration) {
-              <button mat-raised-button color="primary" (click)="exportConfig()" [disabled]="gatewayConfiguration?.$invalid || !gatewayConfiguration?.$dirty" attr.aria-label="{{ 'gateway.download-tip' | translate }}" attr.matTooltip="{{'gateway.download-tip' | translate }}">
+              <button mat-raised-button color="primary" (click)="$any(this).exportConfig()" [disabled]="$any(this).gatewayConfiguration?.$invalid || !$any(this).gatewayConfiguration?.$dirty" attr.aria-label="{{ 'gateway.download-tip' | translate }}" attr.matTooltip="{{'gateway.download-tip' | translate }}">
                 {{'action.download' | translate }}
                 
             </button>
             }
             @if (configurations?.remoteConfiguration) {
-              <button mat-raised-button color="primary" (click)="saveAttributeConfig()" [disabled]="gatewayConfiguration?.$invalid || !gatewayConfiguration?.$dirty" attr.aria-label="{{ 'gateway.save-tip' | translate }}" attr.matTooltip="{{'gateway.save-tip' | translate }}">
+              <button mat-raised-button color="primary" (click)="$any(this).saveAttributeConfig()" [disabled]="$any(this).gatewayConfiguration?.$invalid || !$any(this).gatewayConfiguration?.$dirty" attr.aria-label="{{ 'gateway.save-tip' | translate }}" attr.matTooltip="{{'gateway.save-tip' | translate }}">
                 {{'action.save' | translate }}
                 <!-- TODO(port): the md-tooltip had its own AngularJS directives; bind matTooltipDisabled for them -->
             </button>

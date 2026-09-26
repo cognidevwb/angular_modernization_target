@@ -1,18 +1,20 @@
 import { Component, inject, model } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import $ from 'jquery';
-import entityTypeListTemplate from '../../../../app/entity/entity-type-list.tpl.html?raw';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $filter: any;
 declare let $mdUtil: any;
 declare let $q: any;
-declare let $templateCache: any;
 declare let angular: any;
 declare let element: any;
 declare let ngModelCtrl: any;
@@ -24,7 +26,7 @@ declare let ngModelCtrl: any;
 @Component({
   selector: 'tb-entity-type-list',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatAutocompleteModule, TranslatePipe],
   templateUrl: './tb-entity-type-list.directive.html',
 })
 export class TbEntityTypeListDirective {
@@ -50,7 +52,6 @@ export class TbEntityTypeListDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(entityTypeListTemplate);
   ngModelCtrl: any = ngModelCtrl;
   placeholder: any;
   secondaryPlaceholder: any;
@@ -60,13 +61,13 @@ export class TbEntityTypeListDirective {
   entityTypeList: any;
   entityTypeListWatch: any;
   inputTouched: any;
+  entityTypeSearchText = '';
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.placeholder = this.tbRequired() ? this.translate.instant('entity.enter-entity-type')
                                 : this.translate.instant('entity.any-entity');
     this.secondaryPlaceholder = '+' + this.translate.instant('entity.entity-type');
@@ -120,6 +121,27 @@ export class TbEntityTypeListDirective {
                 this.inputTouched = true;
             } );
         });
+  }
+
+  remove(entityType?: any): void {
+    const index = this.entityTypeList ? this.entityTypeList.indexOf(entityType) : -1;
+    if (index >= 0) {
+        this.entityTypeList.splice(index, 1);
+        this.updateEntityTypeList();
+    }
+  }
+
+  onBlur(): void {
+    this.inputTouched = true;
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    if (!this.entityTypeList) {
+        this.entityTypeList = [];
+    }
+    this.entityTypeList.push(event.option.value);
+    this.entityTypeSearchText = '';
+    this.updateEntityTypeList();
   }
 
   entityTypeFromValue(entityTypeValue?: any, ...rest: any[]): any {

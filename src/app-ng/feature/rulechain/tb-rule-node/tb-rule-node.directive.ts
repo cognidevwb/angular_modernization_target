@@ -7,7 +7,6 @@ import { TbRuleNodeConfigDirective } from '../tb-rule-node-config/tb-rule-node-c
 import { TbEntityAutocompleteDirective } from '../../entity/tb-entity-autocomplete/tb-entity-autocomplete.directive';
 
 import $ from 'jquery';
-import ruleNodeFieldsetTemplate from '!!raw-loader!../../../../app/rulechain/rulenode-fieldset.tpl.html';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -47,7 +46,6 @@ export class TbRuleNodeDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(ruleNodeFieldsetTemplate);
   types: any;
   params: any = {
             targetRuleChainId: null
@@ -58,7 +56,6 @@ export class TbRuleNodeDirective {
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     this.$watch('ruleNode', () => {
             if (this.ruleNode() && this.ruleNode().component.type == this.typesRef.ruleNodeType.RULE_CHAIN.value) {
