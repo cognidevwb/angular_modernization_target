@@ -1,115 +1,157 @@
-import { Component, inject, input, model } from '@angular/core';
-import { ElementRef } from '@angular/core';
+import { Component, effect, inject, input, model } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { TranslatePipe } from '@ngx-translate/core';
+import { isEqual } from 'lodash-es';
 import { EntityService } from '../../api/services/entity.service';
-
-import $ from 'jquery';
-import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let ngModelCtrl: any;
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
- * Ported from the AngularJS directive `tbRelatedEntityAutocomplete` (module `thingsboard.directives.relatedEntityAutocomplete`) in src/app/components/related-entity-autocomplete.directive.js:25.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbRelatedEntityAutocomplete` (module `thingsboard.directives.relatedEntityAutocomplete`)
+ * in src/app/components/related-entity-autocomplete.directive.js:25: picks one of the entities related to
+ * `rootEntityId`; `[(ngModel)]` is the picked entity's id object.
  */
 @Component({
   selector: 'tb-related-entity-autocomplete',
   standalone: true,
-  template: '', // TODO(port): no template found
+  imports: [FormsModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, TranslatePipe],
+  template: `
+<mat-form-field class="tb-related-entity-autocomplete" style="width: 100%;">
+    <mat-label>{{ placeholderText() | translate }}</mat-label>
+    <input matInput type="text" name="entity"
+           [required]="!!tbRequired()"
+           [disabled]="!!disabled()"
+           [ngModel]="entitySearchText"
+           (ngModelChange)="onSearchTextChange($event)"
+           (focus)="loadEntities()"
+           [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete" class="tb-related-entity-autocomplete" [displayWith]="displayEntity"
+                      (optionSelected)="onEntitySelected($event)">
+        @for (item of entities; track item?.id?.id) {
+        <mat-option [value]="item">
+            <div class="tb-entity-item"><span>{{ item.name }}</span></div>
+        </mat-option>
+        }
+        @if (!entities.length) {
+        <mat-option disabled>
+            <div class="tb-not-found">
+                <span>{{ notFoundText() | translate: { entity: searchString() } }}</span>
+            </div>
+        </mat-option>
+        }
+    </mat-autocomplete>
+    @if (tbRequired() && !entity) {
+    <mat-error>{{ requiredText() | translate }}</mat-error>
+    }
+</mat-form-field>
+`,
+  providers: ngModelProviders(TbRelatedEntityAutocompleteDirective),
 })
-export class TbRelatedEntityAutocompleteDirective {
+export class TbRelatedEntityAutocompleteDirective extends NgModelController {
   readonly rootEntityId = model<any>();
   readonly entityType = model<any>();
   readonly entitySubtypes = model<any>();
   readonly excludeEntityIds = model<any>();
   readonly theForm = model<any>();
-  readonly tbRequired = model<any>();
+  readonly tbRequired = model<any>(false);
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
-  readonly placeholderText = input<any>();
-  readonly notFoundText = input<any>();
-  readonly requiredText = input<any>();
+  readonly placeholderText = input<string>('');
+  readonly notFoundText = input<string>('');
+  readonly requiredText = input<string>('');
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$filter' — inject the pipe class and call transform()
-  // TODO(port): '$q' — use Promise, or an Observable
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly entityService = inject(EntityService);
-  protected readonly element = inject(ElementRef);
 
   entity: any = null;
   entitySearchText: any = '';
-  allEntities: any = null;
-  $watch: any;
-  protected onChange: (value: any) => void = () => {};
-
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  entities: any[] = [];
+  allEntities: any[] | null = null;
 
   constructor() {
-    this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
-    this.$watch('entity', () => {
-            this.updateView();
-        });
-    this.$watch('disabled', () => {
-            this.updateView();
-        });
+    super();
+    // `scope.$watch('disabled', updateView)`
+    effect(() => {
+      this.disabled();
+      this.updateView();
+    });
   }
 
-  writeValue(value: any): void {
-    if (value) {
-        this.entityService.getRelatedEntity(value).then(
-            (entity?: any) => {
-                this.entity = entity;
-            },
-            () => {
-                this.entity = null;
-            }
-        );
+  override $render(): void {
+    if (this.$viewValue) {
+      this.entityService.getRelatedEntity(this.$viewValue).then(
+        (entity: any) => {
+          this.entity = entity;
+          this.entitySearchText = entity;
+        },
+        () => {
+          this.entity = null;
+        },
+      );
     } else {
-        this.entity = null;
+      this.entity = null;
+      this.entitySearchText = '';
     }
   }
 
-  fetchEntities(searchText?: any, ...rest: any[]): any {
-    var deferred: any = $q.defer();
-    if (!this.allEntities) {
-        this.entityService.getRelatedEntities(this.rootEntityId(), this.entityType(), this.entitySubtypes(), -1, []).then(
-            (entities?: any) => {
-                if (this.excludeEntityIds() && this.excludeEntityIds().length) {
-                    var filteredEntities: any = [];
-                    entities.forEach((entity?: any) => {
-                        if (this.excludeEntityIds().indexOf(entity.id.id) == -1) {
-                            filteredEntities.push(entity);
-                        }
-                    });
-                    entities = filteredEntities;
-                }
-                this.allEntities = entities;
-                this.filterEntities(searchText, deferred);
-            },
-            function fail() {
-                deferred.reject();
-            }
-        );
-    } else {
-        this.filterEntities(searchText, deferred);
+  readonly displayEntity = (item: any): string => (item && typeof item === 'object' ? item.name : item ?? '');
+
+  searchString(): string {
+    return typeof this.entitySearchText === 'string' ? this.entitySearchText : '';
+  }
+
+  onSearchTextChange(text: any): void {
+    this.entitySearchText = text;
+    if (typeof text === 'string') {
+      this.setEntity(null);
+      this.loadEntities();
     }
-    return deferred.promise;
   }
 
-  filterEntities(searchText?: any, deferred?: any, ...rest: any[]): any {
-    var result: any = (this.allEntities || []).filter((entity: any) =>
-        !searchText || (entity.name && entity.name.toLowerCase().indexOf(String(searchText).toLowerCase()) !== -1));
-    deferred.resolve(result);
+  onEntitySelected(event: MatAutocompleteSelectedEvent): void {
+    this.setEntity(event.option.value);
   }
 
-  entitySearchTextChanged(...rest: any[]): any {
-          }
+  loadEntities(): void {
+    this.fetchEntities(this.searchString()).then(
+      (entities) => (this.entities = entities),
+      () => (this.entities = []),
+    );
+  }
 
-  updateView(...rest: any[]): any {
+  fetchEntities(searchText: string): Promise<any[]> {
+    if (this.allEntities) {
+      return Promise.resolve(this.filterEntities(searchText));
+    }
+    return Promise.resolve(
+      this.entityService.getRelatedEntities(this.rootEntityId(), this.entityType(), this.entitySubtypes(), -1, []),
+    ).then((entities: any[]) => {
+      const exclude: any[] = this.excludeEntityIds() || [];
+      this.allEntities = exclude.length ? entities.filter((e: any) => exclude.indexOf(e.id.id) == -1) : entities;
+      return this.filterEntities(searchText);
+    });
+  }
+
+  /** `$filter('filter')(allEntities, {name: searchText})`: a case-insensitive substring match on name. */
+  filterEntities(searchText: string): any[] {
+    const text = (searchText || '').toLowerCase();
+    return (this.allEntities || []).filter((e: any) => !text || (e.name && String(e.name).toLowerCase().indexOf(text) !== -1));
+  }
+
+  updateView(): void {
     if (!this.disabled()) {
-        this.onChange(this.entity ? this.entity.id : null);
+      const value = this.entity ? this.entity.id : null;
+      if (!isEqual(value, this.$viewValue ?? null)) {
+        this.$setViewValue(value);
+      }
+    }
+  }
+
+  /** `scope.$watch('entity', updateView)` */
+  private setEntity(entity: any): void {
+    if (entity !== this.entity) {
+      this.entity = entity;
+      this.updateView();
     }
   }
 }

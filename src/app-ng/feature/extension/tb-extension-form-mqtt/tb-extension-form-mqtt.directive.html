@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/extension/extensions-forms/extension-form-mqtt.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/extension/extensions-forms/extension-form-mqtt.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -19,23 +19,23 @@
 <mat-card class="extension-form extension-mqtt">
     <mat-card-header name="testValid">
         <mat-card-title>
-            <span translate class="md-headline">extension.configuration</span>
+            <span class="md-headline">{{ 'extension.configuration' | translate }}</span>
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <v-accordion id="mqtt-brokers-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
-            <v-pane id="mqtt-brokers-pane" expanded="true">
-                <v-pane-header>
+        <input type="hidden" name="mqttCertPem" [ngModel]="pemCredentialsValid() ? 'valid' : ''" required>
+        <mat-accordion id="mqtt-brokers-accordion" class="vAccordion--default">
+            <mat-expansion-panel id="mqtt-brokers-pane" [expanded]="true" (opened)="expandValidation(0, 'mqtt-brokers-pane')" (closed)="collapseValidation(0, 'mqtt-brokers-pane')">
+                <mat-expansion-panel-header>
                     {{ 'extension.brokers' | translate }}
-                </v-pane-header>
-                <v-pane-content>
+                </mat-expansion-panel-header>
                     @if (brokers?.length > 0) {
                       <div>
                         <ol class="list-group">
                             @for (brokerIndex of __keys(brokers); track brokerIndex) {
                               @let broker = (brokers)[brokerIndex];
                               <li class="list-group-item">
-                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeBroker(broker)" [hidden]="brokers?.length < 2" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeBroker(broker)" [hidden]="brokers?.length < 2" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                     <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
                                     
                                 </button>
@@ -43,40 +43,24 @@
                                     <mat-card-content>
                                         <section flex layout="row">
                                             <mat-form-field flex="40" class="md-block">
-                                                <mat-label translate>extension.port</mat-label>
-                                                <input matInput required type="number" min="1" max="65535" attr.name="mqttPort_{{brokerIndex}}" [(ngModel)]="broker.port">
-                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                <div ng-messages="theForm?.['mqttPort_' + brokerIndex]?.$error">
-                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                    <div translate ng-message="required">extension.field-required</div>
-                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                    <div translate ng-message="min">extension.port-range</div>
-                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                    <div translate ng-message="max">extension.port-range</div>
-                                                </div>
+                                                <mat-label>{{ 'extension.port' | translate }}</mat-label>
+                                                <input matInput required type="number" min="1" max="65535" name="mqttPort_{{brokerIndex}}" [(ngModel)]="broker.port" #f1="ngModel">
+                                                @if (f1.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>} @else if (f1.hasError('min')) {<mat-error>{{ 'extension.port-range' | translate }}</mat-error>} @else if (f1.hasError('max')) {<mat-error>{{ 'extension.port-range' | translate }}</mat-error>}
                                             </mat-form-field>
                                             <mat-form-field flex="60" class="md-block">
-                                                <mat-label translate>extension.host</mat-label>
-                                                <input matInput required attr.name="mqttHost_{{brokerIndex}}" [(ngModel)]="broker.host">
-                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                <div ng-messages="theForm?.['mqttHost_' + brokerIndex]?.$error">
-                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                    <div translate ng-message="required">extension.field-required</div>
-                                                </div>
+                                                <mat-label>{{ 'extension.host' | translate }}</mat-label>
+                                                <input matInput required name="mqttHost_{{brokerIndex}}" [(ngModel)]="broker.host" #f2="ngModel">
+                                                @if (f2.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                             </mat-form-field>
                                         </section>
                                         <section flex layout="row">
                                             <mat-form-field flex="40" class="md-block">
-                                                <mat-label translate>extension.retry-interval</mat-label>
-                                                <input matInput required type="number" attr.name="mqttRetryInterval_{{brokerIndex}}" [(ngModel)]="broker.retryInterval">
-                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                <div ng-messages="theForm?.['mqttRetryInterval_' + brokerIndex]?.$error">
-                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                    <div translate ng-message="required">extension.field-required</div>
-                                                </div>
+                                                <mat-label>{{ 'extension.retry-interval' | translate }}</mat-label>
+                                                <input matInput required type="number" name="mqttRetryInterval_{{brokerIndex}}" [(ngModel)]="broker.retryInterval" #f3="ngModel">
+                                                @if (f3.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                             </mat-form-field>
                                             <mat-form-field flex="50" class="md-block">
-                                                <mat-label translate>extension.credentials</mat-label>
+                                                <mat-label>{{ 'extension.credentials' | translate }}</mat-label>
                                                 <mat-select required name="mqttCredentials_{{brokerIndex}}" [(ngModel)]="broker.credentials.type" (ngModelChange)="changeCredentials(broker)">
                                                     @for (credentialsType of __keys(types?.mqttCredentialTypes); track credentialsType) {
                                                       @let credentialsValue = (types?.mqttCredentialTypes)[credentialsType];
@@ -86,99 +70,91 @@
                                                     }
                                                 </mat-select>
                                             </mat-form-field>
-                                            <mat-form-field flex="10" class="md-block">
-                                                <mat-checkbox flex attr.aria-label="{{ 'extension.ssl' | translate }}" [(ngModel)]="broker.ssl">{{ 'extension.ssl' | translate }}
+                                            <div flex="10" class="md-block">
+                                                <mat-checkbox flex attr.aria-label="{{ 'extension.ssl' | translate }}" name="mqttSsl_{{brokerIndex}}" [(ngModel)]="broker.ssl">{{ 'extension.ssl' | translate }}
                                                 </mat-checkbox>
-                                            </mat-form-field>
+                                            </div>
                                         </section>
                                         @if (broker?.credentials?.type == "basic") {
                                           <section flex layout="row">
                                             <mat-form-field flex="40" class="md-block">
-                                                <mat-label translate>extension.username</mat-label>
-                                                <input matInput required attr.name="mqttUsername_{{brokerIndex}}" [(ngModel)]="broker.credentials.username">
-                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                <div ng-messages="theForm?.['mqttUsername_' + brokerIndex]?.$error">
-                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                    <div translate ng-message="required">extension.field-required</div>
-                                                </div>
+                                                <mat-label>{{ 'extension.username' | translate }}</mat-label>
+                                                <input matInput required name="mqttUsername_{{brokerIndex}}" [(ngModel)]="broker.credentials.username" #f4="ngModel">
+                                                @if (f4.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                             </mat-form-field>
                                             <mat-form-field flex="60" class="md-block">
-                                                <mat-label translate>extension.password</mat-label>
-                                                <input matInput required attr.name="mqttPassword_{{brokerIndex}}" [(ngModel)]="broker.credentials.password">
-                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                <div ng-messages="theForm?.['mqttPassword_' + brokerIndex]?.$error">
-                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                    <div translate ng-message="required">extension.field-required</div>
-                                                </div>
+                                                <mat-label>{{ 'extension.password' | translate }}</mat-label>
+                                                <input matInput required name="mqttPassword_{{brokerIndex}}" [(ngModel)]="broker.credentials.password" #f5="ngModel">
+                                                @if (f5.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                             </mat-form-field>
                                         </section>
                                         }
                                         @if (broker?.credentials?.type == "cert.PEM") {
                                           <section flex layout="column" class="dropdown-section">
                                             <div class="tb-container" [ngClass]="broker?.credentials?.caCertFileName ? 'ng-valid' : 'ng-invalid'">
-                                                <label class="tb-label" translate>extension.ca-cert</label>
-                                                <div flow-init="{singleFile:true}" flow-file-added='fileAdded($file, broker, "caCert")' class="tb-file-select-container">
+                                                <label class="tb-label">{{ 'extension.ca-cert' | translate }}</label>
+                                                <div class="tb-file-select-container">
                                                     <div class="tb-file-clear-container">
-                                                        <button mat-icon-button color="primary" (click)='clearFile(broker, "caCert")' class="tb-file-clear-btn" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                        <button mat-icon-button color="primary" (click)='clearFile(broker, "caCert")' class="tb-file-clear-btn" attr.aria-label="{{ 'action.remove' | translate }}" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                             
                                                             <mat-icon attr.aria-label="{{ 'action.remove' | translate }}" class="material-icons">close</mat-icon>
                                                         </button>
                                                     </div>
-                                                    <div class="alert tb-flow-drop" flow-drop>
-                                                        <label attr.for="caCertSelect_{{brokerIndex}}" translate>extension.drop-file</label>
-                                                        <input class="file-input" flow-btn flow-attrs="{accept:'.pem'}" attr.id="caCertSelect_{{brokerIndex}}">
+                                                    <div class="alert tb-flow-drop" (dragover)="$event.preventDefault()" (drop)="onFileDrop($event, broker, 'caCert')">
+                                                        <label attr.for="caCertSelect_{{brokerIndex}}">{{ 'extension.drop-file' | translate }}</label>
+                                                        <input type="file" class="file-input" accept=".pem" attr.id="caCertSelect_{{brokerIndex}}" (change)="onFileInput($event, broker, 'caCert')">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="dropdown-messages">
                                                 @if (!broker?.credentials?.caCertFileName) {
-                                                  <div class="tb-error-message" translate>extension.no-file</div>
+                                                  <div class="tb-error-message">{{ 'extension.no-file' | translate }}</div>
                                                 }
                                                 @if (broker?.credentials?.caCertFileName) {
                                                   <div>{{broker?.credentials?.caCertFileName}}</div>
                                                 }
                                             </div>
                                             <div class="tb-container" [ngClass]="broker?.credentials?.privateKeyFileName ? 'ng-valid' : 'ng-invalid'">
-                                                <label class="tb-label" translate>extension.private-key</label>
-                                                <div flow-init="{singleFile:true}" flow-file-added='fileAdded($file, broker, "privateKey")' class="tb-file-select-container">
+                                                <label class="tb-label">{{ 'extension.private-key' | translate }}</label>
+                                                <div class="tb-file-select-container">
                                                     <div class="tb-file-clear-container">
-                                                        <button mat-icon-button color="primary" (click)='clearFile(broker, "privateKey")' class="tb-file-clear-btn" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                        <button mat-icon-button color="primary" (click)='clearFile(broker, "privateKey")' class="tb-file-clear-btn" attr.aria-label="{{ 'action.remove' | translate }}" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                             
                                                             <mat-icon attr.aria-label="{{ 'action.remove' | translate }}" class="material-icons">close</mat-icon>
                                                         </button>
                                                     </div>
-                                                    <div class="alert tb-flow-drop" flow-drop>
-                                                        <label attr.for="privateKeySelect_{{brokerIndex}}" translate>extension.drop-file</label>
-                                                        <input class="file-input" flow-btn flow-attrs="{accept:'.pem'}" attr.id="privateKeySelect_{{brokerIndex}}">
+                                                    <div class="alert tb-flow-drop" (dragover)="$event.preventDefault()" (drop)="onFileDrop($event, broker, 'privateKey')">
+                                                        <label attr.for="privateKeySelect_{{brokerIndex}}">{{ 'extension.drop-file' | translate }}</label>
+                                                        <input type="file" class="file-input" accept=".pem" attr.id="privateKeySelect_{{brokerIndex}}" (change)="onFileInput($event, broker, 'privateKey')">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="dropdown-messages">
                                                 @if (!broker?.credentials?.privateKeyFileName) {
-                                                  <div class="tb-error-message" translate>extension.no-file</div>
+                                                  <div class="tb-error-message">{{ 'extension.no-file' | translate }}</div>
                                                 }
                                                 @if (broker?.credentials?.privateKeyFileName) {
                                                   <div>{{broker?.credentials?.privateKeyFileName}}</div>
                                                 }
                                             </div>
                                             <div class="tb-container" [ngClass]="broker?.credentials?.certFileName ? 'ng-valid' : 'ng-invalid'">
-                                                <label class="tb-label" translate>extension.cert</label>
-                                                <div flow-init="{singleFile:true}" flow-file-added='fileAdded($file, broker, "Cert")' class="tb-file-select-container">
+                                                <label class="tb-label">{{ 'extension.cert' | translate }}</label>
+                                                <div class="tb-file-select-container">
                                                     <div class="tb-file-clear-container">
-                                                        <button mat-icon-button color="primary" (click)='clearFile(broker, "Cert")' class="tb-file-clear-btn" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                        <button mat-icon-button color="primary" (click)='clearFile(broker, "Cert")' class="tb-file-clear-btn" attr.aria-label="{{ 'action.remove' | translate }}" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                             
                                                             <mat-icon attr.aria-label="{{ 'action.remove' | translate }}" class="material-icons">close</mat-icon>
                                                         </button>
                                                     </div>
-                                                    <div class="alert tb-flow-drop" flow-drop>
-                                                        <label attr.for="CertSelect_{{brokerIndex}}" translate>extension.drop-file</label>
-                                                        <input class="file-input" flow-btn flow-attrs="{accept:'.pem'}" attr.id="CertSelect_{{brokerIndex}}">
+                                                    <div class="alert tb-flow-drop" (dragover)="$event.preventDefault()" (drop)="onFileDrop($event, broker, 'Cert')">
+                                                        <label attr.for="CertSelect_{{brokerIndex}}">{{ 'extension.drop-file' | translate }}</label>
+                                                        <input type="file" class="file-input" accept=".pem" attr.id="CertSelect_{{brokerIndex}}" (change)="onFileInput($event, broker, 'Cert')">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="dropdown-messages">
                                                 @if (!broker?.credentials?.certFileName) {
-                                                  <div class="tb-error-message" translate>extension.no-file</div>
+                                                  <div class="tb-error-message">{{ 'extension.no-file' | translate }}</div>
                                                 }
                                                 @if (broker?.credentials?.certFileName) {
                                                   <div>{{broker?.credentials?.certFileName}}</div>
@@ -187,19 +163,18 @@
                                         </section>
                                         }
 
-                                        <v-accordion id="mqtt-mapping-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
-                                            <v-pane id="mqtt-mapping-pane_{{brokerIndex}}">
-                                                <v-pane-header>
+                                        <mat-accordion id="mqtt-mapping-accordion" class="vAccordion--default">
+                                            <mat-expansion-panel id="mqtt-mapping-pane_{{brokerIndex}}" (opened)="expandValidation(0, 'mqtt-mapping-pane_' + brokerIndex)" (closed)="collapseValidation(0, 'mqtt-mapping-pane_' + brokerIndex)">
+                                                <mat-expansion-panel-header>
                                                     {{ 'extension.mapping' | translate }}
-                                                </v-pane-header>
-                                                <v-pane-content>
+                                                </mat-expansion-panel-header>
                                                     @if (broker?.mapping?.length > 0) {
                                                       <div>
                                                         <ol class="list-group">
                                                             @for (mapIndex of __keys(broker?.mapping); track mapIndex) {
                                                               @let map = (broker?.mapping)[mapIndex];
                                                               <li class="list-group-item">
-                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeMap(map, broker.mapping)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeMap(map, broker.mapping)" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                                     <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
                                                                     
                                                                 </button>
@@ -207,8 +182,8 @@
                                                                     <mat-card-content>
                                                                         <section flex layout="row">
                                                                             <mat-form-field flex="40" class="md-block">
-                                                                                <mat-label translate>extension.converter-type</mat-label>
-                                                                                <mat-select required name="mqttConverterType_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converterType" (ngModelChange)="changeConverterType(map)">
+                                                                                <mat-label>{{ 'extension.converter-type' | translate }}</mat-label>
+                                                                                <mat-select required name="mqttConverterType_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converterType" (ngModelChange)="changeConverterType(map)" #f6="ngModel">
                                                                                     @for (converterType of __keys(types?.mqttConverterTypes); track converterType) {
                                                                                       @let value = (types?.mqttConverterTypes)[converterType];
                                                                                       <mat-option [value]="converterType">
@@ -216,20 +191,12 @@
                                                                                     </mat-option>
                                                                                     }
                                                                                 </mat-select>
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['mqttConverterType_' + brokerIndex + mapIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                @if (f6.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             <mat-form-field flex="60" class="md-block">
-                                                                                <mat-label translate>extension.topic-filter</mat-label>
-                                                                                <input matInput required attr.name="mqttTopicFilter_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.topicFilter">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['mqttTopicFilter_' + brokerIndex + mapIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.topic-filter' | translate }}</mat-label>
+                                                                                <input matInput required name="mqttTopicFilter_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.topicFilter" #f7="ngModel">
+                                                                                @if (f7.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                         </section>
 
@@ -237,8 +204,8 @@
                                                                           <div legacyInit (legacyInit)="map.converter.type = 'json'">
                                                                             <section flex layout="row">
                                                                                 <mat-form-field flex="40" class="md-block">
-                                                                                    <mat-label translate>extension.device-name-expression</mat-label>
-                                                                                    <mat-select required name="mqttDeviceNameExpression_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.nameExp" (ngModelChange)="changeNameExpression(map.converter)">
+                                                                                    <mat-label>{{ 'extension.device-name-expression' | translate }}</mat-label>
+                                                                                    <mat-select required name="mqttDeviceNameExpression_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.nameExp" (ngModelChange)="changeNameExpression(map.converter)" #f8="ngModel">
                                                                                         @for (key of __keys(deviceNameExpressions); track key) {
                                                                                           @let value = (deviceNameExpressions)[key];
                                                                                           <mat-option [value]='key'>
@@ -246,39 +213,27 @@
                                                                                         </mat-option>
                                                                                         }
                                                                                     </mat-select>
-                                                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                    <div ng-messages="theForm?.['mqttDeviceNameExpression_' + brokerIndex + mapIndex]?.$error">
-                                                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                        <div translate ng-message="required">extension.field-required</div>
-                                                                                    </div>
+                                                                                    @if (f8.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                 </mat-form-field>
                                                                                 @if (map?.converter?.nameExp == 'deviceNameJsonExpression') {
                                                                                   <mat-form-field flex="60" class="md-block">
-                                                                                    <mat-label translate>extension.json-name-expression</mat-label>
-                                                                                    <input matInput required attr.name="mqttJsonNameExp_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.deviceNameJsonExpression">
-                                                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                    <div ng-messages="theForm?.['mqttJsonNameExp_' + brokerIndex + mapIndex]?.$error">
-                                                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                        <div translate ng-message="required">extension.field-required</div>
-                                                                                    </div>
+                                                                                    <mat-label>{{ 'extension.json-name-expression' | translate }}</mat-label>
+                                                                                    <input matInput required name="mqttJsonNameExp_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.deviceNameJsonExpression" #f9="ngModel">
+                                                                                    @if (f9.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                 </mat-form-field>
                                                                                 }
                                                                                 @if (map?.converter?.nameExp == 'deviceNameTopicExpression') {
                                                                                   <mat-form-field flex="60" class="md-block">
-                                                                                    <mat-label translate>extension.topic-name-expression</mat-label>
-                                                                                    <input matInput required attr.name="mqttTopicNameExp_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.deviceNameTopicExpression">
-                                                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                    <div ng-messages="theForm?.['mqttTopicNameExp_' + brokerIndex + mapIndex]?.$error">
-                                                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                        <div translate ng-message="required">extension.field-required</div>
-                                                                                    </div>
+                                                                                    <mat-label>{{ 'extension.topic-name-expression' | translate }}</mat-label>
+                                                                                    <input matInput required name="mqttTopicNameExp_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.deviceNameTopicExpression" #f10="ngModel">
+                                                                                    @if (f10.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                 </mat-form-field>
                                                                                 }
                                                                             </section>
                                                                             <section flex layout="row">
                                                                                 <mat-form-field flex="40" class="md-block">
-                                                                                    <mat-label translate>extension.device-type-expression</mat-label>
-                                                                                    <mat-select required name="mqttDeviceTypeExpression_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.typeExp" (ngModelChange)="changeTypeExpression(map.converter)">
+                                                                                    <mat-label>{{ 'extension.device-type-expression' | translate }}</mat-label>
+                                                                                    <mat-select required name="mqttDeviceTypeExpression_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.typeExp" (ngModelChange)="changeTypeExpression(map.converter)" #f11="ngModel">
                                                                                         @for (key of __keys(deviceTypeExpressions); track key) {
                                                                                           @let value = (deviceTypeExpressions)[key];
                                                                                           <mat-option [value]='key'>
@@ -286,48 +241,32 @@
                                                                                         </mat-option>
                                                                                         }
                                                                                     </mat-select>
-                                                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                    <div ng-messages="theForm?.['mqttDeviceTypeExpression_' + brokerIndex + mapIndex]?.$error">
-                                                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                        <div translate ng-message="required">extension.field-required</div>
-                                                                                    </div>
+                                                                                    @if (f11.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                 </mat-form-field>
                                                                                 @if (map?.converter?.typeExp == 'deviceTypeJsonExpression') {
                                                                                   <mat-form-field flex="60" class="md-block">
-                                                                                    <mat-label translate>extension.json-type-expression</mat-label>
-                                                                                    <input matInput attr.name="mqttJsonTypeExp_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.deviceTypeJsonExpression">
-                                                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                    <div ng-messages="theForm?.['mqttJsonTypeExp_' + brokerIndex + mapIndex]?.$error">
-                                                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                        <div translate ng-message="required">extension.field-required</div>
-                                                                                    </div>
+                                                                                    <mat-label>{{ 'extension.json-type-expression' | translate }}</mat-label>
+                                                                                    <input matInput name="mqttJsonTypeExp_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.deviceTypeJsonExpression" #f12="ngModel">
+                                                                                    @if (f12.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                 </mat-form-field>
                                                                                 }
                                                                                 @if (map?.converter?.typeExp == 'deviceTypeTopicExpression') {
                                                                                   <mat-form-field flex="60" class="md-block">
-                                                                                    <mat-label translate>extension.topic-type-expression</mat-label>
-                                                                                    <input matInput attr.name="mqttTopicTypeExp_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.deviceTypeTopicExpression">
-                                                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                    <div ng-messages="theForm?.['mqttTopicTypeExp_' + brokerIndex + mapIndex]?.$error">
-                                                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                        <div translate ng-message="required">extension.field-required</div>
-                                                                                    </div>
+                                                                                    <mat-label>{{ 'extension.topic-type-expression' | translate }}</mat-label>
+                                                                                    <input matInput name="mqttTopicTypeExp_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.deviceTypeTopicExpression" #f13="ngModel">
+                                                                                    @if (f13.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                 </mat-form-field>
                                                                                 }
                                                                             </section>
                                                                             <section flex layout="row">
                                                                                 <mat-form-field flex="40" class="md-block">
-                                                                                    <mat-label translate>extension.timeout</mat-label>
-                                                                                    <input matInput type="number" attr.name="mqttTimeout_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.timeout" parse-to-null>
+                                                                                    <mat-label>{{ 'extension.timeout' | translate }}</mat-label>
+                                                                                    <input matInput type="number" name="mqttTimeout_{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.timeout" parse-to-null>
                                                                                 </mat-form-field>
                                                                                 <mat-form-field flex="60" class="md-block">
-                                                                                    <mat-label translate>extension.filter-expression</mat-label>
-                                                                                    <input matInput attr.name="mqttFilterExpression{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.filterExpression">
-                                                                                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                    <div ng-messages="theForm?.['mqttFilterExpression' + brokerIndex + mapIndex]?.$error">
-                                                                                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                        <div translate ng-message="required">extension.field-required</div>
-                                                                                    </div>
+                                                                                    <mat-label>{{ 'extension.filter-expression' | translate }}</mat-label>
+                                                                                    <input matInput name="mqttFilterExpression{{brokerIndex}}{{mapIndex}}" [(ngModel)]="map.converter.filterExpression" #f14="ngModel">
+                                                                                    @if (f14.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                 </mat-form-field>
                                                                             </section>
                                                                         </div>
@@ -335,35 +274,30 @@
 
                                                                         @if (map?.converterType == "custom") {
                                                                           <div>
-                                                                            <div class="md-caption" style="padding-left: 3px; padding-bottom: 10px; color: rgba(0,0,0,0.57);" translate>extension.transformer-json</div>
+                                                                            <div class="md-caption" style="padding-left: 3px; padding-bottom: 10px; color: rgba(0,0,0,0.57);">{{ 'extension.transformer-json' | translate }}</div>
                                                                             <div flex class="tb-extension-custom-transformer-panel">
-                                                                                <div flex class="tb-extension-custom-transformer" ui-ace="extensionCustomConverterOptions" [(ngModel)]="map.converter" attr.name="mqttCustomConverter_{{brokerIndex}}{{mapIndex}}" (ngModelChange)='validateCustomConverter(map.converter, "mqttCustomConverter_" + brokerIndex + mapIndex)' required>
+                                                                                <div flex class="tb-extension-custom-transformer" [ui-ace]="extensionCustomConverterOptions" [(ngModel)]="map.converter" name="mqttCustomConverter_{{brokerIndex}}{{mapIndex}}" (ngModelChange)='validateCustomConverter($event, "mqttCustomConverter_" + brokerIndex + mapIndex)' required #converter="ngModel">
                                                                                 </div>
                                                                             </div>
-                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                            <div class="tb-error-messages" ng-messages="theForm?.['mqttCustomConverter_' + brokerIndex + mapIndex]?.$error" role="alert">
-                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                <div ng-message="required" class="tb-error-message" translate>extension.converter-json-required</div>
-                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                <div ng-message="converterJSON" class="tb-error-message" translate>extension.converter-json-parse</div>
+                                                                            <div class="tb-error-messages" role="alert">
+                                                                                @if (converter.hasError('required')) {<div class="tb-error-message">{{ 'extension.converter-json-required' | translate }}</div>} @else if (converter.hasError('converterJSON')) {<div class="tb-error-message">{{ 'extension.converter-json-parse' | translate }}</div>}
                                                                             </div>
                                                                         </div>
                                                                         }
 
                                                                         @if (map?.converterType =="json") {
-                                                                          <v-accordion id="mqtt-attributes-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
-                                                                            <v-pane id="mqtt-attributes-pane_{{brokerIndex}}{{mapIndex}}">
-                                                                                <v-pane-header>
+                                                                          <mat-accordion id="mqtt-attributes-accordion" class="vAccordion--default">
+                                                                            <mat-expansion-panel id="mqtt-attributes-pane_{{brokerIndex}}{{mapIndex}}" (opened)="expandValidation(0, 'mqtt-attributes-pane_' + brokerIndex + mapIndex)" (closed)="collapseValidation(0, 'mqtt-attributes-pane_' + brokerIndex + mapIndex)">
+                                                                                <mat-expansion-panel-header>
                                                                                     {{ 'extension.attributes' | translate }}
-                                                                                </v-pane-header>
-                                                                                <v-pane-content>
+                                                                                </mat-expansion-panel-header>
                                                                                     @if (map?.converter?.attributes?.length > 0) {
                                                                                       <div>
                                                                                         <ol class="list-group">
                                                                                             @for (attributeIndex of __keys(map?.converter?.attributes); track attributeIndex) {
                                                                                               @let attribute = (map?.converter?.attributes)[attributeIndex];
                                                                                               <li class="list-group-item">
-                                                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(attribute, map.converter.attributes)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(attribute, map.converter.attributes)" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                                                                     <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
                                                                                                     
                                                                                                 </button>
@@ -371,17 +305,13 @@
                                                                                                     <mat-card-content>
                                                                                                         <section flex layout="row">
                                                                                                             <mat-form-field flex="60" class="md-block">
-                                                                                                                <mat-label translate>extension.key</mat-label>
-                                                                                                                <input matInput required attr.name="mqttAttributeKey_{{brokerIndex}}{{mapIndex}}{{attributeIndex}}" [(ngModel)]="attribute.key">
-                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                                <div ng-messages="theForm?.['mqttAttributeKey_' + brokerIndex + mapIndex + attributeIndex]?.$error">
-                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                                                </div>
+                                                                                                                <mat-label>{{ 'extension.key' | translate }}</mat-label>
+                                                                                                                <input matInput required name="mqttAttributeKey_{{brokerIndex}}{{mapIndex}}{{attributeIndex}}" [(ngModel)]="attribute.key" #f15="ngModel">
+                                                                                                                @if (f15.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                                             </mat-form-field>
                                                                                                             <mat-form-field flex="40" class="md-block">
-                                                                                                                <mat-label translate>extension.type</mat-label>
-                                                                                                                <mat-select required name="mqttAttributeType_{{brokerIndex}}{{mapIndex}}{{attributeIndex}}" [(ngModel)]="attribute.type">
+                                                                                                                <mat-label>{{ 'extension.type' | translate }}</mat-label>
+                                                                                                                <mat-select required name="mqttAttributeType_{{brokerIndex}}{{mapIndex}}{{attributeIndex}}" [(ngModel)]="attribute.type" #f16="ngModel">
                                                                                                                     @for (attrType of __keys(types?.extensionValueType); track attrType) {
                                                                                                                       @let attrTypeValue = (types?.extensionValueType)[attrType];
                                                                                                                       <mat-option [value]="attrType">
@@ -389,21 +319,13 @@
                                                                                                                     </mat-option>
                                                                                                                     }
                                                                                                                 </mat-select>
-                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                                <div ng-messages="theForm?.['mqttAttributeType_' + brokerIndex + mapIndex + attributeIndex]?.$error">
-                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                                                </div>
+                                                                                                                @if (f16.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                                             </mat-form-field>
                                                                                                         </section>
                                                                                                         <mat-form-field class="md-block">
-                                                                                                            <mat-label translate>extension.value</mat-label>
-                                                                                                            <input matInput required attr.name="mqttAttributeValue_{{brokerIndex}}{{mapIndex}}{{attributeIndex}}" [(ngModel)]="attribute.value">
-                                                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                            <div ng-messages="theForm?.['mqttAttributeValue_' + brokerIndex + mapIndex + attributeIndex]?.$error">
-                                                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                <div translate ng-message="required">extension.field-required</div>
-                                                                                                            </div>
+                                                                                                            <mat-label>{{ 'extension.value' | translate }}</mat-label>
+                                                                                                            <input matInput required name="mqttAttributeValue_{{brokerIndex}}{{mapIndex}}{{attributeIndex}}" [(ngModel)]="attribute.value" #f17="ngModel">
+                                                                                                            @if (f17.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                                         </mat-form-field>
                                                                                                     </mat-card-content>
                                                                                                 </mat-card>
@@ -415,28 +337,26 @@
                                                                                     <div flex layout="row" layout-align="start center">
                                                                                         <button mat-raised-button color="primary" (click)="addAttribute(map.converter.attributes)" attr.aria-label="{{ 'action.add' | translate }}">
                                                                                             <mat-icon class="material-icons">add</mat-icon>
-                                                                                            <span translate>extension.add-attribute</span>
+                                                                                            <span>{{ 'extension.add-attribute' | translate }}</span>
                                                                                         </button>
                                                                                     </div>
-                                                                                </v-pane-content>
-                                                                            </v-pane>
-                                                                        </v-accordion>
+                                                                            </mat-expansion-panel>
+                                                                        </mat-accordion>
                                                                         }
 
                                                                         @if (map?.converterType =="json") {
-                                                                          <v-accordion id="mqtt-timeseries-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
-                                                                            <v-pane id="mqtt-timeseries-pane_{{brokerIndex}}{{mapIndex}}">
-                                                                                <v-pane-header>
+                                                                          <mat-accordion id="mqtt-timeseries-accordion" class="vAccordion--default">
+                                                                            <mat-expansion-panel id="mqtt-timeseries-pane_{{brokerIndex}}{{mapIndex}}" (opened)="expandValidation(0, 'mqtt-timeseries-pane_' + brokerIndex + mapIndex)" (closed)="collapseValidation(0, 'mqtt-timeseries-pane_' + brokerIndex + mapIndex)">
+                                                                                <mat-expansion-panel-header>
                                                                                     {{ 'extension.timeseries' | translate }}
-                                                                                </v-pane-header>
-                                                                                <v-pane-content>
+                                                                                </mat-expansion-panel-header>
                                                                                     @if (map?.converter?.timeseries?.length > 0) {
                                                                                       <div>
                                                                                         <ol class="list-group">
                                                                                             @for (timeseriesIndex of __keys(map?.converter?.timeseries); track timeseriesIndex) {
                                                                                               @let timeseries = (map?.converter?.timeseries)[timeseriesIndex];
                                                                                               <li class="list-group-item">
-                                                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(timeseries, map.converter.timeseries)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(timeseries, map.converter.timeseries)" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                                                                     <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
                                                                                                     
                                                                                                 </button>
@@ -444,17 +364,13 @@
                                                                                                     <mat-card-content>
                                                                                                         <section flex layout="row">
                                                                                                             <mat-form-field flex="60" class="md-block">
-                                                                                                                <mat-label translate>extension.key</mat-label>
-                                                                                                                <input matInput required attr.name="mqttTimeseriesKey_{{brokerIndex}}{{mapIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.key">
-                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                                <div ng-messages="theForm?.['mqttTimeseriesKey_' + brokerIndex + mapIndex + timeseriesIndex]?.$error">
-                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                                                </div>
+                                                                                                                <mat-label>{{ 'extension.key' | translate }}</mat-label>
+                                                                                                                <input matInput required name="mqttTimeseriesKey_{{brokerIndex}}{{mapIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.key" #f18="ngModel">
+                                                                                                                @if (f18.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                                             </mat-form-field>
                                                                                                             <mat-form-field flex="40" class="md-block">
-                                                                                                                <mat-label translate>extension.type</mat-label>
-                                                                                                                <mat-select required name="mqttTimeseriesType_{{brokerIndex}}{{mapIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.type">
+                                                                                                                <mat-label>{{ 'extension.type' | translate }}</mat-label>
+                                                                                                                <mat-select required name="mqttTimeseriesType_{{brokerIndex}}{{mapIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.type" #f19="ngModel">
                                                                                                                     @for (attrType of __keys(types?.extensionValueType); track attrType) {
                                                                                                                       @let attrTypeValue = (types?.extensionValueType)[attrType];
                                                                                                                       <mat-option [value]="attrType">
@@ -462,21 +378,13 @@
                                                                                                                     </mat-option>
                                                                                                                     }
                                                                                                                 </mat-select>
-                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                                <div ng-messages="theForm?.['mqttTimeseriesType_' + brokerIndex + mapIndex + timeseriesIndex]?.$error">
-                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                                                </div>
+                                                                                                                @if (f19.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                                             </mat-form-field>
                                                                                                         </section>
                                                                                                         <mat-form-field class="md-block">
-                                                                                                            <mat-label translate>extension.value</mat-label>
-                                                                                                            <input matInput required attr.name="mqttTimeseriesValue_{{brokerIndex}}{{mapIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.value">
-                                                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                            <div ng-messages="theForm?.['mqttTimeseriesValue_' + brokerIndex + mapIndex + timeseriesIndex]?.$error">
-                                                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                <div translate ng-message="required">extension.field-required</div>
-                                                                                                            </div>
+                                                                                                            <mat-label>{{ 'extension.value' | translate }}</mat-label>
+                                                                                                            <input matInput required name="mqttTimeseriesValue_{{brokerIndex}}{{mapIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.value" #f20="ngModel">
+                                                                                                            @if (f20.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                                         </mat-form-field>
                                                                                                     </mat-card-content>
                                                                                                 </mat-card>
@@ -488,12 +396,11 @@
                                                                                     <div flex layout="row" layout-align="start center">
                                                                                         <button mat-raised-button color="primary" (click)="addAttribute(map.converter.timeseries)" attr.aria-label="{{ 'action.add' | translate }}">
                                                                                             <mat-icon class="material-icons">add</mat-icon>
-                                                                                            <span translate>extension.add-timeseries</span>
+                                                                                            <span>{{ 'extension.add-timeseries' | translate }}</span>
                                                                                         </button>
                                                                                     </div>
-                                                                                </v-pane-content>
-                                                                            </v-pane>
-                                                                        </v-accordion>
+                                                                            </mat-expansion-panel>
+                                                                        </mat-accordion>
                                                                         }
 
                                                                     </mat-card-content>
@@ -506,44 +413,38 @@
                                                     <div flex layout="row" layout-align="start center">
                                                         <button mat-raised-button color="primary" (click)="addMap(broker.mapping)" attr.aria-label="{{ 'action.add' | translate }}">
                                                             <mat-icon class="material-icons">add</mat-icon>
-                                                            <span translate>extension.add-map</span>
+                                                            <span>{{ 'extension.add-map' | translate }}</span>
                                                         </button>
                                                     </div>
-                                                </v-pane-content>
-                                            </v-pane>
-                                        </v-accordion>
+                                            </mat-expansion-panel>
+                                        </mat-accordion>
 
-                                        <v-accordion id="mqtt-connect-requests-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
-                                            <v-pane id="mqtt-connect-requests-pane_{{brokerIndex}}">
-                                                <v-pane-header>
+                                        <mat-accordion id="mqtt-connect-requests-accordion" class="vAccordion--default">
+                                            <mat-expansion-panel id="mqtt-connect-requests-pane_{{brokerIndex}}" (opened)="expandValidation(0, 'mqtt-connect-requests-pane_' + brokerIndex)" (closed)="collapseValidation(0, 'mqtt-connect-requests-pane_' + brokerIndex)">
+                                                <mat-expansion-panel-header>
                                                     {{ 'extension.connect-requests' | translate }}
-                                                </v-pane-header>
-                                                <v-pane-content>
+                                                </mat-expansion-panel-header>
                                                     @if (broker?.connectRequests?.length > 0) {
                                                       <div>
                                                         <ol class="list-group">
                                                             @for (connectRequestIndex of __keys(broker?.connectRequests); track connectRequestIndex) {
                                                               @let connectRequest = (broker?.connectRequests)[connectRequestIndex];
                                                               <li class="list-group-item">
-                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(connectRequest, broker.connectRequests)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(connectRequest, broker.connectRequests)" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                                     <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
                                                                     
                                                                 </button>
                                                                 <mat-card>
                                                                     <mat-card-content>
                                                                         <mat-form-field class="md-block">
-                                                                            <mat-label translate>extension.topic-filter</mat-label>
-                                                                            <input matInput required attr.name="conRequestTopicFilter_{{brokerIndex}}{{connectRequestIndex}}" [(ngModel)]="connectRequest.topicFilter">
-                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                            <div ng-messages="theForm?.['conRequestTopicFilter_' + brokerIndex + connectRequestIndex]?.$error">
-                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                <div translate ng-message="required">extension.field-required</div>
-                                                                            </div>
+                                                                            <mat-label>{{ 'extension.topic-filter' | translate }}</mat-label>
+                                                                            <input matInput required name="conRequestTopicFilter_{{brokerIndex}}{{connectRequestIndex}}" [(ngModel)]="connectRequest.topicFilter" #f21="ngModel">
+                                                                            @if (f21.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                         </mat-form-field>
                                                                         <section flex layout="row">
                                                                             <mat-form-field flex="40" class="md-block">
-                                                                                <mat-label translate>extension.device-name-expression</mat-label>
-                                                                                <mat-select required name="connectDeviceNameExpression_{{brokerIndex}}{{connectRequestIndex}}" [(ngModel)]="connectRequest.nameExp" (ngModelChange)="changeNameExpression(connectRequest, 'connect')">
+                                                                                <mat-label>{{ 'extension.device-name-expression' | translate }}</mat-label>
+                                                                                <mat-select required name="connectDeviceNameExpression_{{brokerIndex}}{{connectRequestIndex}}" [(ngModel)]="connectRequest.nameExp" (ngModelChange)="changeNameExpression(connectRequest, 'connect')" #f22="ngModel">
                                                                                     @for (key of __keys(deviceNameExpressions); track key) {
                                                                                       @let value = (deviceNameExpressions)[key];
                                                                                       <mat-option [value]='key'>
@@ -551,32 +452,20 @@
                                                                                     </mat-option>
                                                                                     }
                                                                                 </mat-select>
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['connectDeviceNameExpression_' + brokerIndex + connectRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                @if (f22.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             @if (connectRequest?.nameExp == 'deviceNameJsonExpression') {
                                                                               <mat-form-field flex="60" class="md-block">
-                                                                                <mat-label translate>extension.json-name-expression</mat-label>
-                                                                                <input matInput required attr.name="connectJsonNameExp_{{brokerIndex}}{{connectRequestIndex}}" [(ngModel)]="connectRequest.deviceNameJsonExpression">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['connectJsonNameExp_' + brokerIndex + connectRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.json-name-expression' | translate }}</mat-label>
+                                                                                <input matInput required name="connectJsonNameExp_{{brokerIndex}}{{connectRequestIndex}}" [(ngModel)]="connectRequest.deviceNameJsonExpression" #f23="ngModel">
+                                                                                @if (f23.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             }
                                                                             @if (connectRequest?.nameExp == 'deviceNameTopicExpression') {
                                                                               <mat-form-field flex="60" class="md-block">
-                                                                                <mat-label translate>extension.topic-name-expression</mat-label>
-                                                                                <input matInput required attr.name="connectTopicNameExp_{{brokerIndex}}{{connectRequestIndex}}" [(ngModel)]="connectRequest.deviceNameTopicExpression">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['connectTopicNameExp_' + brokerIndex + connectRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.topic-name-expression' | translate }}</mat-label>
+                                                                                <input matInput required name="connectTopicNameExp_{{brokerIndex}}{{connectRequestIndex}}" [(ngModel)]="connectRequest.deviceNameTopicExpression" #f24="ngModel">
+                                                                                @if (f24.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             }
                                                                         </section>
@@ -590,44 +479,38 @@
                                                     <div flex layout="row" layout-align="start center">
                                                         <button mat-raised-button color="primary" (click)='addConnectRequest(broker.connectRequests, "connect")' attr.aria-label="{{ 'action.add' | translate }}">
                                                             <mat-icon class="material-icons">add</mat-icon>
-                                                            <span translate>extension.add-connect-request</span>
+                                                            <span>{{ 'extension.add-connect-request' | translate }}</span>
                                                         </button>
                                                     </div>
-                                                </v-pane-content>
-                                            </v-pane>
-                                        </v-accordion>
+                                            </mat-expansion-panel>
+                                        </mat-accordion>
 
-                                        <v-accordion id="mqtt-disconnect-requests-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
-                                            <v-pane id="mqtt-disconnect-requests-pane_{{brokerIndex}}">
-                                                <v-pane-header>
+                                        <mat-accordion id="mqtt-disconnect-requests-accordion" class="vAccordion--default">
+                                            <mat-expansion-panel id="mqtt-disconnect-requests-pane_{{brokerIndex}}" (opened)="expandValidation(0, 'mqtt-disconnect-requests-pane_' + brokerIndex)" (closed)="collapseValidation(0, 'mqtt-disconnect-requests-pane_' + brokerIndex)">
+                                                <mat-expansion-panel-header>
                                                     {{ 'extension.disconnect-requests' | translate }}
-                                                </v-pane-header>
-                                                <v-pane-content>
+                                                </mat-expansion-panel-header>
                                                     @if (broker?.disconnectRequests?.length > 0) {
                                                       <div>
                                                         <ol class="list-group">
                                                             @for (disconnectRequestIndex of __keys(broker?.disconnectRequests); track disconnectRequestIndex) {
                                                               @let disconnectRequest = (broker?.disconnectRequests)[disconnectRequestIndex];
                                                               <li class="list-group-item">
-                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(disconnectRequest, broker.disconnectRequests)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(disconnectRequest, broker.disconnectRequests)" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                                     <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
                                                                     
                                                                 </button>
                                                                 <mat-card>
                                                                     <mat-card-content>
                                                                         <mat-form-field class="md-block">
-                                                                            <mat-label translate>extension.topic-filter</mat-label>
-                                                                            <input matInput required attr.name="disconRequestTopicFilter_{{brokerIndex}}{{disconnectRequestIndex}}" [(ngModel)]="disconnectRequest.topicFilter">
-                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                            <div ng-messages="theForm?.['disconRequestTopicFilter_' + brokerIndex + disconnectRequestIndex]?.$error">
-                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                <div translate ng-message="required">extension.field-required</div>
-                                                                            </div>
+                                                                            <mat-label>{{ 'extension.topic-filter' | translate }}</mat-label>
+                                                                            <input matInput required name="disconRequestTopicFilter_{{brokerIndex}}{{disconnectRequestIndex}}" [(ngModel)]="disconnectRequest.topicFilter" #f25="ngModel">
+                                                                            @if (f25.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                         </mat-form-field>
                                                                         <section flex layout="row">
                                                                             <mat-form-field flex="40" class="md-block">
-                                                                                <mat-label translate>extension.device-name-expression</mat-label>
-                                                                                <mat-select required name="disconnectDeviceNameExpression_{{brokerIndex}}{{disconnectRequestIndex}}" [(ngModel)]="disconnectRequest.nameExp" (ngModelChange)="changeNameExpression(disconnectRequest, 'disconnect')">
+                                                                                <mat-label>{{ 'extension.device-name-expression' | translate }}</mat-label>
+                                                                                <mat-select required name="disconnectDeviceNameExpression_{{brokerIndex}}{{disconnectRequestIndex}}" [(ngModel)]="disconnectRequest.nameExp" (ngModelChange)="changeNameExpression(disconnectRequest, 'disconnect')" #f26="ngModel">
                                                                                     @for (key of __keys(deviceNameExpressions); track key) {
                                                                                       @let value = (deviceNameExpressions)[key];
                                                                                       <mat-option [value]='key'>
@@ -635,32 +518,20 @@
                                                                                     </mat-option>
                                                                                     }
                                                                                 </mat-select>
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['disconnectDeviceNameExpression_' + brokerIndex + disconnectRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                @if (f26.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             @if (disconnectRequest?.nameExp == 'deviceNameJsonExpression') {
                                                                               <mat-form-field flex="60" class="md-block">
-                                                                                <mat-label translate>extension.json-name-expression</mat-label>
-                                                                                <input matInput required attr.name="disconnectJsonNameExp_{{brokerIndex}}{{disconnectRequestIndex}}" [(ngModel)]="disconnectRequest.deviceNameJsonExpression">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['disconnectJsonNameExp_' + brokerIndex + disconnectRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.json-name-expression' | translate }}</mat-label>
+                                                                                <input matInput required name="disconnectJsonNameExp_{{brokerIndex}}{{disconnectRequestIndex}}" [(ngModel)]="disconnectRequest.deviceNameJsonExpression" #f27="ngModel">
+                                                                                @if (f27.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             }
                                                                             @if (disconnectRequest?.nameExp == 'deviceNameTopicExpression') {
                                                                               <mat-form-field flex="60" class="md-block">
-                                                                                <mat-label translate>extension.topic-name-expression</mat-label>
-                                                                                <input matInput required attr.name="disconnectTopicNameExp_{{brokerIndex}}{{disconnectRequestIndex}}" [(ngModel)]="disconnectRequest.deviceNameTopicExpression">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['disconnectTopicNameExp_' + brokerIndex + disconnectRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.topic-name-expression' | translate }}</mat-label>
+                                                                                <input matInput required name="disconnectTopicNameExp_{{brokerIndex}}{{disconnectRequestIndex}}" [(ngModel)]="disconnectRequest.deviceNameTopicExpression" #f28="ngModel">
+                                                                                @if (f28.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             }
                                                                         </section>
@@ -674,26 +545,24 @@
                                                     <div flex layout="row" layout-align="start center">
                                                         <button mat-raised-button color="primary" (click)='addConnectRequest(broker.disconnectRequests, "disconnect")' attr.aria-label="{{ 'action.add' | translate }}">
                                                             <mat-icon class="material-icons">add</mat-icon>
-                                                            <span translate>extension.add-disconnect-request</span>
+                                                            <span>{{ 'extension.add-disconnect-request' | translate }}</span>
                                                         </button>
                                                     </div>
-                                                </v-pane-content>
-                                            </v-pane>
-                                        </v-accordion>
+                                            </mat-expansion-panel>
+                                        </mat-accordion>
 
-                                        <v-accordion id="mqtt-attribute-requests-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
-                                            <v-pane id="mqtt-attribute-requests-pane_{{brokerIndex}}">
-                                                <v-pane-header>
+                                        <mat-accordion id="mqtt-attribute-requests-accordion" class="vAccordion--default">
+                                            <mat-expansion-panel id="mqtt-attribute-requests-pane_{{brokerIndex}}" (opened)="expandValidation(0, 'mqtt-attribute-requests-pane_' + brokerIndex)" (closed)="collapseValidation(0, 'mqtt-attribute-requests-pane_' + brokerIndex)">
+                                                <mat-expansion-panel-header>
                                                     {{ 'extension.attribute-requests' | translate }}
-                                                </v-pane-header>
-                                                <v-pane-content>
+                                                </mat-expansion-panel-header>
                                                     @if (broker?.attributeRequests?.length > 0) {
                                                       <div>
                                                         <ol class="list-group">
                                                             @for (attributeRequestIndex of __keys(broker?.attributeRequests); track attributeRequestIndex) {
                                                               @let attributeRequest = (broker?.attributeRequests)[attributeRequestIndex];
                                                               <li class="list-group-item">
-                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(attributeRequest, broker.attributeRequests)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(attributeRequest, broker.attributeRequests)" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                                     <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
                                                                     
                                                                 </button>
@@ -701,23 +570,19 @@
                                                                     <mat-card-content>
                                                                         <section flex layout="row">
                                                                             <mat-form-field flex="80" class="md-block">
-                                                                                <mat-label translate>extension.topic-filter</mat-label>
-                                                                                <input matInput required attr.name="attributeRequestTopicFilter_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.topicFilter">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['attributeRequestTopicFilter_' + brokerIndex + attributeRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.topic-filter' | translate }}</mat-label>
+                                                                                <input matInput required name="attributeRequestTopicFilter_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.topicFilter" #f29="ngModel">
+                                                                                @if (f29.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
-                                                                            <mat-form-field flex="20" class="md-block">
-                                                                                <mat-checkbox flex attr.aria-label="{{ 'extension.client-scope' | translate }}" [(ngModel)]="attributeRequest.clientScope">{{ 'extension.client-scope' | translate }}
+                                                                            <div flex="20" class="md-block">
+                                                                                <mat-checkbox flex attr.aria-label="{{ 'extension.client-scope' | translate }}" name="attrRequestClientScope_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.clientScope">{{ 'extension.client-scope' | translate }}
                                                                                 </mat-checkbox>
-                                                                            </mat-form-field>
+                                                                            </div>
                                                                         </section>
                                                                         <section flex layout="row">
                                                                             <mat-form-field flex="40" class="md-block">
-                                                                                <mat-label translate>extension.device-name-expression</mat-label>
-                                                                                <mat-select required name="attrRequestDeviceNameExpression_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.nameExp" (ngModelChange)="changeNameExpression(attributeRequest, 'attribute')">
+                                                                                <mat-label>{{ 'extension.device-name-expression' | translate }}</mat-label>
+                                                                                <mat-select required name="attrRequestDeviceNameExpression_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.nameExp" (ngModelChange)="changeNameExpression(attributeRequest, 'attribute')" #f30="ngModel">
                                                                                     @for (key of __keys(deviceNameExpressions); track key) {
                                                                                       @let value = (deviceNameExpressions)[key];
                                                                                       <mat-option [value]='key'>
@@ -725,40 +590,28 @@
                                                                                     </mat-option>
                                                                                     }
                                                                                 </mat-select>
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['attrRequestDeviceNameExpression_' + brokerIndex + attributeRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                @if (f30.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             @if (attributeRequest?.nameExp == 'deviceNameJsonExpression') {
                                                                               <mat-form-field flex="60" class="md-block">
-                                                                                <mat-label translate>extension.json-name-expression</mat-label>
-                                                                                <input matInput required attr.name="attrRequestJsonNameExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.deviceNameJsonExpression">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['attrRequestJsonNameExp_' + brokerIndex + attributeRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.json-name-expression' | translate }}</mat-label>
+                                                                                <input matInput required name="attrRequestJsonNameExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.deviceNameJsonExpression" #f31="ngModel">
+                                                                                @if (f31.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             }
                                                                             @if (attributeRequest?.nameExp == 'deviceNameTopicExpression') {
                                                                               <mat-form-field flex="60" class="md-block">
-                                                                                <mat-label translate>extension.topic-name-expression</mat-label>
-                                                                                <input matInput required attr.name="attrRequestTopicNameExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.deviceNameTopicExpression">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['attrRequestTopicNameExp_' + brokerIndex + attributeRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.topic-name-expression' | translate }}</mat-label>
+                                                                                <input matInput required name="attrRequestTopicNameExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.deviceNameTopicExpression" #f32="ngModel">
+                                                                                @if (f32.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             }
                                                                         </section>
 
                                                                         <section flex layout="row">
                                                                             <mat-form-field flex="40" class="md-block">
-                                                                                <mat-label translate>extension.attribute-key-expression</mat-label>
-                                                                                <mat-select required name="attrRequestAttributeKeyExpression_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.attrKey" (ngModelChange)="changeAttrKeyExpression(attributeRequest)">
+                                                                                <mat-label>{{ 'extension.attribute-key-expression' | translate }}</mat-label>
+                                                                                <mat-select required name="attrRequestAttributeKeyExpression_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.attrKey" (ngModelChange)="changeAttrKeyExpression(attributeRequest)" #f33="ngModel">
                                                                                     @for (key of __keys(attributeKeyExpressions); track key) {
                                                                                       @let value = (attributeKeyExpressions)[key];
                                                                                       <mat-option [value]='key'>
@@ -766,40 +619,28 @@
                                                                                     </mat-option>
                                                                                     }
                                                                                 </mat-select>
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['attrRequestAttributeKeyExpression_' + brokerIndex + attributeRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                @if (f33.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             @if (attributeRequest?.attrKey == 'attributeKeyJsonExpression') {
                                                                               <mat-form-field flex="60" class="md-block">
-                                                                                <mat-label translate>extension.attr-json-key-expression</mat-label>
-                                                                                <input matInput required attr.name="attrRequestJsonKeyExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.attributeKeyJsonExpression">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['attrRequestJsonKeyExp_' + brokerIndex + attributeRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.attr-json-key-expression' | translate }}</mat-label>
+                                                                                <input matInput required name="attrRequestJsonKeyExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.attributeKeyJsonExpression" #f34="ngModel">
+                                                                                @if (f34.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             }
                                                                             @if (attributeRequest?.attrKey == 'attributeKeyTopicExpression') {
                                                                               <mat-form-field flex="60" class="md-block">
-                                                                                <mat-label translate>extension.attr-topic-key-expression</mat-label>
-                                                                                <input matInput required attr.name="attrRequestTopicKeyExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.attributeKeyTopicExpression">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['attrRequestTopicKeyExp_' + brokerIndex + attributeRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.attr-topic-key-expression' | translate }}</mat-label>
+                                                                                <input matInput required name="attrRequestTopicKeyExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.attributeKeyTopicExpression" #f35="ngModel">
+                                                                                @if (f35.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             }
                                                                         </section>
 
                                                                         <section flex layout="row">
                                                                             <mat-form-field flex="40" class="md-block">
-                                                                                <mat-label translate>extension.request-id-expression</mat-label>
-                                                                                <mat-select required name="attrRequestIdExpression_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.requestId" (ngModelChange)="changeRequestIdExpression(attributeRequest)">
+                                                                                <mat-label>{{ 'extension.request-id-expression' | translate }}</mat-label>
+                                                                                <mat-select required name="attrRequestIdExpression_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.requestId" (ngModelChange)="changeRequestIdExpression(attributeRequest)" #f36="ngModel">
                                                                                     @for (key of __keys(requestIdExpressions); track key) {
                                                                                       @let value = (requestIdExpressions)[key];
                                                                                       <mat-option [value]='key'>
@@ -807,53 +648,33 @@
                                                                                     </mat-option>
                                                                                     }
                                                                                 </mat-select>
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['attrRequestIdExpression_' + brokerIndex + attributeRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                @if (f36.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             @if (attributeRequest?.requestId == 'requestIdJsonExpression') {
                                                                               <mat-form-field flex="60" class="md-block">
-                                                                                <mat-label translate>extension.request-id-json-expression</mat-label>
-                                                                                <input matInput required attr.name="attrRequestJsonIdExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.requestIdJsonExpression">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['attrRequestJsonIdExp_' + brokerIndex + attributeRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.request-id-json-expression' | translate }}</mat-label>
+                                                                                <input matInput required name="attrRequestJsonIdExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.requestIdJsonExpression" #f37="ngModel">
+                                                                                @if (f37.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             }
                                                                             @if (attributeRequest?.requestId == 'requestIdTopicExpression') {
                                                                               <mat-form-field flex="60" class="md-block">
-                                                                                <mat-label translate>extension.request-id-topic-expression</mat-label>
-                                                                                <input matInput required attr.name="attrRequestTopicIdExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.requestIdTopicExpression">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['attrRequestTopicIdExp_' + brokerIndex + attributeRequestIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.request-id-topic-expression' | translate }}</mat-label>
+                                                                                <input matInput required name="attrRequestTopicIdExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.requestIdTopicExpression" #f38="ngModel">
+                                                                                @if (f38.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             }
                                                                         </section>
 
                                                                         <mat-form-field class="md-block">
-                                                                            <mat-label translate>extension.response-topic-expression</mat-label>
-                                                                            <input matInput required attr.name="attributeRequestResponseTopicExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.responseTopicExpression">
-                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                            <div ng-messages="theForm?.['attributeRequestResponseTopicExp_' + brokerIndex + attributeRequestIndex]?.$error">
-                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                <div translate ng-message="required">extension.field-required</div>
-                                                                            </div>
+                                                                            <mat-label>{{ 'extension.response-topic-expression' | translate }}</mat-label>
+                                                                            <input matInput required name="attributeRequestResponseTopicExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.responseTopicExpression" #f39="ngModel">
+                                                                            @if (f39.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                         </mat-form-field>
                                                                         <mat-form-field class="md-block">
-                                                                            <mat-label translate>extension.value-expression</mat-label>
-                                                                            <input matInput required attr.name="attributeRequestValueExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.valueExpression">
-                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                            <div ng-messages="theForm?.['attributeRequestValueExp_' + brokerIndex + attributeRequestIndex]?.$error">
-                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                <div translate ng-message="required">extension.field-required</div>
-                                                                            </div>
+                                                                            <mat-label>{{ 'extension.value-expression' | translate }}</mat-label>
+                                                                            <input matInput required name="attributeRequestValueExp_{{brokerIndex}}{{attributeRequestIndex}}" [(ngModel)]="attributeRequest.valueExpression" #f40="ngModel">
+                                                                            @if (f40.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                         </mat-form-field>
                                                                     </mat-card-content>
                                                                 </mat-card>
@@ -865,26 +686,24 @@
                                                     <div flex layout="row" layout-align="start center">
                                                         <button mat-raised-button color="primary" (click)="addAttributeRequest(broker.attributeRequests)" attr.aria-label="{{ 'action.add' | translate }}">
                                                             <mat-icon class="material-icons">add</mat-icon>
-                                                            <span translate>extension.add-attribute-request</span>
+                                                            <span>{{ 'extension.add-attribute-request' | translate }}</span>
                                                         </button>
                                                     </div>
-                                                </v-pane-content>
-                                            </v-pane>
-                                        </v-accordion>
+                                            </mat-expansion-panel>
+                                        </mat-accordion>
 
-                                        <v-accordion id="mqtt-attribute-updates-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
-                                            <v-pane id="mqtt-attribute-updates-pane_{{brokerIndex}}">
-                                                <v-pane-header>
+                                        <mat-accordion id="mqtt-attribute-updates-accordion" class="vAccordion--default">
+                                            <mat-expansion-panel id="mqtt-attribute-updates-pane_{{brokerIndex}}" (opened)="expandValidation(0, 'mqtt-attribute-updates-pane_' + brokerIndex)" (closed)="collapseValidation(0, 'mqtt-attribute-updates-pane_' + brokerIndex)">
+                                                <mat-expansion-panel-header>
                                                     {{ 'extension.attribute-updates' | translate }}
-                                                </v-pane-header>
-                                                <v-pane-content>
+                                                </mat-expansion-panel-header>
                                                     @if (broker?.attributeUpdates?.length > 0) {
                                                       <div>
                                                         <ol class="list-group">
                                                             @for (attributeUpdateIndex of __keys(broker?.attributeUpdates); track attributeUpdateIndex) {
                                                               @let attributeUpdate = (broker?.attributeUpdates)[attributeUpdateIndex];
                                                               <li class="list-group-item">
-                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(attributeUpdate, broker.attributeUpdates)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(attributeUpdate, broker.attributeUpdates)" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                                     <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
                                                                     
                                                                 </button>
@@ -892,41 +711,25 @@
                                                                     <mat-card-content>
                                                                         <section flex layout="row">
                                                                             <mat-form-field flex="50" class="md-block">
-                                                                                <mat-label translate>extension.device-name-filter</mat-label>
-                                                                                <input matInput required attr.name="attributeUpdateDeviceNameFilter_{{brokerIndex}}{{attributeUpdateIndex}}" [(ngModel)]="attributeUpdate.deviceNameFilter">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['attributeUpdateDeviceNameFilter_' + brokerIndex + attributeUpdateIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.device-name-filter' | translate }}</mat-label>
+                                                                                <input matInput required name="attributeUpdateDeviceNameFilter_{{brokerIndex}}{{attributeUpdateIndex}}" [(ngModel)]="attributeUpdate.deviceNameFilter" #f41="ngModel">
+                                                                                @if (f41.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             <mat-form-field flex="50" class="md-block">
-                                                                                <mat-label translate>extension.attribute-filter</mat-label>
-                                                                                <input matInput required attr.name="attributeUpdateAttributeFilter_{{brokerIndex}}{{attributeUpdateIndex}}" [(ngModel)]="attributeUpdate.attributeFilter">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['attributeUpdateAttributeFilter_' + brokerIndex + attributeUpdateIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.attribute-filter' | translate }}</mat-label>
+                                                                                <input matInput required name="attributeUpdateAttributeFilter_{{brokerIndex}}{{attributeUpdateIndex}}" [(ngModel)]="attributeUpdate.attributeFilter" #f42="ngModel">
+                                                                                @if (f42.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                         </section>
                                                                         <mat-form-field class="md-block">
-                                                                            <mat-label translate>extension.topic-expression</mat-label>
-                                                                            <input matInput required attr.name="attributeUpdateTopicExp_{{brokerIndex}}{{attributeUpdateIndex}}" [(ngModel)]="attributeUpdate.topicExpression">
-                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                            <div ng-messages="theForm?.['attributeUpdateTopicExp_' + brokerIndex + attributeUpdateIndex]?.$error">
-                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                <div translate ng-message="required">extension.field-required</div>
-                                                                            </div>
+                                                                            <mat-label>{{ 'extension.topic-expression' | translate }}</mat-label>
+                                                                            <input matInput required name="attributeUpdateTopicExp_{{brokerIndex}}{{attributeUpdateIndex}}" [(ngModel)]="attributeUpdate.topicExpression" #f43="ngModel">
+                                                                            @if (f43.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                         </mat-form-field>
                                                                         <mat-form-field class="md-block">
-                                                                            <mat-label translate>extension.value-expression</mat-label>
-                                                                            <input matInput required attr.name="attributeUpdateValueExp_{{brokerIndex}}{{attributeUpdateIndex}}" [(ngModel)]="attributeUpdate.valueExpression">
-                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                            <div ng-messages="theForm?.['attributeUpdateValueExp_' + brokerIndex + attributeUpdateIndex]?.$error">
-                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                <div translate ng-message="required">extension.field-required</div>
-                                                                            </div>
+                                                                            <mat-label>{{ 'extension.value-expression' | translate }}</mat-label>
+                                                                            <input matInput required name="attributeUpdateValueExp_{{brokerIndex}}{{attributeUpdateIndex}}" [(ngModel)]="attributeUpdate.valueExpression" #f44="ngModel">
+                                                                            @if (f44.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                         </mat-form-field>
                                                                     </mat-card-content>
                                                                 </mat-card>
@@ -938,26 +741,24 @@
                                                     <div flex layout="row" layout-align="start center">
                                                         <button mat-raised-button color="primary" (click)='addAttributeUpdate(broker.attributeUpdates)' attr.aria-label="{{ 'action.add' | translate }}">
                                                             <mat-icon class="material-icons">add</mat-icon>
-                                                            <span translate>extension.add-attribute-update</span>
+                                                            <span>{{ 'extension.add-attribute-update' | translate }}</span>
                                                         </button>
                                                     </div>
-                                                </v-pane-content>
-                                            </v-pane>
-                                        </v-accordion>
+                                            </mat-expansion-panel>
+                                        </mat-accordion>
 
-                                        <v-accordion id="mqtt-server-side-rpc-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
-                                            <v-pane id="mqtt-server-side-rpc-pane_{{brokerIndex}}">
-                                                <v-pane-header>
+                                        <mat-accordion id="mqtt-server-side-rpc-accordion" class="vAccordion--default">
+                                            <mat-expansion-panel id="mqtt-server-side-rpc-pane_{{brokerIndex}}" (opened)="expandValidation(0, 'mqtt-server-side-rpc-pane_' + brokerIndex)" (closed)="collapseValidation(0, 'mqtt-server-side-rpc-pane_' + brokerIndex)">
+                                                <mat-expansion-panel-header>
                                                     {{ 'extension.server-side-rpc' | translate }}
-                                                </v-pane-header>
-                                                <v-pane-content>
+                                                </mat-expansion-panel-header>
                                                     @if (broker?.serverSideRpc?.length > 0) {
                                                       <div>
                                                         <ol class="list-group">
                                                             @for (rpcIndex of __keys(broker?.serverSideRpc); track rpcIndex) {
                                                               @let rpc = (broker?.serverSideRpc)[rpcIndex];
                                                               <li class="list-group-item">
-                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(rpc, broker.serverSideRpc)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(rpc, broker.serverSideRpc)" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                                     <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
                                                                     
                                                                 </button>
@@ -965,50 +766,34 @@
                                                                     <mat-card-content>
                                                                         <section flex layout="row">
                                                                             <mat-form-field flex="50" class="md-block">
-                                                                                <mat-label translate>extension.device-name-filter</mat-label>
-                                                                                <input matInput required attr.name="serverSideRpcDeviceNameFilter_{{brokerIndex}}{{rpcIndex}}" [(ngModel)]="rpc.deviceNameFilter">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['serverSideRpcDeviceNameFilter_' + brokerIndex + rpcIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.device-name-filter' | translate }}</mat-label>
+                                                                                <input matInput required name="serverSideRpcDeviceNameFilter_{{brokerIndex}}{{rpcIndex}}" [(ngModel)]="rpc.deviceNameFilter" #f45="ngModel">
+                                                                                @if (f45.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                             <mat-form-field flex="50" class="md-block">
-                                                                                <mat-label translate>extension.method-filter</mat-label>
-                                                                                <input matInput required attr.name="serverSideRpcMethodFilter_{{brokerIndex}}{{rpcIndex}}" [(ngModel)]="rpc.methodFilter">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['serverSideRpcMethodFilter_' + brokerIndex + rpcIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.method-filter' | translate }}</mat-label>
+                                                                                <input matInput required name="serverSideRpcMethodFilter_{{brokerIndex}}{{rpcIndex}}" [(ngModel)]="rpc.methodFilter" #f46="ngModel">
+                                                                                @if (f46.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                         </section>
                                                                         <mat-form-field class="md-block">
-                                                                            <mat-label translate>extension.request-topic-expression</mat-label>
-                                                                            <input matInput required attr.name="serverSideRpcRequestTopicExp_{{brokerIndex}}{{rpcIndex}}" [(ngModel)]="rpc.requestTopicExpression">
-                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                            <div ng-messages="theForm?.['serverSideRpcRequestTopicExp_' + brokerIndex + rpcIndex]?.$error">
-                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                <div translate ng-message="required">extension.field-required</div>
-                                                                            </div>
+                                                                            <mat-label>{{ 'extension.request-topic-expression' | translate }}</mat-label>
+                                                                            <input matInput required name="serverSideRpcRequestTopicExp_{{brokerIndex}}{{rpcIndex}}" [(ngModel)]="rpc.requestTopicExpression" #f47="ngModel">
+                                                                            @if (f47.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                         </mat-form-field>
                                                                         <mat-form-field class="md-block">
-                                                                            <mat-label translate>extension.response-topic-expression</mat-label>
-                                                                            <input matInput attr.name="serverSideRpcResponseTopicExp_{{brokerIndex}}{{rpcIndex}}" [(ngModel)]="rpc.responseTopicExpression" parse-to-null>
+                                                                            <mat-label>{{ 'extension.response-topic-expression' | translate }}</mat-label>
+                                                                            <input matInput name="serverSideRpcResponseTopicExp_{{brokerIndex}}{{rpcIndex}}" [(ngModel)]="rpc.responseTopicExpression" parse-to-null>
                                                                         </mat-form-field>
                                                                         <section flex layout="row">
                                                                             <mat-form-field flex="50" class="md-block">
-                                                                                <mat-label translate>extension.response-timeout</mat-label>
-                                                                                <input matInput type="number" attr.name="serverSideRpcResponseTimeout_{{brokerIndex}}{{rpcIndex}}" [(ngModel)]="rpc.responseTimeout" parse-to-null>
+                                                                                <mat-label>{{ 'extension.response-timeout' | translate }}</mat-label>
+                                                                                <input matInput type="number" name="serverSideRpcResponseTimeout_{{brokerIndex}}{{rpcIndex}}" [(ngModel)]="rpc.responseTimeout" parse-to-null>
                                                                             </mat-form-field>
                                                                             <mat-form-field flex="50" class="md-block">
-                                                                                <mat-label translate>extension.value-expression</mat-label>
-                                                                                <input matInput required attr.name="serverSideRpcValueExp_{{brokerIndex}}{{rpcIndex}}" [(ngModel)]="rpc.valueExpression">
-                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                <div ng-messages="theForm?.['serverSideRpcValueExp_' + brokerIndex + rpcIndex]?.$error">
-                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                </div>
+                                                                                <mat-label>{{ 'extension.value-expression' | translate }}</mat-label>
+                                                                                <input matInput required name="serverSideRpcValueExp_{{brokerIndex}}{{rpcIndex}}" [(ngModel)]="rpc.valueExpression" #f48="ngModel">
+                                                                                @if (f48.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                             </mat-form-field>
                                                                         </section>
                                                                     </mat-card-content>
@@ -1021,12 +806,11 @@
                                                     <div flex layout="row" layout-align="start center">
                                                         <button mat-raised-button color="primary" (click)='addServerSideRpc(broker.serverSideRpc)' attr.aria-label="{{ 'action.add' | translate }}">
                                                             <mat-icon class="material-icons">add</mat-icon>
-                                                            <span translate>extension.add-server-side-rpc-request</span>
+                                                            <span>{{ 'extension.add-server-side-rpc-request' | translate }}</span>
                                                         </button>
                                                     </div>
-                                                </v-pane-content>
-                                            </v-pane>
-                                        </v-accordion>
+                                            </mat-expansion-panel>
+                                        </mat-accordion>
 
                                     </mat-card-content>
                                 </mat-card>
@@ -1039,12 +823,11 @@
                     <div flex layout="row" layout-align="start center">
                         <button mat-raised-button color="primary" (click)="addBroker()" attr.aria-label="{{ 'action.add' | translate }}">
                             <mat-icon class="material-icons">add</mat-icon>
-                            <span translate>extension.add-broker</span>
+                            <span>{{ 'extension.add-broker' | translate }}</span>
                         </button>
                     </div>
-                </v-pane-content>
-            </v-pane>
-        </v-accordion>
+            </mat-expansion-panel>
+        </mat-accordion>
 <!--<pre>
 {{config | json}}
 </pre>-->

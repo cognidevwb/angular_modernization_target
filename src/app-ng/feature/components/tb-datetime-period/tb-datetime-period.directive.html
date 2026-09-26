@@ -1,4 +1,3 @@
-<!-- Scaffolded by the playbook from src/app/components/datetime-period.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -17,12 +16,12 @@
 
 -->
 <section layout="column" layout-align="start start">
-	<section layout="row" layout-align="start start">
-	    <mdp-date-picker [(ngModel)]="startDate" attr.mdp-placeholder="{{ 'datetime.date-from' | translate }}"></mdp-date-picker>
-	    <mdp-time-picker [(ngModel)]="startDate" attr.mdp-placeholder="{{ 'datetime.time-from' | translate }}" mdp-auto-switch="true"></mdp-time-picker>
-    </section>
-	<section layout="row" layout-align="start start">
-	    <mdp-date-picker [(ngModel)]="endDate" attr.mdp-placeholder="{{ 'datetime.date-to' | translate }}"></mdp-date-picker>
-	    <mdp-time-picker [(ngModel)]="endDate" attr.mdp-placeholder="{{ 'datetime.time-to' | translate }}" mdp-auto-switch="true"></mdp-time-picker>
-    </section>
+	<mat-form-field>
+		<mat-label>{{ 'datetime.date-from' | translate }}</mat-label>
+		<input matInput type="datetime-local" step="1" [ngModel]="toLocal(startDate)" (ngModelChange)="setStartDate($event)" [max]="toLocal(maxStartDate)">
+	</mat-form-field>
+	<mat-form-field>
+		<mat-label>{{ 'datetime.date-to' | translate }}</mat-label>
+		<input matInput type="datetime-local" step="1" [ngModel]="toLocal(endDate)" (ngModelChange)="setEndDate($event)" [min]="toLocal(minEndDate)" [max]="toLocal(maxEndDate)">
+	</mat-form-field>
 </section>

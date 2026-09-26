@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/dashboard/edit-widget.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/dashboard/edit-widget.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -16,6 +16,10 @@
     limitations under the License.
 
 -->
-<fieldset [disabled]="rootScope?.loading">
-	<tb-widget-config [widgetType]="widget().type" (widgetTypeChange)="widget().type = $event" [(typeParameters)]="typeParameters" [(actionSources)]="actionSources" [(ngModel)]="widgetConfig" [(isDataEnabled)]="isDataEnabled" [(widgetSettingsSchema)]="settingsSchema" [(datakeySettingsSchema)]="dataKeySettingsSchema" [(aliasController)]="aliasController" [(functionsOnly)]="widgetEditMode" (fetchEntityKeys)="fetchEntityKeys($event.entityAliasId, $event.query, $event.type)" (fetchDashboardStates)="fetchDashboardStates($event.query)" (onCreateEntityAlias)="createEntityAlias($event.event, $event.alias, $event.allowedEntityTypes)" [(theForm)]="theForm"></tb-widget-config>
+<fieldset [disabled]="rootScope['loading']">
+	<tb-widget-config [widgetType]="widget().type" (widgetTypeChange)="widget().type = $event" [(typeParameters)]="typeParameters" [(actionSources)]="actionSources"
+	                  [(ngModel)]="widgetConfig" [(isDataEnabled)]="isDataEnabled" [(widgetSettingsSchema)]="settingsSchema" [(datakeySettingsSchema)]="dataKeySettingsSchema"
+	                  [aliasController]="aliasController()" [functionsOnly]="widgetEditMode()"
+	                  [fetchEntityKeys]="fetchEntityKeysFn" [fetchDashboardStates]="fetchDashboardStatesFn" [onCreateEntityAlias]="createEntityAliasFn"
+	                  [theForm]="theForm()"></tb-widget-config>
 </fieldset>

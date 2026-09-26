@@ -1,30 +1,28 @@
-import { Component, forwardRef, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
+import { Component, Type, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgClass } from '@angular/common';
+import { MatTabsModule } from '@angular/material/tabs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TenantService } from '../../api/services/tenant.service';
-import { TranslateService } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
-import { CommonModule } from '@angular/common';
-import { TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
-import { TbHelpDirective } from '../../help/tb-help/tb-help.directive';
+import { goState } from '../../../state-paths';
+import { GridConfig, TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
+import { TbGridHelpButtonComponent } from '../../components/tb-grid/grid-help-button.component';
 import { TbTenantDirective } from '../tb-tenant/tb-tenant.directive';
 import { TbAttributeTableDirective } from '../../entity/tb-attribute-table/tb-attribute-table.directive';
 import { TbAlarmTableDirective } from '../../alarm/tb-alarm-table/tb-alarm-table.directive';
 import { TbEventTableDirective } from '../../event/tb-event-table/tb-event-table.directive';
 import { TbRelationTableDirective } from '../../entity/tb-relation-table/tb-relation-table.directive';
-import addTenantTemplate from '../../../../app/tenant/add-tenant.tpl.html?raw';
-import tenantCard from '../../../../app/tenant/tenant-card.tpl.html?raw';
-import { MatTabsModule } from '@angular/material/tabs';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TenantCardComponent } from './tenant-card.component';
+import { AddTenantDialogComponent } from './add-tenant-dialog.component';
 
 /**
  * Ported from the AngularJS controller `TenantController` (module `thingsboard.tenant`) in src/app/tenant/index.js:26.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
   selector: 'tenant',
   standalone: true,
-  imports: [TranslatePipe, MatTabsModule, CommonModule, forwardRef(() => TbGridDirective), forwardRef(() => TbHelpDirective), forwardRef(() => TbTenantDirective), forwardRef(() => TbAttributeTableDirective), forwardRef(() => TbAlarmTableDirective), forwardRef(() => TbEventTableDirective), forwardRef(() => TbRelationTableDirective)],
+  imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbTenantDirective, TbAttributeTableDirective, TbAlarmTableDirective, TbEventTableDirective, TbRelationTableDirective],
   templateUrl: './tenant.component.html',
 })
 export class TenantComponent {
@@ -33,15 +31,14 @@ export class TenantComponent {
   protected readonly route = inject(ActivatedRoute);
   protected readonly translate = inject(TranslateService);
   protected readonly typesRef: any = types;
-  // TODO(port): elements not resolved to a component: details-buttons
+
+  readonly tenantCard: Type<unknown> = TenantCardComponent;
+  readonly addTenantDialog: Type<unknown> = AddTenantDialogComponent;
 
   protected tenantActionsList: any;
   types: any;
-  tenantGridConfig: any;
-  grid: any;
-
-  // TODO(port): $state.go — $state.go: this.router.navigate([...])
-  // TODO(port): $stateParams — $stateParams: this.route.snapshot.params
+  tenantGridConfig: GridConfig;
+  grid!: TbGridDirective;
 
   constructor() {
     this.tenantActionsList = [
@@ -79,25 +76,22 @@ export class TenantComponent {
 
         getItemTitleFunc: this.getTenantTitle,
 
-        itemCardTemplateUrl: tenantCard,
-
         actionsList: this.tenantActionsList,
 
         onGridInited: this.gridInited,
-
-        addItemTemplateUrl: addTenantTemplate,
 
         addItemText: (...rest: any[]) => { return this.translate.instant('tenant.add-tenant-text') },
         noItemsText: (...rest: any[]) => { return this.translate.instant('tenant.no-tenants-text') },
         itemDetailsText: (...rest: any[]) => { return this.translate.instant('tenant.tenant-details') }
     };
-    if ((this.route.snapshot.params['items'] !== undefined) && this.route.snapshot.params['items'] !== null) {
-        this.tenantGridConfig.items = this.route.snapshot.params['items'];
+    const items = this.router.getCurrentNavigation()?.extras.state?.['items'];
+    if (items !== undefined && items !== null) {
+        this.tenantGridConfig.items = items;
     }
-    if ((this.route.snapshot.params['topIndex'] !== undefined) && this.route.snapshot.params['topIndex'] > 0) {
-        this.tenantGridConfig.topIndex = this.route.snapshot.params['topIndex'];
+    const topIndex = Number(this.route.snapshot.queryParams['topIndex']);
+    if (topIndex > 0) {
+        this.tenantGridConfig.topIndex = topIndex;
     }
-    this.openTenantUsers = this.openTenantUsers;
   }
 
   deleteTenantTitle = (tenant?: any, ...rest: any[]): any => {
@@ -109,18 +103,18 @@ export class TenantComponent {
   };
 
   deleteTenantsTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('tenant.delete-tenants-title', {count: selectedCount}, 'messageformat');
+    return this.translate.instant('tenant.delete-tenants-title', {count: selectedCount});
   };
 
   deleteTenantsActionTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('tenant.delete-tenants-action-title', {count: selectedCount}, 'messageformat');
+    return this.translate.instant('tenant.delete-tenants-action-title', {count: selectedCount});
   };
 
   deleteTenantsText = (...rest: any[]): any => {
     return this.translate.instant('tenant.delete-tenants-text');
   };
 
-  gridInited = (grid?: any, ...rest: any[]): any => {
+  gridInited = (grid: TbGridDirective): void => {
     this.grid = grid;
   };
 
@@ -144,6 +138,6 @@ export class TenantComponent {
     if ($event) {
         $event.stopPropagation();
     }
-    (this.router as any).go('home.tenants.users', {tenantId: tenant.id.id});
+    goState(this.router, 'home.tenants.users', {tenantId: tenant.id.id});
   };
 }

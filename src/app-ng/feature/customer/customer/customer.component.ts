@@ -1,12 +1,15 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, Type, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CustomerService } from '../../api/services/customer.service';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
-import { CommonModule } from '@angular/common';
-import { TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
-import { TbHelpDirective } from '../../help/tb-help/tb-help.directive';
+import { NgClass } from '@angular/common';
+import { goState } from '../../../state-paths';
+import { GridConfig, TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
+import { TbGridHelpButtonComponent } from '../../components/tb-grid/grid-help-button.component';
+import { CustomerCardComponent } from './customer-card.component';
+import { AddCustomerDialogComponent } from './add-customer-dialog.component';
 import { TbCustomerDirective } from '../tb-customer/tb-customer.directive';
 import { TbAttributeTableDirective } from '../../entity/tb-attribute-table/tb-attribute-table.directive';
 import { TbAlarmTableDirective } from '../../alarm/tb-alarm-table/tb-alarm-table.directive';
@@ -18,12 +21,11 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 /**
  * Ported from the AngularJS controller `CustomerController` (module `thingsboard.customer`) in src/app/customer/index.js:26.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
   selector: 'customer',
   standalone: true,
-  imports: [TranslatePipe, MatTabsModule, CommonModule, forwardRef(() => TbGridDirective), forwardRef(() => TbHelpDirective), forwardRef(() => TbCustomerDirective), forwardRef(() => TbAttributeTableDirective), forwardRef(() => TbAlarmTableDirective), forwardRef(() => TbEventTableDirective), forwardRef(() => TbRelationTableDirective), forwardRef(() => TbAuditLogTableDirective)],
+  imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbCustomerDirective, TbAttributeTableDirective, TbAlarmTableDirective, TbEventTableDirective, TbRelationTableDirective, TbAuditLogTableDirective],
   templateUrl: './customer.component.html',
 })
 export class CustomerComponent {
@@ -32,15 +34,14 @@ export class CustomerComponent {
   protected readonly route = inject(ActivatedRoute);
   protected readonly translate = inject(TranslateService);
   protected readonly typesRef: any = types;
-  // TODO(port): elements not resolved to a component: details-buttons
+
+  readonly customerCard: Type<unknown> = CustomerCardComponent;
+  readonly addCustomerDialog: Type<unknown> = AddCustomerDialogComponent;
 
   protected customerActionsList: any;
   types: any;
-  customerGridConfig: any;
-  grid: any;
-
-  // TODO(port): $state.go — $state.go: this.router.navigate([...])
-  // TODO(port): $stateParams — $stateParams: this.route.snapshot.params
+  customerGridConfig: GridConfig;
+  grid!: TbGridDirective;
 
   constructor() {
     this.customerActionsList = [
@@ -129,13 +130,11 @@ export class CustomerComponent {
 
         getItemTitleFunc: this.getCustomerTitle,
 
-        itemCardTemplateUrl: '', // TODO(port): customer-card.tpl.html
 
         actionsList: this.customerActionsList,
 
         onGridInited: this.gridInited,
 
-        addItemTemplateUrl: '', // TODO(port): add-customer.tpl.html
 
         addItemText: (...rest: any[]) => { return this.translate.instant('customer.add-customer-text') },
         noItemsText: (...rest: any[]) => { return this.translate.instant('customer.no-customers-text') },
@@ -154,16 +153,14 @@ export class CustomerComponent {
             return customer && customer.additionalInfo && customer.additionalInfo.isPublic;
         }
     };
-    if ((this.route.snapshot.params['items'] !== undefined) && this.route.snapshot.params['items'] !== null) {
-        this.customerGridConfig.items = this.route.snapshot.params['items'];
+    const items = this.router.getCurrentNavigation()?.extras.state?.['items'];
+    if (items !== undefined && items !== null) {
+        this.customerGridConfig.items = items;
     }
-    if ((this.route.snapshot.params['topIndex'] !== undefined) && this.route.snapshot.params['topIndex'] > 0) {
-        this.customerGridConfig.topIndex = this.route.snapshot.params['topIndex'];
+    const topIndex = Number(this.route.snapshot.queryParams['topIndex']);
+    if (topIndex > 0) {
+        this.customerGridConfig.topIndex = topIndex;
     }
-    this.openCustomerUsers = this.openCustomerUsers;
-    this.openCustomerAssets = this.openCustomerAssets;
-    this.openCustomerDevices = this.openCustomerDevices;
-    this.openCustomerDashboards = this.openCustomerDashboards;
   }
 
   deleteCustomerTitle = (customer?: any, ...rest: any[]): any => {
@@ -175,18 +172,18 @@ export class CustomerComponent {
   };
 
   deleteCustomersTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('customer.delete-customers-title', {count: selectedCount}, 'messageformat');
+    return this.translate.instant('customer.delete-customers-title', {count: selectedCount});
   };
 
   deleteCustomersActionTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('customer.delete-customers-action-title', {count: selectedCount}, 'messageformat');
+    return this.translate.instant('customer.delete-customers-action-title', {count: selectedCount});
   };
 
   deleteCustomersText = (...rest: any[]): any => {
     return this.translate.instant('customer.delete-customers-text');
   };
 
-  gridInited = (grid?: any, ...rest: any[]): any => {
+  gridInited = (grid: TbGridDirective): void => {
     this.grid = grid;
   };
 
@@ -210,27 +207,27 @@ export class CustomerComponent {
     if ($event) {
         $event.stopPropagation();
     }
-    (this.router as any).go('home.customers.users', {customerId: customer.id.id});
+    goState(this.router, 'home.customers.users', {customerId: customer.id.id});
   };
 
   openCustomerAssets = ($event?: any, customer?: any, ...rest: any[]): any => {
     if ($event) {
         $event.stopPropagation();
     }
-    (this.router as any).go('home.customers.assets', {customerId: customer.id.id});
+    goState(this.router, 'home.customers.assets', {customerId: customer.id.id});
   };
 
   openCustomerDevices = ($event?: any, customer?: any, ...rest: any[]): any => {
     if ($event) {
         $event.stopPropagation();
     }
-    (this.router as any).go('home.customers.devices', {customerId: customer.id.id});
+    goState(this.router, 'home.customers.devices', {customerId: customer.id.id});
   };
 
   openCustomerDashboards = ($event?: any, customer?: any, ...rest: any[]): any => {
     if ($event) {
         $event.stopPropagation();
     }
-    (this.router as any).go('home.customers.dashboards', {customerId: customer.id.id});
+    goState(this.router, 'home.customers.dashboards', {customerId: customer.id.id});
   };
 }

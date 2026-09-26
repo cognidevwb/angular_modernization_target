@@ -179,7 +179,7 @@ export class WidgetActionDialogComponent implements DoCheck {
         }
         return deferred.promise;
     } else {
-        return this.fetchDashboardStates({query: query});
+        return this.fetchDashboardStates?.(query);
     }
     return undefined;
   };

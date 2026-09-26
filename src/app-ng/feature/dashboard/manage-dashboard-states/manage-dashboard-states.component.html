@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/dashboard/states/manage-dashboard-states.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/dashboard/states/manage-dashboard-states.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -16,13 +16,13 @@
     limitations under the License.
 
 -->
-<div attr.aria-label="{{ 'dashboard.manage-states' | translate }}" style="min-width: 600px;" class="md-dialog">
-    <form name="theForm" (ngSubmit)="save()">
+<div [attr.aria-label]="'dashboard.manage-states' | translate" style="min-width: 600px;" class="md-dialog">
+    <form #theFormRef="ngForm" name="theForm" (ngSubmit)="save()">
         <mat-toolbar>
             <div class="md-toolbar-tools">
-                <h2 translate>{{ 'dashboard.manage-states' }}</h2>
+                <h2>{{ 'dashboard.manage-states' | translate }}</h2>
                 <span flex></span>
-                <button mat-icon-button (click)="cancel()">
+                <button mat-icon-button type="button" (click)="cancel()">
                     <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
                 </button>
             </div>
@@ -35,13 +35,13 @@
                     <div class="manage-dashboard-states" layout="column">
                         <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(query?.search === null)">
                             <div class="md-toolbar-tools">
-                                <span translate>dashboard.states</span>
+                                <span>{{ 'dashboard.states' | translate }}</span>
                                 <span flex></span>
-                                <button mat-icon-button (click)="addState($event)" attr.matTooltip="{{ 'dashboard.add-state' | translate }}" matTooltipPosition="above">
+                                <button mat-icon-button type="button" (click)="addState($event)" [matTooltip]="'dashboard.add-state' | translate" matTooltipPosition="above">
                                     <mat-icon>add</mat-icon>
                                     
                                 </button>
-                                <button mat-icon-button (click)="enterFilterMode()" attr.matTooltip="{{ 'action.search' | translate }}" matTooltipPosition="above">
+                                <button mat-icon-button type="button" (click)="enterFilterMode()" [matTooltip]="'action.search' | translate" matTooltipPosition="above">
                                     <mat-icon>search</mat-icon>
                                     
                                 </button>
@@ -49,44 +49,44 @@
                         </mat-toolbar>
                         <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(query?.search != null)">
                             <div class="md-toolbar-tools">
-                                <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{ 'dashboard.search-states' | translate }}" matTooltipPosition="above">
+                                <button mat-icon-button type="button" [attr.aria-label]="'action.search' | translate" [matTooltip]="'dashboard.search-states' | translate" matTooltipPosition="above">
                                     <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
                                     
                                 </button>
                                 <mat-form-field flex>
                                     <mat-label>&nbsp;</mat-label>
-                                    <input matInput [(ngModel)]="query.search" attr.placeholder="{{ 'dashboard.search-states' | translate }}">
+                                    <input matInput [(ngModel)]="query.search" [ngModelOptions]="{standalone: true}" attr.placeholder="{{ 'dashboard.search-states' | translate }}">
                                 </mat-form-field>
-                                <button mat-icon-button aria-label="Close" (click)="exitFilterMode()" attr.matTooltip="{{ 'action.close' | translate }}" matTooltipPosition="above">
+                                <button mat-icon-button type="button" aria-label="Close" (click)="exitFilterMode()" [matTooltip]="'action.close' | translate" matTooltipPosition="above">
                                     <mat-icon aria-label="Close" class="material-icons">close</mat-icon>
                                     
                                 </button>
                             </div>
                         </mat-toolbar>
-                        <table mat-table [dataSource]="states" matSort (matSortChange)="onReorder($event)">
+                        <table mat-table [dataSource]="states" matSort matSortActive="name" matSortDirection="asc" (matSortChange)="onReorder($event)">
                             <ng-container matColumnDef="name">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header="name"><span translate>dashboard.state-name</span></th>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header="name"><span>{{ 'dashboard.state-name' | translate }}</span></th>
                                 <td mat-cell *matCellDef="let state">{{state?.name}}</td>
                             </ng-container>
                             <ng-container matColumnDef="id">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header="id"><span translate>dashboard.state-id</span></th>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header="id"><span>{{ 'dashboard.state-id' | translate }}</span></th>
                                 <td mat-cell *matCellDef="let state">{{state?.id}}</td>
                             </ng-container>
                             <ng-container matColumnDef="root">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header="root"><span translate>dashboard.is-root-state</span></th>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header="root"><span>{{ 'dashboard.is-root-state' | translate }}</span></th>
                                 <td mat-cell *matCellDef="let state">
-                                    <mat-checkbox attr.aria-label="{{'dashboard.is-root-state' | translate }}" disabled [(ngModel)]="state.root">
+                                    <mat-checkbox [attr.aria-label]="'dashboard.is-root-state' | translate" disabled [checked]="state.root">
                                     </mat-checkbox>
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="actions">
-                                <th mat-header-cell *matHeaderCellDef><span>&nbsp</span></th>
+                                <th mat-header-cell *matHeaderCellDef><span>&nbsp;</span></th>
                                 <td mat-cell *matCellDef="let state" class="tb-action-cell">
-                                    <button mat-icon-button attr.aria-label="{{ 'action.edit' | translate }}" (click)="editState($event, state)" attr.matTooltip="{{ 'dashboard.edit-state' | translate }}" matTooltipPosition="above">
+                                    <button mat-icon-button type="button" [attr.aria-label]="'action.edit' | translate" (click)="editState($event, state)" [matTooltip]="'dashboard.edit-state' | translate" matTooltipPosition="above">
                                         <mat-icon attr.aria-label="{{ 'action.edit' | translate }}" class="material-icons">edit</mat-icon>
                                         
                                     </button>
-                                    <button mat-icon-button [hidden]="!(!state?.root)" aria-label="Delete" (click)="deleteState($event, state)" attr.matTooltip="{{ 'dashboard.delete-state' | translate }}" matTooltipPosition="above">
+                                    <button mat-icon-button type="button" [hidden]="state?.root" aria-label="Delete" (click)="deleteState($event, state)" [matTooltip]="'dashboard.delete-state' | translate" matTooltipPosition="above">
                                         <mat-icon aria-label="Delete" class="material-icons">delete</mat-icon>
                                         
                                     </button>
@@ -105,7 +105,7 @@
             <button mat-raised-button color="primary" [disabled]="rootScope?.loading || !theForm?.$dirty || !theForm?.$valid" type="submit">
                 {{ 'action.save' | translate }}
             </button>
-            <button mat-button [disabled]="rootScope?.loading" (click)="cancel()" style="margin-right:20px;">{{ 'action.cancel' | translate }}</button>
+            <button mat-button type="button" [disabled]="rootScope?.loading" (click)="cancel()" style="margin-right:20px;">{{ 'action.cancel' | translate }}</button>
         </mat-dialog-actions>
     </form>
 </div>

@@ -1,9 +1,8 @@
 import { Component, forwardRef, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { UserService } from '../../api/services/user.service';
 import { FormsModule } from '@angular/forms';
 import { TbWidgetsBundleSelectDirective } from '../../components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive';
-import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -14,9 +13,16 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
 
+/** What the dialog closes with on save. */
+export interface SaveWidgetTypeAsResult {
+  widgetName: string;
+  bundleId: string;
+  bundleAlias: string;
+}
+
 /**
  * Ported from the AngularJS controller `SaveWidgetTypeAsController` (module `thingsboard.widget-library`) in src/app/widget/index.js:40.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Closes with the new title and target bundle on save, with nothing on cancel.
  */
 @Component({
   selector: 'save-widget-type-as',
@@ -25,31 +31,25 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './save-widget-type-as.component.html',
 })
 export class SaveWidgetTypeAsComponent {
-  protected readonly rootScope = injectRoot(RootState);
-  protected readonly dialog = inject(MatDialog);
+  protected readonly rootScope = inject(RootState);
+  protected readonly dialogRef = inject(MatDialogRef<SaveWidgetTypeAsComponent, SaveWidgetTypeAsResult>);
   protected readonly userService = inject(UserService);
-  // TODO(port): template: 1 × ng-message left in place
-  // TODO(port): template: 1 × ng-messages left in place
 
   bundlesScope: any = 'system';
   widgetName: any;
   widgetsBundle: any;
 
   constructor() {
-    this.saveAs = this.saveAs;
-    this.cancel = this.cancel;
-    this.widgetName;
-    this.widgetsBundle;
     if (this.userService.getAuthority() === 'TENANT_ADMIN') {
         this.bundlesScope = 'tenant';
     }
   }
 
-  cancel = (...rest: any[]): any => {
-    (this.dialog as any).cancel();
-  };
+  cancel(): void {
+    this.dialogRef.close();
+  }
 
-  saveAs = (...rest: any[]): any => {
-    (this.dialog as any).hide({widgetName: this.widgetName, bundleId: this.widgetsBundle.id.id, bundleAlias: this.widgetsBundle.alias});
-  };
+  saveAs(): void {
+    this.dialogRef.close({ widgetName: this.widgetName, bundleId: this.widgetsBundle.id.id, bundleAlias: this.widgetsBundle.alias });
+  }
 }

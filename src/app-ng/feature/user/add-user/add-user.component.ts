@@ -1,125 +1,102 @@
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { DOCUMENT } from '@angular/common';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { TranslatePipe } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 import { UserService } from '../../api/services/user.service';
-import { helpLinks } from '../../help/constants/help-links';
 import { types } from '../../common/constants/types';
-
-import $ from 'jquery';
-// @ts-ignore
-import activationLinkDialogTemplate from '../../../../app/user/activation-link.dialog.tpl.html';
-import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
+import { AddItemComponent } from '../../components/add-item/add-item.component';
+import { TbGridHelpButtonComponent } from '../../components/tb-grid/grid-help-button.component';
+import { TbUserDirective } from '../tb-user/tb-user.directive';
+import { ActivationLinkDialogComponent } from '../activation-link-dialog/activation-link-dialog.component';
 
 /**
- * Ported from the AngularJS controller `AddUserController` (module `thingsboard.user`) in src/app/user/index.js:27.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS controller `AddUserController` (module `thingsboard.user`) in src/app/user/add-user.controller.js
+ * with its template src/app/user/add-user.tpl.html. Opened by tb-grid; the users page is `data.parentCtl`
+ * (its `usersType`, `tenantId`, `customerId`). Closes with the saved user.
  */
 @Component({
   selector: 'add-user',
   standalone: true,
-  template: '', // TODO(port): this controller's screen template is the templateUrl of its route in the legacy router
+  imports: [FormsModule, MatDialogModule, MatToolbarModule, MatButtonModule, MatIconModule, MatProgressBarModule, MatFormFieldModule, MatSelectModule, TranslatePipe, TbGridHelpButtonComponent, TbUserDirective],
+  template: `
+    <form #theForm="ngForm" (ngSubmit)="add($event)" style="width: 600px;" [attr.aria-label]="'user.add' | translate">
+      <mat-toolbar>
+        <div class="md-toolbar-tools">
+          <h2>{{ 'user.add' | translate }}</h2>
+          <span flex></span>
+          <tb-grid-help helpId="users"></tb-grid-help>
+          <button mat-icon-button type="button" (click)="cancel()">
+            <mat-icon [attr.aria-label]="'dialog.close' | translate">close</mat-icon>
+          </button>
+        </div>
+      </mat-toolbar>
+      <mat-progress-bar color="warn" mode="indeterminate" [style.visibility]="rootScope.loading ? 'visible' : 'hidden'"></mat-progress-bar>
+      <mat-dialog-content>
+        <div class="md-dialog-content">
+          <tb-user [user]="item" [isEdit]="true" [theForm]="theFormCtl()"></tb-user>
+          <mat-form-field class="md-block">
+            <mat-label>{{ 'user.activation-method' | translate }}</mat-label>
+            <mat-select name="userActivationMethod" [attr.aria-label]="'user.activation-method' | translate" [(ngModel)]="userActivationMethod">
+              @for (activationMethod of activationMethods; track activationMethod.value) {
+                <mat-option [value]="activationMethod.value">{{ activationMethod.name | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-dialog-content>
+      <mat-dialog-actions layout="row">
+        <span flex></span>
+        <button mat-raised-button color="primary" type="submit" [disabled]="rootScope.loading || theForm.invalid || !theForm.dirty">
+          {{ 'action.add' | translate }}
+        </button>
+        <button mat-button type="button" [disabled]="rootScope.loading" (click)="cancel()" style="margin-right:20px;">{{ 'action.cancel' | translate }}</button>
+      </mat-dialog-actions>
+    </form>
+  `,
 })
-export class AddUserComponent {
+export class AddUserComponent extends AddItemComponent {
   protected readonly dialog = inject(MatDialog);
-  protected readonly router = inject(Router);
-  protected readonly route = inject(ActivatedRoute);
-  protected readonly document = inject(DOCUMENT);
-  // TODO(port): '$q' — use Promise, or an Observable
   protected readonly userService = inject(UserService);
-  protected readonly helpLinksRef: any = helpLinks;
 
-  protected tenantId: any;
-  protected customerId: any;
-  protected usersType: any;
-  helpLinks: any;
-  item: any = {};
-  activationMethods: any = [
-        {
-            value: 'displayActivationLink',
-            name: 'user.display-activation-link'
-        },
-        {
-            value: 'sendActivationMail',
-            name: 'user.send-activation-mail'
-        }
-    ];
-  userActivationMethod: any = 'displayActivationLink';
-  theForm: any;
+  activationMethods = [
+    { value: 'displayActivationLink', name: 'user.display-activation-link' },
+    { value: 'sendActivationMail', name: 'user.send-activation-mail' },
+  ];
+  userActivationMethod = 'displayActivationLink';
 
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): $stateParams — $stateParams: this.route.snapshot.params
-  // TODO(port): `success` — a named function expression that calls itself; as an arrow it has no name: name it as a method
-
-  constructor() {
-    this.tenantId = this.route.snapshot.params['tenantId'];
-    this.customerId = this.route.snapshot.params['customerId'];
-    this.usersType = (this.router as any).$current.data.usersType;
-    this.helpLinks = this.helpLinksRef;
-    this.add = this.add;
-    this.cancel = this.cancel;
-  }
-
-  cancel = (...rest: any[]): any => {
-    (this.dialog as any).cancel();
-  };
-
-  add = ($event?: any, ...rest: any[]): any => {
-    var sendActivationMail: any = false;
-    if (this.userActivationMethod == 'sendActivationMail') {
-        sendActivationMail = true;
-    }
-    if (this.usersType === 'tenant') {
-        this.item.authority = "TENANT_ADMIN";
-        this.item.tenantId = {
-            entityType: types.entityType.tenant,
-            id: this.tenantId
-        };
-    } else if (this.usersType === 'customer') {
-        this.item.authority = "CUSTOMER_USER";
-        this.item.customerId = {
-            entityType: types.entityType.customer,
-            id: this.customerId
-        };
+  override add($event?: any): void {
+    const parent = this.data.parentCtl ?? {};
+    const sendActivationMail = this.userActivationMethod == 'sendActivationMail';
+    if (parent.usersType === 'tenant') {
+      this.item.authority = 'TENANT_ADMIN';
+      this.item.tenantId = { entityType: types.entityType.tenant, id: parent.tenantId };
+    } else if (parent.usersType === 'customer') {
+      this.item.authority = 'CUSTOMER_USER';
+      this.item.customerId = { entityType: types.entityType.customer, id: parent.customerId };
     }
     this.userService.saveUser(this.item, sendActivationMail).then((item?: any) => {
-        this.item = item;
-        this.theForm.$setPristine();
-        if (this.userActivationMethod == 'displayActivationLink') {
-            this.userService.getActivationLink(this.item.id.id).then(
-                (activationLink?: any) => {
-                    this.displayActivationLink($event, activationLink).then(
-                        () => {
-                            (this.dialog as any).hide();
-                        }
-                    );
-                }
-            );
-        } else {
-            (this.dialog as any).hide();
-        }
+      this.item = item;
+      this.ngForm()?.form.markAsPristine();
+      if (this.userActivationMethod == 'displayActivationLink') {
+        this.userService.getActivationLink(this.item.id.id).then((activationLink?: any) => {
+          this.displayActivationLink($event, activationLink).then(() => this.dialogRef.close(item));
+        });
+      } else {
+        this.dialogRef.close(item);
+      }
     });
-  };
+  }
 
-  displayActivationLink($event?: any, activationLink?: any, ...rest: any[]): any {
-    let vm = this;
-    var deferred: any = $q.defer();
-    (this.dialog as any).show({
-        controller: 'ActivationLinkDialogController',
-        controllerAs: 'vm',
-        templateUrl: activationLinkDialogTemplate,
-        locals: {
-            activationLink: activationLink
-        },
-        parent: $(this.document.body),
-        fullscreen: true,
-        multiple: true,
-        targetEvent: $event
-    }).then(function () {
-        deferred.resolve();
-    });
-    return deferred.promise;
+  /** Shows the activation link over this dialog; resolves when it is closed with OK. */
+  displayActivationLink(_$event: any, activationLink: any): Promise<void> {
+    const ref = this.dialog.open(ActivationLinkDialogComponent, { data: { activationLink } });
+    return firstValueFrom(ref.afterClosed()).then((ok) => (ok ? undefined : new Promise<void>(() => undefined)));
   }
 }

@@ -17,12 +17,12 @@
 
 -->
 <div attr.aria-label="{{ 'widget.save-widget-type-as' | translate }}" class="md-dialog">
-    <form name="theForm" #theForm="ngForm" (ngSubmit)="saveAs()">
+    <form #theForm="ngForm" (ngSubmit)="saveAs()">
         <mat-toolbar>
             <div class="md-toolbar-tools">
-                <h2 translate>widget.save-widget-type-as</h2>
+                <h2>{{ 'widget.save-widget-type-as' | translate }}</h2>
                 <span flex></span>
-                <button mat-icon-button (click)="cancel()">
+                <button mat-icon-button type="button" (click)="cancel()">
                     <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
                 </button>
             </div>
@@ -32,17 +32,13 @@
         <mat-dialog-content>
             <div class="md-dialog-content">
                 <fieldset>
-                    <span translate>widget.save-widget-type-as-text</span>
+                    <span>{{ 'widget.save-widget-type-as-text' | translate }}</span>
                     <mat-form-field class="md-block">
-                        <mat-label translate>widget.title</mat-label>
+                        <mat-label>{{ 'widget.title' | translate }}</mat-label>
                         <input matInput required name="title" [(ngModel)]="widgetName">
-                        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                        <div ng-messages="theForm?.title?.$error">
-                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                            <div translate ng-message="required">widget.title-required</div>
-                        </div>
+                        <mat-error>{{ 'widget.title-required' | translate }}</mat-error>
                     </mat-form-field>
-                    <tb-widgets-bundle-select flex [(ngModel)]="widgetsBundle" [tbRequired]="true" bundlesScope="{{bundlesScope}}">
+                    <tb-widgets-bundle-select flex name="widgetsBundle" [(ngModel)]="widgetsBundle" [tbRequired]="true" [bundlesScope]="bundlesScope">
                     </tb-widgets-bundle-select>
                 </fieldset>
             </div>
@@ -52,7 +48,7 @@
             <button mat-raised-button color="primary" [disabled]="rootScope?.loading || theForm.invalid" type="submit">
                 {{ 'action.saveAs' | translate }}
             </button>
-            <button mat-button [disabled]="rootScope?.loading" (click)="cancel()" style="margin-right:20px;">{{ 'action.cancel' |
+            <button mat-button type="button" [disabled]="rootScope?.loading" (click)="cancel()" style="margin-right:20px;">{{ 'action.cancel' |
                 translate }}
             </button>
         </mat-dialog-actions>

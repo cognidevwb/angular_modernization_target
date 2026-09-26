@@ -1,52 +1,64 @@
-import { Component, inject, input, model, output } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { types } from '../../common/constants/types';
-
+import { AfterViewInit, Component, ElementRef, effect, inject, input, output } from '@angular/core';
 import $ from 'jquery';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $scope: any;
+import 'jstree';
+
+declare global {
+  interface JQuery {
+    /** jstree's jQuery plugin (the `jstree` package, as src/app/app.js loaded it). */
+    jstree(...args: any[]): any;
+  }
+}
+
+/** What the tree asks the host when searching: does `node` match `searchText`? */
+export type NavTreeSearchCallback = (searchText: string, node: any) => boolean;
 
 /**
- * Ported from the AngularJS directive `tbNavTree` (module `thingsboard.directives.navTree`) in src/app/components/nav-tree.directive.js:24.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 5 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbNavTree` (module `thingsboard.directives.navTree`) in src/app/components/nav-tree.directive.js:24:
+ * a jstree over `loadNodes` (jstree's `core.data`), with the edit API written onto `editCallbacks`.
+ * `searchCallback` was an optional `&` whose result jstree reads, so it is a function input.
  */
 @Component({
   selector: 'tb-nav-tree',
   standalone: true,
   templateUrl: './tb-nav-tree.directive.html',
 })
-export class TbNavTreeDirective {
-  readonly loadNodes = model<any>();
-  readonly editCallbacks = model<any>();
+export class TbNavTreeDirective implements AfterViewInit {
+  readonly loadNodes = input<any>();
+  readonly editCallbacks = input<any>();
   readonly enableSearch = input<any>();
-  readonly onNodeSelected = output<any>();
-  readonly onNodesInserted = output<any>();
-  readonly searchCallback = output<any>();
+  readonly searchCallback = input<NavTreeSearchCallback | undefined>();
+  readonly onNodeSelected = output<{ node: any; event: any }>();
+  readonly onNodesInserted = output<{ nodes: any; parent: any }>();
 
-  // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly element = inject(ElementRef);
-  protected readonly typesRef: any = types;
 
-  types: any;
   treeElement: any;
-
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
-  // TODO(port): `vm.onNodeSelected` was an optional callback; an output is always there, so its check reads `true`
-  // TODO(port): `vm.onNodesInserted` was an optional callback; an output is always there, so its check reads `true`
-  // TODO(port): `vm.searchCallback(…)` — its result was read; an output emits and returns nothing: take the value from an input callback instead
-  // TODO(port): `vm.searchCallback` was an optional callback; an output is always there, so its check reads `true`
+  private viewReady = false;
+  private builtFor: any;
 
   constructor() {
-    let vm = this;
-    this.types = this.typesRef;
-    $scope.$watch('vm.loadNodes', (newVal?: any) => {
-        if (newVal) {
-            this.initTree();
-        }
+    // `$scope.$watch('vm.loadNodes', …)`: (re)build the tree when the loader changes
+    effect(() => {
+      const loadNodes = this.loadNodes();
+      if (this.viewReady) {
+        this.buildFor(loadNodes);
+      }
     });
   }
 
-  initTree(...rest: any[]): any {
+  ngAfterViewInit(): void {
+    this.viewReady = true;
+    this.buildFor(this.loadNodes());
+  }
+
+  private buildFor(loadNodes: any): void {
+    if (loadNodes && loadNodes !== this.builtFor) {
+      this.builtFor = loadNodes;
+      this.initTree();
+    }
+  }
+
+  initTree(): void {
     var config: any = {
         core: {
             multiple: false,
@@ -64,8 +76,9 @@ export class TbNavTreeDirective {
             show_only_matches_children: false,
             search_leaves_only: false
         };
-        if (true) {
-            config.search.search_callback = (searchText?: any, node?: any) => this.searchCallback.emit({searchText: searchText, node: node});
+        const searchCallback = this.searchCallback();
+        if (searchCallback) {
+            config.search.search_callback = (searchText: string, node: any) => searchCallback(searchText, node);
         }
     }
 
@@ -73,15 +86,11 @@ export class TbNavTreeDirective {
         .jstree(config);
 
     this.treeElement.on("changed.jstree", (e?: any, data?: any) => {
-        if (true) {
-            this.onNodeSelected.emit({node: data.instance.get_selected(true)[0], event: e});
-        }
+        this.onNodeSelected.emit({node: data.instance.get_selected(true)[0], event: e});
     });
 
     this.treeElement.on("model.jstree", (e?: any, data?: any) => {
-        if (true) {
-            this.onNodesInserted.emit({nodes: data.nodes, parent: data.parent});
-        }
+        this.onNodesInserted.emit({nodes: data.nodes, parent: data.parent});
     });
 
     if (this.editCallbacks()) {
@@ -96,8 +105,7 @@ export class TbNavTreeDirective {
             this.treeElement.jstree('deselect_all');
         };
         this.editCallbacks().getNode = (id?: any) => {
-            var node: any = this.treeElement.jstree('get_node', id);
-            return node;
+            return this.treeElement.jstree('get_node', id);
         };
         this.editCallbacks().getParentNodeId = (id?: any) => {
             var node: any = this.treeElement.jstree('get_node', id);
@@ -119,7 +127,6 @@ export class TbNavTreeDirective {
             } else {
                 return true;
             }
-            return undefined;
         };
         this.editCallbacks().nodeIsLoaded = (id?: any) => {
             var node: any = this.treeElement.jstree('get_node', id);
@@ -128,7 +135,6 @@ export class TbNavTreeDirective {
             } else {
                 return true;
             }
-            return undefined;
         };
         this.editCallbacks().refreshNode = (id?: any) => {
             if (id === '#') {

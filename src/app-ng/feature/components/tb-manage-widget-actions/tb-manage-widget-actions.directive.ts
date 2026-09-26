@@ -1,4 +1,5 @@
-import { Component, effect, inject, model, output } from '@angular/core';
+import { Component, effect, inject, input, model } from '@angular/core';
+import { FetchDashboardStatesFn } from '../tb-datasource/datasource-callbacks';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,7 +27,7 @@ import { isEqual, orderBy } from 'lodash-es';
 export class TbManageWidgetActionsDirective {
   readonly actionSources = model<any>();
   readonly widgetActions = model<any>();
-  readonly fetchDashboardStates = output<any>();
+  readonly fetchDashboardStates = input<FetchDashboardStatesFn | undefined>();
 
   // TODO(port): opening the add/edit widget action dialog (WidgetActionDialogController) is not yet ported to a standalone dialog component
 

@@ -1,38 +1,35 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
 
 /**
- * Ported from the AngularJS controller `AssetCardController` (module `thingsboard.asset`) in src/app/asset/index.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Ported from the AngularJS controller `AssetCardController` (module `thingsboard.asset`) in src/app/asset/index.js:29,
+ * with its card template src/app/asset/asset-card.tpl.html. Rendered by tb-grid for each asset.
  */
 @Component({
   selector: 'asset-card',
   standalone: true,
-  template: '', // TODO(port): this controller's screen template is the templateUrl of its route in the legacy router
+  imports: [TranslatePipe],
+  template: `
+    <div flex layout="column" style="margin-top: -10px;">
+      <div style="text-transform: uppercase; padding-bottom: 10px;">{{ item()?.type }}</div>
+      <div class="tb-small" [hidden]="!isAssignedToCustomer()">{{ 'asset.assignedToCustomer' | translate }} '{{ item()?.assignedCustomer?.title }}'</div>
+      <div class="tb-small" [hidden]="!isPublic()">{{ 'asset.public' | translate }}</div>
+    </div>
+  `,
 })
 export class AssetCardComponent {
-  protected readonly typesRef: any = types;
+  readonly item = input<any>();
+  readonly parentCtl = input<any>();
 
-  types: any;
-  item: any;
-  parentCtl: any;
-
-  constructor() {
-    this.types = this.typesRef;
+  isAssignedToCustomer(): boolean {
+    const item = this.item();
+    return !!(item && item.customerId && this.parentCtl()?.assetsScope === 'tenant' &&
+      item.customerId.id != types.id.nullUid && !item.assignedCustomer?.isPublic);
   }
 
-  isAssignedToCustomer(...rest: any[]): any {
-    if (this.item && this.item.customerId && this.parentCtl.assetsScope === 'tenant' &&
-        this.item.customerId.id != this.types.id.nullUid && !this.item.assignedCustomer.isPublic) {
-        return true;
-    }
-    return false;
-  }
-
-  isPublic(...rest: any[]): any {
-    if (this.item && this.item.assignedCustomer && this.parentCtl.assetsScope === 'tenant' && this.item.assignedCustomer.isPublic) {
-        return true;
-    }
-    return false;
+  isPublic(): boolean {
+    const item = this.item();
+    return !!(item && item.assignedCustomer && this.parentCtl()?.assetsScope === 'tenant' && item.assignedCustomer.isPublic);
   }
 }

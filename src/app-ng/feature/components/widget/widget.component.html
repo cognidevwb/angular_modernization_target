@@ -1,0 +1,40 @@
+@if (widgetErrorData) {
+<div class="tb-absolute-fill tb-widget-error">
+	<span>Widget Error: {{ widgetErrorData.name + ": " + widgetErrorData.message }}</span>
+</div>
+}
+@if (loadingData) {
+<div class="tb-absolute-fill tb-widget-loading" layout="column" layout-align="center center">
+	<mat-progress-spinner mode="indeterminate" color="accent" [diameter]="40"></mat-progress-spinner>
+</div>
+}
+@if (rendered) {
+	@for (generation of [renderGeneration]; track generation) {
+		@if (displayLegend) {
+		<div class="tb-absolute-fill" [attr.layout]="legendLayout">
+			@if (legendFirst) {
+			<tb-legend [style]="legendStyle" [legendConfig]="legendConfig" [legendData]="legendData"></tb-legend>
+			}
+			<div flex id="widget-container">
+				<ng-container *ngTemplateOutlet="containerTpl"></ng-container>
+			</div>
+			@if (!legendFirst) {
+			<tb-legend [style]="legendStyle" [legendConfig]="legendConfig" [legendData]="legendData"></tb-legend>
+			}
+		</div>
+		} @else {
+		<ng-container *ngTemplateOutlet="containerTpl"></ng-container>
+		}
+	}
+}
+<ng-template #containerTpl>
+	@if (directiveOutlet) {
+	<div id="container">
+		@if (directiveOutlet.mounted) {
+		<ng-container *ngComponentOutlet="directiveOutlet.type; inputs: directiveOutlet.inputs"></ng-container>
+		}
+	</div>
+	} @else {
+	<div id="container" [innerHTML]="containerHtml"></div>
+	}
+</ng-template>

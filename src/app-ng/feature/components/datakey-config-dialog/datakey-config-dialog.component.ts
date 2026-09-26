@@ -61,6 +61,10 @@ export class DatakeyConfigDialogComponent {
     this.dialogRef.close();
   }
 
+  /** The key lookup tb-datakey-config calls (its legacy `fetch-entity-keys` callback). */
+  readonly fetchKeys = (args: { entityAliasId: string; query: string; type: string }): Promise<string[]> =>
+    this.fetchEntityKeys(args.entityAliasId, args.query, args.type);
+
   fetchEntityKeys(entityAliasId?: any, query?: any, type?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     this.aliasController.getAliasInfo(entityAliasId).then(

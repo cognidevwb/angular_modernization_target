@@ -1,13 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 /**
  * Ported from the AngularJS controller `ItemCardController` (module `thingsboard.directives.grid`) in src/app/components/grid.directive.js:27.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * The grid's default card: the legacy default card template was an empty `<span></span>`.
+ * Every card component takes the same two inputs: the `item` and the page's `parentCtl`.
  */
 @Component({
   selector: 'item-card',
   standalone: true,
-  template: '', // TODO(port): this controller's screen template is the templateUrl of its route in the legacy router
+  template: '<span></span>',
 })
 export class ItemCardComponent {
+  readonly item = input<any>();
+  readonly parentCtl = input<any>();
 }

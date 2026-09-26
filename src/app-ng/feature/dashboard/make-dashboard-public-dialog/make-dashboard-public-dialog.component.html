@@ -1,54 +1,32 @@
-<!-- Scaffolded by the playbook from src/app/dashboard/make-dashboard-public-dialog.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
-<!--
-
-    Copyright © 2016-2020 The Thingsboard Authors
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<div attr.aria-label="{{ 'dashboard.make-public' | translate }}" style="min-width: 400px;" class="md-dialog">
-    <form>
-        <mat-toolbar>
-            <div class="md-toolbar-tools">
-                <h2 translate="dashboard.public-dashboard-title"></h2>
-                <span flex></span>
-                <button mat-icon-button (click)="close()">
-                    <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
-                </button>
-            </div>
-        </mat-toolbar>
-        <mat-dialog-content>
-            <div id="make-dialog-public-content" class="md-dialog-content">
-                <div class="md-content md-padding" layout="column">
-                    <span translate="dashboard.public-dashboard-text" translate-values="{dashboardTitle: vm.dashboard.title, publicLink: vm.publicLink}"></span>
-                    <div layout="row" layout-align="start center">
-                        <pre class="tb-highlight" flex><code>{{ publicLink }}</code></pre>
-                        <button mat-icon-button ngclipboard attr.data-clipboard-text="{{ publicLink }}" ngclipboard-success="vm.onPublicLinkCopied(e)" attr.matTooltip="{{ 'dashboard.copy-public-link' | translate }}" matTooltipPosition="above">
-                            <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
-                            
-                        </button>
-                    </div>
-                    <div class="tb-notice" translate>dashboard.public-dashboard-notice</div>
-                    <tb-social-share-panel style="padding-top: 15px;" shareTitle="{{ 'dashboard.socialshare-title' | translate:{dashboardTitle:dashboard?.title} }}" shareText="{{ 'dashboard.socialshare-text' | translate:{dashboardTitle:dashboard?.title} }}" shareLink="{{ publicLink }}" shareHashTags="thingsboard, iot">
-                    </tb-social-share-panel>
-                </div>
-            </div>
-        </mat-dialog-content>
-        <mat-dialog-actions layout="row">
+<!-- Ported from src/app/dashboard/make-dashboard-public-dialog.tpl.html (Copyright © 2016-2020 The Thingsboard Authors, Apache License 2.0) -->
+<form [attr.aria-label]="'dashboard.make-public' | translate" style="min-width: 400px;">
+    <mat-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>{{ 'dashboard.public-dashboard-title' | translate }}</h2>
             <span flex></span>
-            <button mat-button (click)="close()">{{ 'action.ok' |
-                translate }}
+            <button mat-icon-button type="button" (click)="close()">
+                <mat-icon [attr.aria-label]="'dialog.close' | translate">close</mat-icon>
             </button>
-        </mat-dialog-actions>
-    </form>
-</div>
+        </div>
+    </mat-toolbar>
+    <mat-dialog-content>
+        <div id="make-dialog-public-content" class="md-dialog-content">
+            <div class="md-content md-padding" layout="column">
+                <span [innerHTML]="'dashboard.public-dashboard-text' | translate: { dashboardTitle: dashboard?.title, publicLink: publicLink }"></span>
+                <div layout="row" layout-align="start center">
+                    <pre class="tb-highlight" flex><code>{{ publicLink }}</code></pre>
+                    <button mat-icon-button type="button" (click)="copyPublicLink($event)" [matTooltip]="'dashboard.copy-public-link' | translate" matTooltipPosition="above">
+                        <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
+                    </button>
+                </div>
+                <div class="tb-notice">{{ 'dashboard.public-dashboard-notice' | translate }}</div>
+                <tb-social-share-panel style="padding-top: 15px;" [shareTitle]="'dashboard.socialshare-title' | translate: { dashboardTitle: dashboard?.title }" [shareText]="'dashboard.socialshare-text' | translate: { dashboardTitle: dashboard?.title }" [shareLink]="publicLink" shareHashTags="thingsboard, iot">
+                </tb-social-share-panel>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions layout="row">
+        <span flex></span>
+        <button mat-button type="button" (click)="close()">{{ 'action.ok' | translate }}</button>
+    </mat-dialog-actions>
+</form>

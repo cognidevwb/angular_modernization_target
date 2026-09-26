@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { AfterViewInit, Component, effect, inject, model, untracked } from '@angular/core';
 import { DestroyRef } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { UtilsService } from '../../common/services/utils.service';
@@ -6,13 +6,12 @@ import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
 
 import $ from 'jquery';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $scope: any;
-declare let utils: any;
+import { RootState } from '../../../root-state';
 
 /**
  * Ported from the AngularJS directive `tbRoundSwitch` (module `thingsboard.widgets.rpc.roundSwitch`) in src/app/widget/lib/rpc/round-switch.directive.js:24.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The widget runtime renders it for a widget type whose template is `<tb-round-switch ctx="ctx">`; it
+ * initialises whenever `ctx` is set, once its template is in the DOM (the legacy `$scope.$watch('vm.ctx')`).
  */
 @Component({
   selector: 'tb-round-switch',
@@ -20,13 +19,15 @@ declare let utils: any;
   imports: [CommonModule],
   templateUrl: './tb-round-switch.directive.html',
 })
-export class TbRoundSwitchDirective {
+export class TbRoundSwitchDirective implements AfterViewInit {
   readonly ctx = model<any>();
 
   protected readonly element = inject(ElementRef);
-  // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly utils = inject(UtilsService);
   protected readonly destroyRef = inject(DestroyRef);
+  protected readonly rootScope = inject(RootState);
+  private viewReady = false;
+  private initedCtx: any = null;
 
   showTitle: any = false;
   value: any = false;
@@ -53,38 +54,44 @@ export class TbRoundSwitchDirective {
   setValueMethod: any;
   title: any;
   valueKey: any;
-  widgetEditMode: any;
-
-  // TODO(port): $scope.$digest — $digest is not needed: Angular detects the change
-  // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
 
   constructor() {
-    let vm = this;
     this.checkboxId = 'onoff-' + this.utils.guid();
-    this.switchElement = $('.switch', $(this.element.nativeElement));
-    this.switchContainer = $('#switch-container', $(this.element.nativeElement));
-    this.onoff = $('input', $(this.element.nativeElement));
-    this.textMeasure = $('#text-measure', $(this.element.nativeElement));
-    this.switchTitleContainer = $('.title-container', $(this.element.nativeElement));
-    this.switchTitle = $('.switch-title', $(this.element.nativeElement));
-    this.switchErrorContainer = $('.error-container', $(this.element.nativeElement));
-    this.switchError = $('.switch-error', $(this.element.nativeElement));
-    this.onoff.bind('change', () => {
-        this.value = this.onoff.prop('checked') === false;
-        this.onValue();
-    });
-    $scope.$watch('vm.ctx', () => {
-        if (this.ctx()) {
-            this.init();
-        }
+    effect(() => {
+      const ctx = this.ctx();
+      untracked(() => this.ctxChanged(ctx));
     });
     this.destroyRef.onDestroy(() => {
         if (this.valueSubscription) {
             this.ctx().subscriptionApi.removeSubscription(this.valueSubscription.id);
         }
     });
+  }
+
+  ngAfterViewInit(): void {
+    const host = $(this.element.nativeElement);
+    this.switchElement = $('.switch', host);
+    this.switchContainer = $('#switch-container', host);
+    this.onoff = $('input', host);
+    this.textMeasure = $('#text-measure', host);
+    this.switchTitleContainer = $('.title-container', host);
+    this.switchTitle = $('.switch-title', host);
+    this.switchErrorContainer = $('.error-container', host);
+    this.switchError = $('.switch-error', host);
+    this.onoff.bind('change', () => {
+        this.value = this.onoff.prop('checked') === false;
+        this.onValue();
+    });
+    this.viewReady = true;
     this.resize();
+    this.ctxChanged(this.ctx());
+  }
+
+  private ctxChanged(ctx: any): void {
+    if (ctx && this.viewReady && ctx !== this.initedCtx) {
+      this.initedCtx = ctx;
+      this.init();
+    }
   }
 
   init(...rest: any[]): any {
@@ -101,7 +108,7 @@ export class TbRoundSwitchDirective {
     var subscription: any = this.ctx().defaultSubscription;
     var rpcEnabled: any = subscription.rpcEnabled;
 
-    this.isSimulated = this.widgetEditMode;
+    this.isSimulated = this.rootScope['widgetEditMode'];
 
     this.requestTimeout = 500;
     if (this.ctx().settings.requestTimeout) {
@@ -204,7 +211,7 @@ export class TbRoundSwitchDirective {
     );
   }
 
-  onDataUpdated = (subscription?: any, apply?: any, ...rest: any[]): any => {
+  onDataUpdated = (subscription?: any, ...rest: any[]): any => {
     var value: any = false;
     var data: any = subscription.data;
     if (data.length) {
@@ -221,9 +228,6 @@ export class TbRoundSwitchDirective {
         }
     }
     this.setValue(value);
-    if (apply) {
-
-    }
   };
 
   onDataUpdateError = (subscription?: any, e?: any, ...rest: any[]): any => {

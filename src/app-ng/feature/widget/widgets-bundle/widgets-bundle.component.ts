@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, Type, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ImportExportService } from '../../import-export/services/import-export.service';
 import { Router } from '@angular/router';
@@ -6,21 +6,19 @@ import { TranslateService } from '@ngx-translate/core';
 import { UserService } from '../../api/services/user.service';
 import { WidgetService } from '../../api/services/widget.service';
 import { types } from '../../common/constants/types';
-import { TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
+import { goState } from '../../../state-paths';
+import { GridConfig, TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
 import { TbWidgetsBundleDirective } from '../tb-widgets-bundle/tb-widgets-bundle.directive';
-// @ts-ignore
-import addWidgetsBundleTemplate from '../../../../app/widget/add-widgets-bundle.tpl.html';
-// @ts-ignore
-import widgetsBundleCard from '../../../../app/widget/widgets-bundle-card.tpl.html';
+import { WidgetsBundleCardComponent } from './widgets-bundle-card.component';
+import { AddWidgetsBundleDialogComponent } from './add-widgets-bundle-dialog.component';
 
 /**
  * Ported from the AngularJS controller `WidgetsBundleController` (module `thingsboard.widget-library`) in src/app/widget/index.js:40.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
   selector: 'widgets-bundle',
   standalone: true,
-  imports: [forwardRef(() => TbGridDirective), forwardRef(() => TbWidgetsBundleDirective)],
+  imports: [TbGridDirective, TbWidgetsBundleDirective],
   templateUrl: './widgets-bundle.component.html',
 })
 export class WidgetsBundleComponent {
@@ -32,14 +30,14 @@ export class WidgetsBundleComponent {
   protected readonly translate = inject(TranslateService);
   protected readonly typesRef: any = types;
 
+  readonly widgetsBundleCard: Type<unknown> = WidgetsBundleCardComponent;
+  readonly addWidgetsBundleDialog: Type<unknown> = AddWidgetsBundleDialogComponent;
+
   protected widgetsBundleActionsList: any;
   protected widgetsBundleAddItemActionsList: any;
   types: any;
-  widgetsBundleGridConfig: any;
-  grid: any;
-
-  // TODO(port): $state.go — $state.go: this.router.navigate([...])
-  // TODO(port): $stateParams — $stateParams: this.route.snapshot.params
+  widgetsBundleGridConfig: GridConfig;
+  grid!: TbGridDirective;
 
   constructor() {
     this.widgetsBundleActionsList = [
@@ -108,15 +106,12 @@ export class WidgetsBundleComponent {
         deleteItemFunc: this.deleteWidgetsBundle,
 
         getItemTitleFunc: this.getWidgetsBundleTitle,
-        itemCardTemplateUrl: widgetsBundleCard,
         parentCtl: this,
 
         actionsList: this.widgetsBundleActionsList,
         addItemActions: this.widgetsBundleAddItemActionsList,
 
         onGridInited: this.gridInited,
-
-        addItemTemplateUrl: addWidgetsBundleTemplate,
 
         addItemText: (...rest: any[]) => { return this.translate.instant('widgets-bundle.add-widgets-bundle-text') },
         noItemsText: (...rest: any[]) => { return this.translate.instant('widgets-bundle.no-widgets-bundles-text') },
@@ -127,13 +122,14 @@ export class WidgetsBundleComponent {
         }
 
     };
-    if ((this.route.snapshot.params['items'] !== undefined) && this.route.snapshot.params['items'] !== null) {
-        this.widgetsBundleGridConfig.items = this.route.snapshot.params['items'];
+    const items = this.router.getCurrentNavigation()?.extras.state?.['items'];
+    if (items !== undefined && items !== null) {
+        this.widgetsBundleGridConfig.items = items;
     }
-    if ((this.route.snapshot.params['topIndex'] !== undefined) && this.route.snapshot.params['topIndex'] > 0) {
-        this.widgetsBundleGridConfig.topIndex = this.route.snapshot.params['topIndex'];
+    const topIndex = Number(this.route.snapshot.queryParams['topIndex']);
+    if (topIndex > 0) {
+        this.widgetsBundleGridConfig.topIndex = topIndex;
     }
-    this.exportWidgetsBundle = this.exportWidgetsBundle;
   }
 
   deleteWidgetsBundleTitle = (widgetsBundle?: any, ...rest: any[]): any => {
@@ -145,18 +141,18 @@ export class WidgetsBundleComponent {
   };
 
   deleteWidgetsBundlesTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('widgets-bundle.delete-widgets-bundles-title', {count: selectedCount}, 'messageformat');
+    return this.translate.instant('widgets-bundle.delete-widgets-bundles-title', {count: selectedCount});
   };
 
   deleteWidgetsBundlesActionTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('widgets-bundle.delete-widgets-bundles-action-title', {count: selectedCount}, 'messageformat');
+    return this.translate.instant('widgets-bundle.delete-widgets-bundles-action-title', {count: selectedCount});
   };
 
   deleteWidgetsBundlesText = (...rest: any[]): any => {
     return this.translate.instant('widgets-bundle.delete-widgets-bundles-text');
   };
 
-  gridInited = (grid?: any, ...rest: any[]): any => {
+  gridInited = (grid: TbGridDirective): void => {
     this.grid = grid;
   };
 
@@ -194,6 +190,6 @@ export class WidgetsBundleComponent {
     if ($event) {
         $event.stopPropagation();
     }
-(this.router as any).go('home.widgets-bundles.widget-types', {widgetsBundleId: widgetsBundle.id.id});
+    goState(this.router, 'home.widgets-bundles.widget-types', {widgetsBundleId: widgetsBundle.id.id});
   };
 }

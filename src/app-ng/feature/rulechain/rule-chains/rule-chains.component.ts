@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, Type, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ImportExportService } from '../../import-export/services/import-export.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,21 +7,17 @@ import { RuleChainService } from '../../api/services/rule-chain.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UserService } from '../../api/services/user.service';
 import { types } from '../../common/constants/types';
-import { CommonModule } from '@angular/common';
-import { TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
-import { TbHelpDirective } from '../../help/tb-help/tb-help.directive';
+import { NgClass } from '@angular/common';
+import { GridConfig, TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
+import { TbGridHelpButtonComponent } from '../../components/tb-grid/grid-help-button.component';
 import { TbRuleChainDirective } from '../tb-rule-chain/tb-rule-chain.directive';
 import { TbAttributeTableDirective } from '../../entity/tb-attribute-table/tb-attribute-table.directive';
 import { TbAlarmTableDirective } from '../../alarm/tb-alarm-table/tb-alarm-table.directive';
 import { TbEventTableDirective } from '../../event/tb-event-table/tb-event-table.directive';
 import { TbRelationTableDirective } from '../../entity/tb-relation-table/tb-relation-table.directive';
 import { TbAuditLogTableDirective } from '../../audit/tb-audit-log-table/tb-audit-log-table.directive';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import addRuleChainTemplate from '../../../../app/rulechain/add-rulechain.tpl.html';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import ruleChainCard from '../../../../app/rulechain/rulechain-card.tpl.html';
+import { RuleChainCardComponent } from './rule-chain-card.component';
+import { AddRuleChainDialogComponent } from './add-rule-chain-dialog.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '@ngx-translate/core';
 import { goState, stateUrlTree } from '../../../state-paths';
@@ -34,7 +30,7 @@ import { showConfirm } from '../confirm-dialog/confirm-dialog.component';
 @Component({
   selector: 'rule-chains',
   standalone: true,
-  imports: [TranslatePipe, MatTabsModule, CommonModule, forwardRef(() => TbGridDirective), forwardRef(() => TbHelpDirective), forwardRef(() => TbRuleChainDirective), forwardRef(() => TbAttributeTableDirective), forwardRef(() => TbAlarmTableDirective), forwardRef(() => TbEventTableDirective), forwardRef(() => TbRelationTableDirective), forwardRef(() => TbAuditLogTableDirective)],
+  imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbRuleChainDirective, TbAttributeTableDirective, TbAlarmTableDirective, TbEventTableDirective, TbRelationTableDirective, TbAuditLogTableDirective],
   templateUrl: './rule-chains.component.html',
 })
 export class RuleChainsComponent {
@@ -47,11 +43,14 @@ export class RuleChainsComponent {
   protected readonly dialog = inject(MatDialog);
   protected readonly typesRef: any = types;
 
+  readonly ruleChainCard: Type<unknown> = RuleChainCardComponent;
+  readonly addRuleChainDialog: Type<unknown> = AddRuleChainDialogComponent;
+
   protected ruleChainActionsList: any;
   protected ruleChainAddItemActionsList: any;
   types: any;
-  ruleChainGridConfig: any;
-  grid: any;
+  ruleChainGridConfig: GridConfig;
+  grid!: TbGridDirective;
 
 
   constructor() {
@@ -130,7 +129,6 @@ export class RuleChainsComponent {
         deleteItemFunc: this.deleteRuleChain,
 
         getItemTitleFunc: this.getRuleChainTitle,
-        itemCardTemplateUrl: ruleChainCard,
         parentCtl: this,
 
         actionsList: this.ruleChainActionsList,
@@ -138,15 +136,15 @@ export class RuleChainsComponent {
 
         onGridInited: this.gridInited,
 
-        addItemTemplateUrl: addRuleChainTemplate,
 
         addItemText: (...rest: any[]) => { return this.translate.instant('rulechain.add-rulechain-text') },
         noItemsText: (...rest: any[]) => { return this.translate.instant('rulechain.no-rulechains-text') },
         itemDetailsText: (...rest: any[]) => { return this.translate.instant('rulechain.rulechain-details') },
         isSelectionEnabled: this.isNonRootRuleChain
     };
-    if ((this.route.snapshot.params['items'] !== undefined) && this.route.snapshot.params['items'] !== null) {
-        this.ruleChainGridConfig.items = this.route.snapshot.params['items'];
+    const items = this.router.getCurrentNavigation()?.extras.state?.['items'];
+    if (items !== undefined && items !== null) {
+        this.ruleChainGridConfig.items = items;
     }
     if ((this.route.snapshot.queryParams['topIndex'] !== undefined) && this.route.snapshot.queryParams['topIndex'] > 0) {
         this.ruleChainGridConfig.topIndex = this.route.snapshot.queryParams['topIndex'];
@@ -166,18 +164,18 @@ export class RuleChainsComponent {
   };
 
   deleteRuleChainsTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('rulechain.delete-rulechains-title', {count: selectedCount}, 'messageformat');
+    return this.translate.instant('rulechain.delete-rulechains-title', {count: selectedCount});
   };
 
   deleteRuleChainsActionTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('rulechain.delete-rulechains-action-title', {count: selectedCount}, 'messageformat');
+    return this.translate.instant('rulechain.delete-rulechains-action-title', {count: selectedCount});
   };
 
   deleteRuleChainsText = (...rest: any[]): any => {
     return this.translate.instant('rulechain.delete-rulechains-text');
   };
 
-  gridInited = (grid?: any, ...rest: any[]): any => {
+  gridInited = (grid: TbGridDirective): void => {
     this.grid = grid;
   };
 

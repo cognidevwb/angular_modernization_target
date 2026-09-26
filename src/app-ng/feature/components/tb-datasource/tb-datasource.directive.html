@@ -27,10 +27,10 @@
         </mat-select>
     </mat-form-field>
     <section flex class="datasource" on="model.type">
-        <tb-datasource-func flex [(ngModel)]="model" [(maxDataKeys)]="maxDataKeys" [(optDataKeys)]="optDataKeys" [(datakeySettingsSchema)]="datakeySettingsSchema" [required]="model?.type === types?.datasourceType?.function" [(widgetType)]="widgetType" (generateDataKey)="generateDataKey.emit($event)">
+        <tb-datasource-func flex [(ngModel)]="model" [(maxDataKeys)]="maxDataKeys" [(optDataKeys)]="optDataKeys" [(datakeySettingsSchema)]="datakeySettingsSchema" [required]="model?.type === types?.datasourceType?.function" [(widgetType)]="widgetType" [generateDataKey]="generateDataKey()">
         </tb-datasource-func>
         <!-- TODO(port): ng-switch-when has no one-to-one Angular form -->
-        <tb-datasource-entity flex [(ngModel)]="model" [(maxDataKeys)]="maxDataKeys" [(optDataKeys)]="optDataKeys" [(datakeySettingsSchema)]="datakeySettingsSchema" ng-switch-when="entity" [required]="model?.type === types?.datasourceType?.entity" [(widgetType)]="widgetType" [(aliasController)]="aliasController" (generateDataKey)="generateDataKey.emit($event)" (fetchEntityKeys)="fetchEntityKeys.emit($event)" (onCreateEntityAlias)="onCreateEntityAlias.emit($event)">
+        <tb-datasource-entity flex [(ngModel)]="model" [(maxDataKeys)]="maxDataKeys" [(optDataKeys)]="optDataKeys" [(datakeySettingsSchema)]="datakeySettingsSchema" ng-switch-when="entity" [required]="model?.type === types?.datasourceType?.entity" [(widgetType)]="widgetType" [(aliasController)]="aliasController" [generateDataKey]="generateDataKey()" [fetchEntityKeys]="fetchEntityKeys()" [onCreateEntityAlias]="onCreateEntityAlias()">
         </tb-datasource-entity>
     </section>
 </section>

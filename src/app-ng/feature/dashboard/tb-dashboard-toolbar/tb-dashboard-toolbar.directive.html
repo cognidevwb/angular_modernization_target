@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/dashboard/dashboard-toolbar.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/dashboard/dashboard-toolbar.tpl.html (md-fab-toolbar: a trigger fab that opens a toolbar to its left) -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -16,16 +16,19 @@
     limitations under the License.
 
 -->
-<md-fab-toolbar md-open="vm.toolbarOpened" md-direction="left" [ngClass]="{'is-fullscreen': forceFullscreen(), 'md-whiteframe-z1': forceFullscreen() && toolbarOpened() }">
-    <!-- TODO(port): md-fab-trigger: the mat-fab that opens the speed dial --><md-fab-trigger class="align-with-text">
-        <button mat-fab color="primary" aria-label="menu" (click)="onTriggerClick.emit(undefined)" attr.matTooltip="{{ 'dashboard.open-toolbar' | translate }}" matTooltipPosition="below">
-            <!-- TODO(port): the md-tooltip had its own AngularJS directives; bind matTooltipDisabled for them -->
-            <mat-icon aria-label="dashboard-toolbar" class="material-icons">more_horiz</mat-icon>
-        </button>
-    </md-fab-trigger>
-    <mat-toolbar>
-        <!-- TODO(port): md-fab-actions: the buttons the speed dial shows --><md-fab-actions class="md-toolbar-tools">
-            <div><ng-content></ng-content></div>
-        </md-fab-actions>
-    </mat-toolbar>
-</md-fab-toolbar>
+<div class="tb-fab-toolbar" [class.md-is-open]="toolbarOpened()"
+     [ngClass]="{'is-fullscreen': forceFullscreen(), 'md-whiteframe-z1': forceFullscreen() && toolbarOpened() }">
+    <div class="tb-fab-toolbar-wrapper">
+        <mat-toolbar class="tb-fab-toolbar-content" [class.tb-closed]="!toolbarOpened()">
+            <div class="md-toolbar-tools tb-fab-actions">
+                <div class="md-fab-action-item"><ng-content></ng-content></div>
+            </div>
+        </mat-toolbar>
+        <div class="tb-fab-trigger align-with-text" [hidden]="toolbarOpened()">
+            <button mat-mini-fab color="primary" aria-label="menu" (click)="onTriggerClick.emit(undefined)"
+                    [matTooltip]="'dashboard.open-toolbar' | translate" [matTooltipDisabled]="toolbarOpened()" matTooltipPosition="below">
+                <mat-icon aria-label="dashboard-toolbar" class="material-icons">more_horiz</mat-icon>
+            </button>
+        </div>
+    </div>
+</div>

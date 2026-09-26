@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/widget/lib/entities-hierarchy-widget.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/widget/lib/entities-hierarchy-widget.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -17,25 +17,30 @@
 
 -->
 <div class="tb-absolute-fill tb-entities-hierarchy" layout="column">
-    <div [hidden]="!(showData)" flex class="tb-absolute-fill" layout="column">
-        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(query?.search != null)">
+    <div [hidden]="!showData" flex class="tb-absolute-fill" layout="column">
+        <mat-toolbar class="md-table-toolbar md-default" [hidden]="query.search == null">
             <div class="md-toolbar-tools">
-                <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{'entity.search' | translate}}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
-                    <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
-                    
+                <button mat-icon-button [attr.aria-label]="'action.search' | translate" [matTooltip]="'entity.search' | translate"
+                        [matTooltipPosition]="ctx()?.dashboard?.isWidgetExpanded ? 'below' : 'above'">
+                    <mat-icon [attr.aria-label]="'action.search' | translate" class="material-icons">search</mat-icon>
                 </button>
                 <mat-form-field flex>
                     <mat-label>&nbsp;</mat-label>
-                    <input matInput [(ngModel)]="query.search" class="searchInput" attr.placeholder="{{'entity.search' | translate}}">
+                    <input matInput [ngModel]="query.search" (ngModelChange)="onSearchChange($event)" class="searchInput" [placeholder]="'entity.search' | translate">
                 </mat-form-field>
-                <button mat-icon-button aria-label="Close" (click)="exitFilterMode()" attr.matTooltip="{{ 'action.close' | translate }}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                <button mat-icon-button aria-label="Close" (click)="exitFilterMode()" [matTooltip]="'action.close' | translate"
+                        [matTooltipPosition]="ctx()?.dashboard?.isWidgetExpanded ? 'below' : 'above'">
                     <mat-icon aria-label="Close" class="material-icons">close</mat-icon>
-                    
                 </button>
             </div>
         </mat-toolbar>
         <div flex class="tb-entities-nav-tree-panel">
-            <tb-nav-tree [(loadNodes)]="loadNodes" (onNodeSelected)="onNodeSelected(node, event)" (onNodesInserted)="onNodesInserted(nodes, parent)" [(editCallbacks)]="nodeEditCallbacks" enableSearch="true" (searchCallback)="searchCallback(searchText, node)"></tb-nav-tree>
+            <tb-nav-tree [loadNodes]="treeLoader"
+                         (onNodeSelected)="onNodeSelected($event.node, $event.event)"
+                         (onNodesInserted)="onNodesInserted($event.nodes, $event.parent)"
+                         [editCallbacks]="nodeEditCallbacks"
+                         [enableSearch]="true"
+                         [searchCallback]="searchCallback"></tb-nav-tree>
         </div>
     </div>
 </div>

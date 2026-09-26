@@ -1,30 +1,51 @@
-import { Component, forwardRef, inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Component, forwardRef, inject, ViewChild } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialog } from '@angular/material/dialog';
-import { WidgetService } from '../../api/services/widget.service';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { types } from '../../common/constants/types';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { TbHelpDirective } from '../../help/tb-help/tb-help.directive';
 import { TbWidgetConfigDirective } from '../../components/tb-widget-config/tb-widget-config.directive';
 
-import $ from 'jquery';
 import { firstValueFrom } from 'rxjs';
-import { EntityAliasDialogComponent } from '../../entity/alias/entity-alias-dialog.component';
-import { inject as injectRoot } from '@angular/core';
+import { EntityAliasDialogComponent } from '../../entity/entity-alias-dialog/entity-alias-dialog.component';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
 import { $q } from '../../../core/q';
 
+/** The legacy `theForm` as the widget config reads it (`$valid`, `$dirty`, `$setDirty()` …), over the dialog's NgForm. */
+class AddWidgetFormState {
+  ngForm: NgForm | null = null;
+  private dirty = false;
+
+  get $invalid(): boolean {
+    return !!this.ngForm?.invalid;
+  }
+
+  get $valid(): boolean {
+    return !this.$invalid;
+  }
+
+  get $dirty(): boolean {
+    return this.dirty || !!this.ngForm?.dirty;
+  }
+
+  $setDirty(): void {
+    this.dirty = true;
+  }
+
+  $setPristine(): void {
+    this.dirty = false;
+    this.ngForm?.form.markAsPristine();
+  }
+}
+
 /**
- * Ported from the AngularJS controller `AddWidgetController` (module `thingsboard.dashboard`) in src/app/dashboard/index.js:50.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 4 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS controller `AddWidgetController` (src/app/dashboard/add-widget.controller.js):
+ * the dialog that configures a new widget before it is added; closes with `{widget}`.
  */
 @Component({
   selector: 'add-widget',
@@ -33,12 +54,10 @@ import { $q } from '../../../core/q';
   templateUrl: './add-widget.component.html',
 })
 export class AddWidgetComponent {
-  protected readonly rootScope = injectRoot(RootState);
-  protected readonly widgetService = inject(WidgetService);
+  protected readonly rootScope = inject(RootState);
   protected readonly entityService = inject(EntityService);
   protected readonly dialog = inject(MatDialog);
-  // TODO(port): '$q' — use Promise, or an Observable
-  protected readonly document = inject(DOCUMENT);
+  protected readonly dialogRef = inject(MatDialogRef<AddWidgetComponent>);
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
 
   dashboard: any;
@@ -47,45 +66,37 @@ export class AddWidgetComponent {
   widgetInfo: any;
   functionsOnly: any = false;
   widgetConfig: any;
-  protected settingsSchema_local: any;
-  protected dataKeySettingsSchema_local: any;
   dataKeySettingsSchema: any;
   settingsSchema: any;
-  theForm: any;
+  readonly theForm = new AddWidgetFormState();
 
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): `success` — a named function expression that calls itself; as an arrow it has no name: name it as a method
-  // TODO(port): `dataKeySettingsSchema` was both a local and a member the class exposes; the local is `dataKeySettingsSchema_local`, the member stays `dataKeySettingsSchema`
-  // TODO(port): `settingsSchema` was both a local and a member the class exposes; the local is `settingsSchema_local`, the member stays `settingsSchema`
+  @ViewChild('theFormRef')
+  set theFormRef(form: NgForm | undefined) {
+    this.theForm.ngForm = form ?? null;
+  }
 
   constructor() {
     this.dashboard = this.dialogData.dashboard;
     this.aliasController = this.dialogData.aliasController;
     this.widget = this.dialogData.widget;
     this.widgetInfo = this.dialogData.widgetInfo;
-    this.helpLinkIdForWidgetType = this.helpLinkIdForWidgetType;
-    this.add = this.add;
-    this.cancel = this.cancel;
-    this.fetchEntityKeys = this.fetchEntityKeys;
-    this.fetchDashboardStates = this.fetchDashboardStates;
-    this.createEntityAlias = this.createEntityAlias;
     this.widgetConfig = {
         config: this.widget.config,
         layout: {}
     };
     this.widgetConfig.layout.mobileOrder = this.widget.config.mobileOrder;
     this.widgetConfig.layout.mobileHeight = this.widget.config.mobileHeight;
-    this.settingsSchema_local = this.widgetInfo.typeSettingsSchema || this.dialogData.widgetInfo.settingsSchema;
-    this.dataKeySettingsSchema_local = this.widgetInfo.typeDataKeySettingsSchema || this.dialogData.widgetInfo.dataKeySettingsSchema;
-    if (!this.settingsSchema_local || this.settingsSchema_local === '') {
+    const settingsSchema = this.widgetInfo.typeSettingsSchema || this.widgetInfo.settingsSchema;
+    const dataKeySettingsSchema = this.widgetInfo.typeDataKeySettingsSchema || this.widgetInfo.dataKeySettingsSchema;
+    if (!settingsSchema || settingsSchema === '') {
         this.settingsSchema = {};
     } else {
-        this.settingsSchema = JSON.parse(this.settingsSchema_local);
+        this.settingsSchema = JSON.parse(settingsSchema);
     }
-    if (!this.dataKeySettingsSchema_local || this.dataKeySettingsSchema_local === '') {
+    if (!dataKeySettingsSchema || dataKeySettingsSchema === '') {
         this.dataKeySettingsSchema = {};
     } else {
-        this.dataKeySettingsSchema = JSON.parse(this.dataKeySettingsSchema_local);
+        this.dataKeySettingsSchema = JSON.parse(dataKeySettingsSchema);
     }
   }
 
@@ -119,7 +130,7 @@ export class AddWidgetComponent {
   };
 
   cancel = (...rest: any[]): any => {
-    (this.dialog as any).cancel();
+    this.dialogRef.close();
   };
 
   add = (...rest: any[]): any => {
@@ -128,7 +139,7 @@ export class AddWidgetComponent {
         this.widget.config = this.widgetConfig.config;
         this.widget.config.mobileOrder = this.widgetConfig.layout.mobileOrder;
         this.widget.config.mobileHeight = this.widgetConfig.layout.mobileHeight;
-        (this.dialog as any).hide({widget: this.widget});
+        this.dialogRef.close({widget: this.widget});
     }
   };
 
@@ -139,10 +150,10 @@ export class AddWidgetComponent {
             var entity: any = aliasInfo.currentEntity;
             if (entity) {
                 this.entityService.getEntityKeys(entity.entityType, entity.id, query, type, {ignoreLoading: true}).then(
-                    function success(keys?: any) {
+                    (keys?: any) => {
                         deferred.resolve(keys);
                     },
-                    function fail() {
+                    () => {
                         deferred.resolve([]);
                     }
                 );
@@ -150,7 +161,7 @@ export class AddWidgetComponent {
                 deferred.resolve([]);
             }
         },
-        function fail() {
+        () => {
             deferred.resolve([]);
         }
     );

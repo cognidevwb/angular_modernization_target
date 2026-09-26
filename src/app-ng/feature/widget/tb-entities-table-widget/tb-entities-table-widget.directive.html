@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/widget/lib/entities-table-widget.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/widget/lib/entities-table-widget.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -17,65 +17,74 @@
 
 -->
 <div class="tb-absolute-fill tb-entities-table tb-data-table" layout="column">
-    <div [hidden]="!($any(this).showData)" flex class="tb-absolute-fill" layout="column">
-        <mat-toolbar class="md-table-toolbar md-default" [hidden]="!($any(this).query?.search != null)">
+    <div [hidden]="!showData" flex class="tb-absolute-fill" layout="column">
+        <mat-toolbar class="md-table-toolbar md-default" [hidden]="query.search == null">
             <div class="md-toolbar-tools">
-                <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{'entity.search' | translate}}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
-                    <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
-                    
+                <button mat-icon-button [attr.aria-label]="'action.search' | translate" [matTooltip]="'entity.search' | translate"
+                        [matTooltipPosition]="ctx()?.dashboard?.isWidgetExpanded ? 'below' : 'above'">
+                    <mat-icon [attr.aria-label]="'action.search' | translate" class="material-icons">search</mat-icon>
                 </button>
                 <mat-form-field flex>
                     <mat-label>&nbsp;</mat-label>
-                    <input matInput [(ngModel)]="$any(this).query.search" class="searchInput" attr.placeholder="{{'entity.search' | translate}}">
+                    <input matInput [ngModel]="query.search" (ngModelChange)="onSearchChange($event)" class="searchInput" [placeholder]="'entity.search' | translate">
                 </mat-form-field>
-                <button mat-icon-button aria-label="Close" (click)="$any(this).exitFilterMode()" attr.matTooltip="{{ 'action.close' | translate }}" attr.matTooltipPosition="{{ctx()?.dashboard?.isWidgetExpanded ? 'bottom' : 'top'}}">
+                <button mat-icon-button aria-label="Close" (click)="exitFilterMode()" [matTooltip]="'action.close' | translate"
+                        [matTooltipPosition]="ctx()?.dashboard?.isWidgetExpanded ? 'below' : 'above'">
                     <mat-icon aria-label="Close" class="material-icons">close</mat-icon>
-                    
                 </button>
             </div>
         </mat-toolbar>
-        <!-- TODO(port): md-table-container (angular-material-data-table): a mat-table with MatSort --><div flex class="tb-table-container">
-            <table md-table>
-                <thead fix-head md-head md-order="vm.query.order" md-on-reorder="vm.onReorder">
-                <tr md-row>
-                    @for (column of $any(this).columns; track $index) {
+        <div flex class="tb-table-container md-table-container">
+            <table class="md-table">
+                <thead>
+                <tr class="md-row">
+                    @for (column of columns; track $index) {
                       @if (column?.display) {
-                      <th md-column attr.md-order-by='"{{column?.label}}"'><span>{{ column?.title }}</span></th>
+                      <th class="md-column md-sort" [class.md-active]="sortDirection(column.label)" (click)="sortBy(column.label)">
+                        @if (sortDirection(column.label)) {
+                        <mat-icon class="md-sort-icon">{{ sortDirection(column.label) }}</mat-icon>
+                        }
+                        <span>{{ column?.title }}</span>
+                      </th>
+                      }
                     }
-                    }
-                    <th md-column class="tb-action-cell" layout="row" layout-align="end center"></th>
+                    <th class="md-column tb-action-cell" layout="row" layout-align="end center"></th>
                 </tr>
                 </thead>
-                <tbody md-body>
-                @for (entity of $any(this).entities; track $index) {
-                  <tr [hidden]="!($any(this).entities?.length)" md-row md-select="entity" md-select-id="id.id" md-auto-select="false" (click)="$any(this).onRowClick($event, entity)" (dblclick)="$any(this).onRowClick($event, entity, true)" [ngClass]="{'tb-current': $any(this).isCurrent(entity)}">
-                    @for (column of $any(this).columns; track $index) {
+                <tbody>
+                @for (entity of entities; track $index) {
+                  <tr class="md-row" (click)="onRowClick($event, entity)" (dblclick)="onRowClick($event, entity, true)" [ngClass]="{'tb-current': isCurrent(entity)}">
+                    @for (column of columns; track $index) {
                       @if (column?.display) {
-                      <td md-cell flex [ngStyle]="$any(this).cellStyle(entity, column)" [innerHTML]="$any(this).cellContent(entity, column)">
-                    </td>
+                      <td class="md-cell" flex [ngStyle]="cellStyle(entity, column)" [innerHTML]="cellContent(entity, column)"></td>
+                      }
                     }
-                    }
-                    <td md-cell class="tb-action-cell" [ngStyle]="{minWidth: $any(this).actionCellDescriptors?.length*36+'px',
-                                   maxWidth: $any(this).actionCellDescriptors?.length*36+'px',
-                                   width: $any(this).actionCellDescriptors?.length*36+'px'}">
-                        @for (actionDescriptor of $any(this).actionCellDescriptors; track $index) {
-                          <button mat-icon-button attr.aria-label="{{ actionDescriptor?.displayName }}" (click)="$any(this).onActionButtonClick($event, entity, actionDescriptor)" [disabled]="$any(this).rootScope?.loading" attr.matTooltip="{{ actionDescriptor?.displayName }}" matTooltipPosition="above">
-                            <mat-icon attr.aria-label="{{ actionDescriptor?.displayName }}" class="material-icons">{{actionDescriptor?.icon}}</mat-icon>
-                            
-                        </button>
+                    <td class="md-cell tb-action-cell" [ngStyle]="{minWidth: actionCellDescriptors?.length*36+'px',
+                                   maxWidth: actionCellDescriptors?.length*36+'px',
+                                   width: actionCellDescriptors?.length*36+'px'}">
+                        @for (actionDescriptor of actionCellDescriptors; track $index) {
+                          <button mat-icon-button [attr.aria-label]="actionDescriptor?.displayName" (click)="onActionButtonClick($event, entity, actionDescriptor)"
+                                  [disabled]="rootScope['loading']" [matTooltip]="actionDescriptor?.displayName" matTooltipPosition="above">
+                            <mat-icon [attr.aria-label]="actionDescriptor?.displayName" class="material-icons">{{actionDescriptor?.icon}}</mat-icon>
+                          </button>
                         }
                     </td>
-                </tr>
+                  </tr>
                 }
                 </tbody>
             </table>
             <mat-divider></mat-divider>
-            <span [hidden]="!(!$any(this).entities?.length)" layout-align="center center" class="no-data-found" translate>entity.no-entities-prompt</span>
+            <span [hidden]="entities?.length" layout-align="center center" class="no-data-found">{{ 'entity.no-entities-prompt' | translate }}</span>
         </div>
-        <!-- TODO(port): md-table-pagination: a mat-paginator -->@if ($any(this).displayPagination) {
-          <div md-boundary-links md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" attr.md-total="{{$any(this).entitiesCount}}" md-on-paginate="vm.onPaginate" md-page-select="vm.isGtMd">
-        </div>
+        @if (displayPagination) {
+          <mat-paginator class="md-table-pagination" [showFirstLastButtons]="true"
+                         [length]="entitiesCount"
+                         [pageSize]="query.limit"
+                         [pageIndex]="query.page - 1"
+                         [pageSizeOptions]="limitOptions || []"
+                         [hidePageSize]="!isGtMd"
+                         (page)="onPage($event)"></mat-paginator>
         }
     </div>
-    <span [hidden]="!(!$any(this).showData)" layout-align="center center" style="text-transform: uppercase; display: flex;" class="tb-absolute-fill" translate>entity.no-data</span>
+    <span [hidden]="showData" layout-align="center center" style="text-transform: uppercase; display: flex;" class="tb-absolute-fill">{{ 'entity.no-data' | translate }}</span>
 </div>

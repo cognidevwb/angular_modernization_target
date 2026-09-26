@@ -149,9 +149,9 @@
                                                    [aliasController]="aliasController()"
                                                    [functionsOnly]="functionsOnly()"
                                                    [datakeySettingsSchema]="datakeySettingsSchema()"
-                                                   (generateDataKey)="generateDataKey($event?.chip, $event?.type)"
-                                                   (fetchEntityKeys)="fetchEntityKeys.emit($event)"
-                                                   (onCreateEntityAlias)="onCreateEntityAlias.emit($event)"></tb-datasource>
+                                                   [generateDataKey]="generateDataKeyFn"
+                                                   [fetchEntityKeys]="fetchEntityKeys()"
+                                                   [onCreateEntityAlias]="onCreateEntityAlias()"></tb-datasource>
                                     <button mat-icon-button color="primary" type="button" [disabled]="rootScope.loading"
                                             style="min-width: 40px;"
                                             (click)="removeDatasource($event, datasource)"
@@ -195,7 +195,7 @@
                                                 [allowedEntityTypes]="[types.entityType.device]"
                                                 [ngModel]="targetDeviceAlias.value"
                                                 (ngModelChange)="onTargetDeviceAliasChange($event)"
-                                                (onCreateEntityAlias)="onCreateEntityAlias.emit($event)">
+                                                [onCreateEntityAlias]="onCreateEntityAlias()">
                         </tb-entity-alias-select>
                     </div>
                 </mat-expansion-panel>
@@ -214,8 +214,8 @@
                                        [functionsOnly]="functionsOnly()"
                                        [aliasController]="aliasController()"
                                        [datakeySettingsSchema]="datakeySettingsSchema()"
-                                       (generateDataKey)="generateDataKey($event?.chip, $event?.type)"
-                                       (onCreateEntityAlias)="onCreateEntityAlias.emit($event)"></tb-datasource>
+                                       [generateDataKey]="generateDataKeyFn"
+                                       [onCreateEntityAlias]="onCreateEntityAlias()"></tb-datasource>
                     </div>
                 </mat-expansion-panel>
             </mat-accordion>
@@ -370,7 +370,7 @@
                     [actionSources]="actionSources()"
                     [widgetActions]="actions"
                     (widgetActionsChange)="onActionsChange($event)"
-                    (fetchDashboardStates)="fetchDashboardStates.emit($event)">
+                    [fetchDashboardStates]="fetchDashboardStates()">
             </tb-manage-widget-actions>
         </div>
     </mat-tab>

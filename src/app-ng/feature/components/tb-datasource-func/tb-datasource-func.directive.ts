@@ -1,4 +1,5 @@
-import { Component, inject, model, output, effect } from '@angular/core';
+import { Component, inject, input, model, effect } from '@angular/core';
+import { GenerateDataKeyFn } from '../tb-datasource/datasource-callbacks';
 import { DOCUMENT } from '@angular/common';
 import { ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -29,7 +30,7 @@ export class TbDatasourceFuncDirective extends NgModelController {
   readonly widgetType = model<any>();
   readonly maxDataKeys = model<any>();
   readonly optDataKeys = model<any>();
-  readonly generateDataKey = output<any>();
+  readonly generateDataKey = input<GenerateDataKeyFn | undefined>();
   readonly datakeySettingsSchema = model<any>();
 
   // TODO(port): '$compile' — not in Angular: compose with components instead
@@ -54,7 +55,6 @@ export class TbDatasourceFuncDirective extends NgModelController {
   datasourceName: any;
   funcDataKeys: any;
 
-  // TODO(port): `scope.generateDataKey(…)` — its result was read; an output emits and returns nothing: take the value from an input callback instead
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
@@ -134,13 +134,13 @@ export class TbDatasourceFuncDirective extends NgModelController {
     if (this.maxDataKeys() > 0 && this.$viewValue.dataKeys.length >= this.maxDataKeys() ) {
         return null;
     } else {
-        return this.generateDataKey.emit({chip: chip, type: this.typesRef.dataKeyType.function});
+        return this.generateDataKey()?.(chip, this.typesRef.dataKeyType.function);
     }
     return undefined;
   }
 
   transformAlarmDataKeyChip(chip?: any, ...rest: any[]): any {
-    return this.generateDataKey.emit({chip: chip, type: this.typesRef.dataKeyType.alarm});
+    return this.generateDataKey()?.(chip, this.typesRef.dataKeyType.alarm);
   }
 
   // TODO(port): '$mdColorPicker' — an AngularJS Material color-picker add-on with no Angular counterpart; use the browser's native color input instead

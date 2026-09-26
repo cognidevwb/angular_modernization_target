@@ -34,7 +34,7 @@
         </button>
     </section>
     <div flex layout="column" class="md-whiteframe-z1 tb-event-table">
-        <div class="tb-row tb-header" layout="row" layout-align="start center" tb-event-header attr.event-type="{{eventType}}">
+        <div class="tb-row tb-header" layout="row" layout-align="start center" tb-event-header [eventType]="eventType">
         </div>
         <mat-progress-bar style="max-height: 0px;" mode="indeterminate" [hidden]="!rootScope.loading"></mat-progress-bar>
         <mat-divider></mat-divider>

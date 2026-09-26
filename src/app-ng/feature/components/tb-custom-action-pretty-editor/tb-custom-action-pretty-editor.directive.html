@@ -16,9 +16,9 @@
     limitations under the License.
 
 -->
-<div class="tb-custom-action-pretty md-whiteframe-z1" (tbExpandFullscreen)="fullscreen" (fullscreenZindex)="100" (hideExpandButton)="true">
+<div class="tb-custom-action-pretty md-whiteframe-z1" [tbExpandFullscreen]="fullscreen" fullscreenZindex="100" [hideExpandButton]="true">
     <div layout="row" layout-align="end center" class="tb-action-expand-button" [ngClass]="{'tb-fullscreen-editor': fullscreen}">
-        <button mat-button hide-xs hide-sm attr.aria-label="{{ 'widget.toggle-fullscreen' | translate }}" (click)="toggleFullscreen()" attr.matTooltip="{{ 'widget.toggle-fullscreen' | translate }}" matTooltipPosition="below">
+        <button mat-button type="button" hide-xs hide-sm attr.aria-label="{{ 'widget.toggle-fullscreen' | translate }}" (click)="toggleFullscreen()" [matTooltip]="'widget.toggle-fullscreen' | translate" matTooltipPosition="below">
             
             <mat-icon [hidden]="!(!fullscreen)" attr.aria-label="{{ 'widget.toggle-fullscreen' | translate }}">
                 fullscreen
@@ -27,7 +27,7 @@
                 fullscreen_exit
             </mat-icon>
             @if (fullscreen) {
-              <span translate hide-xs hide-sm>widget.toggle-fullscreen</span>
+              <span hide-xs hide-sm>{{ 'widget.toggle-fullscreen' | translate }}</span>
             }
         </button>
     </div>
@@ -41,9 +41,9 @@
                             @for (resource of action?.customResources; track $index) {
                               <div flex layout="row" style="max-height: 40px;" layout-align="start center">
                                 <mat-form-field flex class="md-block" style="margin: 10px 0px 0px 0px; max-height: 40px;">
-                                    <input matInput attr.placeholder="{{ 'widget.resource-url' | translate }}" [required]="true" name="resource" [(ngModel)]="resource.url">
+                                    <input matInput [placeholder]="'widget.resource-url' | translate" [required]="true" name="resource" [(ngModel)]="resource.url" (ngModelChange)="onActionChanged()">
                                 </mat-form-field>
-                                <button mat-icon-button color="primary" [disabled]="rootScope?.loading" (click)="removeResource($index)" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'widget.remove-resource' | translate }}" matTooltipPosition="above">
+                                <button mat-icon-button type="button" color="primary" [disabled]="rootScope.loading" (click)="removeResource($index)" attr.aria-label="{{ 'action.remove' | translate }}" [matTooltip]="'widget.remove-resource' | translate" matTooltipPosition="above">
                                     
                                     <mat-icon attr.aria-label="{{ 'action.delete' | translate }}" class="material-icons">
                                         close
@@ -52,36 +52,36 @@
                             </div>
                             }
                             <div>
-                                <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="addResource()" attr.aria-label="{{ 'action.add' | translate }}" attr.matTooltip="{{ 'widget.add-resource' | translate }}" matTooltipPosition="above">
+                                <button mat-raised-button type="button" color="primary" [disabled]="rootScope.loading" (click)="addResource()" attr.aria-label="{{ 'action.add' | translate }}" [matTooltip]="'widget.add-resource' | translate" matTooltipPosition="above">
                                     
-                                    <span translate>action.add</span>
+                                    <span>{{ 'action.add' | translate }}</span>
                                 </button>
                             </div>
                         </div>
                     </div>
                 </mat-tab>
                 <mat-tab label="{{ 'widget.css' | translate }}">
-                    <div class="tb-custom-action-editor-container" tbExpandFullscreen (fullscreenZindex)="100" expand-button-id="expand-button">
+                    <div class="tb-custom-action-editor-container" tb-expand-fullscreen fullscreenZindex="100" expand-button-id="expand-button">
                         <div class="tb-editor-area-title-panel">
-                            <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyCss()">{{ 'widget.tidy' | translate }}
+                            <button mat-button type="button" attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyCss()">{{ 'widget.tidy' | translate }}
                             </button>
-                            <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
+                            <button mat-icon-button type="button" id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
                         </div>
-                        <div id="css-panel" class="css-panel" ui-ace="cssEditorOptions" [(ngModel)]="action.customCss"></div>
+                        <div id="css-panel" class="css-panel" [ui-ace]="cssEditorOptions" [(ngModel)]="action.customCss" (ngModelChange)="onActionChanged()"></div>
                     </div>
                 </mat-tab>
                 <mat-tab label="{{ 'widget.html' | translate }}">
-                    <div class="tb-custom-action-editor-container" tbExpandFullscreen (fullscreenZindex)="100" expand-button-id="expand-button">
+                    <div class="tb-custom-action-editor-container" tb-expand-fullscreen fullscreenZindex="100" expand-button-id="expand-button">
                         <div class="tb-editor-area-title-panel">
-                            <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyHtml()">{{ 'widget.tidy' | translate }}
+                            <button mat-button type="button" attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyHtml()">{{ 'widget.tidy' | translate }}
                             </button>
-                            <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
+                            <button mat-icon-button type="button" id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
                         </div>
-                        <div id="html-panel" class="html-panel" ui-ace="htmlEditorOptions" [(ngModel)]="action.customHtml"></div>
+                        <div id="html-panel" class="html-panel" [ui-ace]="htmlEditorOptions" [(ngModel)]="action.customHtml" (ngModelChange)="onActionChanged()"></div>
                     </div>
                 </mat-tab>
                 <mat-tab label="{{ 'widget.js' | translate }}">
-                    <tb-js-func [(ngModel)]="action.customFunction" attr.function-args="{{ ['$event', 'widgetContext', 'entityId', 'entityName', 'htmlTemplate', 'additionalParams'] }}" attr.validation-args="{{ [] }}">
+                    <tb-js-func [(ngModel)]="action.customFunction" (ngModelChange)="onActionChanged()" [functionArgs]="functionArgs" [validationArgs]="[]">
                     </tb-js-func>
                 </mat-tab>
             </mat-tab-group>
@@ -97,9 +97,9 @@
                                 @for (resource of action?.customResources; track $index) {
                                   <div flex layout="row" style="max-height: 40px;" layout-align="start center">
                                     <mat-form-field flex class="md-block" style="margin: 10px 0px 0px 0px; max-height: 40px;">
-                                        <input matInput attr.placeholder="{{ 'widget.resource-url' | translate }}" [required]="true" name="resource" [(ngModel)]="resource.url">
+                                        <input matInput [placeholder]="'widget.resource-url' | translate" [required]="true" name="resource" [(ngModel)]="resource.url" (ngModelChange)="onActionChanged()">
                                     </mat-form-field>
-                                    <button mat-icon-button color="primary" [disabled]="rootScope?.loading" (click)="removeResource($index)" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'widget.remove-resource' | translate }}" matTooltipPosition="above">
+                                    <button mat-icon-button type="button" color="primary" [disabled]="rootScope.loading" (click)="removeResource($index)" attr.aria-label="{{ 'action.remove' | translate }}" [matTooltip]="'widget.remove-resource' | translate" matTooltipPosition="above">
                                         
                                         <mat-icon attr.aria-label="{{ 'action.delete' | translate }}" class="material-icons">
                                             close
@@ -108,38 +108,38 @@
                                 </div>
                                 }
                                 <div>
-                                    <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="addResource()" attr.aria-label="{{ 'action.add' | translate }}" attr.matTooltip="{{ 'widget.add-resource' | translate }}" matTooltipPosition="above">
+                                    <button mat-raised-button type="button" color="primary" [disabled]="rootScope.loading" (click)="addResource()" attr.aria-label="{{ 'action.add' | translate }}" [matTooltip]="'widget.add-resource' | translate" matTooltipPosition="above">
                                         
-                                        <span translate>action.add</span>
+                                        <span>{{ 'action.add' | translate }}</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </mat-tab>
                     <mat-tab label="{{ 'widget.css' | translate }}">
-                        <div class="tb-custom-action-editor-container" tbExpandFullscreen (fullscreenZindex)="100" expand-button-id="expand-button">
+                        <div class="tb-custom-action-editor-container" tb-expand-fullscreen fullscreenZindex="100" expand-button-id="expand-button">
                             <div class="tb-editor-area-title-panel">
-                                <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyCss()">{{ 'widget.tidy' | translate }}
+                                <button mat-button type="button" attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyCss()">{{ 'widget.tidy' | translate }}
                                 </button>
-                                <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
+                                <button mat-icon-button type="button" id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
                             </div>
-                            <div id="css-panel" class="css-panel" ui-ace="cssEditorOptions" [(ngModel)]="action.customCss"></div>
+                            <div id="css-panel" class="css-panel" [ui-ace]="cssEditorOptions" [(ngModel)]="action.customCss" (ngModelChange)="onActionChanged()"></div>
                         </div>
                     </mat-tab>
                     <mat-tab label="{{ 'widget.html' | translate }}">
-                        <div class="tb-custom-action-editor-container" tbExpandFullscreen (fullscreenZindex)="100" expand-button-id="expand-button">
+                        <div class="tb-custom-action-editor-container" tb-expand-fullscreen fullscreenZindex="100" expand-button-id="expand-button">
                             <div class="tb-editor-area-title-panel">
-                                <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyHtml()">{{ 'widget.tidy' | translate }}
+                                <button mat-button type="button" attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyHtml()">{{ 'widget.tidy' | translate }}
                                 </button>
-                                <button mat-icon-button id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
+                                <button mat-icon-button type="button" id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
                             </div>
-                            <div id="html-panel" class="html-panel" ui-ace="htmlEditorOptions" [(ngModel)]="action.customHtml"></div>
+                            <div id="html-panel" class="html-panel" [ui-ace]="htmlEditorOptions" [(ngModel)]="action.customHtml" (ngModelChange)="onActionChanged()"></div>
                         </div>
                     </mat-tab>
                 </mat-tab-group>
             </div>
             <div id="right-panel" class="tb-split tb-content">
-                <tb-js-func [(ngModel)]="action.customFunction" attr.function-args="{{ ['$event', 'widgetContext', 'entityId', 'entityName', 'htmlTemplate', 'additionalParams'] }}" attr.validation-args="{{ [] }}" [fillHeight]="true">
+                <tb-js-func [(ngModel)]="action.customFunction" (ngModelChange)="onActionChanged()" [functionArgs]="functionArgs" [validationArgs]="[]" [fillHeight]="true">
                 </tb-js-func>
             </div>
         </div>

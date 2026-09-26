@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, DoCheck, forwardRef, inject, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { DOCUMENT } from '@angular/common';
@@ -34,13 +34,15 @@ import { TbEditWidgetDirective } from '../tb-edit-widget/tb-edit-widget.directiv
 import { TbWidgetsBundleSelectDirective } from '../../components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive';
 import { TbDashboardDirective } from '../../components/tb-dashboard/tb-dashboard.directive';
 
-import $ from 'jquery';
-import { EntityAliasesComponent as entityAliasesTemplate } from '../../entity/alias/entity-aliases.component';
-import { DashboardSettingsComponent as dashboardSettingsTemplate } from '../dashboard-settings/dashboard-settings.component';
-import { ManageDashboardLayoutsComponent as manageDashboardLayoutsTemplate } from '../layouts/manage-dashboard-layouts/manage-dashboard-layouts.component';
-import { ManageDashboardStatesComponent as manageDashboardStatesTemplate } from '../states/manage-dashboard-states/manage-dashboard-states.component';
-import { AddWidgetComponent as addWidgetTemplate } from '../add-widget/add-widget.component';
-import { SelectTargetLayoutComponent as selectTargetLayoutTemplate } from '../layouts/select-target-layout/select-target-layout.component';
+import { NgForm } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
+import { EntityAliasesComponent } from '../../entity/entity-aliases/entity-aliases.component';
+import { DashboardSettingsComponent } from '../dashboard-settings/dashboard-settings.component';
+import { ManageDashboardLayoutsComponent } from '../manage-dashboard-layouts/manage-dashboard-layouts.component';
+import { ManageDashboardStatesComponent } from '../manage-dashboard-states/manage-dashboard-states.component';
+import { AddWidgetComponent } from '../add-widget/add-widget.component';
+import { SelectTargetLayoutComponent } from '../select-target-layout/select-target-layout.component';
+import { showConfirm } from '../../rulechain/confirm-dialog/confirm-dialog.component';
 import AliasController from '../../../../app/api/alias-controller';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -50,15 +52,62 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-import { version as THINGSBOARD_VERSION } from '../../../../../package.json';
-declare let $scope: any;
-declare let $window: any;
-declare let scope: any;
+import { THINGSBOARD_VERSION } from '../../../app-globals';
+import { goState } from '../../../state-paths';
+import { createLegacyFilter, legacyCopy, legacyEquals } from '../../components/widget/legacy-helpers';
+import { notifyWidgetEditor } from '../widget-editor-frame';
+
+/** `$mdMedia('gt-sm')`. */
+const GT_SM = '(min-width: 960px)';
+
+/**
+ * The legacy `vm.widgetForm` as the widget details panel and `tb-edit-widget` read it
+ * (`$dirty`, `$invalid`, `$setPristine()`): dirty while the edited widget or its layout differs
+ * from the copy taken when it was last made pristine, or once a child marks it dirty.
+ */
+class WidgetFormState {
+  private pristineWidget: any = null;
+  private pristineLayout: any = null;
+  private forcedDirty = false;
+  /** The Angular form around the editor, when rendered: its own validity counts too. */
+  ngForm: NgForm | null = null;
+
+  constructor(private readonly host: { editingWidget: any; editingWidgetLayout: any }) {}
+
+  get $dirty(): boolean {
+    return this.forcedDirty || !!this.ngForm?.dirty ||
+      !legacyEquals(this.host.editingWidget, this.pristineWidget) ||
+      !legacyEquals(this.host.editingWidgetLayout, this.pristineLayout);
+  }
+
+  get $pristine(): boolean {
+    return !this.$dirty;
+  }
+
+  get $invalid(): boolean {
+    return !!this.ngForm?.invalid;
+  }
+
+  get $valid(): boolean {
+    return !this.$invalid;
+  }
+
+  $setDirty(): void {
+    this.forcedDirty = true;
+  }
+
+  $setPristine(): void {
+    this.forcedDirty = false;
+    this.pristineWidget = legacyCopy(this.host.editingWidget);
+    this.pristineLayout = legacyCopy(this.host.editingWidgetLayout);
+    this.ngForm?.form.markAsPristine();
+  }
+}
 
 /**
  * Ported from the AngularJS controller `DashboardController` (module `thingsboard.dashboard`) in src/app/dashboard/index.js:50.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 6 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The dashboard page: loads the dashboard, shows its state's layouts, the toolbar, edit mode,
+ * the add/edit widget panels and the dashboard dialogs.
  */
 @Component({
   selector: 'dashboard',
@@ -66,7 +115,7 @@ declare let scope: any;
   imports: [TranslatePipe, MatTooltipModule, MatTabsModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbExpandFullscreenDirective), forwardRef(() => TbDashboardToolbarDirective), forwardRef(() => TbUserMenuDirective), forwardRef(() => TbTimewindowDirective), forwardRef(() => TbAliasesEntitySelectDirective), forwardRef(() => TbDashboardSelectDirective), forwardRef(() => TbStatesComponentDirective), forwardRef(() => TbDashboardLayoutDirective), forwardRef(() => TbDetailsSidenavDirective), forwardRef(() => TbHelpDirective), forwardRef(() => TbEditWidgetDirective), forwardRef(() => TbWidgetsBundleSelectDirective), forwardRef(() => TbDashboardDirective)],
   templateUrl: './dashboard.component.html',
 })
-export class DashboardComponent {
+export class DashboardComponent implements DoCheck {
   protected readonly utils = inject(UtilsService);
   protected readonly dashboardUtils = inject(DashboardUtilsService);
   protected readonly widgetService = inject(WidgetService);
@@ -76,24 +125,17 @@ export class DashboardComponent {
   protected readonly entityService = inject(EntityService);
   protected readonly itembuffer = inject(ItembufferService);
   protected readonly importExport = inject(ImportExportService);
-  // TODO(port): '$window' — use window directly, or inject(DOCUMENT).defaultView
   protected readonly rootScope = inject(RootState);
-  // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly element = inject(ElementRef);
   protected readonly router = inject(Router);
   protected readonly route = inject(ActivatedRoute);
   protected readonly dialog = inject(MatDialog);
   protected readonly breakpoints = inject(BreakpointObserver);
   protected readonly document = inject(DOCUMENT);
-  // TODO(port): '$q' — use Promise, or an Observable
   protected readonly translate = inject(TranslateService);
-  // TODO(port): '$filter' — inject the pipe class and call transform()
   protected readonly destroyRef = inject(DestroyRef);
-  // TODO(port): elements not resolved to a component: md-sidenav, details-buttons, header-pane, md-fab-speed-dial, md-fab-trigger, md-fab-actions
-  // TODO(port): template: 1 × md-fab-actions left in place
-  // TODO(port): template: 1 × md-fab-speed-dial left in place
-  // TODO(port): template: 1 × md-fab-trigger left in place
-  // TODO(port): template: 1 × md-sidenav left in place
+  /** `$filter` for the alias controller (it orders resolved datasources with `orderBy`). */
+  protected readonly $filter = createLegacyFilter((key, params) => this.translate.instant(key, params));
 
   user: any;
   dashboard: any = null;
@@ -149,19 +191,20 @@ export class DashboardComponent {
   editingLayoutCtx: any;
   prevDashboard: any;
   widgetsBundle: any;
+  /** The add-widget speed dial (md-fab-speed-dial) is open. */
+  fabOpen = false;
+  /** `vm.widgetForm`: the widget details form as the legacy panels read it. */
+  readonly widgetForm = new WidgetFormState(this);
 
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
-  // TODO(port): $state.current — $state.current: this.router.url, or the ActivatedRoute snapshot
-  // TODO(port): $state.go — $state.go: this.router.navigate([...])
-  // TODO(port): $stateParams — $stateParams: this.route.snapshot.params
+  @ViewChild('widgetNgForm')
+  set widgetNgForm(form: NgForm | undefined) {
+    this.widgetForm.ngForm = form ?? null;
+  }
 
   constructor() {
-    let vm = this;
     this.user = this.userService.getCurrentUser();
-    this.widgetEditMode = (this.router as any).$current.data.widgetEditMode;
-    this.iframeMode = this.rootScope.iframeMode;
+    this.widgetEditMode = this.route.snapshot.data['widgetEditMode'];
+    this.iframeMode = this.rootScope['iframeMode'];
     this.currentDashboardId = this.route.snapshot.params['dashboardId'];
     if (this.route.snapshot.params['customerId']) {
         this.currentCustomerId = this.route.snapshot.params['customerId'];
@@ -170,119 +213,131 @@ export class DashboardComponent {
         this.currentDashboardScope = this.user.authority === 'TENANT_ADMIN' ? 'tenant' : 'customer';
         this.currentCustomerId = this.user.customerId;
     }
-    Object.defineProperty(this, 'toolbarOpened', {
-        get: (...rest: any[]) => {
-            return !this.widgetEditMode &&
-                (this.toolbarAlwaysOpen() || this.isToolbarOpened || this.isEdit || this.showRightLayoutSwitch()); },
-        set: function(...rest: any[]) { }
+    this.isMobile = !this.breakpoints.isMatched(GT_SM);
+    const gtSm = this.breakpoints.observe(GT_SM).subscribe((state) => {
+        this.isMobile = !state.matches;
     });
-    Object.defineProperty(this, 'rightLayoutOpened', {
-        get: (...rest: any[]) => {
-            return !this.isMobile || this.isRightLayoutOpened; },
-        set: function(...rest: any[]) { }
-    });
-    this.toolbarAlwaysOpen = this.toolbarAlwaysOpen;
-    this.isMobile = !(this.breakpoints as any)('gt-sm');
-    this.watch(() => { return (this.breakpoints as any)('gt-sm'); }, (isGtSm?: any) => {
-        this.isMobile = !isGtSm;
-    });
-    this.addWidget = this.addWidget;
-    this.addWidgetFromType = this.addWidgetFromType;
-    this.exportDashboard = this.exportDashboard;
-    this.importWidget = this.importWidget;
-    this.isPublicUser = this.isPublicUser;
-    this.isTenantAdmin = this.isTenantAdmin;
-    this.isSystemAdmin = this.isSystemAdmin;
-    this.dashboardConfigurationError = this.dashboardConfigurationError;
-    this.showDashboardToolbar = this.showDashboardToolbar;
-    this.onAddWidgetClosed = this.onAddWidgetClosed;
-    this.onEditWidgetClosed = this.onEditWidgetClosed;
-    this.openDashboardState = this.openDashboardState;
-    this.openEntityAliases = this.openEntityAliases;
-    this.openDashboardSettings = this.openDashboardSettings;
-    this.manageDashboardLayouts = this.manageDashboardLayouts;
-    this.manageDashboardStates = this.manageDashboardStates;
-    this.saveDashboard = this.saveDashboard;
-    this.saveWidget = this.saveWidget;
-    this.toggleDashboardEditMode = this.toggleDashboardEditMode;
-    this.onRevertWidgetEdit = this.onRevertWidgetEdit;
-    this.helpLinkIdForWidgetType = this.helpLinkIdForWidgetType;
-    this.displayTitle = this.displayTitle;
-    this.displayExport = this.displayExport;
-    this.displayDashboardTimewindow = this.displayDashboardTimewindow;
-    this.displayDashboardsSelect = this.displayDashboardsSelect;
-    this.displayEntitiesSelect = this.displayEntitiesSelect;
-    this.hideFullscreenButton = this.hideFullscreenButton;
-    this.widgetsBundle;
     this.dashboardCtx = {
         state: null,
         stateController: {
-            openRightLayout: (...rest: any[]) => {
+            openRightLayout: () => {
                 this.openRightLayout();
             }
         },
-        onAddWidget: (event?: any, layoutCtx?: any, ...rest: any[]) => {
+        onAddWidget: (event?: any, layoutCtx?: any) => {
             this.addWidget(event, layoutCtx);
         },
-        onEditWidget: (event?: any, layoutCtx?: any, widget?: any, ...rest: any[]) => {
+        onEditWidget: (event?: any, layoutCtx?: any, widget?: any) => {
             this.editWidget(event, layoutCtx, widget);
         },
-        onExportWidget: (event?: any, layoutCtx?: any, widget?: any, ...rest: any[]) => {
+        onExportWidget: (event?: any, layoutCtx?: any, widget?: any) => {
             this.exportWidget(event, layoutCtx, widget);
         },
-        onWidgetMouseDown: (event?: any, layoutCtx?: any, widget?: any, ...rest: any[]) => {
+        onWidgetMouseDown: (event?: any, layoutCtx?: any, widget?: any) => {
             this.widgetMouseDown(event, layoutCtx, widget);
         },
-        onWidgetClicked: (event?: any, layoutCtx?: any, widget?: any, ...rest: any[]) => {
+        onWidgetClicked: (event?: any, layoutCtx?: any, widget?: any) => {
             this.widgetClicked(event, layoutCtx, widget);
         },
-        prepareDashboardContextMenu: (layoutCtx?: any, ...rest: any[]) => {
+        prepareDashboardContextMenu: (layoutCtx?: any) => {
             return this.prepareDashboardContextMenu(layoutCtx);
         },
-        prepareWidgetContextMenu: (layoutCtx?: any, widget?: any, ...rest: any[]) => {
+        prepareWidgetContextMenu: (layoutCtx?: any, widget?: any) => {
             return this.prepareWidgetContextMenu(layoutCtx, widget);
         },
-        onRemoveWidget: (event?: any, layoutCtx?: any, widget?: any, ...rest: any[]) => {
+        onRemoveWidget: (event?: any, layoutCtx?: any, widget?: any) => {
             this.removeWidget(event, layoutCtx, widget);
         },
-        copyWidget: ($event?: any, layoutCtx?: any, widget?: any, ...rest: any[]) => {
+        copyWidget: ($event?: any, layoutCtx?: any, widget?: any) => {
             this.copyWidget($event, layoutCtx, widget);
         },
-        copyWidgetReference: ($event?: any, layoutCtx?: any, widget?: any, ...rest: any[]) => {
+        copyWidgetReference: ($event?: any, layoutCtx?: any, widget?: any) => {
             this.copyWidgetReference($event, layoutCtx, widget);
         },
-        pasteWidget: ($event?: any, layoutCtx?: any, pos?: any, ...rest: any[]) => {
+        pasteWidget: ($event?: any, layoutCtx?: any, pos?: any) => {
             this.pasteWidget($event, layoutCtx, pos);
         },
-        pasteWidgetReference: ($event?: any, layoutCtx?: any, pos?: any, ...rest: any[]) => {
+        pasteWidgetReference: ($event?: any, layoutCtx?: any, pos?: any) => {
             this.pasteWidgetReference($event, layoutCtx, pos);
         }
     };
-    this.watch('vm.widgetsBundle', (newVal?: any, prevVal?: any) => {
+    this.watch(() => this.widgetsBundle, (newVal?: any, prevVal?: any) => {
         if (newVal !== prevVal && !this.widgetEditMode) {
             this.loadWidgetLibrary();
         }
     });
-    this.watch('vm.currentDashboardId', (newVal?: any, prevVal?: any) => {
+    this.watch(() => this.currentDashboardId, (newVal?: any, prevVal?: any) => {
         if (newVal !== prevVal && !this.widgetEditMode) {
             if (this.currentDashboardScope === 'customer' && this.user.authority === 'TENANT_ADMIN') {
-                (this.router as any).go('home.customers.dashboards.dashboard', {
+                goState(this.router, 'home.customers.dashboards.dashboard', {
                     customerId: this.currentCustomerId,
                     dashboardId: this.currentDashboardId
                 });
             } else {
-                if ((this.router as any).current.name === 'dashboard') {
-                    (this.router as any).go('dashboard', {dashboardId: this.currentDashboardId});
+                if (this.currentStateName() === 'dashboard') {
+                    goState(this.router, 'dashboard', {dashboardId: this.currentDashboardId});
                 } else {
-                    (this.router as any).go('home.dashboards.dashboard', {dashboardId: this.currentDashboardId});
+                    goState(this.router, 'home.dashboards.dashboard', {dashboardId: this.currentDashboardId});
                 }
             }
         }
     });
+    // ui-router made a new controller for another dashboard; the Router keeps this component: load it here
+    const params = this.route.paramMap.subscribe((paramMap) => {
+        const dashboardId = paramMap.get('dashboardId');
+        if (this.dashboard && dashboardId && this.dashboard.id && this.dashboard.id.id !== dashboardId) {
+            this.currentDashboardId = dashboardId;
+            this.setEditMode(false, false);
+            this.onEditWidgetClosed();
+            this.isAddingWidget = false;
+            this.dashboard = null;
+            this.loadDashboard();
+        }
+    });
     this.destroyRef.onDestroy(() => {
-        this.dashboardCtx.stateController.cleanupPreservedStates();
+        gtSm.unsubscribe();
+        params.unsubscribe();
+        if (this.dashboardCtx.stateController.cleanupPreservedStates) {
+            this.dashboardCtx.stateController.cleanupPreservedStates();
+        }
     });
     this.loadDashboard();
+  }
+
+  /** The toolbar is shown open (`vm.toolbarOpened`). */
+  get toolbarOpened(): boolean {
+    return !this.widgetEditMode &&
+        (this.toolbarAlwaysOpen() || this.isToolbarOpened || this.isEdit || this.showRightLayoutSwitch());
+  }
+
+  set toolbarOpened(_value: boolean) {
+    // read-only, as the legacy property
+  }
+
+  /** The right layout is shown (`vm.rightLayoutOpened`): always beside the main one, on mobile when switched to. */
+  get rightLayoutOpened(): boolean {
+    return !this.isMobile || this.isRightLayoutOpened;
+  }
+
+  /** `$state.current.name`: the ui-router state of this route. */
+  private currentStateName(): string | undefined {
+    return this.route.snapshot.data['state'];
+  }
+
+  /** The AliasController the page creates broadcasts its alias changes here (`$scope.$broadcast`). */
+  $broadcast(name: string, ...args: any[]): void {
+    this.rootScope.$broadcast(name, ...args);
+  }
+
+  private createAliasController(): any {
+    return new AliasController(this, $q, this.$filter, this.utils,
+        types, this.entityService, this.dashboardCtx.stateController, this.dashboardConfiguration.entityAliases);
+  }
+
+  /** `$mdDialog.show({…, locals})`: resolves with what the dialog closed with, rejects when it was dismissed. */
+  private showDialog(component: any, data?: any): Promise<any> {
+    const ref = this.dialog.open(component, { data: data, autoFocus: false });
+    return firstValueFrom(ref.afterClosed()).then((result) => (result === undefined ? Promise.reject() : result));
   }
 
   openToolbar(...rest: any[]): any {
@@ -414,40 +469,37 @@ export class DashboardComponent {
     }
   }
 
-  loadDashboard(...rest: any[]): any {
+  loadDashboard(): void {
     if (this.widgetEditMode) {
+        const editWidgetInfo: any = this.rootScope['editWidgetInfo'];
         var widget: any = {
             isSystemType: true,
             bundleAlias: 'customWidgetBundle',
             typeAlias: 'customWidget',
-            type: this.rootScope.editWidgetInfo.type,
+            type: editWidgetInfo.type,
             title: 'My widget',
-            sizeX: this.rootScope.editWidgetInfo.sizeX * 2,
-            sizeY: this.rootScope.editWidgetInfo.sizeY * 2,
+            sizeX: editWidgetInfo.sizeX * 2,
+            sizeY: editWidgetInfo.sizeY * 2,
             row: 2,
             col: 4,
-            config: JSON.parse(this.rootScope.editWidgetInfo.defaultConfig)
+            config: JSON.parse(editWidgetInfo.defaultConfig)
         };
-        widget.config.title = widget.config.title || this.rootScope.editWidgetInfo.widgetName;
+        widget.config.title = widget.config.title || editWidgetInfo.widgetName;
 
         this.dashboard = this.dashboardUtils.createSingleWidgetDashboard(widget);
         this.dashboardConfiguration = this.dashboard.configuration;
         this.dashboardCtx.dashboard = this.dashboard;
         this.dashboardCtx.dashboardTimewindow = this.dashboardConfiguration.timewindow;
-        this.dashboardCtx.aliasController = new AliasController(this, $q, (name: string) => (name === 'translate' ? (key: any, params?: any) => this.translate.instant(key, params) : (...args: any[]) => args[0]), this.utils,
-            types, this.entityService, this.dashboardCtx.stateController, this.dashboardConfiguration.entityAliases);
-        var parentScope: any = (window.parent as any).angular.element((window as any).frameElement).scope();
-        parentScope.$root.$broadcast('widgetEditModeInited');
-        parentScope.$root.$apply();
+        this.dashboardCtx.aliasController = this.createAliasController();
+        notifyWidgetEditor('widgetEditModeInited');
     } else {
-        this.dashboardService.getDashboard(this.route.snapshot.params['dashboardId'])
+        this.dashboardService.getDashboard(this.currentDashboardId)
             .then((dashboard?: any) => {
                 this.dashboard = this.dashboardUtils.validateAndUpdateDashboard(dashboard);
                 this.dashboardConfiguration = this.dashboard.configuration;
                 this.dashboardCtx.dashboard = this.dashboard;
                 this.dashboardCtx.dashboardTimewindow = this.dashboardConfiguration.timewindow;
-                this.dashboardCtx.aliasController = new AliasController(this, $q, (name: string) => (name === 'translate' ? (key: any, params?: any) => this.translate.instant(key, params) : (...args: any[]) => args[0]), this.utils,
-                    types, this.entityService, this.dashboardCtx.stateController, this.dashboardConfiguration.entityAliases);
+                this.dashboardCtx.aliasController = this.createAliasController();
             }, () => {
                 this.configurationError = true;
             });
@@ -455,10 +507,9 @@ export class DashboardComponent {
   }
 
   openDashboardState = (state?: any, openRightLayout?: any, ...rest: any[]): any => {
-    let ctrl = this;
     const updateLayouts = (layoutVisibilityChanged?: any): any => {
-        for (l in this.layouts) {
-            layout = this.layouts[l];
+        for (const l in this.layouts) {
+            const layout: any = this.layouts[l];
             if (layoutsData[l]) {
                 var layoutInfo: any = layoutsData[l];
                 if (layout.layoutCtx.id === 'main') {
@@ -496,7 +547,6 @@ export class DashboardComponent {
   };
 
   updateLayout(layout?: any, widgets?: any, widgetLayouts?: any, gridSettings?: any, ...rest: any[]): any {
-    let ctrl = this;
     if (gridSettings) {
         layout.layoutCtx.gridSettings = gridSettings;
     }
@@ -529,98 +579,53 @@ export class DashboardComponent {
   };
 
   openEntityAliases = ($event?: any, ...rest: any[]): any => {
-    let vm = this;
-    (this.dialog as any).show({
-        controller: 'EntityAliasesController',
-        controllerAs: 'vm',
-        templateUrl: entityAliasesTemplate,
-        locals: {
-            config: {
-                entityAliases: structuredClone(this.dashboard.configuration.entityAliases),
-                widgets: this.dashboardUtils.getWidgetsArray(this.dashboard),
-                isSingleEntityAlias: false,
-                singleEntityAlias: null
-            }
-        },
-        parent: $(this.document.body),
-        multiple: true,
-        fullscreen: true,
-        targetEvent: $event
+    this.showDialog(EntityAliasesComponent, {
+        config: {
+            entityAliases: legacyCopy(this.dashboard.configuration.entityAliases),
+            widgets: this.dashboardUtils.getWidgetsArray(this.dashboard),
+            isSingleEntityAlias: false,
+            singleEntityAlias: null
+        }
     }).then((entityAliases?: any) => {
         this.dashboard.configuration.entityAliases = entityAliases;
         this.entityAliasesUpdated();
-    }, function () {
-    });
+    }, () => {});
   };
 
   openDashboardSettings = ($event?: any, ...rest: any[]): any => {
-    let vm = this;
     var gridSettings: any = null;
     var layoutKeys: any = this.dashboardUtils.isSingleLayoutDashboard(this.dashboard);
     if (layoutKeys) {
-        gridSettings = structuredClone(this.dashboard.configuration.states[layoutKeys.state].layouts[layoutKeys.layout].gridSettings)
+        gridSettings = legacyCopy(this.dashboard.configuration.states[layoutKeys.state].layouts[layoutKeys.layout].gridSettings);
     }
-    (this.dialog as any).show({
-        controller: 'DashboardSettingsController',
-        controllerAs: 'vm',
-        templateUrl: dashboardSettingsTemplate,
-        locals: {
-            settings: structuredClone(this.dashboard.configuration.settings),
-            gridSettings: gridSettings
-        },
-        parent: $(this.document.body),
-        multiple: true,
-        fullscreen: true,
-        targetEvent: $event
+    this.showDialog(DashboardSettingsComponent, {
+        settings: legacyCopy(this.dashboard.configuration.settings),
+        gridSettings: gridSettings
     }).then((data?: any) => {
         this.dashboard.configuration.settings = data.settings;
         var gridSettings: any = data.gridSettings;
         if (gridSettings) {
             this.updateLayoutGrid(layoutKeys, gridSettings);
         }
-    }, function () {
-    });
+    }, () => {});
   };
 
   manageDashboardLayouts = ($event?: any, ...rest: any[]): any => {
-    let vm = this;
-    (this.dialog as any).show({
-        controller: 'ManageDashboardLayoutsController',
-        controllerAs: 'vm',
-        templateUrl: manageDashboardLayoutsTemplate,
-        locals: {
-            layouts: structuredClone(this.dashboard.configuration.states[this.dashboardCtx.state].layouts)
-        },
-        parent: $(this.document.body),
-        multiple: true,
-        fullscreen: true,
-        targetEvent: $event
+    this.showDialog(ManageDashboardLayoutsComponent, {
+        layouts: legacyCopy(this.dashboard.configuration.states[this.dashboardCtx.state].layouts)
     }).then((layouts?: any) => {
         this.updateLayouts(layouts);
-    }, function () {
-    });
+    }, () => {});
   };
 
   manageDashboardStates = ($event?: any, ...rest: any[]): any => {
-    let vm = this;
     var dashboardConfiguration: any = this.dashboard.configuration;
-    var states: any = structuredClone(dashboardConfiguration.states);
-
-    (this.dialog as any).show({
-        controller: 'ManageDashboardStatesController',
-        controllerAs: 'vm',
-        templateUrl: manageDashboardStatesTemplate,
-        locals: {
-            states: states
-        },
-        parent: $(this.document.body),
-        multiple: true,
-        fullscreen: true,
-        targetEvent: $event
+    var states: any = legacyCopy(dashboardConfiguration.states);
+    this.showDialog(ManageDashboardStatesComponent, {
+        states: states
     }).then((states?: any) => {
         this.updateStates(states);
-    }, function () {
-    });
+    }, () => {});
   };
 
   updateLayoutGrid(layoutKeys?: any, gridSettings?: any, ...rest: any[]): any {
@@ -648,16 +653,16 @@ export class DashboardComponent {
   }
 
   editWidget($event?: any, layoutCtx?: any, widget?: any, ...rest: any[]): any {
-    let ctrl = this;
     $event.stopPropagation();
     if (this.editingWidgetOriginal === widget) {
-        setTimeout(this.onEditWidgetClosed());
+        this.onEditWidgetClosed();
     } else {
         var transition: any = !this.forceDashboardMobileMode;
         this.editingWidgetOriginal = widget;
         this.editingWidgetLayoutOriginal = layoutCtx.widgetLayouts[widget.id];
-        this.editingWidget = structuredClone(this.editingWidgetOriginal);
-        this.editingWidgetLayout = structuredClone(this.editingWidgetLayoutOriginal);
+        this.editingWidget = legacyCopy(this.editingWidgetOriginal);
+        this.editingWidgetLayout = legacyCopy(this.editingWidgetLayoutOriginal);
+        this.widgetForm.$setPristine();
         this.editingLayoutCtx = layoutCtx;
         this.editingWidgetSubtitle = this.widgetService.getInstantWidgetInfo(this.editingWidget).widgetName;
         this.forceDashboardMobileMode = true;
@@ -667,7 +672,7 @@ export class DashboardComponent {
             var delay: any = transition ? 400 : 300;
             setTimeout(() => {
                 layoutCtx.ctrl.highlightWidget(this.editingWidgetOriginal, delay);
-            }, delayOffset, false);
+            }, delayOffset);
         }
     }
   }
@@ -695,7 +700,6 @@ export class DashboardComponent {
   };
 
   widgetMouseDown($event?: any, layoutCtx?: any, widget?: any, ...rest: any[]): any {
-    let ctrl = this;
     if (this.isEdit && !this.isEditingWidget) {
         layoutCtx.ctrl.selectWidget(widget, 0);
     }
@@ -708,7 +712,6 @@ export class DashboardComponent {
   }
 
   prepareDashboardContextMenu(layoutCtx?: any, ...rest: any[]): any {
-    let ctrl = this;
     var dashboardContextActions: any = [];
     if (this.isEdit && !this.isEditingWidget && !this.widgetEditMode) {
         dashboardContextActions.push(
@@ -904,22 +907,21 @@ export class DashboardComponent {
   };
 
   hideFullscreenButton = (...rest: any[]): any => {
-    return this.widgetEditMode || this.iframeMode || this.rootScope.forceFullscreen || (this.router as any).current.name === 'dashboard';
+    return this.widgetEditMode || this.iframeMode || this.rootScope['forceFullscreen'] || this.currentStateName() === 'dashboard';
   };
 
   onRevertWidgetEdit = (widgetForm?: any, ...rest: any[]): any => {
     if (widgetForm.$dirty) {
         widgetForm.$setPristine();
-        this.editingWidget = structuredClone(this.editingWidgetOriginal);
-        this.editingWidgetLayout = structuredClone(this.editingWidgetLayoutOriginal);
+        this.editingWidget = legacyCopy(this.editingWidgetOriginal);
+        this.editingWidgetLayout = legacyCopy(this.editingWidgetLayoutOriginal);
+        widgetForm.$setPristine();
     }
   };
 
   saveWidget = (widgetForm?: any, ...rest: any[]): any => {
-    let ctrl = this;
-    widgetForm.$setPristine();
-    var widget: any = structuredClone(this.editingWidget);
-    var widgetLayout: any = structuredClone(this.editingWidgetLayout);
+    var widget: any = legacyCopy(this.editingWidget);
+    var widgetLayout: any = legacyCopy(this.editingWidgetLayout);
     var id: any = this.editingWidgetOriginal.id;
     var index: any = this.editingLayoutCtx.widgets.indexOf(this.editingWidgetOriginal);
     this.dashboardConfiguration.widgets[id] = widget;
@@ -928,6 +930,7 @@ export class DashboardComponent {
     this.editingLayoutCtx.widgets[index] = widget;
     this.editingLayoutCtx.widgetLayouts[widget.id] = widgetLayout;
     this.editingLayoutCtx.ctrl.highlightWidget(this.editingWidgetOriginal, 0);
+    widgetForm.$setPristine();
   };
 
   onEditWidgetClosed = (...rest: any[]): any => {
@@ -956,36 +959,16 @@ export class DashboardComponent {
     this.staticWidgetTypes = [];
   };
 
-  selectTargetLayout = ($event?: any, ...rest: any[]): any => {
-    let vm = this;
-    var deferred: any = $q.defer();
+  selectTargetLayout = ($event?: any, ...rest: any[]): Promise<any> => {
     var layouts: any = this.dashboardConfiguration.states[this.dashboardCtx.state].layouts;
     var layoutIds: any = Object.keys(layouts);
     if (layoutIds.length > 1) {
-        (this.dialog as any).show({
-            controller: 'SelectTargetLayoutController',
-            controllerAs: 'vm',
-            templateUrl: selectTargetLayoutTemplate,
-            parent: $(this.document.body),
-            fullscreen: true,
-            multiple: true,
-            targetEvent: $event
-        }).then(
-            function success(layoutId?: any) {
-                deferred.resolve(layoutId);
-            },
-            function fail() {
-                deferred.reject();
-            }
-        );
-    } else {
-        deferred.resolve(layoutIds[0]);
+        return this.showDialog(SelectTargetLayoutComponent);
     }
-    return deferred.promise;
+    return $q.resolve(layoutIds[0]);
   };
 
   addWidgetFromType = (event?: any, widget?: any, ...rest: any[]): any => {
-    let vm = this;
     this.onAddWidgetClosed();
     this.isAddingWidget = false;
     this.widgetService.getWidgetInfo(widget.bundleAlias, widget.typeAlias, widget.isSystemType).then(
@@ -1025,28 +1008,21 @@ export class DashboardComponent {
             if (widgetTypeInfo.typeParameters.useCustomDatasources) {
                 addWidget(newWidget);
             } else {
-                (this.dialog as any).show({
-                    controller: 'AddWidgetController',
-                    controllerAs: 'vm',
-                    templateUrl: addWidgetTemplate,
-                    locals: {
+                const ref = this.dialog.open(AddWidgetComponent, {
+                    data: {
                         dashboard: this.dashboard,
                         aliasController: this.dashboardCtx.aliasController,
                         widget: newWidget,
                         widgetInfo: widgetTypeInfo
                     },
-                    parent: $(this.document.body),
-                    fullscreen: true,
-                    multiple: true,
-                    targetEvent: event,
-                    onComplete: function (...rest: any[]) {
-                        var w: any = $(window);
-                        w.triggerHandler('resize');
+                    autoFocus: false
+                });
+                // onComplete: the widget config inside lays itself out on a window resize
+                ref.afterOpened().subscribe(() => window.dispatchEvent(new Event('resize')));
+                firstValueFrom(ref.afterClosed()).then((result?: any) => {
+                    if (result) {
+                        addWidget(result.widget);
                     }
-                }).then((result?: any) => {
-                    var widget: any = result.widget;
-                    addWidget(widget);
-                }, function () {
                 });
             }
         }
@@ -1058,20 +1034,18 @@ export class DashboardComponent {
     if (!title || title.length === 0) {
         title = this.widgetService.getInstantWidgetInfo(widget).widgetName;
     }
-    var confirm: any = (this.dialog as any).confirm()
-        .targetEvent(event)
-        .title(this.translate.instant('widget.remove-widget-title', {widgetTitle: title}))
-        .htmlContent(this.translate.instant('widget.remove-widget-text'))
-        .ariaLabel(this.translate.instant('widget.remove'))
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
+    showConfirm(this.dialog, {
+        title: this.translate.instant('widget.remove-widget-title', {widgetTitle: title}),
+        htmlContent: this.translate.instant('widget.remove-widget-text'),
+        cancel: this.translate.instant('action.no'),
+        ok: this.translate.instant('action.yes')
+    }).then(() => {
         var index: any = layoutCtx.widgets.indexOf(widget);
         if (index > -1) {
             layoutCtx.widgets.splice(index, 1);
             this.dashboardUtils.removeWidgetFromLayout(this.dashboard, this.dashboardCtx.state, layoutCtx.id, widget.id);
         }
-    });
+    }, () => {});
   }
 
   pasteWidget(event?: any, layoutCtx?: any, pos?: any, ...rest: any[]): any {
@@ -1098,7 +1072,7 @@ export class DashboardComponent {
     this.isEdit = isEdit;
     if (this.isEdit) {
         this.dashboardCtx.stateController.preserveState();
-        this.prevDashboard = structuredClone(this.dashboard);
+        this.prevDashboard = legacyCopy(this.dashboard);
     } else {
         if (this.widgetEditMode) {
             if (revert) {
@@ -1119,7 +1093,6 @@ export class DashboardComponent {
   }
 
   resetHighlight(...rest: any[]): any {
-    let ctrl = this;
     for (var l in this.layouts) {
         if (this.layouts[l].layoutCtx) {
             if (this.layouts[l].layoutCtx.ctrl) {
@@ -1144,23 +1117,21 @@ export class DashboardComponent {
 
   notifyDashboardUpdated(...rest: any[]): any {
     if (this.widgetEditMode) {
-        var parentScope: any = (window.parent as any).angular.element((window as any).frameElement).scope();
         var widget: any = this.layouts.main.layoutCtx.widgets[0];
         var layout: any = this.layouts.main.layoutCtx.widgetLayouts[widget.id];
         widget.sizeX = layout.sizeX;
         widget.sizeY = layout.sizeY;
-        parentScope.$root.$broadcast('widgetEditUpdated', widget);
-        parentScope.$root.$apply();
+        notifyWidgetEditor('widgetEditUpdated', widget);
     } else {
         this.dashboardService.saveDashboard(this.dashboard);
     }
   }
 
+  /** The page's `$scope.$watch`es, run on every change detection (the digest). */
   private _watchers: Array<{ expr: () => any; prev: any; cb: (n: any, p: any) => void }> = [];
 
-  private watch(expr: string | (() => any), cb: (n: any, p: any) => void): void {
-    const exprFn = typeof expr === 'function' ? expr : () => (this as any)[expr.replace(/^vm\./, '')];
-    this._watchers.push({ expr: exprFn, prev: exprFn(), cb });
+  private watch(expr: () => any, cb: (n: any, p: any) => void): void {
+    this._watchers.push({ expr, prev: expr(), cb });
   }
 
   ngDoCheck(): void {

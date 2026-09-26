@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/components/grid.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/components/grid.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -16,101 +16,87 @@
     limitations under the License.
 
 -->
-<span layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill" [hidden]="!($any(this).noData())">{{$any(this).noItemsText()}}</span>
-<section layout="row" flex style="height: 100%;" flex layout-wrap>
+<span layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill" [hidden]="!noData()">{{ noItemsText() }}</span>
+<section layout="row" flex style="height: 100%;" layout-wrap>
     <div layout="column" style="height: 100%;" flex layout-wrap>
-        <!-- TODO(port): md-virtual-repeat-container: a cdk-virtual-scroll-viewport with *cdkVirtualFor --><div [hidden]="!($any(this).hasData())" tb-scope-element="repeatContainer" id="tb-vertical-container" md-top-index="vm.topIndex" flex>
-            <div class="md-padding" layout="column">
-                <section layout="row" md-virtual-repeat="rowItem in vm.itemRows" md-on-demand md-item-size="vm.itemHeight">
-                    @for (n of [] | range:$any(this).columns; track $index) {
-                      @if ($any(this).rowItem?.[n]) {
-                      <div flex [ngStyle]="{'height':$any(this).itemHeight+'px'}">
-                        <mat-card [ngClass]="{'tb-current-item': $any(this).isCurrentItem($any(this).rowItem?.[n])}" class="repeated-item tb-card-item" [ngStyle]="{'height':($any(this).itemHeight-16)+'px','cursor':'pointer'}" (click)="$any(this).clickItemFunc($event, $any(this).rowItem[n])">
-                            <section layout="row" layout-wrap>
-                                <mat-card-header layout="row">
-                                    <section layout="column" layout-wrap>
-                                        @if ($any(this).isSelectionEnabled($any(this).rowItem?.[n])) {
-                                          <mat-checkbox (click)="$any(this).toggleItemSelection($event, $any(this).rowItem[n])" layout-align="start start" attr.aria-label="{{ 'item.selected' | translate }}" [checked]="$any(this).rowItem?.[n]?.selected">
-                                        </mat-checkbox>
-                                        }
-                                        <span flex></span>
-                                    </section>
-                                    <mat-card-title>
-                                        <span class="md-headline">{{$any(this).getItemTitleFunc($any(this).rowItem?.[n])}}</span>
-                                    </mat-card-title>
-                                </mat-card-header>
-                            </section>
-                            <mat-card-content flex>
-                                <tb-grid-card-content flex [(gridCtl)]="$any(this).vm" [(parentCtl)]="$any(this).parentCtl" [(itemController)]="$any(this).itemCardController" [(itemTemplate)]="$any(this).itemCardTemplate" [(item)]="$any(this).rowItem[n]"></tb-grid-card-content>
-                            </mat-card-content>
-                            <mat-card-actions layout="row" layout-align="end end">
-                                @for (action of $any(this).actionsList; track $index) {
-                                  @if (action?.isEnabled?.($any(this).rowItem?.[n])) {
-                                  <button mat-icon-button color="primary" [disabled]="rootScope?.loading" (click)="action.onAction($event, $any(this).rowItem[n])" attr.aria-label="{{ action?.name?.() }}" attr.matTooltip="{{ action?.details?.( $any(this).rowItem?.[n] ) }}" matTooltipPosition="above">
-                                    
-                                    <mat-icon>{{action?.icon}}</mat-icon>
-                                </button>
-                                }
-                                }
-                            </mat-card-actions>
-                        </mat-card>
-                    </div>
-                    }
-                    }
-                    @for (n of [] | range:$any(this).columns; track $index) {
-                      @if (!$any(this).rowItem?.[n]) {
-                      <div flex [ngStyle]="{'height':$any(this).itemHeight+'px'}">
-                    </div>
-                    }
+        <cdk-virtual-scroll-viewport [hidden]="!hasData()" id="tb-vertical-container" [itemSize]="itemHeight" (scrolledIndexChange)="onScrolledIndexChange($event)" flex>
+            <div layout="column" style="padding: 0 16px;">
+                <section layout="row" *cdkVirtualFor="let rowItem of rows; trackBy: trackRow" [style.height.px]="itemHeight">
+                    @for (n of columnIndexes; track n) {
+                      @if (rowItem[n]; as item) {
+                        <div flex [style.height.px]="itemHeight">
+                            <mat-card [ngClass]="{'tb-current-item': isCurrentItem(item)}" class="repeated-item tb-card-item" [style.height.px]="itemHeight - 16" style="cursor: pointer;" (click)="clickItemFunc($event, item)">
+                                <section layout="row" layout-wrap>
+                                    <mat-card-header layout="row">
+                                        <section layout="column" layout-wrap>
+                                            @if (isSelectionEnabled(item)) {
+                                              <mat-checkbox (click)="$event.stopPropagation()" (change)="toggleItemSelection(null, item)" layout-align="start start" [attr.aria-label]="'item.selected' | translate" [checked]="!!item.selected"></mat-checkbox>
+                                            }
+                                            <span flex></span>
+                                        </section>
+                                        <mat-card-title>
+                                            <span class="md-headline">{{ getItemTitleFunc(item) }}</span>
+                                        </mat-card-title>
+                                    </mat-card-header>
+                                </section>
+                                <mat-card-content flex>
+                                    <tb-grid-card-content flex [gridCtl]="this" [parentCtl]="parentCtl" [itemComponent]="itemCardComponent()" [item]="item"></tb-grid-card-content>
+                                </mat-card-content>
+                                <mat-card-actions layout="row" layout-align="end end">
+                                    @for (action of actionsList; track $index) {
+                                      @if (action.isEnabled?.(item)) {
+                                        <button mat-icon-button color="primary" [disabled]="rootScope.loading" (click)="action.onAction($event, item)" [attr.aria-label]="action.name()" [matTooltip]="action.details(item)" matTooltipPosition="above">
+                                            <mat-icon>{{ action.icon }}</mat-icon>
+                                        </button>
+                                      }
+                                    }
+                                </mat-card-actions>
+                            </mat-card>
+                        </div>
+                      } @else {
+                        <div flex [style.height.px]="itemHeight"></div>
+                      }
                     }
                 </section>
             </div>
-        </div>
+        </cdk-virtual-scroll-viewport>
     </div>
-    <tb-details-sidenav headerTitle="{{$any(this).getItemTitleFunc($any(this).operatingItem())}}" headerSubtitle="{{$any(this).itemDetailsText($any(this).operatingItem())}}" [isReadOnly]="$any(this).isDetailsReadOnly($any(this).operatingItem())" [(isOpen)]="$any(this).detailsConfig.isDetailsOpen" [(isEdit)]="$any(this).detailsConfig.isDetailsEditMode" (onCloseDetails)="$any(this).onCloseDetails()" (onToggleDetailsEditMode)="$any(this).onToggleDetailsEditMode($any(this).detailsForm)" (onApplyDetails)="$any(this).saveItem($any(this).detailsForm)" [(theForm)]="$any(this).detailsForm">
-        <div details-buttons>
-            <!-- TODO(port): ng-transclude with a named slot: use <ng-content select> here -->
-            <div ng-content-placeholder></div>
+    <tb-details-sidenav [headerTitle]="getItemTitleFunc(operatingItem())" [headerSubtitle]="itemDetailsText(operatingItem())" [isReadOnly]="isDetailsReadOnly(operatingItem())" [(isOpen)]="detailsConfig.isDetailsOpen" [(isEdit)]="detailsConfig.isDetailsEditMode" (onCloseDetails)="onCloseDetails()" (onToggleDetailsEditMode)="onToggleDetailsEditMode(detailsForm)" (onApplyDetails)="saveItem(detailsForm)" [theForm]="detailsForm">
+        <div class="tb-details-buttons" layout="row">
+            <ng-content select="[details-buttons]"></ng-content>
         </div>
-        <form name="vm.detailsForm">
-            <div><ng-content></ng-content></div>
-        </form>
+        <div>
+            <ng-content></ng-content>
+        </div>
     </tb-details-sidenav>
 </section>
 
-<section layout="row" layout-wrap class="tb-footer-buttons md-fab " layout-align="start end">
-    @for (groupAction of $any(this).groupActionsList; track $index) {
-      <button mat-fab color="accent" [disabled]="rootScope?.loading" [hidden]="!($any(this).items?.selectedCount > 0)" class="tb-btn-footer md-hue-2" (click)="groupAction.onAction($event, $any(this).items)" attr.aria-label="{{ groupAction?.name?.() }}" attr.matTooltip="{{ groupAction?.details?.($any(this).items?.selectedCount) }}" matTooltipPosition="above">
-        
-        <mat-icon>{{groupAction?.icon}}</mat-icon>
-    </button>
+<section layout="row" layout-wrap class="tb-footer-buttons md-fab" layout-align="start end">
+    @for (groupAction of groupActionsList; track $index) {
+      <button mat-fab color="accent" [disabled]="rootScope.loading" [hidden]="!(items?.selectedCount > 0)" class="tb-btn-footer md-hue-2" (click)="groupAction.onAction($event, items)" [attr.aria-label]="groupAction.name()" [matTooltip]="groupAction.details(items?.selectedCount)" matTooltipPosition="above">
+        <mat-icon>{{ groupAction.icon }}</mat-icon>
+      </button>
     }
-    <button mat-fab color="primary" [disabled]="rootScope?.loading" [hidden]="!($any(this).topIndex > 0)" class="tb-btn-footer md-hue-1" (click)="$any(this).moveToTop()" attr.aria-label="{{'grid.scroll-to-top' | translate}}" attr.matTooltip="{{'grid.scroll-to-top' | translate}}" matTooltipPosition="above">
-        
+    <button mat-fab color="primary" [disabled]="rootScope.loading" [hidden]="!(topIndex > 0)" class="tb-btn-footer md-hue-1" (click)="moveToTop()" [attr.aria-label]="'grid.scroll-to-top' | translate" [matTooltip]="'grid.scroll-to-top' | translate" matTooltipPosition="above">
         <mat-icon>arrow_drop_up</mat-icon>
     </button>
-    @if (($any(this).addItemAction?.name?.() && $any(this).addItemActions?.length == 0) ? $any(this).addItemAction : null; as addItemAction) {
-      <button mat-fab color="accent" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" (click)="addItemAction.onAction($event)" attr.aria-label="{{ addItemAction?.name?.() }}" attr.matTooltip="{{ addItemAction?.details?.() }}" matTooltipPosition="above">
-        
-        <mat-icon>{{ addItemAction?.icon }}</mat-icon>
-    </button>
+    @if (addItemAction?.name?.() && addItemActions.length == 0) {
+      <button mat-fab color="accent" [disabled]="rootScope.loading" class="tb-btn-footer md-hue-2" (click)="addItemAction.onAction($event)" [attr.aria-label]="addItemAction.name()" [matTooltip]="addItemAction.details()" matTooltipPosition="above">
+        <mat-icon>{{ addItemAction.icon }}</mat-icon>
+      </button>
     }
-    @if ($any(this).addItemAction?.name?.() ? $any(this).addItemAction : null; as addItemAction) {
-      <div class="md-scale" md-direction="up">
-        <ng-container>
-            <button mat-fab color="accent" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" attr.aria-label="{{ addItemAction?.name?.() }}" attr.matTooltip="{{ addItemAction?.details?.() }}" matTooltipPosition="above">
-                
-                <mat-icon>{{ addItemAction?.icon }}</mat-icon>
+    @if (addItemAction?.name?.() && addItemActions.length > 0) {
+      <div class="tb-fab-speed-dial" style="display: flex; flex-direction: column-reverse; align-items: center;" (mouseenter)="addItemActionsOpen = true" (mouseleave)="addItemActionsOpen = false">
+        <button mat-fab color="accent" [disabled]="rootScope.loading" class="tb-btn-footer md-hue-2" (click)="addItemActionsOpen = !addItemActionsOpen" [attr.aria-label]="addItemAction.name()" [matTooltip]="addItemAction.details()" matTooltipPosition="above">
+          <mat-icon>{{ addItemAction.icon }}</mat-icon>
+        </button>
+        @if (addItemActionsOpen) {
+          @for (action of addItemActions; track $index) {
+            <button mat-fab color="accent" [disabled]="rootScope.loading" class="md-hue-2" style="margin-bottom: 8px;" (click)="addItemActionsOpen = false; action.onAction($event)" [attr.aria-label]="action.name()" [matTooltip]="action.details()" matTooltipPosition="left">
+              <mat-icon>{{ action.icon }}</mat-icon>
             </button>
-        </ng-container>
-        <ng-container>
-            @for (addItemAction of $any(this).addItemActions; track $index) {
-              <button mat-fab color="accent" [disabled]="rootScope?.loading" class="md-hue-2" (click)="addItemAction.onAction($event)" attr.aria-label="{{ addItemAction?.name?.() }}" attr.matTooltip="{{ addItemAction?.details?.() }}" matTooltipPosition="above">
-                
-                <mat-icon>{{addItemAction?.icon}}</mat-icon>
-            </button>
-            }
-        </ng-container>
-    </div>
+          }
+        }
+      </div>
     }
 </section>

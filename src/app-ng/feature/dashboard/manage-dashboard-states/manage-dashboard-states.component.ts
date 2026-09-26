@@ -1,14 +1,16 @@
-import { Component, inject, DoCheck } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, inject, DoCheck, ViewChild } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { isEqual, orderBy } from 'lodash-es';
+import { PageEvent } from '@angular/material/paginator';
+import { Sort } from '@angular/material/sort';
 
-import { DashboardStateDialogComponent } from './dashboard-state-dialog/dashboard-state-dialog.component';
-import { inject as injectRoot } from '@angular/core';
+import { DashboardStateDialogComponent } from '../dashboard-state-dialog/dashboard-state-dialog.component';
+import { showConfirm } from '../../rulechain/confirm-dialog/confirm-dialog.component';
+import { legacyCopy } from '../../components/widget/legacy-helpers';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -26,7 +28,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 /**
  * Ported from the AngularJS controller `ManageDashboardStatesController` (module `thingsboard.dashboard.states`) in src/app/dashboard/states/index.js:22.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The dialog that lists, adds, edits and deletes the dashboard states; closes with the states by id.
  */
 @Component({
   selector: 'manage-dashboard-states',
@@ -35,16 +37,11 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './manage-dashboard-states.component.html',
 })
 export class ManageDashboardStatesComponent implements DoCheck {
-  protected readonly rootScope = injectRoot(RootState);
-  // TODO(port): '$scope' — component state: fields and signals on this class
+  protected readonly rootScope = inject(RootState);
   protected readonly dialog = inject(MatDialog);
-  // TODO(port): '$filter' — inject the pipe class and call transform()
-  protected readonly document = inject(DOCUMENT);
+  protected readonly dialogRef = inject(MatDialogRef<ManageDashboardStatesComponent>);
   protected readonly translate = inject(TranslateService);
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
-  // TODO(port): elements not resolved to a component: md-table-container, md-table-pagination
-  // TODO(port): template: 1 × md-table-container left in place
-  // TODO(port): template: 1 × md-table-pagination left in place
 
   allStates: any = [];
   states: any = [];
@@ -56,8 +53,29 @@ export class ManageDashboardStatesComponent implements DoCheck {
         page: 1,
         search: null
     };
-  theForm: any;
+  /** The legacy `theForm`: dirty once a state was added, edited or deleted. */
+  readonly theForm = {
+    dirty: false,
+    ngForm: null as NgForm | null,
+    get $dirty(): boolean {
+      return this.dirty;
+    },
+    get $valid(): boolean {
+      return !this.ngForm?.invalid;
+    },
+    $setDirty(): void {
+      this.dirty = true;
+    },
+    $setPristine(): void {
+      this.dirty = false;
+    },
+  };
   state: any;
+
+  @ViewChild('theFormRef')
+  set theFormRef(form: NgForm | undefined) {
+    this.theForm.ngForm = form ?? null;
+  }
   private prevQuerySearch: any = undefined;
 
   ngDoCheck(): void {
@@ -68,22 +86,12 @@ export class ManageDashboardStatesComponent implements DoCheck {
   }
 
   constructor() {
-    let vm = this;
     for (var id in this.dialogData.states) {
         var state: any = this.dialogData.states[id];
         state.id = id;
         this.allStates.push(state);
     }
-    this.enterFilterMode = this.enterFilterMode;
-    this.exitFilterMode = this.exitFilterMode;
-    this.onReorder = this.onReorder;
-    this.onPaginate = this.onPaginate;
-    this.addState = this.addState;
-    this.editState = this.editState;
-    this.deleteState = this.deleteState;
-    this.cancel = this.cancel;
-    this.save = this.save;
-    this.updateStates ();
+    this.updateStates();
   }
 
   updateStates(...rest: any[]): any {
@@ -119,11 +127,20 @@ export class ManageDashboardStatesComponent implements DoCheck {
     this.updateStates();
   };
 
-  onReorder = (...rest: any[]): any => {
+  /** md-order: the column header clicked (matSort) sets the order, `-` for descending. */
+  onReorder = (sort?: Sort): any => {
+    if (sort) {
+        this.query.order = sort.direction ? (sort.direction === 'desc' ? '-' : '') + sort.active : 'name';
+    }
     this.updateStates();
   };
 
-  onPaginate = (...rest: any[]): any => {
+  /** md-table-pagination's page and limit. */
+  onPaginate = (event?: PageEvent): any => {
+    if (event) {
+        this.query.limit = event.pageSize;
+        this.query.page = event.pageIndex + 1;
+    }
     this.updateStates();
   };
 
@@ -144,7 +161,7 @@ export class ManageDashboardStatesComponent implements DoCheck {
         prevStateId = state.id;
     }
     firstValueFrom(this.dialog.open(DashboardStateDialogComponent, {
-        data: {isAdd: isAdd, allStates: this.allStates, state: structuredClone(state)},
+        data: {isAdd: isAdd, allStates: this.allStates, state: legacyCopy(state)},
         panelClass: 'tb-dialog'
     }).afterClosed()).then((result?: any) => {
         if (result !== undefined) {
@@ -189,30 +206,24 @@ export class ManageDashboardStatesComponent implements DoCheck {
     if (state) {
         var title: any = this.translate.instant('dashboard.delete-state-title');
         var content: any = this.translate.instant('dashboard.delete-state-text', {stateName: state.name});
-        var confirm: any = (this.dialog as any).confirm()
-            .targetEvent($event)
-            .title(title)
-            .htmlContent(content)
-            .ariaLabel(title)
-            .cancel(this.translate.instant('action.no'))
-            .ok(this.translate.instant('action.yes'));
-
-        confirm._options.multiple = true;
-        confirm._options.fullscreen = true;
-
-        (this.dialog as any).show(confirm).then(() => {
+        showConfirm(this.dialog, {
+            title: title,
+            htmlContent: content,
+            cancel: this.translate.instant('action.no'),
+            ok: this.translate.instant('action.yes')
+        }).then(() => {
             var index: any = this.getStateIndex(state.id);
             if (index > -1) {
                 this.allStates.splice(index, 1);
             }
             this.theForm.$setDirty();
             this.updateStates();
-        });
+        }, () => {});
     }
   };
 
   cancel = (...rest: any[]): any => {
-    (this.dialog as any).cancel();
+    this.dialogRef.close();
   };
 
   save = (...rest: any[]): any => {
@@ -224,6 +235,6 @@ export class ManageDashboardStatesComponent implements DoCheck {
         delete state.id;
         savedStates[id] = state;
     }
-    (this.dialog as any).hide(savedStates);
+    this.dialogRef.close(savedStates);
   };
 }

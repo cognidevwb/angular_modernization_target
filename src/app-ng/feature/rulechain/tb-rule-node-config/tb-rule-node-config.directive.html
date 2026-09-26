@@ -24,6 +24,6 @@
   <div class="tb-rulenode-directive-error">{{definedDirectiveError}}</div>
 }
 @if (!useDefinedDirective()) {
-  <tb-json-object-edit class="tb-rule-node-configuration-json" [(ngModel)]="configuration" [attr.label]="'rulenode.configuration' | translate" [(ngRequired)]="required" [fillHeight]="true">
+  <tb-json-object-edit class="tb-rule-node-configuration-json" [(ngModel)]="configuration" [label]="'rulenode.configuration' | translate" [(ngRequired)]="required" [fillHeight]="true">
 </tb-json-object-edit>
 }

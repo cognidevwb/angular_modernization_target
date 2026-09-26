@@ -1,78 +1,49 @@
-import { Component, inject } from '@angular/core';
-import { ElementRef } from '@angular/core';
+import { Component, ElementRef, inject, Input, OnInit } from '@angular/core';
 import { WidgetService } from '../../api/services/widget.service';
-
-import $ from 'jquery';
-import { linkAttrs } from '../../../legacy-link';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $controller: any;
+import { WidgetComponent } from '../widget/widget.component';
 
 /**
- * Ported from the AngularJS directive `tbWidget` (module `thingsboard.directives.widget`) in src/app/components/widget/widget.directive.js:24.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbWidget` (src/app/components/widget/widget.directive.js).
+ *
+ * The dashboard grid renders one per widget with the `locals` the legacy template passed
+ * (`tb-widget locals="…"`). It loads the widget type (`widgetService.getWidgetInfo`), marks
+ * its element with the widget type's CSS namespace, and starts the widget runtime
+ * (`WidgetController` → `<widget>`) with the widget info and the widget type's function.
  */
 @Component({
   selector: 'tb-widget, [tb-widget]',
   standalone: true,
-  template: '', // TODO(port): no template found
+  imports: [WidgetComponent],
+  template: `
+    @if (widgetInfo) {
+      <widget [locals]="locals" [widgetInfo]="widgetInfo" [widgetType]="widgetType"></widget>
+    }
+  `,
+  host: { flex: '', style: 'display: block; position: relative; min-height: 0;' },
 })
-export class TbWidgetDirective {
-  // TODO(port): '$controller' — an AngularJS built-in with no Angular counterpart
+export class TbWidgetDirective implements OnInit {
+  @Input() locals: any;
+
   protected readonly widgetService = inject(WidgetService);
   protected readonly element = inject(ElementRef);
 
-  protected locals: any;
-  protected widget: any;
-  protected widgetController: any;
-  protected gridsterItem: any;
-  $eval: any;
-  $on: any;
-  loadingData: any;
-  protected gridsterItemInitialized$: any;
+  widgetInfo: any = null;
+  widgetType: any = null;
 
-  // TODO(port): link(scope, elem, attrs) — `elem` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
-  constructor() {
-    this.locals = this.attrs.locals;
-    this.widget = this.locals.widget;
-    this.gridsterItemInitialized$.subscribe((item?: any) => {
-                this.gridsterItem = item;
-                if (this.widgetController) {
-                    this.widgetController.gridsterItemInitialized(this.gridsterItem);
-                }
-            });
-    this.widgetService.getWidgetInfo(this.widget.bundleAlias, this.widget.typeAlias, this.widget.isSystemType).then(
-                (widgetInfo?: any) => {
-                    this.loadFromWidgetInfo(widgetInfo);
-                }
-            );
+  ngOnInit(): void {
+    const widget = this.locals.widget;
+    this.widgetService.getWidgetInfo(widget.bundleAlias, widget.typeAlias, widget.isSystemType).then((widgetInfo?: any) => {
+      this.loadFromWidgetInfo(widgetInfo);
+    });
   }
 
-  loadFromWidgetInfo(widgetInfo?: any, ...rest: any[]): any {
-
-    this.loadingData = true;
-
-    $(this.element.nativeElement).addClass("tb-widget");
-
-    var widgetNamespace: any = "widget-type-" + (this.widget.isSystemType ? 'sys-' : '')
-        + this.widget.bundleAlias + '-'
-        + this.widget.typeAlias;
-
-    $(this.element.nativeElement).addClass(widgetNamespace);
-
-    var widgetType: any = this.widgetService.getWidgetTypeFunction(this.widget.bundleAlias, this.widget.typeAlias, this.widget.isSystemType);
-
-    Object.assign(this.locals, {$scope: this, $element: $(this.element.nativeElement), widgetInfo: widgetInfo, widgetType: widgetType});
-
-    this.widgetController = this;
-
-    if (this.gridsterItem) {
-        this.widgetController.gridsterItemInitialized(this.gridsterItem);
-    }
-  }
-
-  /** The link's `attrs`: the host element's attributes, read live. */
-  protected get attrs(): any {
-    return linkAttrs(this.element.nativeElement);
+  loadFromWidgetInfo(widgetInfo?: any): void {
+    const widget = this.locals.widget;
+    const el: HTMLElement = this.element.nativeElement;
+    el.classList.add('tb-widget');
+    const widgetNamespace = 'widget-type-' + (widget.isSystemType ? 'sys-' : '') + widget.bundleAlias + '-' + widget.typeAlias;
+    el.classList.add(widgetNamespace);
+    this.widgetType = this.widgetService.getWidgetTypeFunction(widget.bundleAlias, widget.typeAlias, widget.isSystemType);
+    this.widgetInfo = widgetInfo;
   }
 }

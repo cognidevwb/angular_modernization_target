@@ -1,4 +1,4 @@
-import { Component, inject, model, output } from '@angular/core';
+import { Component, inject, input, model } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { DOCUMENT, DatePipe } from '@angular/common';
 import { ElementRef } from '@angular/core';
@@ -23,7 +23,8 @@ import $ from 'jquery';
 export class TbTimewindowDirective extends NgModelController {
   readonly asButton = model<any>(undefined, { alias: 'asButton' });
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
-  readonly isEdit = output<any>();
+  /** Whether the timewindow is edited in the dashboard's edit mode: a flag, or the legacy `&?` callback returning one. */
+  readonly isEdit = input<(() => boolean) | boolean | string | undefined>(undefined);
 
   // TODO(port): '$compile' — not in Angular: compose with components instead
   protected readonly document = inject(DOCUMENT);
@@ -48,15 +49,12 @@ export class TbTimewindowDirective extends NgModelController {
   timewindowDisabled: any;
   tooltipDirection: any;
 
-  // TODO(port): `scope.isEdit` was an optional callback; an output is always there, so its check reads `true`
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
     super();
     this.historyOnly = (this.attrs.historyOnly !== undefined);
-    // TODO(port): `isEdit` is an input; a value assigned here belongs in the template or a computed()
-  this.isEdit = (this.attrs.isEdit === 'true') as any;
     this.aggregation = this.$eval(this.attrs.aggregation);
     this.isToolbar = (this.attrs.isToolbar !== undefined);
     (this.translate as any).onReady(() => {
@@ -74,6 +72,18 @@ export class TbTimewindowDirective extends NgModelController {
                 this.timewindowDisabled = this.isTimewindowDisabled();
             }
         });
+  }
+
+  /** The legacy `attrs.isEdit === 'true'`, over the bound value when there is one. */
+  isEditFlag(): boolean {
+    const value = this.isEdit();
+    if (typeof value === 'function') {
+      return !!value();
+    }
+    if (value === undefined) {
+      return this.attrs.isEdit === 'true';
+    }
+    return value === true || value === 'true';
   }
 
   override $render(): void {
@@ -160,7 +170,7 @@ export class TbTimewindowDirective extends NgModelController {
             'timewindow': structuredClone(this.model),
             'historyOnly': this.historyOnly,
             'aggregation': this.aggregation,                    
-            'isEdit': this.isEdit,
+            'isEdit': this.isEditFlag(),
             'onTimewindowUpdate': (timewindow?: any, ...rest: any[]) => {
                 this.model = timewindow;
                 this.updateView();
@@ -259,7 +269,7 @@ export class TbTimewindowDirective extends NgModelController {
   }
 
   isTimewindowDisabled(...rest: any[]): any {
-    return this.disabled() || (!this.isEdit && this.model.hideInterval && this.model.hideAggregation && this.model.hideAggInterval);
+    return this.disabled() || (!this.isEditFlag() && this.model.hideInterval && this.model.hideAggregation && this.model.hideAggInterval);
   }
 
   /** The link's `attrs`: the host element's attributes, read live. */

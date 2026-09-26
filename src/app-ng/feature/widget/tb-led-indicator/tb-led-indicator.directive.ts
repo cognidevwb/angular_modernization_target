@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { AfterViewInit, Component, effect, inject, model, untracked } from '@angular/core';
 import { DestroyRef } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { UtilsService } from '../../common/services/utils.service';
@@ -7,14 +7,12 @@ import { CommonModule } from '@angular/common';
 
 import $ from 'jquery';
 import tinycolor from 'tinycolor2';
-import { $timeout } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $scope: any;
-declare let utils: any;
+import { RootState } from '../../../root-state';
 
 /**
  * Ported from the AngularJS directive `tbLedIndicator` (module `thingsboard.widgets.rpc.ledIndicator`) in src/app/widget/lib/rpc/led-indicator.directive.js:26.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The widget runtime renders it for a widget type whose template is `<tb-led-indicator ctx="ctx">`; it
+ * initialises whenever `ctx` is set, once its template is in the DOM (the legacy `$scope.$watch('vm.ctx')`).
  */
 @Component({
   selector: 'tb-led-indicator',
@@ -22,14 +20,15 @@ declare let utils: any;
   imports: [CommonModule],
   templateUrl: './tb-led-indicator.directive.html',
 })
-export class TbLedIndicatorDirective {
+export class TbLedIndicatorDirective implements AfterViewInit {
   readonly ctx = model<any>();
 
   protected readonly element = inject(ElementRef);
-  // TODO(port): '$scope' — component state: fields and signals on this class
-  // TODO(port): '$timeout' — use setTimeout, or an rxjs timer
   protected readonly utils = inject(UtilsService);
   protected readonly destroyRef = inject(DestroyRef);
+  protected readonly rootScope = inject(RootState);
+  private viewReady = false;
+  private initedCtx: any = null;
 
   showTitle: any = false;
   value: any = false;
@@ -58,32 +57,18 @@ export class TbLedIndicatorDirective {
   subscription: any;
   title: any;
   valueAttribute: any;
-  widgetEditMode: any;
-
-  // TODO(port): $scope.$digest — $digest is not needed: Angular detects the change
-  // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
 
   constructor() {
-    let vm = this;
     this.subscriptionOptions = {
         callbacks: {
             onDataUpdated: this.onDataUpdated,
             onDataUpdateError: this.onDataUpdateError,
-            dataLoading: (...rest: any[]) => {}
+            dataLoading: () => {}
         }
     };
-    this.led = $('.led', $(this.element.nativeElement));
-    this.ledContainer = $('#led-container', $(this.element.nativeElement));
-    this.textMeasure = $('#text-measure', $(this.element.nativeElement));
-    this.ledTitleContainer = $('.title-container', $(this.element.nativeElement));
-    this.ledTitle = $('.led-title', $(this.element.nativeElement));
-    this.ledErrorContainer = $('.error-container', $(this.element.nativeElement));
-    this.ledError = $('.led-error', $(this.element.nativeElement));
-    $scope.$watch('vm.ctx', () => {
-        if (this.ctx()) {
-            this.init();
-        }
+    effect(() => {
+      const ctx = this.ctx();
+      untracked(() => this.ctxChanged(ctx));
     });
     this.destroyRef.onDestroy(() => {
         this.destroyed = true;
@@ -94,7 +79,27 @@ export class TbLedIndicatorDirective {
             this.ctx().subscriptionApi.removeSubscription(this.subscription.id);
         }
     });
+  }
+
+  ngAfterViewInit(): void {
+    const host = $(this.element.nativeElement);
+    this.led = $('.led', host);
+    this.ledContainer = $('#led-container', host);
+    this.textMeasure = $('#text-measure', host);
+    this.ledTitleContainer = $('.title-container', host);
+    this.ledTitle = $('.led-title', host);
+    this.ledErrorContainer = $('.error-container', host);
+    this.ledError = $('.led-error', host);
+    this.viewReady = true;
     this.resize();
+    this.ctxChanged(this.ctx());
+  }
+
+  private ctxChanged(ctx: any): void {
+    if (ctx && this.viewReady && ctx !== this.initedCtx) {
+      this.initedCtx = ctx;
+      this.init();
+    }
   }
 
   init(...rest: any[]): any {
@@ -121,7 +126,7 @@ export class TbLedIndicatorDirective {
     var subscription: any = this.ctx().defaultSubscription;
     var rpcEnabled: any = subscription.rpcEnabled;
 
-    this.isSimulated = this.widgetEditMode;
+    this.isSimulated = this.rootScope['widgetEditMode'];
 
     this.requestTimeout = 500;
     if (this.ctx().settings.requestTimeout) {
@@ -275,7 +280,7 @@ export class TbLedIndicatorDirective {
     );
   }
 
-  onDataUpdated = (subscription?: any, apply?: any, ...rest: any[]): any => {
+  onDataUpdated = (subscription?: any, ...rest: any[]): any => {
     var value: any = false;
     var data: any = subscription.data;
     if (data.length) {
@@ -292,9 +297,6 @@ export class TbLedIndicatorDirective {
         }
     }
     this.setValue(value);
-    if (apply) {
-
-    }
   };
 
   onDataUpdateError = (subscription?: any, e?: any, ...rest: any[]): any => {

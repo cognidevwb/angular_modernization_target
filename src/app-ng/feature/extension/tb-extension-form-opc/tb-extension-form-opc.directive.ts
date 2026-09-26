@@ -1,44 +1,55 @@
-import { Directive, inject, model } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { types } from '../../common/constants/types';
+import { Component, OnInit, inject, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
-import $ from 'jquery';
-import { LegacyInitDirective } from '../../../legacy-init.directive';
+import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
+import $ from 'jquery';
+import { types } from '../../common/constants/types';
+import { LegacyInitDirective } from '../../../legacy-init.directive';
+
+/** Which keystore fields a picked file fills: its name and its base64 content. */
+interface FileFields {
+  location: string;
+  fileContent: string;
+}
 
 /**
- * Ported from the AngularJS directive `tbExtensionFormOpc` (module `thingsboard.extension`) in src/app/extension/index.js:24.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbExtensionFormOpc` (module `thingsboard.extension`) in
+ * src/app/extension/extensions-forms/extension-form-opc.directive.js.
+ * The legacy `scope.$parent.theForm` is the enclosing extension dialog's form: here the enclosing NgForm.
  */
-@Directive({
+@Component({
   selector: '[tb-extension-form-opc]',
   standalone: true,
+  templateUrl: './tb-extension-form-opc.directive.html',
+  imports: [
+    CommonModule,
+    FormsModule,
+    LegacyInitDirective,
+    MatButtonModule,
+    MatCardModule,
+    MatExpansionModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatSelectModule,
+    MatTooltipModule,
+    TranslatePipe,
+  ],
 })
-export class TbExtensionFormOpcDirective {
+export class TbExtensionFormOpcDirective implements OnInit {
   readonly configuration = model<any>();
   readonly isAdd = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
-  protected readonly translate = inject(TranslateService);
-  protected readonly typesRef: any = types;
-  protected readonly element = inject(ElementRef);
-  // TODO(port): elements not resolved to a component: v-accordion, v-pane, v-pane-header, v-pane-content
-  // TODO(port): template: 23 × ng-message left in place
-  // TODO(port): template: 21 × ng-messages left in place
+  protected readonly theForm = inject(NgForm, { optional: true });
+  readonly types: any = types;
 
   protected Server: any = function Server(this: any, ...rest: any[]): any {
     this.applicationName = "Thingsboard OPC-UA client";
@@ -76,60 +87,32 @@ export class TbExtensionFormOpcDirective {
     this.type = "long";
     this.value = "${Tag2}";
   };
-  types: any;
-  theForm: any;
-  $parent: any;
-  applicationName: any;
-  applicationUri: any;
-  attributes: any;
-  deviceNamePattern: any;
-  deviceNodePattern: any;
-  host: any;
-  identity: any;
-  key: any;
-  keystore: any;
-  mapping: any;
-  port: any;
-  scanPeriodInSeconds: any;
-  security: any;
-  timeoutInMillis: any;
-  timeseries: any;
-  type: any;
-  value: any;
-  server: any;
-  map: any;
-  attribute: any;
-
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
-  constructor() {
-    this.types = this.typesRef;
-    this.theForm = this.$parent.theForm;
+  ngOnInit(): void {
     if (!this.configuration().servers.length) {
-            this.configuration().servers.push(new this.Server());
-        }
+      this.configuration().servers.push(new this.Server());
+    }
   }
 
   addServer(serversList?: any, ...rest: any[]): any {
     serversList.push(new this.Server());
     // scope.addMap(serversList[serversList.length-1].mapping);
 
-    this.theForm.$setDirty();
+    this.setDirty();
   }
 
   addMap(mappingList?: any, ...rest: any[]): any {
     mappingList.push(new this.Map());
-    this.theForm.$setDirty();
+    this.setDirty();
   }
 
   addNewAttribute(attributesList?: any, ...rest: any[]): any {
     attributesList.push(new this.Attribute());
-    this.theForm.$setDirty();
+    this.setDirty();
   }
 
   addNewTimeseries(timeseriesList?: any, ...rest: any[]): any {
     timeseriesList.push(new this.Timeseries());
-    this.theForm.$setDirty();
+    this.setDirty();
   }
 
   removeItem(item?: any, itemList?: any, ...rest: any[]): any {
@@ -137,31 +120,45 @@ export class TbExtensionFormOpcDirective {
     if (index > -1) {
         itemList.splice(index, 1);
     }
-    this.theForm.$setDirty();
+    this.setDirty();
   }
 
-  fileAdded($file?: any, model?: any, options?: any, ...rest: any[]): any {
-    let reader: any = new FileReader();
-    reader.onload = (event?: any) => {
-        (() => {
-            if(event.target.result) {
-                this.theForm.$setDirty();
-                let addedFile: any = event.target.result;
-
-                if (addedFile && addedFile.length > 0) {
-                    model[options.location] = $file.name;
-                    model[options.fileContent] = addedFile.replace(/^data.*base64,/, "");
-
-                }
+  fileAdded(file: File, model: any, options: FileFields): void {
+    const reader = new FileReader();
+    reader.onload = (event: ProgressEvent<FileReader>) => {
+        const addedFile: any = event.target?.result;
+        if (addedFile) {
+            this.setDirty();
+            if (addedFile.length > 0) {
+                model[options.location] = file.name;
+                model[options.fileContent] = addedFile.replace(/^data.*base64,/, "");
             }
-        })();
+        }
     };
-    reader.readAsDataURL($file.file);
+    reader.readAsDataURL(file);
+  }
 
+  /** The legacy ng-flow `flow-file-added`, from the file input. */
+  onFileInput(event: Event, model: any, options: FileFields): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      this.fileAdded(file, model, options);
+    }
+    input.value = '';
+  }
+
+  /** The legacy ng-flow `flow-drop` area. */
+  onFileDrop(event: DragEvent, model: any, options: FileFields): void {
+    event.preventDefault();
+    const file = event.dataTransfer?.files?.[0];
+    if (file) {
+      this.fileAdded(file, model, options);
+    }
   }
 
   clearFile(model?: any, options?: any, ...rest: any[]): any {
-    this.theForm.$setDirty();
+    this.setDirty();
 
     model[options.location] = null;
     model[options.fileContent] = null;
@@ -183,5 +180,9 @@ export class TbExtensionFormOpcDirective {
   /** The keys of a `(k, v) in obj` repeat, in the object's own order. */
   protected __keys(obj: any): string[] {
     return obj ? Object.keys(obj) : [];
+  }
+
+  private setDirty(): void {
+    this.theForm?.form.markAsDirty();
   }
 }

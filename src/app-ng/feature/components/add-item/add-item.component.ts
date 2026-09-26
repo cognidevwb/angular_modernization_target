@@ -1,40 +1,51 @@
-import { Component, inject } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Directive, computed, inject, viewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { helpLinks } from '../../help/constants/help-links';
+import { RootState } from '../../../root-state';
+import { legacyForm, LegacyForm } from '../tb-grid/legacy-form';
+
+/** What the grid hands an add dialog (the legacy `locals`). */
+export interface AddItemDialogData {
+  saveItemFunction: (item: any) => Promise<any>;
+  /** The page that configured the grid (its `parentCtl`). */
+  parentCtl?: any;
+}
 
 /**
  * Ported from the AngularJS controller `AddItemController` (module `thingsboard.directives.grid`) in src/app/components/grid.directive.js:27.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * The base of every page's add dialog (add-device, add-asset, …): the template is the page's,
+ * with `<form #theForm="ngForm" (ngSubmit)="add()">`; the dialog closes with the saved item.
  */
-@Component({
-  selector: 'add-item',
-  standalone: true,
-  template: '', // TODO(port): this controller's screen template is the templateUrl of its route in the legacy router
-})
-export class AddItemComponent {
-  protected readonly dialog = inject(MatDialog);
-  protected readonly helpLinksRef: any = helpLinks;
-  private readonly data: { saveItemFunction: (item: any) => Promise<any> } = inject(MAT_DIALOG_DATA);
+@Directive()
+export abstract class AddItemComponent {
+  protected readonly rootScope = inject(RootState);
+  protected readonly dialogRef = inject(MatDialogRef);
+  protected readonly data: AddItemDialogData = inject(MAT_DIALOG_DATA);
+  protected readonly helpLinks: any = helpLinks;
 
-  helpLinks: any;
+  /** The `<form #theForm="ngForm">` of the dialog template. */
+  protected readonly ngForm = viewChild<NgForm>('theForm');
+  /** The same form as the entity details components read it (`theForm.$invalid`, …). */
+  protected readonly theFormCtl = computed<LegacyForm | undefined>(() => {
+    const form = this.ngForm();
+    return form ? legacyForm(form) : undefined;
+  });
+
   item: any = {};
-  theForm: any;
 
-  constructor() {
-    this.helpLinks = this.helpLinksRef;
-    this.add = this.add;
-    this.cancel = this.cancel;
+  cancel(): void {
+    this.dialogRef.close();
   }
 
-  cancel = (...rest: any[]): any => {
-    (this.dialog as any).cancel();
-  };
-
-  add = (...rest: any[]): any => {
-    this.data.saveItemFunction(this.item).then((item?: any) => {
+  add(): void {
+    this.data.saveItemFunction(this.item).then(
+      (item?: any) => {
         this.item = item;
-        this.theForm.$setPristine();
-    (this.dialog as any).hide();
-    });
-  };
+        this.ngForm()?.form.markAsPristine();
+        this.dialogRef.close(item);
+      },
+      () => undefined,
+    );
+  }
 }

@@ -1,524 +1,477 @@
-import { Component, forwardRef, inject, input, model } from '@angular/core';
-import { AttributeService } from '../../api/services/attribute.service';
-import { DOCUMENT } from '@angular/common';
-import { DashboardUtilsService } from '../../common/services/dashboard-utils.service';
-import { DestroyRef } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { EntityService } from '../../api/services/entity.service';
-import { MatDialog } from '@angular/material/dialog';
-import { RootState } from '../../../root-state';
-import { TranslateService } from '@ngx-translate/core';
-import { UtilsService } from '../../common/services/utils.service';
-import { WidgetService } from '../../api/services/widget.service';
-import { types } from '../../common/constants/types';
-import { CommonModule } from '@angular/common';
+import { Component, DestroyRef, ElementRef, effect, forwardRef, inject, input } from '@angular/core';
+import { DatePipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TbWidgetsBundleSelectDirective } from '../../components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive';
-import { TbDashboardDirective } from '../../components/tb-dashboard/tb-dashboard.directive';
-
-import $ from 'jquery';
-import { linkAttrs } from '../../../legacy-link';
-declare function require(id: string): any;
-const attributeTableTemplate = require('../../../../app/entity/attribute/attribute-table.tpl.html') as any;
-const addAttributeDialogTemplate = require('../../../../app/entity/attribute/add-attribute-dialog.tpl.html') as any;
-const addWidgetToDashboardDialogTemplate = require('../../../../app/entity/attribute/add-widget-to-dashboard-dialog.tpl.html') as any;
-const editAttributeValueTemplate = require('../../../../app/entity/attribute/edit-attribute-value.tpl.html') as any;
-import EditAttributeValueController from '../../../../app/entity/attribute/edit-attribute-value.controller';
-import AliasController from '../../../../app/api/alias-controller';
+import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from '@ngx-translate/core';
-import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $filter: any;
-declare let $mdEditDialog: any;
-declare let $mdUtil: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
+import { AttributeService } from '../../api/services/attribute.service';
+import { EntityService } from '../../api/services/entity.service';
+import { WidgetService } from '../../api/services/widget.service';
+import { DashboardUtilsService } from '../../common/services/dashboard-utils.service';
+import { UtilsService } from '../../common/services/utils.service';
+import { types } from '../../common/constants/types';
+import { RootState } from '../../../root-state';
+import { linkAttrs } from '../../../legacy-link';
+import { TbWidgetsBundleSelectDirective } from '../../components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive';
+import { TbDashboardDirective } from '../../components/tb-dashboard/tb-dashboard.directive';
+import { showConfirm } from '../../rulechain/confirm-dialog/confirm-dialog.component';
+import { AddAttributeDialogComponent, AddAttributeDialogData } from '../add-attribute-dialog/add-attribute-dialog.component';
+import { AddWidgetToDashboardDialogComponent, AddWidgetToDashboardDialogData } from '../add-widget-to-dashboard-dialog/add-widget-to-dashboard-dialog.component';
+import { AliasController } from '../alias-controller';
+import { EditAttributeValueDialogComponent, EditAttributeValueDialogData } from './edit-attribute-value-dialog.component';
 
 /**
- * Ported from the AngularJS directive `tbAttributeTable` (module `thingsboard.entity`) in src/app/entity/index.js:37.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbAttributeTable` (module `thingsboard.entity`) in
+ * src/app/entity/attribute/attribute-table.directive.js: the attributes / latest telemetry of one
+ * entity — a paged, sortable, searchable, selectable table, add / edit / delete, and a widget
+ * mode that previews the selected keys on the widgets of a bundle.
+ *
+ * `entity-type` and `default-attribute-scope` were plain attributes; they are inputs here, and
+ * the host attributes (`attr.entity-type="…"`) are still read when the inputs are not bound.
  */
 @Component({
   selector: 'tb-attribute-table',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatSelectModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbWidgetsBundleSelectDirective), forwardRef(() => TbDashboardDirective)],
+  imports: [
+    DatePipe, NgClass, FormsModule, TranslatePipe, MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatIconModule,
+    MatInputModule, MatPaginatorModule, MatProgressBarModule, MatSelectModule, MatToolbarModule, MatTooltipModule,
+    forwardRef(() => TbWidgetsBundleSelectDirective), forwardRef(() => TbDashboardDirective),
+  ],
   templateUrl: './tb-attribute-table.directive.html',
 })
 export class TbAttributeTableDirective {
-  readonly entityId = model<any>();
-  readonly entityName = model<any>();
+  readonly entityId = input<any>();
+  readonly entityName = input<any>();
   readonly disableAttributeScopeSelection = input<any>();
+  readonly entityTypeInput = input<string | undefined>(undefined, { alias: 'entityType' });
+  readonly defaultAttributeScopeInput = input<string | undefined>(undefined, { alias: 'defaultAttributeScope' });
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly rootScope = inject(RootState);
-  // TODO(port): '$q' — use Promise, or an Observable
-  // TODO(port): '$mdEditDialog' — an AngularJS built-in with no Angular counterpart
   protected readonly dialog = inject(MatDialog);
-  // TODO(port): '$mdUtil' — AngularJS Material's internals: debounce/throttle → rxjs; nextTick → queueMicrotask
-  protected readonly document = inject(DOCUMENT);
   protected readonly translate = inject(TranslateService);
-  // TODO(port): '$filter' — inject the pipe class and call transform()
   protected readonly utils = inject(UtilsService);
-  protected readonly typesRef: any = types;
   protected readonly dashboardUtils = inject(DashboardUtilsService);
   protected readonly entityService = inject(EntityService);
   protected readonly attributeService = inject(AttributeService);
   protected readonly widgetService = inject(WidgetService);
   protected readonly element = inject(ElementRef);
-  protected readonly destroyRef = inject(DestroyRef);
-  // TODO(port): elements not resolved to a component: md-table-container, md-table-pagination
-  // TODO(port): AngularJS built-in filters in the template: date — use Angular pipes
-  // TODO(port): template: 1 × md-table-container left in place
-  // TODO(port): template: 1 × md-table-pagination left in place
 
-  protected template: any;
-  types: any;
+  readonly types: any = types;
   entityType: any;
-  attributeScope: any;
-  attributes: any = {
-            count: 0,
-            data: []
-        };
-  selectedAttributes: any = [];
-  mode: any = 'default';
+  attributeScopes: any = {};
+  attributeScopeList: any[] = [];
+  attributeScopeSelectionReadonly = false;
+  private attributeScopeValue: any;
+  attributes: any = { count: 0, data: [] };
+  selectedAttributes: any[] = [];
+  mode: 'default' | 'widget' = 'default';
   subscriptionId: any = null;
-  query: any = {
-            order: 'key',
-            limit: 5,
-            page: 1,
-            search: null
-        };
-  $watch: any;
-  aliasController: any;
-  attributeScopeSelectionReadonly: any;
-  attributeScopes: any;
+  query: any = { order: 'key', limit: 5, page: 1, search: null };
+  private searchValue: string | null = null;
   attributesDeferred: any;
-  firstBundle: any;
-  selectedWidgetsBundleAlias: any;
-  widgetsBundle: any;
-  widgetsBundleWatch: any;
-  widgetsCarousel: any;
-  widgetsIndexWatch: any;
-  widgetsList: any;
-  widgetsListCache: any;
-  widgetsLoaded: any;
+  loadingAttributes = false;
 
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  aliasController: AliasController | null = null;
+  private widgetDatasource: any;
+  widgetsBundle: any = null;
+  selectedWidgetsBundleAlias: any;
+  widgetsListCache: any[] = [];
+  widgetsLoaded = false;
+  widgetsCarousel = { index: 0 };
+  private initialized = false;
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
-    this.types = this.typesRef;
-    this.entityType = this.attrs.entityType;
-    if (this.entityType === this.typesRef.entityType.device || this.entityType === this.typesRef.entityType.entityView) {
-            this.attributeScopes = this.typesRef.attributesScope;
-            this.attributeScopeSelectionReadonly = false;
-        } else {
-            this.attributeScopes = {};
-            this.attributeScopes.server = this.typesRef.attributesScope.server;
-            this.attributeScopeSelectionReadonly = true;
-        }
-    this.attributeScope = this.getAttributeScopeByValue(this.attrs.defaultAttributeScope);
-    if (this.entityType != this.typesRef.entityType.device) {
-            if (this.attributeScope != this.typesRef.latestTelemetry) {
-                this.attributeScope = this.attributeScopes.server;
-            }
-        }
-    this.$watch("entityId", (newVal?: any) => {
-            if (newVal) {
-                this.resetFilter();
-                this.getEntityAttributes(false, true);
-            }
-        });
-    this.$watch("attributeScope", (newVal?: any, prevVal?: any) => {
-            if (newVal && JSON.stringify(newVal) !== JSON.stringify(prevVal)) {
-                this.mode = 'default';
-                this.query.search = null;
-                this.selectedAttributes = [];
-                this.getEntityAttributes(false, true);
-            }
-        });
-    this.$watch("query.search", (newVal?: any, prevVal?: any) => {
-            if (JSON.stringify(newVal) !== JSON.stringify(prevVal) && this.query.search != null) {
-                this.getEntityAttributes();
-            }
-        });
-    this.destroyRef.onDestroy(() => {
-            if (this.subscriptionId) {
-                this.attributeService.unsubscribeForEntityAttributes(this.subscriptionId);
-            }
-        });
+    // `scope.$watch('entityId', …)`: a new entity resets the filter and reloads
+    effect(() => {
+      const entityId = this.entityId();
+      this.ensureInit();
+      if (entityId) {
+        this.resetFilter();
+        this.getEntityAttributes(false, true);
+      }
+    });
+    inject(DestroyRef).onDestroy(() => {
+      if (this.subscriptionId) {
+        this.attributeService.unsubscribeForEntityAttributes(this.subscriptionId);
+      }
+    });
   }
 
-  getAttributeScopeByValue(attributeScopeValue?: any, ...rest: any[]): any {
-    if (this.types.latestTelemetry.value === attributeScopeValue) {
-        return this.types.latestTelemetry;
+  /** The legacy link's setup, once the host's attributes are in place. */
+  private ensureInit(): void {
+    if (this.initialized) {
+      return;
     }
-    for (var attrScope in this.attributeScopes) {
-        if (this.attributeScopes[attrScope].value === attributeScopeValue) {
-            return this.attributeScopes[attrScope];
-        }
+    this.initialized = true;
+    const attrs = linkAttrs(this.element.nativeElement);
+    this.entityType = this.entityTypeInput() ?? attrs.entityType;
+    if (this.entityType === types.entityType.device || this.entityType === types.entityType.entityView) {
+      this.attributeScopes = types.attributesScope;
+      this.attributeScopeSelectionReadonly = false;
+    } else {
+      this.attributeScopes = { server: types.attributesScope.server };
+      this.attributeScopeSelectionReadonly = true;
+    }
+    this.attributeScopeList = Object.values(this.attributeScopes);
+    this.attributeScopeValue = this.defaultAttributeScope();
+  }
+
+  private defaultAttributeScope(): any {
+    const value = this.defaultAttributeScopeInput() ?? linkAttrs(this.element.nativeElement).defaultAttributeScope;
+    let scope = this.getAttributeScopeByValue(value);
+    if (this.entityType != types.entityType.device && scope != types.latestTelemetry) {
+      scope = this.attributeScopes.server;
+    }
+    return scope;
+  }
+
+  get attributeScope(): any {
+    return this.attributeScopeValue;
+  }
+
+  /** `scope.$watch('attributeScope', …)`: another scope starts over. */
+  set attributeScope(newVal: any) {
+    const prevVal = this.attributeScopeValue;
+    this.attributeScopeValue = newVal;
+    if (newVal && JSON.stringify(newVal) !== JSON.stringify(prevVal)) {
+      this.mode = 'default';
+      this.search = null;
+      this.selectedAttributes = [];
+      this.getEntityAttributes(false, true);
+    }
+  }
+
+  get search(): string | null {
+    return this.searchValue;
+  }
+
+  /** `scope.$watch('query.search', …)`: typing filters. */
+  set search(value: string | null) {
+    const prev = this.searchValue;
+    this.searchValue = value;
+    this.query.search = value;
+    if (value !== prev && value != null) {
+      this.getEntityAttributes();
+    }
+  }
+
+  getAttributeScopeByValue(attributeScopeValue: any): any {
+    if (types.latestTelemetry.value === attributeScopeValue) {
+      return types.latestTelemetry;
+    }
+    for (const attrScope in this.attributeScopes) {
+      if (this.attributeScopes[attrScope].value === attributeScopeValue) {
+        return this.attributeScopes[attrScope];
+      }
     }
     return undefined;
   }
 
-  resetFilter(...rest: any[]): any {
+  resetFilter(): void {
     this.mode = 'default';
+    this.searchValue = null;
     this.query.search = null;
     this.selectedAttributes = [];
-    this.attributeScope = this.getAttributeScopeByValue(this.attrs.defaultAttributeScope);
+    this.attributeScopeValue = this.defaultAttributeScope();
   }
 
-  enterFilterMode(event?: any, ...rest: any[]): any {
-    let $button: any = $(event.currentTarget);
-    let $toolbarsContainer: any = $button.closest('.toolbarsContainer');
-
-    this.query.search = '';
-
+  enterFilterMode(event: Event): void {
+    const toolbarsContainer = (event.currentTarget as HTMLElement).closest('.toolbarsContainer');
+    this.search = '';
     setTimeout(() => {
-        $toolbarsContainer.find('.searchInput').focus();
-    })
+      (toolbarsContainer?.querySelector('.searchInput') as HTMLInputElement | null)?.focus();
+    });
   }
 
-  exitFilterMode(...rest: any[]): any {
-    this.query.search = null;
+  exitFilterMode(): void {
+    this.search = null;
     this.getEntityAttributes();
   }
 
-  success(attributes?: any, update?: any, apply?: any, ...rest: any[]): any {
+  success(attributes: any, update?: boolean): void {
     this.attributes = attributes;
     if (!update) {
-        this.selectedAttributes = [];
-    }
-    if (apply) {
-
+      this.selectedAttributes = [];
     }
   }
 
-  onReorder(...rest: any[]): any {
+  /** The legacy md-order toggle: the same column flips direction, another sorts ascending. */
+  sortBy(column: string): void {
+    this.query.order = this.query.order === column ? '-' + column : column;
     this.getEntityAttributes(false, false);
   }
 
-  onPaginate(...rest: any[]): any {
+  onPaginate(event: PageEvent): void {
+    this.query.page = event.pageIndex + 1;
+    this.query.limit = event.pageSize;
     this.getEntityAttributes(false, false);
   }
 
-  getEntityAttributes(forceUpdate?: any, reset?: any, ...rest: any[]): any {
+  getEntityAttributes(forceUpdate?: boolean, reset?: boolean): void {
     if (this.attributesDeferred) {
-        this.attributesDeferred.resolve();
+      this.attributesDeferred.resolve();
     }
     if (this.entityId() && this.entityType && this.attributeScope) {
-        if (reset) {
-            this.attributes = {
-                count: 0,
-                data: []
-            };
-        }
-        this.checkSubscription();
-        this.attributesDeferred = this.attributeService.getEntityAttributes(this.entityType, this.entityId(), this.attributeScope.value,
-            this.query, (attributes?: any, update?: any, apply?: any) => {
-                this.success(attributes, update || forceUpdate, apply);
-            }
-        );
-    } else {
-        var deferred: any = $q.defer();
-        this.attributesDeferred = deferred;
-        this.success({
-            count: 0,
-            data: []
+      if (reset) {
+        this.attributes = { count: 0, data: [] };
+      }
+      this.checkSubscription();
+      this.loadingAttributes = true;
+      const deferred = this.attributeService.getEntityAttributes(this.entityType, this.entityId(), this.attributeScope.value,
+        this.query, (attributes: any, update?: boolean) => {
+          this.success(attributes, update || forceUpdate);
         });
-        deferred.resolve();
+      this.attributesDeferred = deferred;
+      Promise.resolve(deferred?.promise).finally(() => {
+        if (this.attributesDeferred === deferred) {
+          this.loadingAttributes = false;
+        }
+      });
+    } else {
+      this.attributesDeferred = null;
+      this.success({ count: 0, data: [] });
     }
   }
 
-  checkSubscription(...rest: any[]): any {
-    var newSubscriptionId: any = null;
+  checkSubscription(): void {
+    let newSubscriptionId: any = null;
     if (this.entityId() && this.entityType && this.attributeScope.clientSide && this.mode != 'widget') {
-        newSubscriptionId = this.attributeService.subscribeForEntityAttributes(this.entityType, this.entityId(), this.attributeScope.value);
+      newSubscriptionId = this.attributeService.subscribeForEntityAttributes(this.entityType, this.entityId(), this.attributeScope.value);
     }
     if (this.subscriptionId && this.subscriptionId != newSubscriptionId) {
-        this.attributeService.unsubscribeForEntityAttributes(this.subscriptionId);
+      this.attributeService.unsubscribeForEntityAttributes(this.subscriptionId);
     }
     this.subscriptionId = newSubscriptionId;
   }
 
-  editAttribute($event?: any, attribute?: any, ...rest: any[]): any {
-    if (!this.attributeScope.clientSide) {
-        $event.stopPropagation();
-        $mdEditDialog.show({
-            controller: EditAttributeValueController,
-            templateUrl: editAttributeValueTemplate,
-            locals: {
-                attributeValue: attribute.value,
-                save: (model?: any, ...rest: any[]) => {
-                    var updatedAttribute: any = structuredClone(attribute);
-                    updatedAttribute.value = model.value;
-                    this.attributeService.saveEntityAttributes(this.entityType, this.entityId(), this.attributeScope.value, [updatedAttribute]).then(
-                        () => {
-                            this.getEntityAttributes();
-                        }
-                    );
-                }
-            },
-            targetEvent: $event
-        });
-    }
+  isSelected(attribute: any): boolean {
+    return this.selectedAttributes.some((a) => a.key === attribute.key);
   }
 
-  addAttribute($event?: any, ...rest: any[]): any {
-    let vm = this;
-    if (!this.attributeScope.clientSide) {
-        $event.stopPropagation();
-        (this.dialog as any).show({
-            controller: 'AddAttributeDialogController',
-            controllerAs: 'vm',
-            templateUrl: addAttributeDialogTemplate,
-            parent: $(this.document.body),
-            locals: {
-                entityType: this.entityType,
-                entityId: this.entityId(),
-                attributeScope: this.attributeScope.value
-            },
-            fullscreen: true,
-            targetEvent: $event
-        }).then(() => {
-            this.getEntityAttributes();
-        });
-    }
+  toggleSelected(attribute: any): void {
+    this.selectedAttributes = this.isSelected(attribute)
+      ? this.selectedAttributes.filter((a) => a.key !== attribute.key)
+      : [...this.selectedAttributes, attribute];
   }
 
-  deleteAttributes($event?: any, ...rest: any[]): any {
-    if (!this.attributeScope.clientSide) {
-        $event.stopPropagation();
-        var confirm: any = (this.dialog as any).confirm()
-            .targetEvent($event)
-            .title(this.translate.instant('attribute.delete-attributes-title', {count: this.selectedAttributes.length}, 'messageformat'))
-            .htmlContent(this.translate.instant('attribute.delete-attributes-text'))
-            .ariaLabel(this.translate.instant('attribute.delete-attributes'))
-            .cancel(this.translate.instant('action.no'))
-            .ok(this.translate.instant('action.yes'));
-        (this.dialog as any).show(confirm).then(() => {
-            this.attributeService.deleteEntityAttributes(this.entityType, this.entityId(), this.attributeScope.value, this.selectedAttributes).then(
-                () => {
-                    this.selectedAttributes = [];
-                    this.getEntityAttributes();
-                }
-            )
-        });
-    }
+  allSelected(): boolean {
+    const rows = this.attributes?.data ?? [];
+    return rows.length > 0 && rows.every((a: any) => this.isSelected(a));
   }
 
-  nextWidget(...rest: any[]): any {
-    queueMicrotask(() => {
-        if (this.widgetsCarousel.index < this.widgetsList.length - 1) {
-            this.widgetsCarousel.index++;
-        }
+  toggleAll(): void {
+    this.selectedAttributes = this.allSelected() ? [] : [...(this.attributes?.data ?? [])];
+  }
+
+  editAttribute($event: Event, attribute: any): void {
+    if (this.attributeScope.clientSide) {
+      return;
+    }
+    $event.stopPropagation();
+    const ref = this.dialog.open<EditAttributeValueDialogComponent, EditAttributeValueDialogData, { value: any }>(
+      EditAttributeValueDialogComponent, { data: { attributeValue: attribute.value }, panelClass: 'tb-dialog' });
+    firstValueFrom(ref.afterClosed()).then((model) => {
+      if (!model) {
+        return;
+      }
+      const updatedAttribute = structuredClone(attribute);
+      updatedAttribute.value = model.value;
+      this.attributeService.saveEntityAttributes(this.entityType, this.entityId(), this.attributeScope.value, [updatedAttribute]).then(() => {
+        this.getEntityAttributes();
+      });
     });
   }
 
-  prevWidget(...rest: any[]): any {
-    queueMicrotask(() => {
-        if (this.widgetsCarousel.index > 0) {
-            this.widgetsCarousel.index--;
-        }
+  addAttribute($event: Event): void {
+    if (this.attributeScope.clientSide) {
+      return;
+    }
+    $event.stopPropagation();
+    const ref = this.dialog.open<AddAttributeDialogComponent, AddAttributeDialogData, boolean>(AddAttributeDialogComponent, {
+      data: { entityType: this.entityType, entityId: this.entityId(), attributeScope: this.attributeScope.value },
+      panelClass: 'tb-dialog',
+    });
+    firstValueFrom(ref.afterClosed()).then((added) => {
+      if (added) {
+        this.getEntityAttributes();
+      }
     });
   }
 
-  enterWidgetMode(...rest: any[]): any {
-
-    if (this.widgetsIndexWatch) {
-        this.widgetsIndexWatch();
-        this.widgetsIndexWatch = null;
+  deleteAttributes($event: Event): void {
+    if (this.attributeScope.clientSide) {
+      return;
     }
+    $event.stopPropagation();
+    showConfirm(this.dialog, {
+      title: this.translate.instant('attribute.delete-attributes-title', { count: this.selectedAttributes.length }),
+      htmlContent: this.translate.instant('attribute.delete-attributes-text'),
+      cancel: this.translate.instant('action.no'),
+      ok: this.translate.instant('action.yes'),
+    }).then(
+      () => {
+        this.attributeService.deleteEntityAttributes(this.entityType, this.entityId(), this.attributeScope.value, this.selectedAttributes).then(() => {
+          this.selectedAttributes = [];
+          this.getEntityAttributes();
+        });
+      },
+      () => undefined,
+    );
+  }
 
-    if (this.widgetsBundleWatch) {
-        this.widgetsBundleWatch();
-        this.widgetsBundleWatch = null;
+  /** The widget the carousel shows (legacy kept only the current slide populated). */
+  currentWidgets(): any[] {
+    return this.widgetsListCache[this.widgetsCarousel.index] ?? [];
+  }
+
+  nextWidget(): void {
+    if (this.widgetsCarousel.index < this.widgetsListCache.length - 1) {
+      this.widgetsCarousel.index++;
     }
+  }
 
+  prevWidget(): void {
+    if (this.widgetsCarousel.index > 0) {
+      this.widgetsCarousel.index--;
+    }
+  }
+
+  enterWidgetMode(): void {
     this.mode = 'widget';
     this.checkSubscription();
-    this.widgetsList = [];
     this.widgetsListCache = [];
     this.widgetsLoaded = false;
-    this.widgetsCarousel = {
-        index: 0
-    }
+    this.widgetsCarousel = { index: 0 };
     this.widgetsBundle = null;
-    this.firstBundle = true;
-    this.selectedWidgetsBundleAlias = this.typesRef.systemBundleAlias.cards;
+    this.selectedWidgetsBundleAlias = types.systemBundleAlias.cards;
 
-    var entityAlias: any = {
-        id: this.utils.guid(),
-        alias: this.entityName(),
-        filter: this.dashboardUtils.createSingleEntityFilter(this.entityType, this.entityId())
+    const entityAlias: any = {
+      id: this.utils.guid(),
+      alias: this.entityName(),
+      filter: this.dashboardUtils.createSingleEntityFilter(this.entityType, this.entityId()),
     };
-    var entitiAliases: any = {};
-    entitiAliases[entityAlias.id] = entityAlias;
-
-    var stateController: any = {
-        getStateParams: function (...rest: any[]) {
-            return {};
-        }
+    const entityAliases: any = { [entityAlias.id]: entityAlias };
+    const stateController = {
+      getStateParams: () => ({}),
     };
-    this.aliasController = new AliasController(this, $q, (name: string) => (value: any, params?: any) =>
-        name === 'translate' ? this.translate.instant(value, params) : value, this.utils,
-        this.typesRef, this.entityService, stateController, entitiAliases);
+    this.aliasController = new AliasController(this.rootScope, null, null, this.utils, types, this.entityService, stateController, entityAliases);
 
-    var dataKeyType: any = this.attributeScope === this.typesRef.latestTelemetry ?
-        this.typesRef.dataKeyType.timeseries : this.typesRef.dataKeyType.attribute;
-
-    var datasource: any = {
-        type: this.typesRef.datasourceType.entity,
-        entityAliasId: entityAlias.id,
-        dataKeys: []
+    const dataKeyType = this.attributeScope === types.latestTelemetry ? types.dataKeyType.timeseries : types.dataKeyType.attribute;
+    this.widgetDatasource = {
+      type: types.datasourceType.entity,
+      entityAliasId: entityAlias.id,
+      dataKeys: this.selectedAttributes.map((attribute: any, i: number) => ({
+        name: attribute.key,
+        label: attribute.key,
+        type: dataKeyType,
+        color: this.utils.getMaterialColor(i),
+        settings: {},
+        _hash: Math.random(),
+      })),
     };
-    var i: any = 0;
-    for (var attr: any = 0; attr < this.selectedAttributes.length; attr++) {
-        var attribute: any = this.selectedAttributes[attr];
-        var dataKey: any = {
-            name: attribute.key,
-            label: attribute.key,
-            type: dataKeyType,
-            color: this.utils.getMaterialColor(i),
-            settings: {},
-            _hash: Math.random()
-        };
-        datasource.dataKeys.push(dataKey);
-        i++;
+  }
+
+  /** `scope.$watch('widgetsBundle', …)` in widget mode: load the bundle's widgets for the keys. */
+  onWidgetsBundleChange(widgetsBundle: any): void {
+    this.widgetsBundle = widgetsBundle;
+    if (this.mode !== 'widget') {
+      return;
     }
-
-    this.widgetsIndexWatch = this.$watch('widgetsCarousel.index', (newVal?: any, prevVal?: any) => {
-        if (this.mode === 'widget' && (newVal != prevVal)) {
-            var index: any = this.widgetsCarousel.index;
-            for (var i: any = 0; i < this.widgetsList.length; i++) {
-                this.widgetsList[i].splice(0, this.widgetsList[i].length);
-                if (i === index) {
-                    this.widgetsList[i].push(this.widgetsListCache[i][0]);
-                }
-            }
+    this.widgetsListCache = [];
+    this.widgetsCarousel.index = 0;
+    if (!widgetsBundle) {
+      return;
+    }
+    this.widgetsLoaded = false;
+    const bundleAlias = widgetsBundle.alias;
+    const isSystem = widgetsBundle.tenantId.id === types.id.nullUid;
+    this.widgetService.getBundleWidgetTypes(bundleAlias, isSystem).then((loaded: any) => {
+      if (this.widgetsBundle !== widgetsBundle) {
+        return;
+      }
+      const widgetTypes = [...loaded].sort((a: any, b: any) => {
+        const aType = a?.descriptor?.type ?? '';
+        const bType = b?.descriptor?.type ?? '';
+        if (aType !== bType) {
+          return aType < bType ? 1 : -1;
         }
-    });
-
-    this.widgetsBundleWatch = this.$watch('widgetsBundle', (newVal?: any, prevVal?: any) => {
-        if (this.mode === 'widget' && (this.firstBundle === true || newVal != prevVal)) {
-            this.widgetsList = [];
-            this.widgetsListCache = [];
-            this.widgetsCarousel.index = 0;
-            this.firstBundle = false;
-            if (this.widgetsBundle) {
-                this.widgetsLoaded = false;
-                var bundleAlias: any = this.widgetsBundle.alias;
-                var isSystem: any = this.widgetsBundle.tenantId.id === this.typesRef.id.nullUid;
-                this.widgetService.getBundleWidgetTypes(this.widgetsBundle.alias, isSystem).then(
-                    (widgetTypes?: any) => {
-
-                        widgetTypes = [...widgetTypes].sort((a: any, b: any) => {
-                            const aType = a?.descriptor?.type ?? '';
-                            const bType = b?.descriptor?.type ?? '';
-                            if (aType !== bType) {
-                                return aType < bType ? 1 : -1;
-                            }
-                            const aCreated = a?.createdTime ?? 0;
-                            const bCreated = b?.createdTime ?? 0;
-                            return aCreated < bCreated ? 1 : aCreated > bCreated ? -1 : 0;
-                        });
-
-                        for (var i: any = 0; i < widgetTypes.length; i++) {
-                            var widgetType: any = widgetTypes[i];
-                            var widgetInfo: any = this.widgetService.toWidgetInfo(widgetType);
-                            if (widgetInfo.type !== this.typesRef.widgetType.static.value) {
-                                var sizeX: any = widgetInfo.sizeX * 2;
-                                var sizeY: any = widgetInfo.sizeY * 2;
-                                var col: any = Math.floor(Math.max(0, (20 - sizeX) / 2));
-                                var widget: any = {
-                                    isSystemType: isSystem,
-                                    bundleAlias: bundleAlias,
-                                    typeAlias: widgetInfo.alias,
-                                    type: widgetInfo.type,
-                                    title: widgetInfo.widgetName,
-                                    sizeX: sizeX,
-                                    sizeY: sizeY,
-                                    row: 0,
-                                    col: col,
-                                    config: JSON.parse(widgetInfo.defaultConfig)
-                                };
-
-                                widget.config.title = widgetInfo.widgetName;
-                                widget.config.datasources = [datasource];
-                                var length: any;
-                                if (this.attributeScope === this.typesRef.latestTelemetry && widgetInfo.type !== this.typesRef.widgetType.rpc.value) {
-                                    length = this.widgetsListCache.push([widget]);
-                                    this.widgetsList.push(length === 1 ? [widget] : []);
-                                } else if (widgetInfo.type === this.typesRef.widgetType.latest.value) {
-                                    length = this.widgetsListCache.push([widget]);
-                                    this.widgetsList.push(length === 1 ? [widget] : []);
-                                }
-                            }
-                        }
-                        this.widgetsLoaded = true;
-                    }
-                );
-            }
+        const aCreated = a?.createdTime ?? 0;
+        const bCreated = b?.createdTime ?? 0;
+        return aCreated < bCreated ? 1 : aCreated > bCreated ? -1 : 0;
+      });
+      for (const widgetType of widgetTypes) {
+        const widget = this.toPreviewWidget(widgetType, bundleAlias, isSystem);
+        if (widget) {
+          this.widgetsListCache.push([widget]);
         }
+      }
+      this.widgetsLoaded = true;
     });
   }
 
-  exitWidgetMode(...rest: any[]): any {
-    if (this.widgetsBundleWatch) {
-        this.widgetsBundleWatch();
-        this.widgetsBundleWatch = null;
+  private toPreviewWidget(widgetType: any, bundleAlias: string, isSystem: boolean): any {
+    const widgetInfo = this.widgetService.toWidgetInfo(widgetType);
+    if (widgetInfo.type === types.widgetType.static.value) {
+      return null;
     }
-    if (this.widgetsIndexWatch) {
-        this.widgetsIndexWatch();
-        this.widgetsIndexWatch = null;
+    const showsKeys = this.attributeScope === types.latestTelemetry
+      ? widgetInfo.type !== types.widgetType.rpc.value
+      : widgetInfo.type === types.widgetType.latest.value;
+    if (!showsKeys) {
+      return null;
     }
+    const sizeX = widgetInfo.sizeX * 2;
+    const sizeY = widgetInfo.sizeY * 2;
+    const widget: any = {
+      isSystemType: isSystem,
+      bundleAlias,
+      typeAlias: widgetInfo.alias,
+      type: widgetInfo.type,
+      title: widgetInfo.widgetName,
+      sizeX,
+      sizeY,
+      row: 0,
+      col: Math.floor(Math.max(0, (20 - sizeX) / 2)),
+      config: JSON.parse(widgetInfo.defaultConfig),
+    };
+    widget.config.title = widgetInfo.widgetName;
+    widget.config.datasources = [this.widgetDatasource];
+    return widget;
+  }
+
+  exitWidgetMode(): void {
     this.selectedWidgetsBundleAlias = null;
     this.mode = 'default';
     this.getEntityAttributes(true);
   }
 
-  addWidgetToDashboard($event?: any, ...rest: any[]): any {
-    let vm = this;
+  addWidgetToDashboard($event: Event): void {
     if (this.mode === 'widget' && this.widgetsListCache.length > 0) {
-        var widget: any = this.widgetsListCache[this.widgetsCarousel.index][0];
-        $event.stopPropagation();
-        (this.dialog as any).show({
-            controller: 'AddWidgetToDashboardDialogController',
-            controllerAs: 'vm',
-            templateUrl: addWidgetToDashboardDialogTemplate,
-            parent: $(this.document.body),
-            locals: {
-                entityId: this.entityId(),
-                entityType: this.entityType,
-                entityName: this.entityName(),
-                widget: structuredClone(widget)
-            },
-            fullscreen: true,
-            targetEvent: $event
-        }).then(function () {
-
-        });
+      const widget = this.widgetsListCache[this.widgetsCarousel.index][0];
+      $event.stopPropagation();
+      this.dialog.open<AddWidgetToDashboardDialogComponent, AddWidgetToDashboardDialogData>(AddWidgetToDashboardDialogComponent, {
+        data: {
+          entityId: this.entityId(),
+          entityType: this.entityType,
+          entityName: this.entityName(),
+          widget: structuredClone(widget),
+        },
+        panelClass: 'tb-dialog',
+      });
     }
   }
 
-  loading(...rest: any[]): any {
-    return this.rootScope.loading;
-  }
-
-  /** The link's `attrs`: the host element's attributes, read live. */
-  protected get attrs(): any {
-    return linkAttrs(this.element.nativeElement);
+  loading(): boolean {
+    return !!this.rootScope['loading'];
   }
 }

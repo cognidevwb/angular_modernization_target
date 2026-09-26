@@ -1,50 +1,51 @@
-import { Component, inject, model, effect, DestroyRef } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { ElementRef } from '@angular/core';
-import { ToastService } from '../../services/toast.service';
-import { UtilsService } from '../../common/services/utils.service';
-
-import $ from 'jquery';
-import { linkAttrs } from '../../../legacy-link';
-import fixAceEditor from '../../../../app/components/ace-editor-fix';
+import { Component, DestroyRef, ElementRef, inject, input, model } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
-import { isEqual } from 'lodash-es';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import $ from 'jquery';
+import { ToastService } from '../../services/toast.service';
+import { UtilsService } from '../../common/services/utils.service';
 import { RootState } from '../../../root-state';
 import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let angular: any;
+import { TbExpandFullscreenDirective } from '../tb-expand-fullscreen/tb-expand-fullscreen.directive';
+import { UiAceDirective, UiAceOptions } from '../ui-ace/ui-ace.directive';
+import { fixAceEditor } from '../ui-ace/ace-editor-fix';
 
 /**
- * Ported from the AngularJS directive `tbJsonObjectEdit` (module `thingsboard.directives.jsonObjectEdit`) in src/app/components/json-object-edit.directive.js:31.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbJsonObjectEdit` (module `thingsboard.directives.jsonObjectEdit`)
+ * in src/app/components/json-object-edit.directive.js:31: a JSON object edited as text in an ace editor,
+ * bound through `[(ngModel)]` (the object), with tidy/minify and a fullscreen toggle.
  */
 @Component({
   selector: 'tb-json-object-edit',
   standalone: true,
-  imports: [FormsModule, MatButtonModule, MatIconModule, TranslatePipe],
+  imports: [NgClass, FormsModule, MatButtonModule, TranslatePipe, TbExpandFullscreenDirective, UiAceDirective],
   template: `
-    <div id="tb-json-panel" class="tb-json-object-edit">
-      @if (label) {
-        <label class="tb-title" [class.tb-error]="!objectValid">{{ label }}</label>
-      }
-      <div class="tb-json-toolbar">
-        <button type="button" mat-icon-button [attr.aria-label]="'action.beautify' | translate" (click)="beautifyJSON()">
-          <mat-icon>code</mat-icon>
+<div style="background: #fff;" [ngClass]="{'fill-height': fillHeight()}" tb-expand-fullscreen fullscreenZindex="100"
+     expand-button-id="expand-button" (onFullscreenChanged)="onFullscreenChanged()" layout="column">
+    <div layout="row" layout-align="start center" class="tb-json-object-edit-toolbar">
+        <label class="tb-title no-padding"
+               [ngClass]="{'tb-required': required(), 'tb-readonly': readonly(), 'tb-error': !objectValid}">{{ label() }}</label>
+        <span flex></span>
+        @if (!readonly()) {
+        <button mat-button type="button" class="md-button tidy" [attr.aria-label]="'js-func.tidy' | translate" (click)="beautifyJSON()">
+            {{ 'js-func.tidy' | translate }}
         </button>
-        <button type="button" mat-icon-button [attr.aria-label]="'action.minify' | translate" (click)="minifyJSON()">
-          <mat-icon>format_align_left</mat-icon>
+        <button mat-button type="button" class="md-button tidy" [attr.aria-label]="'js-func.mini' | translate" (click)="minifyJSON()">
+            {{ 'js-func.mini' | translate }}
         </button>
-      </div>
-      <textarea class="tb-json-editor" [(ngModel)]="contentBody" [readonly]="readonly()"></textarea>
-      @if (!objectValid) {
-        <div class="tb-json-error">{{ validationError }}</div>
-      }
+        }
+        <button type="button" id="expand-button" aria-label="Fullscreen" class="md-button md-icon-button tb-md-32 tb-fullscreen-button-style"></button>
     </div>
+    <div flex id="tb-json-panel" class="tb-json-object-panel" layout="column">
+        <div flex id="tb-json-input" [ngClass]="{'fill-height': fillHeight()}"
+             [readonly]="readonly()"
+             [ui-ace]="jsonEditorOptions"
+             [ngModel]="contentBody" (ngModelChange)="contentBody = $event">
+        </div>
+    </div>
+</div>
   `,
   providers: ngModelProviders(TbJsonObjectEditDirective),
 })
@@ -52,170 +53,164 @@ export class TbJsonObjectEditDirective extends NgModelController {
   readonly required = model<any>(undefined, { alias: 'ngRequired' });
   readonly readonly = model<any>(undefined, { alias: 'ngReadonly' });
   readonly fillHeight = model<any>();
+  readonly label = input<string>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  protected readonly document = inject(DOCUMENT);
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly toast = inject(ToastService);
   protected readonly utils = inject(UtilsService);
   protected readonly element = inject(ElementRef);
   protected readonly rootScope = inject(RootState);
-  protected readonly destroy$ = new Subject<void>();
 
-  label: any;
-  objectValid: any = true;
-  validationError: any = '';
-  jsonEditorOptions: any;
-  $on: any;
-  $watch: any;
-  contentBody: any;
-  _prevContentBody: any;
+  objectValid = true;
+  validationError = '';
   json_editor: any;
   object: any;
-  onChange: (value: any) => void = () => {};
-  onValidatorChange: () => void = () => {};
+  private contentBodyValue: any;
 
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  readonly jsonEditorOptions: UiAceOptions = {
+    useWrapMode: true,
+    mode: 'json',
+    advanced: {
+      enableSnippets: true,
+      enableBasicAutocompletion: true,
+      enableLiveAutocompletion: true,
+    },
+    onLoad: (_ace: any) => {
+      this.json_editor = _ace;
+      this.json_editor.session.on('change', () => {
+        this.cleanupJsonErrors();
+      });
+      fixAceEditor(_ace);
+    },
+  };
 
   constructor() {
     super();
-    inject(DestroyRef).onDestroy(() => this.destroy$.next());
-    this.label = this.attrs.label;
-    this.json_editor;
-    this.jsonEditorOptions = {
-            useWrapMode: true,
-            mode: 'json',
-            advanced: {
-                enableSnippets: true,
-                enableBasicAutocompletion: true,
-                enableLiveAutocompletion: true
-            },
-            onLoad: (_ace?: any, ...rest: any[]) => {
-                this.json_editor = _ace;
-                this.json_editor.session.on("change", () => {
-                    this.cleanupJsonErrors();
-                });
-                fixAceEditor(_ace);
-            }
-        };
-    effect(() => {
-      const newVal = this.contentBody;
-      if (!isEqual(newVal, this._prevContentBody)) {
-            var object: any = this.validate();
-            if (this.objectValid) {
-                if (object == null) {
-                    this.object = null;
-                } else {
-                    if (this.object == null) {
-                        this.object = {};
-                    }
-                    Object.keys(this.object).forEach((key?: any) => {
-                        delete this.object[key];
-                    });
-                    Object.keys(object).forEach((key?: any) => {
-                        this.object[key] = object[key];
-                    });
-                }
-                this.$setViewValue(this.object);
-            }
-            this.updateValidity();
+    const offFormSubmit = this.rootScope.$on('form-submit', () => {
+      if (!this.readonly()) {
+        this.cleanupJsonErrors();
+        if (!this.objectValid) {
+          this.showError(this.validationError);
+        }
       }
-      this._prevContentBody = newVal;
     });
-    this.rootScope.formSubmit$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-            if (!this.readonly()) {
-                this.cleanupJsonErrors();
-                if (!this.objectValid) {
-                    this.showError(this.validationError);
-                }
-            }
+    const offEditorSize = this.rootScope.$on('update-ace-editor-size', () => {
+      this.updateEditorSize();
+    });
+    inject(DestroyRef).onDestroy(() => {
+      offFormSubmit();
+      offEditorSize();
+    });
+  }
+
+  get contentBody(): any {
+    return this.contentBodyValue;
+  }
+
+  /** The legacy `scope.$watch('contentBody', …)`: parse, and push the object to the form. */
+  set contentBody(newVal: any) {
+    const prevVal = this.contentBodyValue;
+    this.contentBodyValue = newVal;
+    if (newVal === prevVal) {
+      return;
+    }
+    const object = this.parseContent();
+    if (this.objectValid) {
+      if (object == null) {
+        this.object = null;
+      } else {
+        if (this.object == null) {
+          this.object = {};
+        }
+        Object.keys(this.object).forEach((key) => {
+          delete this.object[key];
         });
-    this.rootScope.updateAceEditorSize$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-            this.updateEditorSize();
+        Object.keys(object).forEach((key) => {
+          this.object[key] = object[key];
         });
+      }
+      this.$setViewValue(this.object);
+    }
+    this.updateValidity();
   }
 
   override $render(): void {
     this.object = this.$viewValue;
-    var content: any = '';
+    let content = '';
     try {
-        if (this.object) {
-            content = JSON.stringify(this.object, null, 2);
-        }
-    } catch (e: any) {
-        //
+      if (this.object) {
+        content = JSON.stringify(this.object, null, 2);
+      }
+    } catch (e: unknown) {
+      // an unserializable value renders as empty, as angular.toJson's failure did
     }
-    this.contentBody = content;
+    this.contentBodyValue = content;
+    this.objectValid = true;
+    this.validationError = '';
+    this.parseContent();
+    this.updateValidity();
   }
 
-  onFullscreenChanged(...rest: any[]): any {
+  onFullscreenChanged(): void {
     this.updateEditorSize();
   }
 
-  beautifyJSON(...rest: any[]): any {
+  beautifyJSON(): void {
     this.contentBody = JSON.stringify(this.object, null, 4);
   }
 
-  minifyJSON(...rest: any[]): any {
+  minifyJSON(): void {
     this.contentBody = JSON.stringify(this.object);
   }
 
-  updateEditorSize(...rest: any[]): any {
+  updateEditorSize(): void {
     if (this.json_editor) {
-        this.json_editor.resize();
-        this.json_editor.renderer.updateFull();
+      this.json_editor.resize();
+      this.json_editor.renderer.updateFull();
     }
   }
 
-  cleanupJsonErrors(...rest: any[]): any {
+  cleanupJsonErrors(): void {
     this.toast.hide();
   }
 
-  updateValidity(...rest: any[]): any {
+  updateValidity(): void {
     this.$setValidity('objectValid', this.objectValid);
   }
 
-  showError(error?: any, ...rest: any[]): any {
-    var toastParent: any = $('#tb-json-panel', $(this.element.nativeElement));
+  showError(error: string): void {
+    const toastParent = $('#tb-json-panel', $(this.element.nativeElement));
     this.toast.showError(error, toastParent, 'bottom left');
   }
 
-  override validate(...rest: any[]): any {
+  /** The legacy `scope.validate()`: parse the text, setting `objectValid`/`validationError`. */
+  parseContent(): any {
     if (!this.contentBody || !this.contentBody.length) {
-        if (this.required()) {
-            this.validationError = 'Json object is required.';
-            this.objectValid = false;
-        } else {
-            this.validationError = '';
-            this.objectValid = true;
-        }
-        return null;
-    } else {
-        try {
-            var object: any = JSON.parse(this.contentBody);
-            this.validationError = '';
-            this.objectValid = true;
-            return object;
-        } catch (e: any) {
-            var details: any = this.utils.parseException(e);
-            var errorInfo: any = 'Error:';
-            if (details.name) {
-                errorInfo += ' ' + details.name + ':';
-            }
-            if (details.message) {
-                errorInfo += ' ' + details.message;
-            }
-            this.validationError = errorInfo;
-            this.objectValid = false;
-            return null;
-        }
+      if (this.required()) {
+        this.validationError = 'Json object is required.';
+        this.objectValid = false;
+      } else {
+        this.validationError = '';
+        this.objectValid = true;
+      }
+      return null;
     }
-    return undefined;
-  }
-
-  /** The link's `attrs`: the host element's attributes, read live. */
-  protected get attrs(): any {
-    return linkAttrs(this.element.nativeElement);
+    try {
+      const object = JSON.parse(this.contentBody);
+      this.validationError = '';
+      this.objectValid = true;
+      return object;
+    } catch (e: unknown) {
+      const details: any = this.utils.parseException(e);
+      let errorInfo = 'Error:';
+      if (details.name) {
+        errorInfo += ' ' + details.name + ':';
+      }
+      if (details.message) {
+        errorInfo += ' ' + details.message;
+      }
+      this.validationError = errorInfo;
+      this.objectValid = false;
+      return null;
+    }
   }
 }

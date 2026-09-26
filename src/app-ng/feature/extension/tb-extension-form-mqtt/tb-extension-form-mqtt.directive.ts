@@ -1,30 +1,28 @@
-import { Component, forwardRef, inject, model } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { types } from '../../common/constants/types';
+import { Component, OnInit, inject, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ParseToNullDirective } from '../parse-to-null/parse-to-null.directive';
-
-import $ from 'jquery';
-import { LegacyInitDirective } from '../../../legacy-init.directive';
+import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let element: any;
+import $ from 'jquery';
+import { types } from '../../common/constants/types';
+import { ParseToNullDirective } from '../parse-to-null/parse-to-null.directive';
+import { LegacyInitDirective } from '../../../legacy-init.directive';
+import { UiAceDirective, UiAceOptions } from '../../components/ui-ace/ui-ace.directive';
 
 /**
- * Ported from the AngularJS directive `tbExtensionFormMqtt` (module `thingsboard.extension`) in src/app/extension/index.js:24.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbExtensionFormMqtt` (module `thingsboard.extension`) in
+ * src/app/extension/extensions-forms/extension-form-mqtt.directive.js.
+ * The legacy `scope.$parent.theForm` is the enclosing extension dialog's form: here the enclosing NgForm.
+ * The deep `$watch('brokers')` that set the form's `cert.PEM` validity is a hidden required control
+ * in the template bound to `pemCredentialsValid()`.
  */
 @Component({
   selector: '[tb-extension-form-mqtt]',
@@ -35,9 +33,11 @@ declare let element: any;
     FormsModule,
     ParseToNullDirective,
     LegacyInitDirective,
+    UiAceDirective,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
+    MatExpansionModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -46,19 +46,13 @@ declare let element: any;
     TranslatePipe,
   ],
 })
-export class TbExtensionFormMqttDirective {
+export class TbExtensionFormMqttDirective implements OnInit {
   readonly config = model<any>();
   readonly isAdd = model<any>();
 
-  protected readonly translate = inject(TranslateService);
-  protected readonly typesRef: any = types;
-  protected readonly element = inject(ElementRef);
-  // TODO(port): elements not resolved to a component: v-accordion, v-pane, v-pane-header, v-pane-content
-  // TODO(port): template: 52 × ng-message left in place
-  // TODO(port): template: 49 × ng-messages left in place
+  protected readonly theForm = inject(NgForm, { optional: true });
+  readonly types: any = types;
 
-  types: any;
-  theForm: any;
   deviceNameExpressions: any = {
             deviceNameJsonExpression: "extension.converter-json",
             deviceNameTopicExpression: "extension.topic"
@@ -75,7 +69,7 @@ export class TbExtensionFormMqttDirective {
             requestIdJsonExpression: "extension.converter-json",
             requestIdTopicExpression: "extension.topic"
         };
-  extensionCustomConverterOptions: any = {
+  extensionCustomConverterOptions: UiAceOptions = {
             useWrapMode: false,
             mode: 'json',
             showGutter: true,
@@ -86,53 +80,27 @@ export class TbExtensionFormMqttDirective {
                 enableBasicAutocompletion: true,
                 enableLiveAutocompletion: true
             },
-            onLoad: function(_ace?: any, ...rest: any[]) {
+            onLoad: (_ace: any) => {
                 _ace.$blockScrolling = 1;
             }
         };
-  $parent: any;
-  $watch: any;
-  brokers: any;
-  broker: any;
-  map: any;
-  attribute: any;
-  timeseries: any;
-  connectRequest: any;
-  disconnectRequest: any;
-  attributeRequest: any;
-  attributeUpdate: any;
-  rpc: any;
+  brokers: any[] = [];
 
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
-  constructor() {
-    this.types = this.typesRef;
-    this.theForm = this.$parent.theForm;
-    this.$watch('brokers', () => {
-            this.updateValidity();
-        }, true);
-    if(this.isAdd()) {
-            this.brokers = [];
-            this.config().brokers = this.brokers;
-            this.addBroker();
-        } else {
-            this.brokers = this.config().brokers;
-        }
+  ngOnInit(): void {
+    if (this.isAdd()) {
+      this.brokers = [];
+      this.config().brokers = this.brokers;
+      this.addBroker();
+    } else {
+      this.brokers = this.config().brokers;
+    }
   }
 
-  updateValidity(...rest: any[]): any {
-    if(this.brokers.length) {
-        for(let i: any=0;i<this.brokers.length;i++) {
-            if(this.brokers[i].credentials.type == this.types.mqttCredentialTypes.pem.value) {
-                if(!(this.brokers[i].credentials.caCert && this.brokers[i].credentials.privateKey && this.brokers[i].credentials.cert)) {
-                    this.theForm.$setValidity('cert.PEM', false);
-                    break;
-                } else {
-                    this.theForm.$setValidity('cert.PEM', true);
-                }
-            }
-        }
-    }
+  /** The legacy `updateValidity`: every PEM-credentialled broker has its three files. */
+  pemCredentialsValid(): boolean {
+    return (this.brokers || []).every((broker: any) =>
+      broker.credentials.type != this.types.mqttCredentialTypes.pem.value ||
+      !!(broker.credentials.caCert && broker.credentials.privateKey && broker.credentials.cert));
   }
 
   addBroker(...rest: any[]): any {
@@ -241,27 +209,27 @@ export class TbExtensionFormMqttDirective {
     }
   }
 
-  changeNameExpression(element?: any, type?: any, ...rest: any[]): any {
-    if(element.nameExp == "deviceNameJsonExpression") {
-        if(element.deviceNameTopicExpression) {
-            delete element.deviceNameTopicExpression;
+  changeNameExpression(target?: any, type?: any, ...rest: any[]): any {
+    if(target.nameExp == "deviceNameJsonExpression") {
+        if(target.deviceNameTopicExpression) {
+            delete target.deviceNameTopicExpression;
         }
         if(type) {
-            element.deviceNameJsonExpression = "${$.serialNumber}";
+            target.deviceNameJsonExpression = "${$.serialNumber}";
         }
     }
-    if(element.nameExp == "deviceNameTopicExpression") {
-        if(element.deviceNameJsonExpression) {
-            delete element.deviceNameJsonExpression;
+    if(target.nameExp == "deviceNameTopicExpression") {
+        if(target.deviceNameJsonExpression) {
+            delete target.deviceNameJsonExpression;
         }
         if(type && type == "connect") {
-            element.deviceNameTopicExpression = "(?<=sensor\\/)(.*?)(?=\\/connect)";
+            target.deviceNameTopicExpression = "(?<=sensor\\/)(.*?)(?=\\/connect)";
         }
         if(type && type == "disconnect") {
-            element.deviceNameTopicExpression = "(?<=sensor\\/)(.*?)(?=\\/disconnect)";
+            target.deviceNameTopicExpression = "(?<=sensor\\/)(.*?)(?=\\/disconnect)";
         }
         if(type && type == "attribute") {
-            element.deviceNameTopicExpression = "(?<=sensors\\/)(.*?)(?=\\/attributes)";
+            target.deviceNameTopicExpression = "(?<=sensors\\/)(.*?)(?=\\/attributes)";
         }
     }
   }
@@ -309,46 +277,67 @@ export class TbExtensionFormMqttDirective {
     }
   }
 
-  validateCustomConverter(model?: any, editorName?: any, ...rest: any[]): any {
-    if(model && model.length) {
-        try {
-            JSON.parse(model);
-            this.theForm[editorName].$setValidity('converterJSON', true);
-        } catch(e: any) {
-            this.theForm[editorName].$setValidity('converterJSON', false);
-        }
+  validateCustomConverter(model: any, editorName: string): void {
+    const control = this.theForm?.controls[editorName];
+    if (control && model && model.length) {
+      let valid = true;
+      try {
+        JSON.parse(model);
+      } catch (e: unknown) {
+        valid = false;
+      }
+      const { converterJSON: _prev, ...others } = control.errors ?? {};
+      const errors = valid ? others : { ...others, converterJSON: true };
+      control.setErrors(Object.keys(errors).length ? errors : null);
     }
   }
 
-  fileAdded($file?: any, broker?: any, fileType?: any, ...rest: any[]): any {
-    var reader: any = new FileReader();
-    reader.onload = (event?: any) => {
-        (() => {
-            if(event.target.result) {
-                this.theForm.$setDirty();
-                var addedFile: any = event.target.result;
-                if (addedFile && addedFile.length > 0) {
-                    if(fileType == "caCert") {
-                        broker.credentials.caCertFileName = $file.name;
-                        broker.credentials.caCert = addedFile.replace(/^data.*base64,/, "");
-                    }
-                    if(fileType == "privateKey") {
-                        broker.credentials.privateKeyFileName = $file.name;
-                        broker.credentials.privateKey = addedFile.replace(/^data.*base64,/, "");
-                    }
-                    if(fileType == "Cert") {
-                        broker.credentials.certFileName = $file.name;
-                        broker.credentials.cert = addedFile.replace(/^data.*base64,/, "");
-                    }
+  /** The legacy ng-flow `flow-file-added`, from the file input. */
+  onFileInput(event: Event, broker: any, fileType: string): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      this.fileAdded(file, broker, fileType);
+    }
+    input.value = '';
+  }
+
+  /** The legacy ng-flow `flow-drop` area. */
+  onFileDrop(event: DragEvent, broker: any, fileType: string): void {
+    event.preventDefault();
+    const file = event.dataTransfer?.files?.[0];
+    if (file) {
+      this.fileAdded(file, broker, fileType);
+    }
+  }
+
+  fileAdded(file: File, broker: any, fileType: string): void {
+    const reader = new FileReader();
+    reader.onload = (event: ProgressEvent<FileReader>) => {
+        const addedFile: any = event.target?.result;
+        if (addedFile) {
+            this.setDirty();
+            if (addedFile.length > 0) {
+                if(fileType == "caCert") {
+                    broker.credentials.caCertFileName = file.name;
+                    broker.credentials.caCert = addedFile.replace(/^data.*base64,/, "");
+                }
+                if(fileType == "privateKey") {
+                    broker.credentials.privateKeyFileName = file.name;
+                    broker.credentials.privateKey = addedFile.replace(/^data.*base64,/, "");
+                }
+                if(fileType == "Cert") {
+                    broker.credentials.certFileName = file.name;
+                    broker.credentials.cert = addedFile.replace(/^data.*base64,/, "");
                 }
             }
-        })();
+        }
     };
-    reader.readAsDataURL($file.file);
+    reader.readAsDataURL(file);
   }
 
   clearFile(broker?: any, fileType?: any, ...rest: any[]): any {
-    this.theForm.$setDirty();
+    this.setDirty();
     if(fileType == "caCert") {
         broker.credentials.caCertFileName = null;
         broker.credentials.caCert = null;
@@ -378,5 +367,9 @@ export class TbExtensionFormMqttDirective {
   /** The keys of a `(k, v) in obj` repeat, in the object's own order. */
   protected __keys(obj: any): string[] {
     return obj ? Object.keys(obj) : [];
+  }
+
+  private setDirty(): void {
+    this.theForm?.form.markAsDirty();
   }
 }

@@ -42,7 +42,7 @@
             <span layout-align="center center" style="margin-top: 25px;" class="tb-prompt" [hidden]="!noData()">{{ 'alarm.no-alarms-prompt' | translate }}</span>
             <cdk-virtual-scroll-viewport [hidden]="!hasData()" flex [itemSize]="rowHeight" (scrolledIndexChange)="onScrolledIndexChange($event)">
                 <div *cdkVirtualFor="let alarm of alarms.data; trackBy: trackByIndex" flex [ngStyle]="hasScroll() ? {'margin-right':'-15px'} : {}">
-                    <div class="tb-row" flex layout="row" layout-align="start center" tb-alarm-row [attr.alarm]="alarm | json">
+                    <div class="tb-row" flex layout="row" layout-align="start center" tb-alarm-row [alarm]="alarm">
                     </div>
                     <mat-divider></mat-divider>
                 </div>

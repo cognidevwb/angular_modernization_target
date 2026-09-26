@@ -1,5 +1,5 @@
 import { Component, OnInit, effect, forwardRef, inject, model, untracked, viewChild } from '@angular/core';
-import { JsonPipe, NgStyle } from '@angular/common';
+import { NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,7 +26,7 @@ import { TbAlarmRowDirective } from '../tb-alarm-row/tb-alarm-row.directive';
   selector: 'tb-alarm-table',
   standalone: true,
   imports: [
-    TranslatePipe, JsonPipe, NgStyle, FormsModule, ScrollingModule, MatTooltipModule, MatSelectModule,
+    TranslatePipe, NgStyle, FormsModule, ScrollingModule, MatTooltipModule, MatSelectModule,
     MatProgressBarModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule,
     forwardRef(() => TbTimewindowDirective), forwardRef(() => TbAlarmHeaderDirective), forwardRef(() => TbAlarmRowDirective),
   ],

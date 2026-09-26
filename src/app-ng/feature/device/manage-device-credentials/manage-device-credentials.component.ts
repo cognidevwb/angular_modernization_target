@@ -1,12 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { DeviceService } from '../../api/services/device.service';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialog } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
-import { inject as injectRoot } from '@angular/core';
-import { RootState } from '../../../root-state';
+import { Component, inject, viewChild } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -14,10 +9,18 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
+import { DeviceService } from '../../api/services/device.service';
+import { RootState } from '../../../root-state';
+
+/** What the devices page opens the dialog with. */
+export interface ManageDeviceCredentialsData {
+  deviceId: string;
+  isReadOnly: boolean;
+}
 
 /**
- * Ported from the AngularJS controller `ManageDeviceCredentialsController` (module `thingsboard.device`) in src/app/device/index.js:29.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Ported from the AngularJS controller `ManageDeviceCredentialsController` (module `thingsboard.device`)
+ * with its template src/app/device/device-credentials.tpl.html. Closes with the saved credentials.
  */
 @Component({
   selector: 'manage-device-credentials',
@@ -26,66 +29,54 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './manage-device-credentials.component.html',
 })
 export class ManageDeviceCredentialsComponent {
-  protected readonly rootScope = injectRoot(RootState);
+  protected readonly rootScope = inject(RootState);
   protected readonly deviceService = inject(DeviceService);
-  protected readonly dialog = inject(MatDialog);
-  protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
-  // TODO(port): template: 3 × ng-message left in place
-  // TODO(port): template: 2 × ng-messages left in place
+  protected readonly dialogRef = inject(MatDialogRef<ManageDeviceCredentialsComponent>);
+  protected readonly dialogData: ManageDeviceCredentialsData = inject(MAT_DIALOG_DATA);
+  protected readonly theForm = viewChild<NgForm>('theForm');
 
-  credentialsTypes: any = [
-        {
-            name: 'Access token',
-            value: 'ACCESS_TOKEN'
-        },
-        {
-            name: 'X.509 Certificate',
-            value: 'X509_CERTIFICATE'
-        }
-    ];
+  credentialsTypes = [
+    { name: 'Access token', value: 'ACCESS_TOKEN' },
+    { name: 'X.509 Certificate', value: 'X509_CERTIFICATE' },
+  ];
   deviceCredentials: any = {};
-  isReadOnly: any;
-  theForm: any;
+  isReadOnly: boolean;
 
   constructor() {
     this.isReadOnly = this.dialogData.isReadOnly;
-    this.valid = this.valid;
-    this.cancel = this.cancel;
-    this.save = this.save;
-    this.clear = this.clear;
     this.loadDeviceCredentials();
   }
 
-  loadDeviceCredentials(...rest: any[]): any {
+  loadDeviceCredentials(): void {
     this.deviceService.getDeviceCredentials(this.dialogData.deviceId).then((deviceCredentials?: any) => {
-        this.deviceCredentials = deviceCredentials;
+      this.deviceCredentials = deviceCredentials;
     });
   }
 
-  cancel = (...rest: any[]): any => {
-    (this.dialog as any).cancel();
-  };
+  cancel(): void {
+    this.dialogRef.close();
+  }
 
-  valid = (...rest: any[]): any => {
-    return this.deviceCredentials &&
-           (this.deviceCredentials.credentialsType === 'ACCESS_TOKEN'
-               && this.deviceCredentials.credentialsId
-               && this.deviceCredentials.credentialsId.length > 0
-               || this.deviceCredentials.credentialsType === 'X509_CERTIFICATE'
-               && this.deviceCredentials.credentialsValue
-               && this.deviceCredentials.credentialsValue.length > 0);
-  };
+  valid(): boolean {
+    return !!(this.deviceCredentials &&
+      (this.deviceCredentials.credentialsType === 'ACCESS_TOKEN'
+        && this.deviceCredentials.credentialsId
+        && this.deviceCredentials.credentialsId.length > 0
+        || this.deviceCredentials.credentialsType === 'X509_CERTIFICATE'
+        && this.deviceCredentials.credentialsValue
+        && this.deviceCredentials.credentialsValue.length > 0));
+  }
 
-  clear = (...rest: any[]): any => {
+  clear(): void {
     this.deviceCredentials.credentialsId = null;
     this.deviceCredentials.credentialsValue = null;
-  };
+  }
 
-  save = (...rest: any[]): any => {
+  save(): void {
     this.deviceService.saveDeviceCredentials(this.deviceCredentials).then((deviceCredentials?: any) => {
-        this.deviceCredentials = deviceCredentials;
-        this.theForm.$setPristine();
-    (this.dialog as any).hide();
+      this.deviceCredentials = deviceCredentials;
+      this.theForm()?.form.markAsPristine();
+      this.dialogRef.close(deviceCredentials);
     });
-  };
+  }
 }

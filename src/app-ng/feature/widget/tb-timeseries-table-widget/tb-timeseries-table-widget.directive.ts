@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, DestroyRef, effect, inject, model, untracked } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
@@ -9,6 +9,7 @@ import tinycolor from 'tinycolor2';
 import cssjs from '../../../../vendor/css.js/css';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
+import { onWidgetEvent } from '../../components/widget/widget-scope';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,20 +18,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from '@ngx-translate/core';
-import { $timeout } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $filter: any;
-declare let $scope: any;
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { createLegacyFilter } from '../../components/widget/legacy-helpers';
 
 /**
  * Ported from the AngularJS directive `tbTimeseriesTableWidget` (module `thingsboard.widgets.timeseriesTableWidget`) in src/app/widget/lib/timeseries-table-widget.js:27.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The widget runtime renders it for the template `<tb-timeseries-table-widget table-id="tableId" ctx="ctx">`;
+ * the widget type's script broadcasts `timeseries-table-data-updated` on `ctx.$scope` when data arrives.
  */
 @Component({
   selector: 'tb-timeseries-table-widget',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatTabsModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, CommonModule, FormsModule],
+  imports: [TranslatePipe, MatPaginatorModule, MatTooltipModule, MatToolbarModule, MatTabsModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, CommonModule, FormsModule],
   templateUrl: './tb-timeseries-table-widget.directive.html',
 })
 export class TbTimeseriesTableWidgetDirective {
@@ -39,12 +39,13 @@ export class TbTimeseriesTableWidgetDirective {
   readonly ctx = model<any>();
 
   protected readonly element = inject(ElementRef);
-  // TODO(port): '$scope' — component state: fields and signals on this class
-  // TODO(port): '$filter' — inject the pipe class and call transform()
-  // TODO(port): '$timeout' — use setTimeout, or an rxjs timer
-  // TODO(port): elements not resolved to a component: md-table-container, md-table-pagination
-  // TODO(port): template: 1 × md-table-container left in place
-  // TODO(port): template: 1 × md-table-pagination left in place
+  protected readonly translate = inject(TranslateService);
+  protected readonly destroyRef = inject(DestroyRef);
+  /** `$filter` as the cell content functions receive it (`filter('date')(value, format)`). */
+  protected readonly $filter = createLegacyFilter((key, params) => this.translate.instant(key, params));
+  /** md-table-pagination's default page sizes (the legacy `vm.limitOptions` was never set). */
+  readonly limitOptions = [5, 10, 15];
+  private offDataUpdated: (() => void) | null = null;
 
   protected dateFormatFilter: any;
   sources: any = [];
@@ -63,52 +64,79 @@ export class TbTimeseriesTableWidgetDirective {
   showTimestamp: any;
   widgetConfig: any;
 
-  // TODO(port): $scope.$digest — $digest is not needed: Angular detects the change
-  // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
-
   constructor() {
-    let vm = this;
-    this.enterFilterMode = this.enterFilterMode;
-    this.exitFilterMode = this.exitFilterMode;
-    this.onRowClick = this.onRowClick;
-    this.onActionButtonClick = this.onActionButtonClick;
     this.searchAction = {
         name: 'action.search',
         show: true,
-        onAction: (...rest: any[]) => {
+        onAction: () => {
             this.enterFilterMode();
         },
         icon: 'search'
     };
-    $scope.$watch('vm.ctx', () => {
-       if (this.ctx()) {
-           this.settings = this.ctx().settings;
-           this.widgetConfig = this.ctx().widgetConfig;
-           this.data = this.ctx().data;
-           this.datasources = this.ctx().datasources;
-           this.initialize();
-       }
+    effect(() => {
+      const ctx = this.ctx();
+      untracked(() => {
+        if (ctx) {
+          this.settings = ctx.settings;
+          this.widgetConfig = ctx.widgetConfig;
+          this.data = ctx.data;
+          this.datasources = ctx.datasources;
+          this.listenForData(ctx);
+          this.initialize();
+        }
+      });
     });
-    $scope.$on('timeseries-table-data-updated', (event?: any, tableId?: any) => {
-        if (this.tableId() == tableId) {
+    this.destroyRef.onDestroy(() => this.offDataUpdated?.());
+  }
+
+  /** The widget type's script broadcasts on its widget scope when new data arrived for this table. */
+  private listenForData(ctx: any): void {
+    this.offDataUpdated?.();
+    this.offDataUpdated = onWidgetEvent(ctx, 'timeseries-table-data-updated', (_event: any, tableId: any) => {
+          if (this.tableId() == tableId) {
             this.dataUpdated();
-        }
-    });
-    $scope.$watch('vm.sourceIndex', (newIndex?: any, oldIndex?: any) => {
-        if (newIndex != oldIndex) {
-            this.updateSourceData(this.sources[this.sourceIndex]);
-            this.updateActiveEntityInfo();
-        }
-    });
+          }
+        });
+  }
+
+  /** The tab selection (`md-selected="vm.sourceIndex"` and its watch). */
+  onSourceIndexChange(newIndex: number): void {
+    const oldIndex = this.sourceIndex;
+    this.sourceIndex = newIndex;
+    if (newIndex != oldIndex) {
+      this.updateSourceData(this.sources[this.sourceIndex]);
+      this.updateActiveEntityInfo();
+    }
+  }
+
+  /** A click on a sortable column header (md-order / md-order-by): same column toggles the direction. */
+  sortBy(source: any, orderBy: any): void {
+    const key = String(orderBy);
+    source.query.order = source.query.order === key ? '-' + key : key;
+    this.onReorder(source);
+  }
+
+  sortDirection(source: any, orderBy: any): string {
+    const key = String(orderBy);
+    if (source.query.order === key) {
+      return 'arrow_upward';
+    }
+    return source.query.order === '-' + key ? 'arrow_downward' : '';
+  }
+
+  /** md-table-pagination's page and limit. */
+  onPage(source: any, event: PageEvent): void {
+    source.query.limit = event.pageSize;
+    source.query.page = event.pageIndex + 1;
+    this.onPaginate(source);
   }
 
   enterFilterMode = (...rest: any[]): any => {
     this.query.search = '';
     this.ctx().hideTitlePanel = true;
-    setTimeout(()=>{
+    setTimeout(() => {
         $(this.ctx().$container).find('.searchInput').focus();
-    })
+    });
   };
 
   exitFilterMode = (...rest: any[]): any => {
@@ -240,7 +268,7 @@ export class TbTimeseriesTableWidgetDirective {
 
   cellContent(source?: any, index?: any, row?: any, value?: any, ...rest: any[]): any {
     if (index === 0) {
-        return $filter('date')(value, this.dateFormatFilter);
+        return this.$filter('date')(value, this.dateFormatFilter);
     } else {
         var strContent: any = '';
         if ((value !== undefined)) {
@@ -256,7 +284,7 @@ export class TbTimeseriesTableWidgetDirective {
                     var headerInfo: any = source.ts.header[h];
                     rowData[headerInfo.dataKey.name] = row[headerInfo.index];
                 }
-                content = contentInfo.cellContentFunction(value, rowData, $filter);
+                content = contentInfo.cellContentFunction(value, rowData, this.$filter);
             } catch (e: any) {
                 content = strContent;
             }
@@ -383,13 +411,13 @@ export class TbTimeseriesTableWidgetDirective {
   reorder(source?: any, ...rest: any[]): any {
     let searchRegExp: any = new RegExp(this.query.search);
 
-    source.data = $filter('orderBy')(source.data, source.query.order);
+    source.data = this.$filter('orderBy')(source.data, source.query.order);
     if (this.query.search !== null) {
         source.data = source.data.filter((item?: any) =>{
             for (let i: any = 0; i < item.length; i++) {
                 if (this.showTimestamp) {
                     if (i === 0) {
-                        if (searchRegExp.test($filter('date')(item[i], this.dateFormatFilter))) {
+                        if (searchRegExp.test(this.$filter('date')(item[i], this.dateFormatFilter))) {
                             return true;
                         }
                     } else {

@@ -1,64 +1,54 @@
-import { Component, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { DOCUMENT } from '@angular/common';
+import { Component, Type, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgClass } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { MatTabsModule } from '@angular/material/tabs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ToastService } from '../../services/toast.service';
-import { TranslateService } from '@ngx-translate/core';
 import { UserService } from '../../api/services/user.service';
 import { types } from '../../common/constants/types';
-import { CommonModule } from '@angular/common';
-import { TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
-import { TbHelpDirective } from '../../help/tb-help/tb-help.directive';
+import { GridConfig, TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
+import { TbGridHelpButtonComponent } from '../../components/tb-grid/grid-help-button.component';
 import { TbUserDirective } from '../tb-user/tb-user.directive';
 import { TbAuditLogTableDirective } from '../../audit/tb-audit-log-table/tb-audit-log-table.directive';
-
-import $ from 'jquery';
-// @ts-ignore
-import addUserTemplate from '../../../../app/user/add-user.tpl.html';
-// @ts-ignore
-import userCard from '../../../../app/user/user-card.tpl.html';
-// @ts-ignore
-import activationLinkDialogTemplate from '../../../../app/user/activation-link.dialog.tpl.html';
-import { MatTabsModule } from '@angular/material/tabs';
-import { TranslatePipe } from '@ngx-translate/core';
+import { AddUserComponent } from '../add-user/add-user.component';
+import { ActivationLinkDialogComponent } from '../activation-link-dialog/activation-link-dialog.component';
+import { UserCardComponent } from './user-card.component';
 
 /**
  * Ported from the AngularJS controller `UserController` (module `thingsboard.user`) in src/app/user/index.js:27.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
   selector: 'user',
   standalone: true,
-  imports: [TranslatePipe, MatTabsModule, CommonModule, TbGridDirective, TbHelpDirective, TbUserDirective, TbAuditLogTableDirective],
+  imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbUserDirective, TbAuditLogTableDirective],
   templateUrl: './user.component.html',
 })
 export class UserComponent {
   protected readonly userService = inject(UserService);
   protected readonly toast = inject(ToastService);
   protected readonly dialog = inject(MatDialog);
-  protected readonly document = inject(DOCUMENT);
   protected readonly router = inject(Router);
   protected readonly route = inject(ActivatedRoute);
   protected readonly translate = inject(TranslateService);
   protected readonly typesRef: any = types;
-  // TODO(port): elements not resolved to a component: details-buttons
 
-  protected tenantId: any;
-  protected customerId: any;
-  protected usersType: any;
+  readonly userCard: Type<unknown> = UserCardComponent;
+  readonly addUserDialog: Type<unknown> = AddUserComponent;
+
+  tenantId: any;
+  customerId: any;
+  usersType: any;
   protected userActionsList: any;
   types: any;
-  userGridConfig: any;
-  grid: any;
+  userGridConfig: GridConfig;
+  grid!: TbGridDirective;
   topIndex: any;
-
-  // TODO(port): $stateParams — $stateParams: this.route.snapshot.params
 
   constructor() {
     this.tenantId = this.route.snapshot.params['tenantId'];
     this.customerId = this.route.snapshot.params['customerId'];
-this.usersType = (this.router as any).$current.data.usersType;
+    this.usersType = this.route.snapshot.data['usersType'];
     this.userActionsList = [
         {
             onAction: ($event?: any, item?: any, ...rest: any[]) => {
@@ -91,29 +81,25 @@ this.usersType = (this.router as any).$current.data.usersType;
         deleteItemFunc: this.deleteUser,
 
         getItemTitleFunc: this.getUserTitle,
-        itemCardTemplateUrl: userCard,
 
         actionsList: this.userActionsList,
 
         onGridInited: this.gridInited,
 
-        addItemTemplateUrl: addUserTemplate,
-        addItemController: 'AddUserController',
+        parentCtl: this,
 
         addItemText: (...rest: any[]) => { return this.translate.instant('user.add-user-text') },
         noItemsText: (...rest: any[]) => { return this.translate.instant('user.no-users-text') },
         itemDetailsText: (...rest: any[]) => { return this.translate.instant('user.user-details') }
     };
-    if ((this.route.snapshot.params['items'] !== undefined) && this.route.snapshot.params['items'] !== null) {
-        this.userGridConfig.items = this.route.snapshot.params['items'];
+    const items = this.router.getCurrentNavigation()?.extras.state?.['items'];
+    if (items !== undefined && items !== null) {
+        this.userGridConfig.items = items;
     }
-    if ((this.route.snapshot.params['topIndex'] !== undefined) && this.route.snapshot.params['topIndex'] > 0) {
-        this.userGridConfig.topIndex = this.route.snapshot.params['topIndex'];
+    const topIndex = Number(this.route.snapshot.queryParams['topIndex']);
+    if (topIndex > 0) {
+        this.userGridConfig.topIndex = topIndex;
     }
-    this.displayActivationLink = this.displayActivationLink;
-    this.resendActivation = this.resendActivation;
-    this.loginAsUser = this.loginAsUser;
-    this.setUserCredentialsEnabled = this.setUserCredentialsEnabled;
     this.initController();
   }
 
@@ -169,18 +155,18 @@ this.usersType = (this.router as any).$current.data.usersType;
   };
 
   deleteUsersTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('user.delete-users-title', {count: selectedCount}, 'messageformat');
+    return this.translate.instant('user.delete-users-title', {count: selectedCount});
   };
 
   deleteUsersActionTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('user.delete-users-action-title', {count: selectedCount}, 'messageformat');
+    return this.translate.instant('user.delete-users-action-title', {count: selectedCount});
   };
 
   deleteUsersText = (...rest: any[]): any => {
     return this.translate.instant('user.delete-users-text');
   };
 
-  gridInited = (grid?: any, ...rest: any[]): any => {
+  gridInited = (grid: TbGridDirective): void => {
     this.grid = grid;
   };
 
@@ -216,20 +202,8 @@ this.usersType = (this.router as any).$current.data.usersType;
     )
   };
 
-  openActivationLinkDialog(event?: any, activationLink?: any, ...rest: any[]): any {
-    let vm = this;
-(this.dialog as any).show({
-        controller: 'ActivationLinkDialogController',
-        controllerAs: 'vm',
-        templateUrl: activationLinkDialogTemplate,
-        locals: {
-            activationLink: activationLink
-        },
-        parent: $(this.document.body),
-        fullscreen: true,
-        multiple: true,
-        targetEvent: event
-    });
+  openActivationLinkDialog(_event?: any, activationLink?: any): void {
+    this.dialog.open(ActivationLinkDialogComponent, { data: { activationLink } });
   }
 
   resendActivation = (user?: any, ...rest: any[]): any => {

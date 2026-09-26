@@ -18,6 +18,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
 import beautify from 'js-beautify';
+import { UiAceDirective } from '../../components/ui-ace/ui-ace.directive';
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 const js_beautify: any = (beautify as any).js;
@@ -29,7 +30,7 @@ const js_beautify: any = (beautify as any).js;
 @Component({
   selector: 'alarm-details-dialog',
   standalone: true,
-  imports: [TranslatePipe, MatToolbarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatButtonModule, CommonModule, FormsModule],
+  imports: [UiAceDirective, TranslatePipe, MatToolbarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatButtonModule, CommonModule, FormsModule],
   templateUrl: './alarm-details-dialog.component.html',
   providers: [DatePipe],
 })

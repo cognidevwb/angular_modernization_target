@@ -1,18 +1,19 @@
-import { Component, forwardRef, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { CustomerService } from '../../api/services/customer.service';
-import { DOCUMENT } from '@angular/common';
-import { DeviceService } from '../../api/services/device.service';
-import { ImportExportService } from '../../import-export/services/import-export.service';
+import { Component, Type, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgClass } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { RootState } from '../../../root-state';
-import { Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { MatTabsModule } from '@angular/material/tabs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
+import { CustomerService } from '../../api/services/customer.service';
+import { DeviceService } from '../../api/services/device.service';
 import { UserService } from '../../api/services/user.service';
+import { ImportExportService } from '../../import-export/services/import-export.service';
 import { types } from '../../common/constants/types';
-import { CommonModule } from '@angular/common';
-import { TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
-import { TbHelpDirective } from '../../help/tb-help/tb-help.directive';
+import { RootState } from '../../../root-state';
+import { GridConfig, TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
+import { TbGridHelpButtonComponent } from '../../components/tb-grid/grid-help-button.component';
+import { showConfirm } from '../../rulechain/confirm-dialog/confirm-dialog.component';
 import { TbDeviceDirective } from '../tb-device/tb-device.directive';
 import { TbAttributeTableDirective } from '../../entity/tb-attribute-table/tb-attribute-table.directive';
 import { TbAlarmTableDirective } from '../../alarm/tb-alarm-table/tb-alarm-table.directive';
@@ -20,31 +21,20 @@ import { TbEventTableDirective } from '../../event/tb-event-table/tb-event-table
 import { TbRelationTableDirective } from '../../entity/tb-relation-table/tb-relation-table.directive';
 import { TbExtensionTableDirective } from '../../extension/tb-extension-table/tb-extension-table.directive';
 import { TbAuditLogTableDirective } from '../../audit/tb-audit-log-table/tb-audit-log-table.directive';
-
-import $ from 'jquery';
-// @ts-ignore
-import addDeviceTemplate from '../../../../app/device/add-device.tpl.html';
-// @ts-ignore
-import deviceCard from '../../../../app/device/device-card.tpl.html';
-// @ts-ignore
-import assignToCustomerTemplate from '../../../../app/device/assign-to-customer.tpl.html';
-// @ts-ignore
-import addDevicesToCustomerTemplate from '../../../../app/device/add-devices-to-customer.tpl.html';
-// @ts-ignore
-import deviceCredentialsTemplate from '../../../../app/device/device-credentials.tpl.html';
-import { MatTabsModule } from '@angular/material/tabs';
-import { TranslatePipe } from '@ngx-translate/core';
-import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
+import { DeviceCardComponent } from '../device-card/device-card.component';
+import { AssignDeviceToCustomerComponent } from '../assign-device-to-customer/assign-device-to-customer.component';
+import { AddDevicesToCustomerComponent } from '../add-devices-to-customer/add-devices-to-customer.component';
+import { ManageDeviceCredentialsComponent } from '../manage-device-credentials/manage-device-credentials.component';
+import { AddDeviceDialogComponent } from './add-device-dialog.component';
 
 /**
- * Ported from the AngularJS controller `DeviceController` (module `thingsboard.device`) in src/app/device/index.js:29.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 4 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS controller `DeviceController` (module `thingsboard.device`) in src/app/device/device.controller.js
+ * (template src/app/device/devices.tpl.html): the tenant's / a customer's devices in tb-grid.
  */
 @Component({
   selector: 'device',
   standalone: true,
-  imports: [TranslatePipe, MatTabsModule, CommonModule, forwardRef(() => TbGridDirective), forwardRef(() => TbHelpDirective), forwardRef(() => TbDeviceDirective), forwardRef(() => TbAttributeTableDirective), forwardRef(() => TbAlarmTableDirective), forwardRef(() => TbEventTableDirective), forwardRef(() => TbRelationTableDirective), forwardRef(() => TbExtensionTableDirective), forwardRef(() => TbAuditLogTableDirective)],
+  imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbDeviceDirective, TbAttributeTableDirective, TbAlarmTableDirective, TbEventTableDirective, TbRelationTableDirective, TbExtensionTableDirective, TbAuditLogTableDirective],
   templateUrl: './device.component.html',
 })
 export class DeviceComponent {
@@ -54,549 +44,350 @@ export class DeviceComponent {
   protected readonly customerService = inject(CustomerService);
   protected readonly router = inject(Router);
   protected readonly route = inject(ActivatedRoute);
-  protected readonly document = inject(DOCUMENT);
   protected readonly dialog = inject(MatDialog);
-  // TODO(port): '$q' — use Promise, or an Observable
   protected readonly translate = inject(TranslateService);
-  protected readonly typesRef: any = types;
   protected readonly importExport = inject(ImportExportService);
-  // TODO(port): elements not resolved to a component: details-buttons
+
+  readonly deviceCard: Type<unknown> = DeviceCardComponent;
+  readonly addDeviceDialog: Type<unknown> = AddDeviceDialogComponent;
 
   protected customerId: any;
-  protected deviceActionsList: any = [];
-  protected deviceGroupActionsList: any = [];
-  protected deviceAddItemActionsList: any;
-  types: any;
-  deviceGridConfig: any;
+  protected deviceActionsList: any[] = [];
+  protected deviceGroupActionsList: any[] = [];
+  protected deviceAddItemActionsList: any[];
+  types: any = types;
+  deviceGridConfig: GridConfig;
   devicesScope: any;
   customerDevicesTitle: any;
-  grid: any;
+  grid!: TbGridDirective;
   topIndex: any;
 
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): $rootScope.$broadcast — a root scope event: call the service that listens
-  // TODO(port): $stateParams — $stateParams: this.route.snapshot.params
-  // TODO(port): `success` — a named function expression that calls itself; as an arrow it has no name: name it as a method
-
   constructor() {
-    this.customerId = this.route.snapshot.params['customerId'];
+    const snapshot = this.route.snapshot;
+    this.customerId = snapshot.params['customerId'];
     this.deviceAddItemActionsList = [
-        {
-            onAction: ($event?: any, ...rest: any[]) => {
-                this.grid.addItem($event);
-            },
-            name: (...rest: any[]) => { return this.translate.instant('action.add') },
-            details: (...rest: any[]) => { return this.translate.instant('device.add-device-text') },
-            icon: "insert_drive_file"
+      {
+        onAction: ($event?: any) => this.grid.addItem($event),
+        name: () => this.translate.instant('action.add'),
+        details: () => this.translate.instant('device.add-device-text'),
+        icon: 'insert_drive_file',
+      },
+      {
+        onAction: ($event?: any) => {
+          this.importExport.importEntities($event, types.entityType.device).then(() => this.grid.refreshList());
         },
-        {
-            onAction: ($event?: any, ...rest: any[]) => {
-                this.importExport.importEntities($event, this.typesRef.entityType.device).then(
-                    () => {
-                        this.grid.refreshList();
-                    }
-                );
-            },
-            name: (...rest: any[]) => { return this.translate.instant('action.import') },
-            details: (...rest: any[]) => { return this.translate.instant('device.import') },
-            icon: "file_upload"
-        }
+        name: () => this.translate.instant('action.import'),
+        details: () => this.translate.instant('device.import'),
+        icon: 'file_upload',
+      },
     ];
-    this.types = this.typesRef;
     this.deviceGridConfig = {
-        deleteItemTitleFunc: this.deleteDeviceTitle,
-        deleteItemContentFunc: this.deleteDeviceText,
-        deleteItemsTitleFunc: this.deleteDevicesTitle,
-        deleteItemsActionTitleFunc: this.deleteDevicesActionTitle,
-        deleteItemsContentFunc: this.deleteDevicesText,
+      deleteItemTitleFunc: this.deleteDeviceTitle,
+      deleteItemContentFunc: this.deleteDeviceText,
+      deleteItemsTitleFunc: this.deleteDevicesTitle,
+      deleteItemsActionTitleFunc: this.deleteDevicesActionTitle,
+      deleteItemsContentFunc: this.deleteDevicesText,
 
-        saveItemFunc: this.saveDevice,
+      saveItemFunc: this.saveDevice,
 
-        getItemTitleFunc: this.getDeviceTitle,
+      getItemTitleFunc: this.getDeviceTitle,
 
-        itemCardController: 'DeviceCardController',
-        itemCardTemplateUrl: deviceCard,
-        parentCtl: this,
+      parentCtl: this,
 
-        actionsList: this.deviceActionsList,
-        groupActionsList: this.deviceGroupActionsList,
-        addItemActions: this.deviceAddItemActionsList,
+      actionsList: this.deviceActionsList,
+      groupActionsList: this.deviceGroupActionsList,
+      addItemActions: this.deviceAddItemActionsList,
 
-        onGridInited: this.gridInited,
+      onGridInited: this.gridInited,
 
-        addItemTemplateUrl: addDeviceTemplate,
-
-        noItemsText: (...rest: any[]) => { return this.translate.instant('device.no-devices-text') },
-        itemDetailsText: (...rest: any[]) => { return this.translate.instant('device.device-details') },
-        isDetailsReadOnly: this.isCustomerUser,
-        isSelectionEnabled: (...rest: any[]) => {
-            return !this.isCustomerUser();
-        }
+      noItemsText: () => this.translate.instant('device.no-devices-text'),
+      itemDetailsText: () => this.translate.instant('device.device-details'),
+      isDetailsReadOnly: this.isCustomerUser,
+      isSelectionEnabled: () => !this.isCustomerUser(),
     };
-    if ((this.route.snapshot.params['items'] !== undefined) && this.route.snapshot.params['items'] !== null) {
-        this.deviceGridConfig.items = this.route.snapshot.params['items'];
+    const items = this.router.getCurrentNavigation()?.extras.state?.['items'];
+    if (items !== undefined && items !== null) {
+      this.deviceGridConfig.items = items;
     }
-    if ((this.route.snapshot.params['topIndex'] !== undefined) && this.route.snapshot.params['topIndex'] > 0) {
-        this.deviceGridConfig.topIndex = this.route.snapshot.params['topIndex'];
+    const topIndex = Number(snapshot.queryParams['topIndex']);
+    if (topIndex > 0) {
+      this.deviceGridConfig.topIndex = topIndex;
     }
-    this.devicesScope = (this.router as any).$current.data.devicesType;
-    this.assignToCustomer = this.assignToCustomer;
-    this.makePublic = this.makePublic;
-    this.unassignFromCustomer = this.unassignFromCustomer;
-    this.manageCredentials = this.manageCredentials;
+    this.devicesScope = snapshot.data['devicesType'];
     this.initController();
   }
 
-  initController(...rest: any[]): any {
-    var fetchDevicesFunction: any = null;
-    var deleteDeviceFunction: any = null;
-    var refreshDevicesParamsFunction: any = null;
+  initController(): void {
+    let fetchDevicesFunction: any = null;
+    let deleteDeviceFunction: any = null;
+    let refreshDevicesParamsFunction: any = null;
 
-    var user: any = this.userService.getCurrentUser();
+    const user: any = this.userService.getCurrentUser();
 
     if (user.authority === 'CUSTOMER_USER') {
-        this.devicesScope = 'customer_user';
-        this.customerId = user.customerId;
+      this.devicesScope = 'customer_user';
+      this.customerId = user.customerId;
     }
     if (this.customerId) {
-        this.customerDevicesTitle = this.translate.instant('customer.devices');
-        this.customerService.getShortCustomerInfo(this.customerId).then(
-            (info?: any) => {
-                if (info.isPublic) {
-                    this.customerDevicesTitle = this.translate.instant('customer.public-devices');
-                }
-            }
-        );
+      this.customerDevicesTitle = this.translate.instant('customer.devices');
+      this.customerService.getShortCustomerInfo(this.customerId).then((info?: any) => {
+        if (info.isPublic) {
+          this.customerDevicesTitle = this.translate.instant('customer.public-devices');
+        }
+      });
     }
 
     if (this.devicesScope === 'tenant') {
-        fetchDevicesFunction = (pageLink?: any, deviceType?: any) => {
-            return this.deviceService.getTenantDevices(pageLink, true, null, deviceType);
-        };
-        deleteDeviceFunction = (deviceId?: any) => {
-            return this.deviceService.deleteDevice(deviceId);
-        };
-        refreshDevicesParamsFunction = () => {
-            return {"topIndex": this.topIndex};
-        };
+      fetchDevicesFunction = (pageLink?: any, deviceType?: any) => this.deviceService.getTenantDevices(pageLink, true, null, deviceType);
+      deleteDeviceFunction = (deviceId?: any) => this.deviceService.deleteDevice(deviceId);
+      refreshDevicesParamsFunction = () => ({ topIndex: this.topIndex });
 
-        this.deviceActionsList.push({
-            onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                this.makePublic($event, item);
-            },
-            name: (...rest: any[]) => { return this.translate.instant('action.share') },
-            details: (...rest: any[]) => { return this.translate.instant('device.make-public') },
-            icon: "share",
-            isEnabled: (device?: any, ...rest: any[]) => {
-                return device && (!device.customerId || device.customerId.id === this.typesRef.id.nullUid);
-            }
-        });
+      this.deviceActionsList.push({
+        onAction: ($event?: any, item?: any) => this.makePublic($event, item),
+        name: () => this.translate.instant('action.share'),
+        details: () => this.translate.instant('device.make-public'),
+        icon: 'share',
+        isEnabled: (device?: any) => device && (!device.customerId || device.customerId.id === types.id.nullUid),
+      });
+      this.deviceActionsList.push({
+        onAction: ($event?: any, item?: any) => this.assignToCustomer($event, [item.id.id]),
+        name: () => this.translate.instant('action.assign'),
+        details: () => this.translate.instant('device.assign-to-customer'),
+        icon: 'assignment_ind',
+        isEnabled: (device?: any) => device && (!device.customerId || device.customerId.id === types.id.nullUid),
+      });
+      this.deviceActionsList.push({
+        onAction: ($event?: any, item?: any) => this.unassignFromCustomer($event, item, false),
+        name: () => this.translate.instant('action.unassign'),
+        details: () => this.translate.instant('device.unassign-from-customer'),
+        icon: 'assignment_return',
+        isEnabled: (device?: any) => device && device.customerId && device.customerId.id !== types.id.nullUid && !device.assignedCustomer.isPublic,
+      });
+      this.deviceActionsList.push({
+        onAction: ($event?: any, item?: any) => this.unassignFromCustomer($event, item, true),
+        name: () => this.translate.instant('action.make-private'),
+        details: () => this.translate.instant('device.make-private'),
+        icon: 'reply',
+        isEnabled: (device?: any) => device && device.customerId && device.customerId.id !== types.id.nullUid && device.assignedCustomer.isPublic,
+      });
+      this.deviceActionsList.push({
+        onAction: ($event?: any, item?: any) => this.manageCredentials($event, item),
+        name: () => this.translate.instant('device.credentials'),
+        details: () => this.translate.instant('device.manage-credentials'),
+        icon: 'security',
+      });
+      this.deviceActionsList.push({
+        onAction: ($event?: any, item?: any) => this.grid.deleteItem($event, item),
+        name: () => this.translate.instant('action.delete'),
+        details: () => this.translate.instant('device.delete'),
+        icon: 'delete',
+      });
 
-        this.deviceActionsList.push(
-            {
-                onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                    this.assignToCustomer($event, [ item.id.id ]);
-                },
-                name: (...rest: any[]) => { return this.translate.instant('action.assign') },
-                details: (...rest: any[]) => { return this.translate.instant('device.assign-to-customer') },
-                icon: "assignment_ind",
-                isEnabled: (device?: any, ...rest: any[]) => {
-                    return device && (!device.customerId || device.customerId.id === this.typesRef.id.nullUid);
-                }
-            }
-        );
-
-        this.deviceActionsList.push(
-            {
-                onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                    this.unassignFromCustomer($event, item, false);
-                },
-                name: (...rest: any[]) => { return this.translate.instant('action.unassign') },
-                details: (...rest: any[]) => { return this.translate.instant('device.unassign-from-customer') },
-                icon: "assignment_return",
-                isEnabled: (device?: any, ...rest: any[]) => {
-                    return device && device.customerId && device.customerId.id !== this.typesRef.id.nullUid && !device.assignedCustomer.isPublic;
-                }
-            }
-        );
-
-        this.deviceActionsList.push({
-            onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                this.unassignFromCustomer($event, item, true);
-            },
-            name: (...rest: any[]) => { return this.translate.instant('action.make-private') },
-            details: (...rest: any[]) => { return this.translate.instant('device.make-private') },
-            icon: "reply",
-            isEnabled: (device?: any, ...rest: any[]) => {
-                return device && device.customerId && device.customerId.id !== this.typesRef.id.nullUid && device.assignedCustomer.isPublic;
-            }
-        });
-
-        this.deviceActionsList.push(
-            {
-                onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                    this.manageCredentials($event, item);
-                },
-                name: (...rest: any[]) => { return this.translate.instant('device.credentials') },
-                details: (...rest: any[]) => { return this.translate.instant('device.manage-credentials') },
-                icon: "security"
-            }
-        );
-
-        this.deviceActionsList.push(
-            {
-                onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                    this.grid.deleteItem($event, item);
-                },
-                name: (...rest: any[]) => { return this.translate.instant('action.delete') },
-                details: (...rest: any[]) => { return this.translate.instant('device.delete') },
-                icon: "delete"
-            }
-        );
-
-        this.deviceGroupActionsList.push(
-            {
-                onAction: ($event?: any, items?: any, ...rest: any[]) => {
-                    this.assignDevicesToCustomer($event, items);
-                },
-                name: (...rest: any[]) => { return this.translate.instant('device.assign-devices') },
-                details: (selectedCount?: any, ...rest: any[]) => {
-                    return this.translate.instant('device.assign-devices-text', {count: selectedCount}, "messageformat");
-                },
-                icon: "assignment_ind"
-            }
-        );
-
-        this.deviceGroupActionsList.push(
-            {
-                onAction: ($event?: any, ...rest: any[]) => {
-                    this.grid.deleteItems($event);
-                },
-                name: (...rest: any[]) => { return this.translate.instant('device.delete-devices') },
-                details: this.deleteDevicesActionTitle,
-                icon: "delete"
-            }
-        );
-
-
-
+      this.deviceGroupActionsList.push({
+        onAction: ($event?: any, items?: any) => this.assignDevicesToCustomer($event, items),
+        name: () => this.translate.instant('device.assign-devices'),
+        details: (selectedCount?: any) => this.translate.instant('device.assign-devices-text', { count: selectedCount }),
+        icon: 'assignment_ind',
+      });
+      this.deviceGroupActionsList.push({
+        onAction: ($event?: any) => this.grid.deleteItems($event),
+        name: () => this.translate.instant('device.delete-devices'),
+        details: this.deleteDevicesActionTitle,
+        icon: 'delete',
+      });
     } else if (this.devicesScope === 'customer' || this.devicesScope === 'customer_user') {
-        fetchDevicesFunction = (pageLink?: any, deviceType?: any) => {
-            return this.deviceService.getCustomerDevices(this.customerId, pageLink, true, null, deviceType);
+      fetchDevicesFunction = (pageLink?: any, deviceType?: any) => this.deviceService.getCustomerDevices(this.customerId, pageLink, true, null, deviceType);
+      deleteDeviceFunction = (deviceId?: any) => this.deviceService.unassignDeviceFromCustomer(deviceId);
+      refreshDevicesParamsFunction = () => ({ customerId: this.customerId, topIndex: this.topIndex });
+
+      if (this.devicesScope === 'customer') {
+        this.deviceActionsList.push({
+          onAction: ($event?: any, item?: any) => this.unassignFromCustomer($event, item, false),
+          name: () => this.translate.instant('action.unassign'),
+          details: () => this.translate.instant('device.unassign-from-customer'),
+          icon: 'assignment_return',
+          isEnabled: (device?: any) => device && !device.assignedCustomer.isPublic,
+        });
+        this.deviceActionsList.push({
+          onAction: ($event?: any, item?: any) => this.unassignFromCustomer($event, item, true),
+          name: () => this.translate.instant('action.make-private'),
+          details: () => this.translate.instant('device.make-private'),
+          icon: 'reply',
+          isEnabled: (device?: any) => device && device.assignedCustomer.isPublic,
+        });
+        this.deviceActionsList.push({
+          onAction: ($event?: any, item?: any) => this.manageCredentials($event, item),
+          name: () => this.translate.instant('device.credentials'),
+          details: () => this.translate.instant('device.manage-credentials'),
+          icon: 'security',
+        });
+        this.deviceGroupActionsList.push({
+          onAction: ($event?: any, items?: any) => this.unassignDevicesFromCustomer($event, items),
+          name: () => this.translate.instant('device.unassign-devices'),
+          details: (selectedCount?: any) => this.translate.instant('device.unassign-devices-action-title', { count: selectedCount }),
+          icon: 'assignment_return',
+        });
+        this.deviceGridConfig.addItemAction = {
+          onAction: ($event?: any) => this.addDevicesToCustomer($event),
+          name: () => this.translate.instant('device.assign-devices'),
+          details: () => this.translate.instant('device.assign-new-device'),
+          icon: 'add',
         };
-        deleteDeviceFunction = (deviceId?: any) => {
-            return this.deviceService.unassignDeviceFromCustomer(deviceId);
-        };
-        refreshDevicesParamsFunction = () => {
-            return {"customerId": this.customerId, "topIndex": this.topIndex};
-        };
-
-        if (this.devicesScope === 'customer') {
-            this.deviceActionsList.push(
-                {
-                    onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                        this.unassignFromCustomer($event, item, false);
-                    },
-                    name: (...rest: any[]) => { return this.translate.instant('action.unassign') },
-                    details: (...rest: any[]) => { return this.translate.instant('device.unassign-from-customer') },
-                    icon: "assignment_return",
-                    isEnabled: function(device?: any, ...rest: any[]) {
-                        return device && !device.assignedCustomer.isPublic;
-                    }
-                }
-            );
-            this.deviceActionsList.push(
-                {
-                    onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                        this.unassignFromCustomer($event, item, true);
-                    },
-                    name: (...rest: any[]) => { return this.translate.instant('action.make-private') },
-                    details: (...rest: any[]) => { return this.translate.instant('device.make-private') },
-                    icon: "reply",
-                    isEnabled: function(device?: any, ...rest: any[]) {
-                        return device && device.assignedCustomer.isPublic;
-                    }
-                }
-            );
-
-            this.deviceActionsList.push(
-                {
-                    onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                        this.manageCredentials($event, item);
-                    },
-                    name: (...rest: any[]) => { return this.translate.instant('device.credentials') },
-                    details: (...rest: any[]) => { return this.translate.instant('device.manage-credentials') },
-                    icon: "security"
-                }
-            );
-
-            this.deviceGroupActionsList.push(
-                {
-                    onAction: ($event?: any, items?: any, ...rest: any[]) => {
-                        this.unassignDevicesFromCustomer($event, items);
-                    },
-                    name: (...rest: any[]) => { return this.translate.instant('device.unassign-devices') },
-                    details: (selectedCount?: any, ...rest: any[]) => {
-                        return this.translate.instant('device.unassign-devices-action-title', {count: selectedCount}, "messageformat");
-                    },
-                    icon: "assignment_return"
-                }
-            );
-
-            this.deviceGridConfig.addItemAction = {
-                onAction: ($event?: any, ...rest: any[]) => {
-                    this.addDevicesToCustomer($event);
-                },
-                name: (...rest: any[]) => { return this.translate.instant('device.assign-devices') },
-                details: (...rest: any[]) => { return this.translate.instant('device.assign-new-device') },
-                icon: "add"
-            };
-
-        } else if (this.devicesScope === 'customer_user') {
-            this.deviceActionsList.push(
-                {
-                    onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                        this.manageCredentials($event, item);
-                    },
-                    name: (...rest: any[]) => { return this.translate.instant('device.credentials') },
-                    details: (...rest: any[]) => { return this.translate.instant('device.view-credentials') },
-                    icon: "security"
-                }
-            );
-
-            this.deviceGridConfig.addItemAction = {};
-        }
-        this.deviceGridConfig.addItemActions = [];
-
+      } else if (this.devicesScope === 'customer_user') {
+        this.deviceActionsList.push({
+          onAction: ($event?: any, item?: any) => this.manageCredentials($event, item),
+          name: () => this.translate.instant('device.credentials'),
+          details: () => this.translate.instant('device.view-credentials'),
+          icon: 'security',
+        });
+        this.deviceGridConfig.addItemAction = {};
+      }
+      this.deviceGridConfig.addItemActions = [];
     }
 
     this.deviceGridConfig.refreshParamsFunc = refreshDevicesParamsFunction;
     this.deviceGridConfig.fetchItemsFunc = fetchDevicesFunction;
     this.deviceGridConfig.deleteItemFunc = deleteDeviceFunction;
-
   }
 
-  deleteDeviceTitle = (device?: any, ...rest: any[]): any => {
-    return this.translate.instant('device.delete-device-title', {deviceName: device.name});
-  };
+  deleteDeviceTitle = (device?: any): any => this.translate.instant('device.delete-device-title', { deviceName: device.name });
 
-  deleteDeviceText = (...rest: any[]): any => {
-    return this.translate.instant('device.delete-device-text');
-  };
+  deleteDeviceText = (): any => this.translate.instant('device.delete-device-text');
 
-  deleteDevicesTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('device.delete-devices-title', {count: selectedCount}, 'messageformat');
-  };
+  deleteDevicesTitle = (selectedCount?: any): any => this.translate.instant('device.delete-devices-title', { count: selectedCount });
 
-  deleteDevicesActionTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('device.delete-devices-action-title', {count: selectedCount}, 'messageformat');
-  };
+  deleteDevicesActionTitle = (selectedCount?: any): any => this.translate.instant('device.delete-devices-action-title', { count: selectedCount });
 
-  deleteDevicesText = (...rest: any[]): any => {
-    return this.translate.instant('device.delete-devices-text');
-  };
+  deleteDevicesText = (): any => this.translate.instant('device.delete-devices-text');
 
-  gridInited = (grid?: any, ...rest: any[]): any => {
+  gridInited = (grid: TbGridDirective): void => {
     this.grid = grid;
   };
 
-  getDeviceTitle = (device?: any, ...rest: any[]): any => {
-    return device ? device.name : '';
+  getDeviceTitle = (device?: any): any => (device ? device.name : '');
+
+  saveDevice = (device?: any): Promise<any> => {
+    return this.deviceService.saveDevice(device).then((savedDevice?: any) => {
+      this.rootScope.$broadcast('deviceSaved');
+      return this.customerService.applyAssignedCustomersInfo([savedDevice]).then((items?: any) =>
+        items && items.length == 1 ? items[0] : Promise.reject(),
+      );
+    });
   };
 
-  saveDevice = (device?: any, ...rest: any[]): any => {
-    var deferred: any = $q.defer();
-    this.deviceService.saveDevice(device).then(
-        (savedDevice?: any) => {
-            this.rootScope.$broadcast('deviceSaved');
-            var devices: any = [ savedDevice ];
-            this.customerService.applyAssignedCustomersInfo(devices).then(
-                function success(items?: any) {
-                    if (items && items.length == 1) {
-                        deferred.resolve(items[0]);
-                    } else {
-                        deferred.reject();
-                    }
-                },
-                function fail() {
-                    deferred.reject();
-                }
-            );
-        },
-        function fail() {
-            deferred.reject();
+  isCustomerUser = (): boolean => this.devicesScope === 'customer_user';
+
+  assignToCustomer = ($event?: any, deviceIds?: any): void => {
+    $event?.stopPropagation?.();
+    const pageSize = 10;
+    this.customerService.getCustomers({ limit: pageSize, textSearch: '' }).then(
+      (_customers?: any) => {
+        const customers: any = {
+          pageSize: pageSize,
+          data: _customers.data,
+          nextPageLink: _customers.nextPageLink,
+          selection: null,
+          hasNext: _customers.hasNext,
+          pending: false,
+        };
+        if (customers.hasNext) {
+          customers.nextPageLink.limit = pageSize;
         }
+        this.openThenRefresh(AssignDeviceToCustomerComponent, { deviceIds, customers });
+      },
+      () => undefined,
     );
-    return deferred.promise;
   };
 
-  isCustomerUser = (...rest: any[]): any => {
-    return this.devicesScope === 'customer_user';
-  };
-
-  assignToCustomer = ($event?: any, deviceIds?: any, ...rest: any[]): any => {
-    let vm = this;
-    if ($event) {
-        $event.stopPropagation();
-    }
-    var pageSize: any = 10;
-    this.customerService.getCustomers({limit: pageSize, textSearch: ''}).then(
-        (_customers?: any) => {
-            var customers: any = {
-                pageSize: pageSize,
-                data: _customers.data,
-                nextPageLink: _customers.nextPageLink,
-                selection: null,
-                hasNext: _customers.hasNext,
-                pending: false
-            };
-            if (customers.hasNext) {
-                customers.nextPageLink.limit = pageSize;
-            }
-            (this.dialog as any).show({
-                controller: 'AssignDeviceToCustomerController',
-                controllerAs: 'vm',
-                templateUrl: assignToCustomerTemplate,
-                locals: {deviceIds: deviceIds, customers: customers},
-                parent: $(this.document.body),
-                fullscreen: true,
-                targetEvent: $event
-            }).then(() => {
-                this.grid.refreshList();
-            }, function () {
-            });
-        },
-        function fail() {
-        });
-  };
-
-  addDevicesToCustomer($event?: any, ...rest: any[]): any {
-    let vm = this;
-    if ($event) {
-        $event.stopPropagation();
-    }
-    var pageSize: any = 10;
-    this.deviceService.getTenantDevices({limit: pageSize, textSearch: ''}, false).then(
-        (_devices?: any) => {
-            var devices: any = {
-                pageSize: pageSize,
-                data: _devices.data,
-                nextPageLink: _devices.nextPageLink,
-                selections: {},
-                selectedCount: 0,
-                hasNext: _devices.hasNext,
-                pending: false
-            };
-            if (devices.hasNext) {
-                devices.nextPageLink.limit = pageSize;
-            }
-            (this.dialog as any).show({
-                controller: 'AddDevicesToCustomerController',
-                controllerAs: 'vm',
-                templateUrl: addDevicesToCustomerTemplate,
-                locals: {customerId: this.customerId, devices: devices},
-                parent: $(this.document.body),
-                fullscreen: true,
-                targetEvent: $event
-            }).then(() => {
-                this.grid.refreshList();
-            }, function () {
-            });
-        },
-        function fail() {
-        });
-  }
-
-  assignDevicesToCustomer($event?: any, items?: any, ...rest: any[]): any {
-    var deviceIds: any = [];
-    for (var id in items.selections) {
-        deviceIds.push(id);
-    }
-    this.assignToCustomer($event, deviceIds);
-  }
-
-  unassignFromCustomer = ($event?: any, device?: any, isPublic?: any, ...rest: any[]): any => {
-    if ($event) {
-        $event.stopPropagation();
-    }
-    var title: any;
-    var content: any;
-    var label: any;
-    if (isPublic) {
-        title = this.translate.instant('device.make-private-device-title', {deviceName: device.name});
-        content = this.translate.instant('device.make-private-device-text');
-        label = this.translate.instant('device.make-private');
-    } else {
-        title = this.translate.instant('device.unassign-device-title', {deviceName: device.name});
-        content = this.translate.instant('device.unassign-device-text');
-        label = this.translate.instant('device.unassign-device');
-    }
-    var confirm: any = (this.dialog as any).confirm()
-        .targetEvent($event)
-        .title(title)
-        .htmlContent(content)
-        .ariaLabel(label)
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
-        this.deviceService.unassignDeviceFromCustomer(device.id.id).then(() => {
-            this.grid.refreshList();
-        });
-    });
-  };
-
-  unassignDevicesFromCustomer($event?: any, items?: any, ...rest: any[]): any {
-    var confirm: any = (this.dialog as any).confirm()
-        .targetEvent($event)
-        .title(this.translate.instant('device.unassign-devices-title', {count: items.selectedCount}, 'messageformat'))
-        .htmlContent(this.translate.instant('device.unassign-devices-text'))
-        .ariaLabel(this.translate.instant('device.unassign-device'))
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
-        var tasks: any = [];
-        for (var id in items.selections) {
-            tasks.push(this.deviceService.unassignDeviceFromCustomer(id));
+  addDevicesToCustomer($event?: any): void {
+    $event?.stopPropagation?.();
+    const pageSize = 10;
+    this.deviceService.getTenantDevices({ limit: pageSize, textSearch: '' }, false).then(
+      (_devices?: any) => {
+        const devices: any = {
+          pageSize: pageSize,
+          data: _devices.data,
+          nextPageLink: _devices.nextPageLink,
+          selections: {},
+          selectedCount: 0,
+          hasNext: _devices.hasNext,
+          pending: false,
+        };
+        if (devices.hasNext) {
+          devices.nextPageLink.limit = pageSize;
         }
-        Promise.all(tasks).then(() => {
-            this.grid.refreshList();
-        });
+        this.openThenRefresh(AddDevicesToCustomerComponent, { customerId: this.customerId, devices });
+      },
+      () => undefined,
+    );
+  }
+
+  /** Opens `component` with `data`; refreshes the grid when it closes with a result. */
+  private openThenRefresh(component: Type<unknown>, data: any): void {
+    firstValueFrom(this.dialog.open(component, { data }).afterClosed()).then((result) => {
+      if (result) {
+        this.grid.refreshList();
+      }
     });
   }
 
-  makePublic = ($event?: any, device?: any, ...rest: any[]): any => {
-    if ($event) {
-        $event.stopPropagation();
+  assignDevicesToCustomer($event?: any, items?: any): void {
+    this.assignToCustomer($event, Object.keys(items.selections));
+  }
+
+  unassignFromCustomer = ($event?: any, device?: any, isPublic?: any): void => {
+    $event?.stopPropagation?.();
+    let title: any;
+    let content: any;
+    if (isPublic) {
+      title = this.translate.instant('device.make-private-device-title', { deviceName: device.name });
+      content = this.translate.instant('device.make-private-device-text');
+    } else {
+      title = this.translate.instant('device.unassign-device-title', { deviceName: device.name });
+      content = this.translate.instant('device.unassign-device-text');
     }
-    var confirm: any = (this.dialog as any).confirm()
-        .targetEvent($event)
-        .title(this.translate.instant('device.make-public-device-title', {deviceName: device.name}))
-        .htmlContent(this.translate.instant('device.make-public-device-text'))
-        .ariaLabel(this.translate.instant('device.make-public'))
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
-        this.deviceService.makeDevicePublic(device.id.id).then(() => {
-            this.grid.refreshList();
-        });
-    });
+    this.confirm(title, content).then(
+      () => this.deviceService.unassignDeviceFromCustomer(device.id.id).then(() => this.grid.refreshList()),
+      () => undefined,
+    );
   };
 
-  manageCredentials = ($event?: any, device?: any, ...rest: any[]): any => {
-    let vm = this;
-    if ($event) {
-        $event.stopPropagation();
-    }
-    (this.dialog as any).show({
-        controller: 'ManageDeviceCredentialsController',
-        controllerAs: 'vm',
-        templateUrl: deviceCredentialsTemplate,
-        locals: {deviceId: device.id.id, isReadOnly: this.isCustomerUser()},
-        parent: $(this.document.body),
-        fullscreen: true,
-        targetEvent: $event
-    }).then(function () {
-    }, function () {
-    });
+  unassignDevicesFromCustomer($event?: any, items?: any): void {
+    this.confirm(
+      this.translate.instant('device.unassign-devices-title', { count: items.selectedCount }),
+      this.translate.instant('device.unassign-devices-text'),
+    ).then(
+      () => {
+        const tasks = Object.keys(items.selections).map((id) => this.deviceService.unassignDeviceFromCustomer(id));
+        Promise.all(tasks).then(() => this.grid.refreshList());
+      },
+      () => undefined,
+    );
+  }
+
+  makePublic = ($event?: any, device?: any): void => {
+    $event?.stopPropagation?.();
+    this.confirm(
+      this.translate.instant('device.make-public-device-title', { deviceName: device.name }),
+      this.translate.instant('device.make-public-device-text'),
+    ).then(
+      () => this.deviceService.makeDevicePublic(device.id.id).then(() => this.grid.refreshList()),
+      () => undefined,
+    );
   };
+
+  manageCredentials = ($event?: any, device?: any): void => {
+    $event?.stopPropagation?.();
+    this.dialog.open(ManageDeviceCredentialsComponent, { data: { deviceId: device.id.id, isReadOnly: this.isCustomerUser() } });
+  };
+
+  /** The legacy confirm dialog, with the page's yes / no buttons. */
+  private confirm(title: string, htmlContent: string): Promise<void> {
+    return showConfirm(this.dialog, {
+      title,
+      htmlContent,
+      cancel: this.translate.instant('action.no'),
+      ok: this.translate.instant('action.yes'),
+    });
+  }
 }

@@ -1,159 +1,164 @@
-import { Directive, inject, model, output, effect } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, OnDestroy, inject, input, output, effect } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { DestroyRef } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { linkAttrs } from '../../../legacy-link';
-import $ from 'jquery';
 import { TranslateService } from '@ngx-translate/core';
+import $ from 'jquery';
 
-// `uniqueId` mirrors the legacy factory's closure-scoped counter, shared by every directive instance.
+// Mirrors the legacy factory's closure-scoped counter, shared by every directive instance.
 let uniqueId = 1;
 
 /**
- * Ported from the AngularJS directive `tbExpandFullscreen` (module `thingsboard.directives.expandFullscreen`) in src/app/components/expand-fullscreen.directive.js:20.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 6 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbExpandFullscreen` (module `thingsboard.directives.expandFullscreen`)
+ * in src/app/components/expand-fullscreen.directive.js:20.
+ *
+ * Moves the host element into a body-level fullscreen parent while expanded, and renders the
+ * expand/restore button (into `#expand-button-id` inside the host when given, else prepended).
+ * Legacy `&` bindings are inputs here: `[tbExpandFullscreen]` (expanded from outside),
+ * `[hideExpandButton]`, `[fullscreenZindex]`; `(onFullscreenChanged)` emits `{expanded}`.
  */
 @Directive({
-  selector: '[tb-expand-fullscreen]',
+  selector: '[tb-expand-fullscreen],[tbExpandFullscreen]',
   standalone: true,
 })
-export class TbExpandFullscreenDirective {
-  readonly expand = output<any>({ alias: 'tbExpandFullscreen' });
-  readonly hideExpandButton = output<any>({ alias: 'hideExpandButton' });
-  readonly onFullscreenChanged = output<any>({ alias: 'onFullscreenChanged' });
-  readonly fullscreenZindex = output<any>({ alias: 'fullscreenZindex' });
-  readonly backgroundStyle = model<any>(undefined, { alias: 'fullscreenBackgroundStyle' });
+export class TbExpandFullscreenDirective implements AfterViewInit, OnDestroy {
+  readonly expand = input<any>(undefined, { alias: 'tbExpandFullscreen' });
+  readonly hideExpandButton = input<any>(false);
+  readonly fullscreenZindex = input<any>(undefined);
+  readonly backgroundStyle = input<any>(undefined, { alias: 'fullscreenBackgroundStyle' });
+  readonly expandButtonId = input<string | undefined>(undefined, { alias: 'expand-button-id' });
+  readonly expandButtonSize = input<string | undefined>(undefined, { alias: 'expand-button-size' });
+  readonly onFullscreenChanged = output<{ expanded: boolean }>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
   protected readonly document = inject(DOCUMENT);
   protected readonly element = inject(ElementRef);
-  protected readonly destroyRef = inject(DestroyRef);
   protected readonly translate = inject(TranslateService);
 
-  body: any;
-  fullscreenParentId: any = 'fullscreen-parent' + uniqueId;
-  fullscreenParent: any;
-  elementParent: any = null;
-  expanded: any = false;
-  protected buttonSize: any;
-  protected tooltipDirection: any;
-  protected html: any;
-  $watch: any;
-
-  // TODO(port): `scope.expand(…)` — its result was read; an output emits and returns nothing: take the value from an input callback instead
-  // TODO(port): `scope.fullscreenZindex(…)` — its result was read; an output emits and returns nothing: take the value from an input callback instead
-  // TODO(port): `scope.fullscreenZindex` was an optional callback; an output is always there, so its check reads `true`
-  // TODO(port): `scope.hideExpandButton(…)` — its result was read; an output emits and returns nothing: take the value from an input callback instead
-  // TODO(port): `scope.onFullscreenChanged` was an optional callback; an output is always there, so its check reads `true`
-  // TODO(port): link(scope, element, attrs) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  private readonly fullscreenParent: JQuery<HTMLElement>;
+  private elementParent: JQuery<HTMLElement> | null = null;
+  private expandedValue = false;
+  private button: JQuery<HTMLElement> | null = null;
 
   constructor() {
-    this.body = $($(this.document).find('body').eq(0));
-    this.fullscreenParent = $('#' + this.fullscreenParentId, this.body)[0];
-    if (!this.fullscreenParent) {
-            uniqueId++;
-            var fullscreenParent: any = $('<div id=\'' + this.fullscreenParentId + '\' class=\'tb-fullscreen-parent\'></div>');
-            this.body.append(fullscreenParent);
-            this.fullscreenParent = $('#' + this.fullscreenParentId, this.body)[0];
-            this.fullscreenParent = $(this.fullscreenParent);
-            this.fullscreenParent.css('display', 'none');
-        } else {
-            this.fullscreenParent = $(this.fullscreenParent);
-        }
-    this.destroyRef.onDestroy(() => {
-            this.fullscreenParent.remove();
-        });
-    // TODO(port): `fullscreenZindex` is an input; a value assigned here belongs in the template or a computed()
-  this.fullscreenZindex = (this.fullscreenZindex as any).emit(undefined);
-    if (!true) {
-            this.fullscreenZindex = '70' as any;
-        }
-    let prevExpanded: any;
+    const body = $(this.document.body);
+    const fullscreenParentId = 'fullscreen-parent' + uniqueId;
+    const existing = $('#' + fullscreenParentId, body);
+    if (!existing.length) {
+      uniqueId++;
+      body.append($('<div id="' + fullscreenParentId + '" class="tb-fullscreen-parent"></div>'));
+      this.fullscreenParent = $('#' + fullscreenParentId, body);
+      this.fullscreenParent.css('display', 'none');
+    } else {
+      this.fullscreenParent = existing;
+    }
+    // `scope.$watch(scope.expand, v => scope.expanded = v)`
     effect(() => {
-      const newExpanded: any = this.expanded;
-      if (newExpanded != prevExpanded) {
-        prevExpanded = newExpanded;
-        if (this.expanded) {
-          this.elementParent = $(this.element.nativeElement).parent();
-          $(this.element.nativeElement).detach();
-          if (this.backgroundStyle()) {
-            this.fullscreenParent.css(this.backgroundStyle());
-          }
-          this.fullscreenParent.append($(this.element.nativeElement));
-          this.fullscreenParent.css('display', '');
-          this.fullscreenParent.css('z-index', this.fullscreenZindex);
-          $(this.element.nativeElement).addClass('tb-fullscreen');
-        } else {
-          if (this.elementParent) {
-            $(this.element.nativeElement).detach();
-            this.elementParent.append($(this.element.nativeElement));
-            this.elementParent = null;
-          }
-          $(this.element.nativeElement).removeClass('tb-fullscreen');
-          this.fullscreenParent.css('display', 'none');
-          this.fullscreenParent.css('z-index', '');
-        }
-        if (true) {
-          this.onFullscreenChanged.emit({expanded: this.expanded});
-        }
+      const newExpanded = this.expand();
+      if (newExpanded !== undefined) {
+        this.expanded = !!newExpanded;
       }
     });
-    effect(() => {
-      const newExpanded: any = this.expand.emit(undefined);
-      this.expanded = newExpanded;
-    });
-    if (this.attrs.expandButtonSize) {
-            this.buttonSize = this.attrs.expandButtonSize;
-        }
-    this.tooltipDirection = (this.attrs.expandTooltipDirection !== undefined) ? this.attrs.expandTooltipDirection : 'top';
-    this.html = '<md-tooltip md-direction="' + (this.expanded ? 'bottom' : this.tooltipDirection) + '">' +
-            this.translate.instant(this.expanded ? 'fullscreen.exit' : 'fullscreen.expand') +
-            '</md-tooltip>' +
-            '<ng-md-icon ' + (this.buttonSize ? 'size="'+ this.buttonSize +'" ' : '') + 'icon="' + (this.expanded ? 'fullscreen_exit' : 'fullscreen') + '" ' +
-            'options=\'{"easing": "circ-in-out", "duration": 375, "rotation": "none"}\'>' +
-            '</ng-md-icon>';
-    if (this.attrs.expandButtonId) {
-            setTimeout(() => {
-               var expandButton: any = $('#' + this.attrs.expandButtonId, $(this.element.nativeElement))[0];
-                this.renderExpandButton(expandButton);
-            });
-        } else {
-            this.renderExpandButton();
-        }
   }
 
-  toggleExpand = ($event?: any, ...rest: any[]): any => {
+  get expanded(): boolean {
+    return this.expandedValue;
+  }
+
+  set expanded(value: boolean) {
+    if (value == this.expandedValue) {
+      return;
+    }
+    this.expandedValue = value;
+    this.applyExpanded();
+  }
+
+  ngAfterViewInit(): void {
+    const buttonId = this.expandButtonId();
+    if (buttonId) {
+      setTimeout(() => {
+        const expandButton = $('#' + buttonId, $(this.element.nativeElement))[0];
+        this.renderExpandButton(expandButton);
+      });
+    } else {
+      this.renderExpandButton();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.fullscreenParent.remove();
+  }
+
+  toggleExpand = ($event?: Event): void => {
     if ($event) {
-        $event.stopPropagation();
+      $event.stopPropagation();
     }
     this.expanded = !this.expanded;
   };
 
-  renderExpandButton(expandButton?: any, ...rest: any[]): any {
-    if (expandButton) {
-        expandButton = $(expandButton);
-        if ((this.hideExpandButton as any)()) {
-            expandButton.remove();
-        } else {
-            expandButton.attr('md-ink-ripple', 'false');
-            expandButton.append(this.html);
-
-            expandButton.on("click", this.toggleExpand);
-        }
-    } else if (!(this.hideExpandButton as any)()) {
-        var button: any = $('<md-button class="tb-fullscreen-button-style tb-fullscreen-button-pos md-icon-button" ' +
-            'md-ink-ripple="false">' +
-            this.html +
-            '</md-button>');
-
-        button.on('click', this.toggleExpand);
-
-        $(this.element.nativeElement).prepend(button);
-    }
+  private zIndex(): string {
+    const z = this.fullscreenZindex();
+    return z ? String(z) : '70';
   }
 
-  /** The link's `attrs`: the host element's attributes, read live. */
-  protected get attrs(): any {
-    return linkAttrs(this.element.nativeElement);
+  private applyExpanded(): void {
+    const element = $(this.element.nativeElement);
+    if (this.expandedValue) {
+      this.elementParent = element.parent();
+      element.detach();
+      const style = this.backgroundStyle();
+      if (style) {
+        this.fullscreenParent.css(style);
+      }
+      this.fullscreenParent.append(element);
+      this.fullscreenParent.css('display', '');
+      this.fullscreenParent.css('z-index', this.zIndex());
+      element.addClass('tb-fullscreen');
+    } else {
+      if (this.elementParent) {
+        element.detach();
+        this.elementParent.append(element);
+        this.elementParent = null;
+      }
+      element.removeClass('tb-fullscreen');
+      this.fullscreenParent.css('display', 'none');
+      this.fullscreenParent.css('z-index', '');
+    }
+    this.updateButton();
+    this.onFullscreenChanged.emit({ expanded: this.expandedValue });
+  }
+
+  /** The legacy md-tooltip + ng-md-icon, as a title and a Material icon glyph. */
+  private updateButton(): void {
+    if (!this.button) {
+      return;
+    }
+    const icon = this.expandedValue ? 'fullscreen_exit' : 'fullscreen';
+    const title = this.translate.instant(this.expandedValue ? 'fullscreen.exit' : 'fullscreen.expand');
+    this.button.attr('title', title);
+    this.button.find('.tb-expand-fullscreen-icon').text(icon);
+  }
+
+  private iconHtml(): string {
+    const size = this.expandButtonSize();
+    const style = size ? ' style="font-size: ' + size + 'px; width: ' + size + 'px; height: ' + size + 'px;"' : '';
+    return '<span class="material-icons tb-expand-fullscreen-icon"' + style + '></span>';
+  }
+
+  private renderExpandButton(expandButton?: HTMLElement): void {
+    if (expandButton) {
+      const button = $(expandButton);
+      if (this.hideExpandButton()) {
+        button.remove();
+      } else {
+        button.append(this.iconHtml());
+        button.on('click', this.toggleExpand);
+        this.button = button;
+      }
+    } else if (!this.hideExpandButton()) {
+      const button = $('<button type="button" class="mat-mdc-icon-button mdc-icon-button tb-fullscreen-button-style tb-fullscreen-button-pos">' +
+        this.iconHtml() + '</button>');
+      button.on('click', this.toggleExpand);
+      $(this.element.nativeElement).prepend(button);
+      this.button = button;
+    }
+    this.updateButton();
   }
 }

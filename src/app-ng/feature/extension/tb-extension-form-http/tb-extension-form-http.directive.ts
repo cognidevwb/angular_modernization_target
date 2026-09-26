@@ -1,45 +1,52 @@
-import { Directive, forwardRef, inject, model } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { types } from '../../common/constants/types';
-import { FormsModule } from '@angular/forms';
-import { ParseToNullDirective } from '../parse-to-null/parse-to-null.directive';
-
-import $ from 'jquery';
+import { Component, OnInit, inject, model } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
+import $ from 'jquery';
+import { types } from '../../common/constants/types';
+import { ParseToNullDirective } from '../parse-to-null/parse-to-null.directive';
+import { UiAceDirective, UiAceOptions } from '../../components/ui-ace/ui-ace.directive';
 
 /**
- * Ported from the AngularJS directive `tbExtensionFormHttp` (module `thingsboard.extension`) in src/app/extension/index.js:24.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbExtensionFormHttp` (module `thingsboard.extension`) in
+ * src/app/extension/extensions-forms/extension-form-http.directive.js.
+ * The legacy `scope.$parent.theForm` is the enclosing extension dialog's form: here the enclosing NgForm.
  */
-@Directive({
+@Component({
   selector: '[tb-extension-form-http]',
   standalone: true,
-  hostDirectives: [ParseToNullDirective],
+  templateUrl: './tb-extension-form-http.directive.html',
+  imports: [
+    CommonModule,
+    FormsModule,
+    ParseToNullDirective,
+    UiAceDirective,
+    MatButtonModule,
+    MatCardModule,
+    MatExpansionModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatSelectModule,
+    MatTooltipModule,
+    TranslatePipe,
+  ],
 })
-export class TbExtensionFormHttpDirective {
+export class TbExtensionFormHttpDirective implements OnInit {
   readonly config = model<any>();
   readonly isAdd = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
-  protected readonly translate = inject(TranslateService);
-  protected readonly typesRef: any = types;
-  protected readonly element = inject(ElementRef);
-  // TODO(port): elements not resolved to a component: v-accordion, v-pane, v-pane-header, v-pane-content
-  // TODO(port): template: 13 × ng-message left in place
-  // TODO(port): template: 11 × ng-messages left in place
-
-  types: any;
-  theForm: any;
-  extensionCustomTransformerOptions: any = {
+  protected readonly theForm = inject(NgForm, { optional: true });
+  readonly types: any = types;
+  extensionCustomTransformerOptions: UiAceOptions = {
             useWrapMode: false,
             mode: 'json',
             showGutter: true,
@@ -50,27 +57,17 @@ export class TbExtensionFormHttpDirective {
                 enableBasicAutocompletion: true,
                 enableLiveAutocompletion: true
             },
-            onLoad: function(_ace?: any, ...rest: any[]) {
+            onLoad: (_ace: any) => {
                 _ace.$blockScrolling = 1;
             }
         };
-  $parent: any;
-  converterConfigs: any;
-  converter: any;
-  attribute: any;
-  timeseries: any;
+  converterConfigs: any[] = [];
 
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
-  constructor() {
-    this.types = this.typesRef;
-    this.theForm = this.$parent.theForm;
-    if(this.isAdd()) {
-            this.converterConfigs = this.config().converterConfigurations;
-            this.addConverterConfig();
-        } else {
-            this.converterConfigs = this.config().converterConfigurations;
-        }
+  ngOnInit(): void {
+    this.converterConfigs = this.config().converterConfigurations;
+    if (this.isAdd()) {
+      this.addConverterConfig();
+    }
   }
 
   addConverterConfig(...rest: any[]): any {
@@ -121,14 +118,18 @@ export class TbExtensionFormHttpDirective {
     attribute.transformer = "";
   }
 
-  validateTransformer(model?: any, editorName?: any, ...rest: any[]): any {
-    if(model && model.length) {
-        try {
-            JSON.parse(model);
-            this.theForm[editorName].$setValidity('transformerJSON', true);
-        } catch(e: any) {
-            this.theForm[editorName].$setValidity('transformerJSON', false);
-        }
+  validateTransformer(model: any, editorName: string): void {
+    const control = this.theForm?.controls[editorName];
+    if (control && model && model.length) {
+      let valid = true;
+      try {
+        JSON.parse(model);
+      } catch (e: unknown) {
+        valid = false;
+      }
+      const { transformerJSON: _prev, ...others } = control.errors ?? {};
+      const errors = valid ? others : { ...others, transformerJSON: true };
+      control.setErrors(Object.keys(errors).length ? errors : null);
     }
   }
 

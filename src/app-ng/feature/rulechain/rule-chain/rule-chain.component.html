@@ -16,7 +16,7 @@
     limitations under the License.
 
 -->
-<div flex tb-expand-fullscreen tb-confirm-on-exit [attr.is-dirty]="isConfirmOnExit" expand-tooltip-direction="bottom" layout="column" class="md-content tb-rulechain" (onFullscreenChanged)="isFullscreen = $any($event)?.expanded">
+<div flex tb-expand-fullscreen tb-confirm-on-exit [isDirty]="isConfirmOnExit" expand-tooltip-direction="bottom" layout="column" class="md-content tb-rulechain" (onFullscreenChanged)="isFullscreen = $any($event)?.expanded">
     <section class="tb-rulechain-container" flex layout="column">
         <div class="tb-rulechain-layout" flex layout="row">
             <section layout="row" layout-wrap class="tb-header-buttons md-fab tb-library-open">

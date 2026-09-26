@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/extension/extensions-forms/extension-form-http.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/extension/extensions-forms/extension-form-http.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -19,23 +19,22 @@
 <mat-card class="extension-form extension-http">
     <mat-card-header>
         <mat-card-title>
-            <span translate class="md-headline">extension.configuration</span>
+            <span class="md-headline">{{ 'extension.configuration' | translate }}</span>
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <v-accordion id="http-converter-configs-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
-            <v-pane id="http-converters-pane" expanded="true">
-                <v-pane-header>
+        <mat-accordion id="http-converter-configs-accordion" class="vAccordion--default">
+            <mat-expansion-panel id="http-converters-pane" [expanded]="true" (opened)="expandValidation(0, 'http-converters-pane')" (closed)="collapseValidation(0, 'http-converters-pane')">
+                <mat-expansion-panel-header>
                     {{ 'extension.converter-configurations' | translate }}
-                </v-pane-header>
-                <v-pane-content>
+                </mat-expansion-panel-header>
                     @if (converterConfigs?.length > 0) {
                       <div>
                         <ol class="list-group">
                             @for (configIndex of __keys(converterConfigs); track configIndex) {
-                              @let config = (converterConfigs)[configIndex];
+                              @let converterConfig = (converterConfigs)[configIndex];
                               <li class="list-group-item">
-                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeConverterConfig(config())" [hidden]="converterConfigs?.length < 2" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeConverterConfig(converterConfig)" [hidden]="converterConfigs?.length < 2" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                     <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
                                     
                                 </button>
@@ -43,68 +42,54 @@
                                     <mat-card-content>
 
                                         <mat-form-field class="md-block">
-                                            <mat-label translate>extension.converter-id</mat-label>
-                                            <input matInput required attr.name="httpConverterId_{{configIndex}}" [ngModel]="config().converterId" (ngModelChange)="config().converterId = $event">
-                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                            <div ng-messages="theForm?.['httpConverterId_' + configIndex]?.$error">
-                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                <div translate ng-message="required">extension.field-required</div>
-                                            </div>
+                                            <mat-label>{{ 'extension.converter-id' | translate }}</mat-label>
+                                            <input matInput required name="httpConverterId_{{configIndex}}" [(ngModel)]="converterConfig.converterId" #fConverterId="ngModel">
+                                            @if (fConverterId.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                         </mat-form-field>
                                         <mat-form-field class="md-block">
-                                            <mat-label translate>extension.token</mat-label>
-                                            <input matInput name="httpToken" [ngModel]="config().token" (ngModelChange)="config().token = $event" parse-to-null>
+                                            <mat-label>{{ 'extension.token' | translate }}</mat-label>
+                                            <input matInput name="httpToken_{{configIndex}}" [(ngModel)]="converterConfig.token" parse-to-null>
                                         </mat-form-field>
-                                        <v-accordion id="http-converters-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
-                                            <v-pane id="http-converters-pane_{{configIndex}}" expanded="true">
-                                                <v-pane-header>
+                                        <mat-accordion id="http-converters-accordion" class="vAccordion--default">
+                                            <mat-expansion-panel id="http-converters-pane_{{configIndex}}" [expanded]="true" (opened)="expandValidation(0, 'http-converters-pane_' + configIndex)" (closed)="collapseValidation(0, 'http-converters-pane_' + configIndex)">
+                                                <mat-expansion-panel-header>
                                                     {{ 'extension.converters' | translate }}
-                                                </v-pane-header>
-                                                <v-pane-content>
-                                                    @if (config()?.converters?.length > 0) {
+                                                </mat-expansion-panel-header>
+                                                    @if (converterConfig?.converters?.length > 0) {
                                                       <div>
                                                         <ol class="list-group">
-                                                            @for (converterIndex of __keys(config()?.converters); track converterIndex) {
-                                                              @let converter = (config()?.converters)[converterIndex];
+                                                            @for (converterIndex of __keys(converterConfig?.converters); track converterIndex) {
+                                                              @let converter = (converterConfig?.converters)[converterIndex];
                                                               <li class="list-group-item">
-                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeConverter(converter, config().converters)" [hidden]="config()?.converters?.length < 2" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeConverter(converter, converterConfig.converters)" [hidden]="converterConfig?.converters?.length < 2" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                                     <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
                                                                     
                                                                 </button>
                                                                 <mat-card>
                                                                     <mat-card-content>
                                                                         <mat-form-field class="md-block">
-                                                                            <mat-label translate>extension.device-name-expression</mat-label>
-                                                                            <input matInput required attr.name="httpDeviceNameExp_{{configIndex}}{{converterIndex}}" [(ngModel)]="converter.deviceNameJsonExpression">
-                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                            <div ng-messages="theForm?.['httpDeviceNameExp_' + configIndex + converterIndex]?.$error">
-                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                <div translate ng-message="required">extension.field-required</div>
-                                                                            </div>
+                                                                            <mat-label>{{ 'extension.device-name-expression' | translate }}</mat-label>
+                                                                            <input matInput required name="httpDeviceNameExp_{{configIndex}}{{converterIndex}}" [(ngModel)]="converter.deviceNameJsonExpression" #f1="ngModel">
+                                                                            @if (f1.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                         </mat-form-field>
                                                                         <mat-form-field class="md-block">
-                                                                            <mat-label translate>extension.device-type-expression</mat-label>
-                                                                            <input matInput required attr.name="httpDeviceTypeExp_{{configIndex}}{{converterIndex}}" [(ngModel)]="converter.deviceTypeJsonExpression">
-                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                            <div ng-messages="theForm?.['httpDeviceTypeExp_' + configIndex + converterIndex]?.$error">
-                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                <div translate ng-message="required">extension.field-required</div>
-                                                                            </div>
+                                                                            <mat-label>{{ 'extension.device-type-expression' | translate }}</mat-label>
+                                                                            <input matInput required name="httpDeviceTypeExp_{{configIndex}}{{converterIndex}}" [(ngModel)]="converter.deviceTypeJsonExpression" #f2="ngModel">
+                                                                            @if (f2.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                         </mat-form-field>
 
-                                                                        <v-accordion id="http-attributes-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
-                                                                            <v-pane id="http-attributes-pane_{{configIndex}}{{converterIndex}}">
-                                                                                <v-pane-header>
+                                                                        <mat-accordion id="http-attributes-accordion" class="vAccordion--default">
+                                                                            <mat-expansion-panel id="http-attributes-pane_{{configIndex}}{{converterIndex}}" (opened)="expandValidation(0, 'http-attributes-pane_' + configIndex + converterIndex)" (closed)="collapseValidation(0, 'http-attributes-pane_' + configIndex + converterIndex)">
+                                                                                <mat-expansion-panel-header>
                                                                                     {{ 'extension.attributes' | translate }}
-                                                                                </v-pane-header>
-                                                                                <v-pane-content>
+                                                                                </mat-expansion-panel-header>
                                                                                     @if (converter?.attributes?.length > 0) {
                                                                                       <div>
                                                                                         <ol class="list-group">
                                                                                             @for (attributeIndex of __keys(converter?.attributes); track attributeIndex) {
                                                                                               @let attribute = (converter?.attributes)[attributeIndex];
                                                                                               <li class="list-group-item">
-                                                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(attribute, converter.attributes)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(attribute, converter.attributes)" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                                                                     <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
                                                                                                     
                                                                                                 </button>
@@ -112,17 +97,13 @@
                                                                                                     <mat-card-content>
                                                                                                         <section flex layout="row">
                                                                                                             <mat-form-field flex="60" class="md-block">
-                                                                                                                <mat-label translate>extension.key</mat-label>
-                                                                                                                <input matInput required attr.name="httpAttributeKey_{{configIndex}}{{converterIndex}}{{attributeIndex}}" [(ngModel)]="attribute.key">
-                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                                <div ng-messages="theForm?.['httpAttributeKey_' + configIndex + converterIndex + attributeIndex]?.$error">
-                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                                                </div>
+                                                                                                                <mat-label>{{ 'extension.key' | translate }}</mat-label>
+                                                                                                                <input matInput required name="httpAttributeKey_{{configIndex}}{{converterIndex}}{{attributeIndex}}" [(ngModel)]="attribute.key" #f3="ngModel">
+                                                                                                                @if (f3.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                                             </mat-form-field>
                                                                                                             <mat-form-field flex="40" class="md-block">
-                                                                                                                <mat-label translate>extension.type</mat-label>
-                                                                                                                <mat-select required name="httpAttributeType_{{configIndex}}{{converterIndex}}{{attributeIndex}}" [(ngModel)]="attribute.type">
+                                                                                                                <mat-label>{{ 'extension.type' | translate }}</mat-label>
+                                                                                                                <mat-select required name="httpAttributeType_{{configIndex}}{{converterIndex}}{{attributeIndex}}" [(ngModel)]="attribute.type" #f4="ngModel">
                                                                                                                     @for (attrType of __keys(types?.extensionValueType); track attrType) {
                                                                                                                       @let attrTypeValue = (types?.extensionValueType)[attrType];
                                                                                                                       <mat-option [value]="attrType">
@@ -130,28 +111,20 @@
                                                                                                                     </mat-option>
                                                                                                                     }
                                                                                                                 </mat-select>
-                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                                <div ng-messages="theForm?.['httpAttributeType_' + configIndex + converterIndex + attributeIndex]?.$error">
-                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                                                </div>
+                                                                                                                @if (f4.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                                             </mat-form-field>
                                                                                                         </section>
                                                                                                         <section flex layout="row">
                                                                                                             <mat-form-field flex="60" class="md-block">
-                                                                                                                <mat-label translate>extension.value</mat-label>
-                                                                                                                <input matInput required attr.name="httpAttributeValue_{{configIndex}}{{converterIndex}}{{attributeIndex}}" [(ngModel)]="attribute.value">
-                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                                <div ng-messages="theForm?.['httpAttributeValue_' + configIndex + converterIndex + attributeIndex]?.$error">
-                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                                                </div>
+                                                                                                                <mat-label>{{ 'extension.value' | translate }}</mat-label>
+                                                                                                                <input matInput required name="httpAttributeValue_{{configIndex}}{{converterIndex}}{{attributeIndex}}" [(ngModel)]="attribute.value" #f5="ngModel">
+                                                                                                                @if (f5.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                                             </mat-form-field>
 
 
                                                                                                             <mat-form-field flex="40" class="md-block">
-                                                                                                                <mat-label translate>extension.transformer</mat-label>
-                                                                                                                <mat-select name="httpAttributeTransformer" [(ngModel)]="attribute.transformerType" (ngModelChange)="transformerTypeChange(attribute)">
+                                                                                                                <mat-label>{{ 'extension.transformer' | translate }}</mat-label>
+                                                                                                                <mat-select name="httpAttributeTransformer_{{configIndex}}{{converterIndex}}{{attributeIndex}}" [(ngModel)]="attribute.transformerType" (ngModelChange)="transformerTypeChange(attribute)">
                                                                                                                     @for (transformerType of __keys(types?.extensionTransformerType); track transformerType) {
                                                                                                                       @let value = (types?.extensionTransformerType)[transformerType];
                                                                                                                       <mat-option [value]="transformerType">
@@ -164,18 +137,14 @@
 
                                                                                                         @if (attribute?.transformerType == "custom") {
                                                                                                           <div>
-                                                                                                            <div class="md-caption" style="padding-left: 3px; padding-bottom: 10px; color: rgba(0,0,0,0.57);" translate>extension.transformer-json</div>
+                                                                                                            <div class="md-caption" style="padding-left: 3px; padding-bottom: 10px; color: rgba(0,0,0,0.57);">{{ 'extension.transformer-json' | translate }}</div>
                                                                                                             <div flex class="tb-extension-custom-transformer-panel">
-                                                                                                                <div flex class="tb-extension-custom-transformer" ui-ace="extensionCustomTransformerOptions" [(ngModel)]="attribute.transformer" attr.name="attributeCustomTransformer_{{configIndex}}{{converterIndex}}{{attributeIndex}}" (ngModelChange)='validateTransformer(attribute.transformer,"attributeCustomTransformer_" + configIndex + converterIndex + attributeIndex)' required>
+                                                                                                                <div flex class="tb-extension-custom-transformer" [ui-ace]="extensionCustomTransformerOptions" [(ngModel)]="attribute.transformer" name="attributeCustomTransformer_{{configIndex}}{{converterIndex}}{{attributeIndex}}" (ngModelChange)='validateTransformer($event, "attributeCustomTransformer_" + configIndex + converterIndex + attributeIndex)' required #attributeTransformer="ngModel">
                                                                                                                 </div>
                                                                                                             </div>
-                                                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                            <div class="tb-error-messages" ng-messages="theForm?.['attributeCustomTransformer_' + configIndex + converterIndex + attributeIndex]?.$error" role="alert">
-                                                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                <div ng-message="required" class="tb-error-message" translate>extension.json-required</div>
-                                                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                <div ng-message="transformerJSON" class="tb-error-message" translate>extension.json-parse</div>
-                                                                                                            </div>
+                                                                                                            <div class="tb-error-messages" role="alert">
+    @if (attributeTransformer.hasError('required')) {<div class="tb-error-message">{{ 'extension.json-required' | translate }}</div>} @else if (attributeTransformer.hasError('transformerJSON')) {<div class="tb-error-message">{{ 'extension.json-parse' | translate }}</div>}
+</div>
                                                                                                         </div>
                                                                                                         }
 
@@ -190,27 +159,25 @@
                                                                                     <div flex layout="row" layout-align="start center">
                                                                                         <button mat-raised-button color="primary" (click)="addAttribute(converter.attributes)" attr.aria-label="{{ 'action.add' | translate }}">
                                                                                             <mat-icon class="material-icons">add</mat-icon>
-                                                                                            <span translate>extension.add-attribute</span>
+                                                                                            <span>{{ 'extension.add-attribute' | translate }}</span>
                                                                                         </button>
                                                                                     </div>
-                                                                                </v-pane-content>
-                                                                            </v-pane>
-                                                                        </v-accordion>
+                                                                            </mat-expansion-panel>
+                                                                        </mat-accordion>
 
 
-                                                                        <v-accordion id="http-timeseries-accordion" class="vAccordion--default" onexpand="expandValidation(index, id)" oncollapse="collapseValidation(index, id)">
-                                                                            <v-pane id="http-timeseries-pane_{{configIndex}}{{converterIndex}}">
-                                                                                <v-pane-header>
+                                                                        <mat-accordion id="http-timeseries-accordion" class="vAccordion--default">
+                                                                            <mat-expansion-panel id="http-timeseries-pane_{{configIndex}}{{converterIndex}}" (opened)="expandValidation(0, 'http-timeseries-pane_' + configIndex + converterIndex)" (closed)="collapseValidation(0, 'http-timeseries-pane_' + configIndex + converterIndex)">
+                                                                                <mat-expansion-panel-header>
                                                                                     {{ 'extension.timeseries' | translate }}
-                                                                                </v-pane-header>
-                                                                                <v-pane-content>
+                                                                                </mat-expansion-panel-header>
                                                                                     @if (converter?.timeseries?.length > 0) {
                                                                                       <div>
                                                                                         <ol class="list-group">
                                                                                             @for (timeseriesIndex of __keys(converter?.timeseries); track timeseriesIndex) {
                                                                                               @let timeseries = (converter?.timeseries)[timeseriesIndex];
                                                                                               <li class="list-group-item">
-                                                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(timeseries, converter.timeseries)" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
+                                                                                                <button mat-icon-button attr.aria-label="{{ 'action.remove' | translate }}" (click)="removeAttribute(timeseries, converter.timeseries)" matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
                                                                                                     <mat-icon attr.aria-label="{{ 'action.remove' | translate }}">close</mat-icon>
                                                                                                     
                                                                                                 </button>
@@ -218,17 +185,13 @@
                                                                                                     <mat-card-content>
                                                                                                         <section flex layout="row">
                                                                                                             <mat-form-field flex="60" class="md-block">
-                                                                                                                <mat-label translate>extension.key</mat-label>
-                                                                                                                <input matInput required attr.name="httpTimeseriesKey_{{configIndex}}{{converterIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.key">
-                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                                <div ng-messages="theForm?.['httpTimeseriesKey_' + configIndex + converterIndex + timeseriesIndex]?.$error">
-                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                                                </div>
+                                                                                                                <mat-label>{{ 'extension.key' | translate }}</mat-label>
+                                                                                                                <input matInput required name="httpTimeseriesKey_{{configIndex}}{{converterIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.key" #f6="ngModel">
+                                                                                                                @if (f6.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                                             </mat-form-field>
                                                                                                             <mat-form-field flex="40" class="md-block">
-                                                                                                                <mat-label translate>extension.type</mat-label>
-                                                                                                                <mat-select required name="httpTimeseriesType_{{configIndex}}{{converterIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.type">
+                                                                                                                <mat-label>{{ 'extension.type' | translate }}</mat-label>
+                                                                                                                <mat-select required name="httpTimeseriesType_{{configIndex}}{{converterIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.type" #f7="ngModel">
                                                                                                                     @for (attrType of __keys(types?.extensionValueType); track attrType) {
                                                                                                                       @let attrTypeValue = (types?.extensionValueType)[attrType];
                                                                                                                       <mat-option [value]="attrType">
@@ -236,28 +199,20 @@
                                                                                                                     </mat-option>
                                                                                                                     }
                                                                                                                 </mat-select>
-                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                                <div ng-messages="theForm?.['httpTimeseriesType_' + configIndex + converterIndex + timeseriesIndex]?.$error">
-                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                                                </div>
+                                                                                                                @if (f7.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                                             </mat-form-field>
                                                                                                         </section>
                                                                                                         <section flex layout="row">
                                                                                                             <mat-form-field flex="60" class="md-block">
-                                                                                                                <mat-label translate>extension.value</mat-label>
-                                                                                                                <input matInput required attr.name="httpTimeseriesValue_{{configIndex}}{{converterIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.value">
-                                                                                                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                                <div ng-messages="theForm?.['httpTimeseriesValue_' + configIndex + converterIndex + timeseriesIndex]?.$error">
-                                                                                                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                    <div translate ng-message="required">extension.field-required</div>
-                                                                                                                </div>
+                                                                                                                <mat-label>{{ 'extension.value' | translate }}</mat-label>
+                                                                                                                <input matInput required name="httpTimeseriesValue_{{configIndex}}{{converterIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.value" #f8="ngModel">
+                                                                                                                @if (f8.hasError('required')) {<mat-error>{{ 'extension.field-required' | translate }}</mat-error>}
                                                                                                             </mat-form-field>
 
 
                                                                                                             <mat-form-field flex="40" class="md-block">
-                                                                                                                <mat-label translate>extension.transformer</mat-label>
-                                                                                                                <mat-select name="httpTimeseriesTransformer" [(ngModel)]="timeseries.transformerType" (ngModelChange)="transformerTypeChange(timeseries)">
+                                                                                                                <mat-label>{{ 'extension.transformer' | translate }}</mat-label>
+                                                                                                                <mat-select name="httpTimeseriesTransformer_{{configIndex}}{{converterIndex}}{{timeseriesIndex}}" [(ngModel)]="timeseries.transformerType" (ngModelChange)="transformerTypeChange(timeseries)">
                                                                                                                     @for (transformerType of __keys(types?.extensionTransformerType); track transformerType) {
                                                                                                                       @let value = (types?.extensionTransformerType)[transformerType];
                                                                                                                       <mat-option [value]="transformerType">
@@ -270,18 +225,14 @@
 
                                                                                                         @if (timeseries?.transformerType == "custom") {
                                                                                                           <div>
-                                                                                                            <div class="md-caption" style="padding-left: 3px; padding-bottom: 10px; color: rgba(0,0,0,0.57);" translate>extension.transformer-json</div>
+                                                                                                            <div class="md-caption" style="padding-left: 3px; padding-bottom: 10px; color: rgba(0,0,0,0.57);">{{ 'extension.transformer-json' | translate }}</div>
                                                                                                             <div flex class="tb-extension-custom-transformer-panel">
-                                                                                                                <div flex class="tb-extension-custom-transformer" ui-ace="extensionCustomTransformerOptions" [(ngModel)]="timeseries.transformer" attr.name="timeseriesCustomTransformer_{{configIndex}}{{converterIndex}}{{timeseriesIndex}}" (ngModelChange)='validateTransformer(timeseries.transformer,"timeseriesCustomTransformer_" + configIndex + converterIndex + timeseriesIndex)' required>
+                                                                                                                <div flex class="tb-extension-custom-transformer" [ui-ace]="extensionCustomTransformerOptions" [(ngModel)]="timeseries.transformer" name="timeseriesCustomTransformer_{{configIndex}}{{converterIndex}}{{timeseriesIndex}}" (ngModelChange)='validateTransformer($event, "timeseriesCustomTransformer_" + configIndex + converterIndex + timeseriesIndex)' required #timeseriesTransformer="ngModel">
                                                                                                                 </div>
                                                                                                             </div>
-                                                                                                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                                                                                            <div class="tb-error-messages" ng-messages="theForm?.['timeseriesCustomTransformer_' + configIndex + converterIndex + timeseriesIndex]?.$error" role="alert">
-                                                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                <div ng-message="required" class="tb-error-message" translate>extension.json-required</div>
-                                                                                                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                                                                                                <div ng-message="transformerJSON" class="tb-error-message" translate>extension.json-parse</div>
-                                                                                                            </div>
+                                                                                                            <div class="tb-error-messages" role="alert">
+    @if (timeseriesTransformer.hasError('required')) {<div class="tb-error-message">{{ 'extension.json-required' | translate }}</div>} @else if (timeseriesTransformer.hasError('transformerJSON')) {<div class="tb-error-message">{{ 'extension.json-parse' | translate }}</div>}
+</div>
                                                                                                         </div>
                                                                                                         }
 
@@ -296,12 +247,11 @@
                                                                                     <div flex layout="row" layout-align="start center">
                                                                                         <button mat-raised-button color="primary" (click)="addAttribute(converter.timeseries)" attr.aria-label="{{ 'action.add' | translate }}">
                                                                                             <mat-icon class="material-icons">add</mat-icon>
-                                                                                            <span translate>extension.add-timeseries</span>
+                                                                                            <span>{{ 'extension.add-timeseries' | translate }}</span>
                                                                                         </button>
                                                                                     </div>
-                                                                                </v-pane-content>
-                                                                            </v-pane>
-                                                                        </v-accordion>
+                                                                            </mat-expansion-panel>
+                                                                        </mat-accordion>
                                                                     </mat-card-content>
                                                                 </mat-card>
                                                             </li>
@@ -310,14 +260,13 @@
                                                     </div>
                                                     }
                                                     <div flex layout="row" layout-align="start center">
-                                                        <button mat-raised-button color="primary" (click)="addConverter(config().converters)" attr.aria-label="{{ 'action.add' | translate }}">
+                                                        <button mat-raised-button color="primary" (click)="addConverter(converterConfig.converters)" attr.aria-label="{{ 'action.add' | translate }}">
                                                             <mat-icon class="material-icons">add</mat-icon>
-                                                            <span translate>extension.add-converter</span>
+                                                            <span>{{ 'extension.add-converter' | translate }}</span>
                                                         </button>
                                                     </div>
-                                                </v-pane-content>
-                                            </v-pane>
-                                        </v-accordion>
+                                            </mat-expansion-panel>
+                                        </mat-accordion>
 
                                     </mat-card-content>
                                 </mat-card>
@@ -329,12 +278,11 @@
                     <div flex layout="row" layout-align="start center">
                         <button mat-raised-button color="primary" (click)="addConverterConfig()" attr.aria-label="{{ 'action.add' | translate }}">
                             <mat-icon class="material-icons">add</mat-icon>
-                            <span translate>extension.add-config</span>
+                            <span>{{ 'extension.add-config' | translate }}</span>
                         </button>
                     </div>
-                </v-pane-content>
-            </v-pane>
-        </v-accordion>
+            </mat-expansion-panel>
+        </mat-accordion>
         <!--{{config}}-->
     </mat-card-content>
 </mat-card>

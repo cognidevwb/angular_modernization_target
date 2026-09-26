@@ -1,36 +1,29 @@
-import { Component, forwardRef, inject, model } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { ToastService } from '../../services/toast.service';
-import { TranslateService } from '@ngx-translate/core';
-import { UtilsService } from '../../common/services/utils.service';
-import { CommonModule } from '@angular/common';
+import { Component, DestroyRef, ElementRef, computed, forwardRef, inject, input, model } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TbExpandFullscreenDirective } from '../tb-expand-fullscreen/tb-expand-fullscreen.directive';
-import { linkAttrs } from '../../../legacy-link';
+import { MatButtonModule } from '@angular/material/button';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import ace from 'brace';
+import beautify from 'js-beautify';
+import $ from 'jquery';
+import { ToastService } from '../../services/toast.service';
+import { UtilsService } from '../../common/services/utils.service';
 import { RootState } from '../../../root-state';
 import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
-import ace from 'brace';
-import $ from 'jquery';
-import { isEqual } from 'lodash-es';
-import fixAceEditor from '../../../../app/components/ace-editor-fix';
-import { MatButtonModule } from '@angular/material/button';
-import { TranslatePipe } from '@ngx-translate/core';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-
-// Helpers at the legacy file's top level, beside the registration (as written).
-import beautify from 'js-beautify';
+import { TbExpandFullscreenDirective } from '../tb-expand-fullscreen/tb-expand-fullscreen.directive';
+import { UiAceDirective, UiAceOptions } from '../ui-ace/ui-ace.directive';
+import { fixAceEditor } from '../ui-ace/ace-editor-fix';
 
 /**
- * Ported from the AngularJS directive `tbJsFunc` (module `thingsboard.directives.jsFunc`) in src/app/components/js-func.directive.js:40.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbJsFunc` (module `thingsboard.directives.jsFunc`) in src/app/components/js-func.directive.js:40:
+ * a JavaScript function body edited in ace (`[(ngModel)]`, the body text), validated on `form-submit` by running it
+ * against `validationArgs` and checking the result against `resultType`.
+ * The legacy read `function-args` / `validation-args` with `scope.$eval(attrs.…)`; they are array inputs here.
  */
 @Component({
   selector: 'tb-js-func',
   standalone: true,
-  imports: [TranslatePipe, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbExpandFullscreenDirective)],
+  imports: [TranslatePipe, MatButtonModule, NgClass, FormsModule, UiAceDirective, forwardRef(() => TbExpandFullscreenDirective)],
   templateUrl: './tb-js-func.directive.html',
   providers: ngModelProviders(TbJsFuncDirective),
 })
@@ -38,114 +31,104 @@ export class TbJsFuncDirective extends NgModelController {
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
   readonly noValidate = model<any>();
   readonly fillHeight = model<any>();
+  readonly functionName = input<string | undefined>(undefined);
+  readonly functionArgs = input<string[] | null | undefined>([]);
+  readonly validationArgs = input<any[][] | null | undefined>([]);
+  readonly resultTypeInput = input<string | undefined>(undefined, { alias: 'result-type' });
+  readonly validationTriggerArg = input<string | undefined>(undefined, { alias: 'validation-trigger-arg' });
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly translate = inject(TranslateService);
   protected readonly toast = inject(ToastService);
   protected readonly utils = inject(UtilsService);
   protected readonly element = inject(ElementRef);
   protected readonly rootScope = inject(RootState);
 
-  functionName: any;
-  functionArgs: any;
-  validationArgs: any;
-  resultType: any;
-  validationTriggerArg: any;
-  functionValid: any = true;
-  protected Range: any = ace.acequire("ace/range").Range;
-  errorMarkers: any = [];
-  functionArgsString: any = '';
-  jsEditorOptions: any;
-  $eval: any;
-  $on: any;
-  $watch: any;
+  protected readonly Range: any = ace.acequire('ace/range').Range;
+  readonly functionArgsString = computed(() => (this.functionArgs() ?? []).join(', '));
+  readonly resultType = computed(() => this.resultTypeInput() || 'nocheck');
+  functionValid = true;
+  errorMarkers: any[] = [];
   errorAnnotationId: any;
-  functionBody: any;
+  private functionBodyValue: any;
   js_editor: any;
-  formSubmitSub: any;
-  updateAceEditorSizeSub: any;
 
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  readonly jsEditorOptions: UiAceOptions = {
+    useWrapMode: true,
+    mode: 'javascript',
+    advanced: {
+      enableSnippets: true,
+      enableBasicAutocompletion: true,
+      enableLiveAutocompletion: true,
+    },
+    onLoad: (_ace: any) => {
+      this.js_editor = _ace;
+      this.js_editor.session.on('change', () => {
+        this.cleanupJsErrors();
+      });
+      fixAceEditor(_ace);
+    },
+  };
 
   constructor() {
     super();
-    this.functionName = this.attrs.functionName;
-this.functionArgs = this.attrs.functionArgs;
-this.validationArgs = this.attrs.validationArgs;
-    this.resultType = this.attrs.resultType;
-    if (!this.resultType || this.resultType.length === 0) {
-            this.resultType = "nocheck";
-        }
-    this.validationTriggerArg = this.attrs.validationTriggerArg;
-    this.js_editor;
-    for (var i: any = 0; i < this.functionArgs.length; i++) {
-            if (this.functionArgsString.length > 0) {
-                this.functionArgsString += ', ';
-            }
-            this.functionArgsString += this.functionArgs[i];
-        }
-    this.jsEditorOptions = {
-            useWrapMode: true,
-            mode: 'javascript',
-            advanced: {
-                enableSnippets: true,
-                enableBasicAutocompletion: true,
-                enableLiveAutocompletion: true
-            },
-            onLoad: (_ace?: any, ...rest: any[]) => {
-                this.js_editor = _ace;
-                this.js_editor.session.on("change", () => {
-                    this.cleanupJsErrors();
-                });
-                fixAceEditor(_ace);
-            }
-        };
-    this.$watch('functionBody', (newFunctionBody?: any, oldFunctionBody?: any) => {
-            this.$setViewValue(this.functionBody);
-            if (!isEqual(newFunctionBody, oldFunctionBody)) {
-                this.functionValid = true;
-            }
-            this.updateValidity();
-        });
-this.formSubmitSub = this.rootScope.$on('form-submit', (args?: any) => {
-      if (!args || this.validationTriggerArg && this.validationTriggerArg == args) {
-            this.validationArgs = this.attrs.validationArgs;
-            this.cleanupJsErrors();
-            this.functionValid = true;
-            this.updateValidity();
-            this.functionValid = this.validate();
-            this.updateValidity();
-        }
+    const offFormSubmit = this.rootScope.$on('form-submit', (_event: unknown, args?: any) => {
+      const trigger = this.validationTriggerArg();
+      if (!args || (trigger && trigger == args)) {
+        this.cleanupJsErrors();
+        this.functionValid = true;
+        this.updateValidity();
+        this.functionValid = this.validateFunction();
+        this.updateValidity();
+      }
     });
-this.updateAceEditorSizeSub = this.rootScope.$on('update-ace-editor-size', () => {
+    const offEditorSize = this.rootScope.$on('update-ace-editor-size', () => {
       this.updateEditorSize();
     });
+    inject(DestroyRef).onDestroy(() => {
+      offFormSubmit();
+      offEditorSize();
+    });
+  }
+
+  get functionBody(): any {
+    return this.functionBodyValue;
+  }
+
+  /** The legacy `$watch('functionBody', …)`: the edited body goes to the form. */
+  set functionBody(newFunctionBody: any) {
+    const oldFunctionBody = this.functionBodyValue;
+    this.functionBodyValue = newFunctionBody;
+    this.$setViewValue(newFunctionBody);
+    if (newFunctionBody !== oldFunctionBody) {
+      this.functionValid = true;
+    }
+    this.updateValidity();
   }
 
   override $render(): void {
-    this.functionBody = this.$viewValue;
+    this.functionBodyValue = this.$viewValue;
   }
 
-  onFullscreenChanged(...rest: any[]): any {
+  onFullscreenChanged(): void {
     this.updateEditorSize();
   }
 
-  beautifyJs(...rest: any[]): any {
-    var res: any = beautify(this.functionBody, {indent_size: 4, wrap_line_length: 60});
-    this.functionBody = res;
+  beautifyJs(): void {
+    this.functionBody = beautify(this.functionBody, { indent_size: 4, wrap_line_length: 60 });
   }
 
-  updateEditorSize(...rest: any[]): any {
+  updateEditorSize(): void {
     if (this.js_editor) {
         this.js_editor.resize();
         this.js_editor.renderer.updateFull();
     }
   }
 
-  cleanupJsErrors(...rest: any[]): any {
+  cleanupJsErrors(): void {
     this.toast.hide();
+    if (!this.js_editor) {
+        return;
+    }
     for (var i: any = 0; i < this.errorMarkers.length; i++) {
         this.js_editor.session.removeMarker(this.errorMarkers[i]);
     }
@@ -158,11 +141,11 @@ this.updateAceEditorSizeSub = this.rootScope.$on('update-ace-editor-size', () =>
     }
   }
 
-  updateValidity(...rest: any[]): any {
-this.$setValidity('functionBody', this.functionValid);
+  updateValidity(): void {
+    this.$setValidity('functionBody', this.functionValid);
   }
 
-  showError(error?: any, ...rest: any[]): any {
+  showError(error: string): void {
     var toastParent: any = $('#tb-javascript-panel', $(this.element.nativeElement));
     var dialogContent: any = toastParent.closest('md-dialog-content');
     if (dialogContent.length > 0) {
@@ -171,18 +154,20 @@ this.$setValidity('functionBody', this.functionValid);
     this.toast.showError(error, toastParent, 'bottom left');
   }
 
-  override validate(...rest: any[]): any {
-    let vm = this;
+  /** The legacy `scope.validate()`: compile and run the body; false (with the error shown) when it fails. */
+  validateFunction(): boolean {
+    const vm = this;
     try {
-        var toValidate: any = new Function(vm.functionArgsString, vm.functionBody);
+        var toValidate: any = new Function(vm.functionArgsString(), vm.functionBody);
         if (vm.noValidate()) {
             return true;
         }
         var res: any;
         var validationError: any;
-        for (var i: any=0;i<vm.validationArgs.length;i++) {
+        const validationArgs = vm.validationArgs() ?? [];
+        for (var i: any=0;i<validationArgs.length;i++) {
             try {
-                res = toValidate.apply(this, vm.validationArgs[i]);
+                res = toValidate.apply(this, validationArgs[i]);
                 validationError = null;
                 break;
             } catch (e: any) {
@@ -192,16 +177,17 @@ this.$setValidity('functionBody', this.functionValid);
         if (validationError) {
             throw validationError;
         }
-        if (vm.resultType != 'nocheck') {
-            if (vm.resultType === 'any') {
+        const resultType = vm.resultType();
+        if (resultType != 'nocheck') {
+            if (resultType === 'any') {
                 if ((res === undefined)) {
                     vm.showError(vm.translate.instant('js-func.no-return-error'));
                     return false;
                 }
             } else {
                 var resType: any = typeof res;
-                if (resType != vm.resultType) {
-                    vm.showError(vm.translate.instant('js-func.return-type-mismatch', {type: vm.resultType}));
+                if (resType != resultType) {
+                    vm.showError(vm.translate.instant('js-func.return-type-mismatch', {type: resultType}));
                     return false;
                 }
             }
@@ -245,11 +231,5 @@ this.$setValidity('functionBody', this.functionValid);
         }
         return false;
     }
-    return undefined;
-  }
-
-  /** The link's `attrs`: the host element's attributes, read live. */
-  protected get attrs(): any {
-    return linkAttrs(this.element.nativeElement);
   }
 }

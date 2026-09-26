@@ -1,14 +1,7 @@
-import { Component, OnInit, forwardRef, inject, model, output } from '@angular/core';
+import { Component, OnInit, forwardRef, inject, input, model } from '@angular/core';
+import { CreateEntityAliasFn, FetchDashboardStatesFn, FetchEntityKeysFn, GenerateDataKeyFn } from '../tb-datasource/datasource-callbacks';
 import { NgClass } from '@angular/common';
-import {
-  AbstractControl,
-  ControlValueAccessor,
-  FormsModule,
-  NG_VALIDATORS,
-  NG_VALUE_ACCESSOR,
-  ValidationErrors,
-  Validator,
-} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -29,6 +22,7 @@ import { TbLegendConfigDirective } from '../tb-legend-config/tb-legend-config.di
 import { TbManageWidgetActionsDirective } from '../tb-manage-widget-actions/tb-manage-widget-actions.directive';
 import { TbMaterialIconSelectDirective } from '../tb-material-icon-select/tb-material-icon-select.directive';
 import { TbTimewindowDirective } from '../tb-timewindow/tb-timewindow.directive';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /** Fields of the settings/data tabs whose change is written back into `config` / `layout` (the legacy combined watch). */
 type ConfigField =
@@ -40,8 +34,7 @@ type ConfigField =
 
 /**
  * Ported from the AngularJS directive `tbWidgetConfig` (module `thingsboard.directives.widgetConfig`) in src/app/components/widget/widget-config.directive.js:38.
- * The `ngModel` it required is this component's ControlValueAccessor; the validity keys it set on
- * `ngModelCtrl` are reported through Validator.
+ * The `ngModel` it required is the NgModelController base: `$render`, `$setViewValue`, `$setValidity`.
  */
 @Component({
   selector: 'tb-widget-config',
@@ -55,12 +48,9 @@ type ConfigField =
     forwardRef(() => TbManageWidgetActionsDirective),
   ],
   templateUrl: './tb-widget-config.directive.html',
-  providers: [
-    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => TbWidgetConfigDirective), multi: true },
-    { provide: NG_VALIDATORS, useExisting: forwardRef(() => TbWidgetConfigDirective), multi: true },
-  ],
+  providers: ngModelProviders(TbWidgetConfigDirective),
 })
-export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Validator {
+export class TbWidgetConfigDirective extends NgModelController implements OnInit {
   readonly forceExpandDatasources = model<any>();
   readonly isDataEnabled = model<any>();
   readonly widgetType = model<any>();
@@ -70,9 +60,11 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
   readonly datakeySettingsSchema = model<any>();
   readonly aliasController = model<any>();
   readonly functionsOnly = model<any>();
-  readonly fetchEntityKeys = output<any>();
-  readonly fetchDashboardStates = output<any>();
-  readonly onCreateEntityAlias = output<any>();
+  readonly fetchEntityKeys = input<FetchEntityKeysFn | undefined>();
+  readonly fetchDashboardStates = input<FetchDashboardStatesFn | undefined>();
+  readonly onCreateEntityAlias = input<CreateEntityAliasFn | undefined>();
+  /** `generateDataKey(chip, type)` handed to the datasources (the legacy `generate-data-key` callback). */
+  readonly generateDataKeyFn: GenerateDataKeyFn = (chip, type) => this.generateDataKey(chip, type);
   readonly theForm = model<any>();
 
   protected readonly rootScope = inject(RootState);
@@ -89,8 +81,7 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
       this.onSettingsChange();
     },
     $setValidity: (key: string, valid: boolean) => {
-      this.jsonFormErrors = valid ? {} : { [key]: true };
-      this.onValidatorChange();
+      this.$setValidity(key, valid);
     },
   };
 
@@ -147,15 +138,8 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
   useDashboardTimewindow: any;
   widgetStyle: any;
 
-  /** The ngModel value (legacy `ngModelCtrl.$viewValue`). */
-  private modelValue: any;
-  private validationErrors: ValidationErrors = {};
-  private jsonFormErrors: ValidationErrors = {};
-  private onChange: (value: any) => void = () => {};
-  private onTouched: () => void = () => {};
-  private onValidatorChange: () => void = () => {};
-
   constructor() {
+    super();
     this.widgetEditMode = this.rootScope['widgetEditMode'];
     this.currentSettings = structuredClone(this.emptySettingsSchema);
     this.currentSettingsGroupInfoes = structuredClone(this.emptySettingsGroupInfoes);
@@ -171,8 +155,8 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
   }
 
   /** Legacy `ngModelCtrl.$render`. */
-  writeValue(viewValue: any): void {
-    this.modelValue = viewValue;
+  override $render(): void {
+    const viewValue = this.$viewValue;
     if (viewValue) {
       var config: any = viewValue.config;
       var layout: any = viewValue.layout;
@@ -266,23 +250,6 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
     }
   }
 
-  registerOnChange(fn: (value: any) => void): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  registerOnValidatorChange(fn: () => void): void {
-    this.onValidatorChange = fn;
-  }
-
-  validate(_control: AbstractControl): ValidationErrors | null {
-    const errors = { ...this.validationErrors, ...this.jsonFormErrors };
-    return Object.keys(errors).length ? errors : null;
-  }
-
   /** One field of the legacy combined watch changed: set it, then write every field back. */
   setField(field: ConfigField, value: any): void {
     (this as any)[field] = value;
@@ -291,8 +258,8 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
 
   /** Legacy combined `$watch('title + showTitleIcon + …')`. */
   onConfigChange(): void {
-    if (this.modelValue) {
-        var value: any = this.modelValue;
+    if (this.$viewValue) {
+        var value: any = this.$viewValue;
         if (value.config) {
             var config: any = value.config;
             config.title = this.title;
@@ -340,8 +307,8 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
 
   /** Legacy `$watch('currentSettings', …, true)`. */
   onSettingsChange(): void {
-    if (this.modelValue) {
-        var value: any = this.modelValue;
+    if (this.$viewValue) {
+        var value: any = this.$viewValue;
         if (value.config) {
             value.config.settings = this.currentSettings;
             this.emitValue(value);
@@ -352,8 +319,8 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
   /** Legacy `$watch('timewindow', …, true)`. */
   onTimewindowChange(timewindow: any): void {
     this.timewindow = timewindow;
-    if (this.modelValue) {
-        var value: any = this.modelValue;
+    if (this.$viewValue) {
+        var value: any = this.$viewValue;
         if (value.config) {
             value.config.timewindow = this.timewindow;
             this.emitValue(value);
@@ -364,8 +331,8 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
   /** Legacy `$watch('legendConfig', …, true)`. */
   onLegendConfigChange(legendConfig: any): void {
     this.legendConfig = legendConfig;
-    if (this.modelValue) {
-        var value: any = this.modelValue;
+    if (this.$viewValue) {
+        var value: any = this.$viewValue;
         if (value.config) {
             value.config.legendConfig = this.legendConfig;
             this.emitValue(value);
@@ -375,11 +342,11 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
 
   /** Legacy `$watch('datasources', …, true)`. */
   onDatasourcesChange(): void {
-    if (this.modelValue && this.modelValue.config
+    if (this.$viewValue && this.$viewValue.config
         && this.widgetType() !== this.typesRef.widgetType.rpc.value
         && this.widgetType() !== this.typesRef.widgetType.alarm.value
         && this.widgetType() !== this.typesRef.widgetType.static.value && this.isDataEnabled()) {
-        var value: any = this.modelValue;
+        var value: any = this.$viewValue;
         var config: any = value.config;
         if (config.datasources) {
             config.datasources.splice(0, config.datasources.length);
@@ -399,8 +366,8 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
   /** Legacy `$watch('targetDeviceAlias.value', …)`. */
   onTargetDeviceAliasChange(alias: any): void {
     this.targetDeviceAlias.value = alias;
-    if (this.modelValue && this.modelValue.config && this.widgetType() === this.typesRef.widgetType.rpc.value && this.isDataEnabled()) {
-        var value: any = this.modelValue;
+    if (this.$viewValue && this.$viewValue.config && this.widgetType() === this.typesRef.widgetType.rpc.value && this.isDataEnabled()) {
+        var value: any = this.$viewValue;
         var config: any = value.config;
         if (this.targetDeviceAlias.value) {
             config.targetDeviceAliasIds = [this.targetDeviceAlias.value.id];
@@ -415,8 +382,8 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
   /** Legacy `$watch('alarmSource.value', …)`. */
   onAlarmSourceChange(alarmSource: any): void {
     this.alarmSource.value = alarmSource;
-    if (this.modelValue && this.modelValue.config && this.widgetType() === this.typesRef.widgetType.alarm.value && this.isDataEnabled()) {
-        var value: any = this.modelValue;
+    if (this.$viewValue && this.$viewValue.config && this.widgetType() === this.typesRef.widgetType.alarm.value && this.isDataEnabled()) {
+        var value: any = this.$viewValue;
         var config: any = value.config;
         if (this.alarmSource.value) {
             config.alarmSource = this.alarmSource.value;
@@ -431,8 +398,8 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
   /** Legacy `$watch('actions', …, true)`. */
   onActionsChange(actions: any): void {
     this.actions = actions;
-    if (this.modelValue && this.modelValue.config) {
-        var value: any = this.modelValue;
+    if (this.$viewValue && this.$viewValue.config) {
+        var value: any = this.$viewValue;
         var config: any = value.config;
         config.actions = this.actions;
         this.emitValue(value);
@@ -442,17 +409,8 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
 
   /** Legacy `ngModelCtrl.$setViewValue(value)`. */
   private emitValue(value: any): void {
-    this.modelValue = value;
-    this.onChange(value);
-    this.onTouched();
-  }
-
-  private setValidity(key: string, valid: any): void {
-    if (valid) {
-      delete this.validationErrors[key];
-    } else {
-      this.validationErrors[key] = true;
-    }
+    this.$setViewValue(value);
+    this.$setTouched();
   }
 
   private setFormDirty(): void {
@@ -481,37 +439,35 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
   }
 
   updateValidity(...rest: any[]): any {
-    this.validationErrors = {};
-    if (this.modelValue) {
-        var value: any = this.modelValue;
+    if (this.$viewValue) {
+        var value: any = this.$viewValue;
         var config: any = value.config;
         if (config) {
             var valid: any;
             if (this.widgetType() === this.typesRef.widgetType.rpc.value && this.isDataEnabled()) {
                 valid = config && config.targetDeviceAliasIds && config.targetDeviceAliasIds.length > 0;
-                this.setValidity('targetDeviceAliasIds', valid);
+                this.$setValidity('targetDeviceAliasIds', valid);
             } else if (this.widgetType() === this.typesRef.widgetType.alarm.value && this.isDataEnabled()) {
                 valid = config && config.alarmSource;
-                this.setValidity('alarmSource', valid);
+                this.$setValidity('alarmSource', valid);
             } else if (this.widgetType() !== this.typesRef.widgetType.static.value && this.isDataEnabled()) {
                 valid = config && config.datasources && config.datasources.length > 0;
-                this.setValidity('datasources', valid);
+                this.$setValidity('datasources', valid);
             }
             try {
                 JSON.parse(this.widgetStyle);
-                this.setValidity('widgetStyle', true);
+                this.$setValidity('widgetStyle', true);
             } catch (e: any) {
-                this.setValidity('widgetStyle', false);
+                this.$setValidity('widgetStyle', false);
             }
             try {
                 JSON.parse(this.titleStyle);
-                this.setValidity('titleStyle', true);
+                this.$setValidity('titleStyle', true);
             } catch (e: any) {
-                this.setValidity('titleStyle', false);
+                this.$setValidity('titleStyle', false);
             }
         }
     }
-    this.onValidatorChange();
   }
 
   addDatasource(...rest: any[]): any {
@@ -581,7 +537,7 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
 
   genNextLabel(name?: any, ...rest: any[]): any {
     var label: any = name;
-    var value: any = this.modelValue;
+    var value: any = this.$viewValue;
     var i: any = 1;
     var matches: any = false;
     do {
@@ -608,7 +564,7 @@ export class TbWidgetConfigDirective implements OnInit, ControlValueAccessor, Va
 
   genNextColor(...rest: any[]): any {
     var i: any = 0;
-    var value: any = this.modelValue;
+    var value: any = this.$viewValue;
     var datasources: any = this.widgetType() == this.typesRef.widgetType.alarm.value ? [value.config.alarmSource] : value.config.datasources;
     if (datasources) {
         for (var d: any=0;d<datasources.length;d++) {

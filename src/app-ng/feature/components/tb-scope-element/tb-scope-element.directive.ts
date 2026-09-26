@@ -1,20 +1,20 @@
-import { Component } from '@angular/core';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let scope: any;
+import { Directive, ElementRef, inject, input } from '@angular/core';
 
 /**
- * Ported from the AngularJS directive `tbScopeElement` (module `thingsboard.directives.scopeElement`) in src/app/components/scope-element.directive.js:16.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Ported from the AngularJS directive `tbScopeElement` (module `thingsboard.directives.scopeElement`)
+ * in src/app/components/scope-element.directive.js:16 — an attribute directive that handed its element
+ * to the surrounding scope under the name in `tb-scope-element="name"`. Angular has no surrounding
+ * scope: the page takes the element with `viewChild(TbScopeElementDirective)` (or a
+ * `#ref="tbScopeElement"` reference) and reads `.element` / `.name()`.
  */
-@Component({
-  selector: 'tb-scope-element',
+@Directive({
+  selector: '[tb-scope-element]',
   standalone: true,
-  template: '', // TODO(port): no template found
+  exportAs: 'tbScopeElement',
 })
 export class TbScopeElementDirective {
-
-  pre(iElement?: any, iAttrs?: any, ...rest: any[]): any {
-    (this as any)[iAttrs.tbScopeElement] = iElement;
-  }
+  /** The name the legacy scope property had. */
+  readonly name = input<string | undefined>(undefined, { alias: 'tb-scope-element' });
+  /** The host element (the legacy scope got the jqLite wrapper; `[0]` of that is this). */
+  readonly element: HTMLElement = inject(ElementRef).nativeElement;
 }

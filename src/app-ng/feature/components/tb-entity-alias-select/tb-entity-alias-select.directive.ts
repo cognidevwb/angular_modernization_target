@@ -1,4 +1,5 @@
-import { Component, inject, model, output } from '@angular/core';
+import { Component, inject, input, model } from '@angular/core';
+import { CreateEntityAliasFn } from '../tb-datasource/datasource-callbacks';
 import { ElementRef } from '@angular/core';
 import { ENTER } from '@angular/cdk/keycodes';
 import { EntityService } from '../../api/services/entity.service';
@@ -20,7 +21,7 @@ export class TbEntityAliasSelectDirective extends NgModelController {
   readonly tbRequired = model<any>();
   readonly aliasController = model<any>();
   readonly allowedEntityTypes = model<any>();
-  readonly onCreateEntityAlias = output<any>();
+  readonly onCreateEntityAlias = input<CreateEntityAliasFn | undefined>();
 
   // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly entityService = inject(EntityService);
@@ -33,7 +34,6 @@ protected template: any = entityAliasSelectTemplate;
   entityAliasSearchText: any;
   ngControl: any;
 
-  // TODO(port): `scope.onCreateEntityAlias(…)` — its result was read; an output emits and returns nothing: take the value from an input callback instead
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
@@ -108,7 +108,7 @@ protected template: any = entityAliasSelectTemplate;
     el.scope().$mdAutocompleteCtrl.hidden = true;
     el.scope().$mdAutocompleteCtrl.hasNotFound = false;
     event.preventDefault();
-    var promise: any = this.onCreateEntityAlias.emit({event: event, alias: alias, allowedEntityTypes: this.allowedEntityTypes()});
+    var promise: any = this.onCreateEntityAlias()?.(event, alias, this.allowedEntityTypes());
     if (promise) {
         promise.then(
             (newAlias?: any) => {

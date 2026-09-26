@@ -24,7 +24,7 @@
 </div>
 <div class="tb-cell" flex="20">{{ alarm ? (('alarm.display-status.' + alarm?.status) | translate) : '' }}</div>
 <div class="tb-cell" flex="15">
-    <button mat-icon-button color="primary" (click)="showAlarmDetails($event)" attr.aria-label="{{ 'action.view' | translate }}" attr.matTooltip="{{ 'alarm.details' | translate }}" matTooltipPosition="above">
+    <button mat-icon-button type="button" color="primary" (click)="showAlarmDetails($event)" attr.aria-label="{{ 'action.view' | translate }}" [matTooltip]="'alarm.details' | translate" matTooltipPosition="above">
         
         <mat-icon attr.aria-label="{{ 'action.view' | translate }}" class="material-icons">
             more_horiz

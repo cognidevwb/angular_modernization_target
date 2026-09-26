@@ -1,44 +1,34 @@
-import { Component, forwardRef, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, Type, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgClass } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 import { CustomerService } from '../../api/services/customer.service';
-import { DOCUMENT } from '@angular/common';
 import { DashboardService } from '../../api/services/dashboard.service';
 import { ImportExportService } from '../../import-export/services/import-export.service';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { UserService } from '../../api/services/user.service';
 import { types } from '../../common/constants/types';
-import { CommonModule } from '@angular/common';
-import { TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
-import { TbHelpDirective } from '../../help/tb-help/tb-help.directive';
+import { goState } from '../../../state-paths';
+import { GridConfig, TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
+import { TbGridHelpButtonComponent } from '../../components/tb-grid/grid-help-button.component';
+import { showConfirm } from '../../rulechain/confirm-dialog/confirm-dialog.component';
 import { TbDashboardDetailsDirective } from '../tb-dashboard-details/tb-dashboard-details.directive';
 import { TbAuditLogTableDirective } from '../../audit/tb-audit-log-table/tb-audit-log-table.directive';
-
-import $ from 'jquery';
-// @ts-ignore
-import addDashboardTemplate from '../../../../app/dashboard/add-dashboard.tpl.html';
-// @ts-ignore
-import dashboardCard from '../../../../app/dashboard/dashboard-card.tpl.html';
-// @ts-ignore
-import addDashboardsToCustomerTemplate from '../../../../app/dashboard/add-dashboards-to-customer.tpl.html';
-// @ts-ignore
-import makeDashboardPublicDialogTemplate from '../../../../app/dashboard/make-dashboard-public-dialog.tpl.html';
-// @ts-ignore
-import manageAssignedCustomersTemplate from '../../../../app/dashboard/manage-assigned-customers.tpl.html';
-import { MatTabsModule } from '@angular/material/tabs';
-import { TranslatePipe } from '@ngx-translate/core';
-import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
+import { DashboardCardComponent } from '../dashboard-card/dashboard-card.component';
+import { AddDashboardsToCustomerComponent } from '../add-dashboards-to-customer/add-dashboards-to-customer.component';
+import { MakeDashboardPublicDialogComponent } from '../make-dashboard-public-dialog/make-dashboard-public-dialog.component';
+import { ManageAssignedCustomersComponent } from '../manage-assigned-customers/manage-assigned-customers.component';
+import { AddDashboardDialogComponent } from './add-dashboard-dialog.component';
 
 /**
  * Ported from the AngularJS controller `DashboardsController` (module `thingsboard.dashboard`) in src/app/dashboard/index.js:50.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 4 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
   selector: 'dashboards',
   standalone: true,
-  imports: [TranslatePipe, MatTabsModule, CommonModule, forwardRef(() => TbGridDirective), forwardRef(() => TbHelpDirective), forwardRef(() => TbDashboardDetailsDirective), forwardRef(() => TbAuditLogTableDirective)],
+  imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbDashboardDetailsDirective, TbAuditLogTableDirective],
   templateUrl: './dashboards.component.html',
 })
 export class DashboardsComponent {
@@ -50,25 +40,20 @@ export class DashboardsComponent {
   protected readonly router = inject(Router);
   protected readonly route = inject(ActivatedRoute);
   protected readonly dialog = inject(MatDialog);
-  protected readonly document = inject(DOCUMENT);
-  // TODO(port): '$q' — use Promise, or an Observable
   protected readonly translate = inject(TranslateService);
-  // TODO(port): elements not resolved to a component: details-buttons
+
+  readonly dashboardCard: Type<unknown> = DashboardCardComponent;
+  readonly addDashboardDialog: Type<unknown> = AddDashboardDialogComponent;
 
   protected customerId: any;
   protected dashboardActionsList: any;
   protected dashboardGroupActionsList: any = [];
   types: any;
-  dashboardGridConfig: any;
+  dashboardGridConfig: GridConfig;
   dashboardsScope: any;
   customerDashboardsTitle: any;
-  grid: any;
+  grid!: TbGridDirective;
   topIndex: any;
-
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): $state.go — $state.go: this.router.navigate([...])
-  // TODO(port): $stateParams — $stateParams: this.route.snapshot.params
-  // TODO(port): `success` — a named function expression that calls itself; as an arrow it has no name: name it as a method
 
   constructor() {
     this.customerId = this.route.snapshot.params['customerId'];
@@ -97,16 +82,12 @@ export class DashboardsComponent {
         clickItemFunc: this.openDashboard,
 
         getItemTitleFunc: this.getDashboardTitle,
-        itemCardController: 'DashboardCardController',
-        itemCardTemplateUrl: dashboardCard,
         parentCtl: this,
 
         actionsList: this.dashboardActionsList,
         groupActionsList: this.dashboardGroupActionsList,
 
         onGridInited: this.gridInited,
-
-        addItemTemplateUrl: addDashboardTemplate,
 
         addItemText: (...rest: any[]) => { return this.translate.instant('dashboard.add-dashboard-text') },
         noItemsText: (...rest: any[]) => { return this.translate.instant('dashboard.no-dashboards-text') },
@@ -118,18 +99,15 @@ export class DashboardsComponent {
             return !(this.dashboardsScope === 'customer_user');
         }
     };
-    if ((this.route.snapshot.params['items'] !== undefined) && this.route.snapshot.params['items'] !== null) {
-        this.dashboardGridConfig.items = this.route.snapshot.params['items'];
+    const items = this.router.getCurrentNavigation()?.extras.state?.['items'];
+    if (items !== undefined && items !== null) {
+        this.dashboardGridConfig.items = items;
     }
-    if ((this.route.snapshot.params['topIndex'] !== undefined) && this.route.snapshot.params['topIndex'] > 0) {
-        this.dashboardGridConfig.topIndex = this.route.snapshot.params['topIndex'];
+    const topIndex = Number(this.route.snapshot.queryParams['topIndex']);
+    if (topIndex > 0) {
+        this.dashboardGridConfig.topIndex = topIndex;
     }
-    this.dashboardsScope = (this.router as any).$current.data.dashboardsType;
-    this.makePublic = this.makePublic;
-    this.makePrivate = this.makePrivate;
-    this.manageAssignedCustomers = this.manageAssignedCustomers;
-    this.unassignFromCustomer = this.unassignFromCustomer;
-    this.exportDashboard = this.exportDashboard;
+    this.dashboardsScope = this.route.snapshot.data['dashboardsType'];
     this.initController();
   }
 
@@ -253,7 +231,7 @@ export class DashboardsComponent {
                     },
                     name: (...rest: any[]) => { return this.translate.instant('dashboard.assign-dashboards') },
                     details: (selectedCount?: any, ...rest: any[]) => {
-                        return this.translate.instant('dashboard.assign-dashboards-text', {count: selectedCount}, "messageformat");
+                        return this.translate.instant('dashboard.assign-dashboards-text', {count: selectedCount});
                     },
                     icon: "assignment_ind"
                 }
@@ -265,7 +243,7 @@ export class DashboardsComponent {
                 },
                 name: (...rest: any[]) => { return this.translate.instant('dashboard.unassign-dashboards') },
                 details: (selectedCount?: any, ...rest: any[]) => {
-                    return this.translate.instant('dashboard.unassign-dashboards-action-text', {count: selectedCount}, "messageformat");
+                    return this.translate.instant('dashboard.unassign-dashboards-action-text', {count: selectedCount});
                 },
                 icon: "assignment_return"                }
         );
@@ -282,7 +260,7 @@ export class DashboardsComponent {
         );
 
         this.dashboardGridConfig.addItemActions = [];
-        this.dashboardGridConfig.addItemActions.push({
+        this.dashboardGridConfig.addItemActions!.push({
             onAction: ($event?: any, ...rest: any[]) => {
                 this.grid.addItem($event);
             },
@@ -290,7 +268,7 @@ export class DashboardsComponent {
             details: (...rest: any[]) => { return this.translate.instant('dashboard.create-new-dashboard') },
             icon: "insert_drive_file"
         });
-        this.dashboardGridConfig.addItemActions.push({
+        this.dashboardGridConfig.addItemActions!.push({
             onAction: ($event?: any, ...rest: any[]) => {
                 this.importExport.importDashboard($event).then(
                     () => {
@@ -360,7 +338,7 @@ export class DashboardsComponent {
                     },
                     name: (...rest: any[]) => { return this.translate.instant('dashboard.unassign-dashboards') },
                     details: (selectedCount?: any, ...rest: any[]) => {
-                        return this.translate.instant('dashboard.unassign-dashboards-action-title', {count: selectedCount}, "messageformat");
+                        return this.translate.instant('dashboard.unassign-dashboards-action-title', {count: selectedCount});
                     },
                     icon: "assignment_return"
                 }
@@ -394,18 +372,18 @@ export class DashboardsComponent {
   };
 
   deleteDashboardsTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('dashboard.delete-dashboards-title', {count: selectedCount}, 'messageformat');
+    return this.translate.instant('dashboard.delete-dashboards-title', {count: selectedCount});
   };
 
   deleteDashboardsActionTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('dashboard.delete-dashboards-action-title', {count: selectedCount}, 'messageformat');
+    return this.translate.instant('dashboard.delete-dashboards-action-title', {count: selectedCount});
   };
 
   deleteDashboardsText = (...rest: any[]): any => {
     return this.translate.instant('dashboard.delete-dashboards-text');
   };
 
-  gridInited = (grid?: any, ...rest: any[]): any => {
+  gridInited = (grid: TbGridDirective): void => {
     this.grid = grid;
   };
 
@@ -417,29 +395,12 @@ export class DashboardsComponent {
     return this.dashboardService.getDashboard(dashboard.id.id);
   };
 
-  saveDashboard = (dashboard?: any, ...rest: any[]): any => {
-    var deferred: any = $q.defer();
-    this.dashboardService.saveDashboard(dashboard).then(
-        (savedDashboard?: any) => {
-            var dashboards: any = [ savedDashboard ];
-            this.customerService.applyAssignedCustomersInfo(dashboards).then(
-                function success(items?: any) {
-                    if (items && items.length == 1) {
-                        deferred.resolve(items[0]);
-                    } else {
-                        deferred.reject();
-                    }
-                },
-                function fail() {
-                    deferred.reject();
-                }
-            );
-        },
-        function fail() {
-            deferred.reject();
-        }
+  saveDashboard = (dashboard?: any): Promise<any> => {
+    return this.dashboardService.saveDashboard(dashboard).then((savedDashboard?: any) =>
+      this.customerService.applyAssignedCustomersInfo([savedDashboard]).then((items?: any) =>
+        items && items.length == 1 ? items[0] : Promise.reject(),
+      ),
     );
-    return deferred.promise;
   };
 
   manageAssignedCustomers = ($event?: any, dashboard?: any, ...rest: any[]): any => {
@@ -462,27 +423,31 @@ export class DashboardsComponent {
     this.showManageAssignedCustomersDialog($event, dashboardIds, 'unassign');
   }
 
-  showManageAssignedCustomersDialog($event?: any, dashboardIds?: any, actionType?: any, assignedCustomers?: any, ...rest: any[]): any {
-    let vm = this;
-    if ($event) {
-        $event.stopPropagation();
-    }
-    (this.dialog as any).show({
-        controller: 'ManageAssignedCustomersController',
-        controllerAs: 'vm',
-        templateUrl: manageAssignedCustomersTemplate,
-        locals: {actionType: actionType, dashboardIds: dashboardIds, assignedCustomers: assignedCustomers},
-        parent: $(this.document.body),
-        fullscreen: true,
-        targetEvent: $event
-    }).then(() => {
+  showManageAssignedCustomersDialog($event?: any, dashboardIds?: any, actionType?: any, assignedCustomers?: any): void {
+    $event?.stopPropagation?.();
+    this.openThenRefresh(ManageAssignedCustomersComponent, { actionType, dashboardIds, assignedCustomers });
+  }
+
+  /** Opens `component` with `data`; refreshes the grid when it closes with a result. */
+  private openThenRefresh(component: Type<unknown>, data: any): void {
+    firstValueFrom(this.dialog.open(component, { data }).afterClosed()).then((result) => {
+      if (result) {
         this.grid.refreshList();
-    }, function () {
+      }
+    });
+  }
+
+  /** The legacy confirm dialog, with the page's yes / no buttons. */
+  private confirm(title: string, htmlContent: string): Promise<void> {
+    return showConfirm(this.dialog, {
+      title,
+      htmlContent,
+      cancel: this.translate.instant('action.no'),
+      ok: this.translate.instant('action.yes'),
     });
   }
 
   addDashboardsToCustomer($event?: any, ...rest: any[]): any {
-    let vm = this;
     if ($event) {
         $event.stopPropagation();
     }
@@ -501,18 +466,7 @@ export class DashboardsComponent {
             if (dashboards.hasNext) {
                 dashboards.nextPageLink.limit = pageSize;
             }
-            (this.dialog as any).show({
-                controller: 'AddDashboardsToCustomerController',
-                controllerAs: 'vm',
-                templateUrl: addDashboardsToCustomerTemplate,
-                locals: {customerId: this.customerId, dashboards: dashboards},
-                parent: $(this.document.body),
-                fullscreen: true,
-                targetEvent: $event
-            }).then(() => {
-                this.grid.refreshList();
-            }, function () {
-            });
+            this.openThenRefresh(AddDashboardsToCustomerComponent, {customerId: this.customerId, dashboards: dashboards});
         },
         function fail() {
         });
@@ -524,37 +478,22 @@ export class DashboardsComponent {
     }
     var title: any = this.translate.instant('dashboard.unassign-dashboard-title', {dashboardTitle: dashboard.title});
     var content: any = this.translate.instant('dashboard.unassign-dashboard-text');
-    var label: any = this.translate.instant('dashboard.unassign-dashboard');
-    var confirm: any = (this.dialog as any).confirm()
-        .targetEvent($event)
-        .title(title)
-        .htmlContent(content)
-        .ariaLabel(label)
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
+    this.confirm(title, content).then(() => {
         this.dashboardService.unassignDashboardFromCustomer(customerId, dashboard.id.id).then(() => {
             this.grid.refreshList();
         });
-    });
+    }, () => undefined);
   };
 
   makePublic = ($event?: any, dashboard?: any, ...rest: any[]): any => {
-    let vm = this;
     if ($event) {
         $event.stopPropagation();
     }
     this.dashboardService.makeDashboardPublic(dashboard.id.id).then((dashboard?: any) => {
-        (this.dialog as any).show({
-            controller: 'MakeDashboardPublicDialogController',
-            controllerAs: 'vm',
-            templateUrl: makeDashboardPublicDialogTemplate,
-            locals: {dashboard: dashboard},
-            parent: $(this.document.body),
-            fullscreen: true,
-            targetEvent: $event
-        }).then(() => {
-            this.grid.refreshList();
+        firstValueFrom(this.dialog.open(MakeDashboardPublicDialogComponent, {data: {dashboard: dashboard}}).afterClosed()).then((closed) => {
+            if (closed) {
+                this.grid.refreshList();
+            }
         });
     });
   };
@@ -565,19 +504,11 @@ export class DashboardsComponent {
     }
     var title: any = this.translate.instant('dashboard.make-private-dashboard-title', {dashboardTitle: dashboard.title});
     var content: any = this.translate.instant('dashboard.make-private-dashboard-text');
-    var label: any = this.translate.instant('dashboard.make-private-dashboard');
-    var confirm: any = (this.dialog as any).confirm()
-        .targetEvent($event)
-        .title(title)
-        .htmlContent(content)
-        .ariaLabel(label)
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
+    this.confirm(title, content).then(() => {
         this.dashboardService.makeDashboardPrivate(dashboard.id.id).then(() => {
             this.grid.refreshList();
         });
-    });
+    }, () => undefined);
   };
 
   exportDashboard = ($event?: any, dashboard?: any, ...rest: any[]): any => {
@@ -586,14 +517,7 @@ export class DashboardsComponent {
   };
 
   unassignDashboardsFromCustomer($event?: any, items?: any, customerId?: any, ...rest: any[]): any {
-    var confirm: any = (this.dialog as any).confirm()
-        .targetEvent($event)
-        .title(this.translate.instant('dashboard.unassign-dashboards-title', {count: items.selectedCount}, 'messageformat'))
-        .htmlContent(this.translate.instant('dashboard.unassign-dashboards-text'))
-        .ariaLabel(this.translate.instant('dashboard.unassign-dashboards'))
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
+    this.confirm(this.translate.instant('dashboard.unassign-dashboards-title', {count: items.selectedCount}), this.translate.instant('dashboard.unassign-dashboards-text')).then(() => {
         var tasks: any = [];
         for (var id in items.selections) {
             tasks.push(this.dashboardService.unassignDashboardFromCustomer(customerId, id));
@@ -601,7 +525,7 @@ export class DashboardsComponent {
         Promise.all(tasks).then(() => {
             this.grid.refreshList();
         });
-    });
+    }, () => undefined);
   }
 
   openDashboard = ($event?: any, dashboard?: any, ...rest: any[]): any => {
@@ -609,12 +533,12 @@ export class DashboardsComponent {
         $event.stopPropagation();
     }
     if (this.dashboardsScope === 'customer') {
-        (this.router as any).go('home.customers.dashboards.dashboard', {
+        goState(this.router, 'home.customers.dashboards.dashboard', {
             customerId: this.customerId,
             dashboardId: dashboard.id.id
         });
     } else {
-        (this.router as any).go('home.dashboards.dashboard', {dashboardId: dashboard.id.id});
+        goState(this.router, 'home.dashboards.dashboard', {dashboardId: dashboard.id.id});
     }
   };
 }

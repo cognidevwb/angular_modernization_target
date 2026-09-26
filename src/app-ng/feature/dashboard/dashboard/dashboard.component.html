@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/dashboard/dashboard.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/dashboard/dashboard.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -17,211 +17,231 @@
 
 -->
 @if (dashboard) {
-  <div style="padding-top: 150px;" flex (tbExpandFullscreen)="widgetEditMode || iframeMode || $any(this).forceFullscreen" expand-button-id="dashboard-expand-button" (hideExpandButton)="hideFullscreenButton()" expand-tooltip-direction="bottom" class="md-content">
-    <section class="tb-dashboard-toolbar" [hidden]="!(showDashboardToolbar())" [ngClass]="{ 'tb-dashboard-toolbar-opened': isToolbarOpened, 'tb-dashboard-toolbar-closed': !isToolbarOpened }">
-        <tb-dashboard-toolbar [hidden]="!(!widgetEditMode)" [(forceFullscreen)]="$any(this).forceFullscreen" [(toolbarOpened)]="isToolbarOpened" (onTriggerClick)="openToolbar()">
+  <div style="padding-top: 150px;" flex [tbExpandFullscreen]="widgetEditMode || iframeMode || rootScope['forceFullscreen']"
+       expand-button-id="dashboard-expand-button" [hideExpandButton]="hideFullscreenButton()" class="md-content">
+    <section class="tb-dashboard-toolbar" [hidden]="!showDashboardToolbar()"
+             [ngClass]="{ 'tb-dashboard-toolbar-opened': toolbarOpened, 'tb-dashboard-toolbar-closed': !toolbarOpened }">
+        <tb-dashboard-toolbar [hidden]="widgetEditMode" [forceFullscreen]="rootScope['forceFullscreen']" [toolbarOpened]="toolbarOpened" (onTriggerClick)="openToolbar()">
             <div class="tb-dashboard-action-panels" layout-sm="column" layout-xs="column" layout-align-gt-sm="space-between center" layout="row" layout-align="center stretch">
                 <div class="tb-dashboard-action-panel" flex-md="30" layout="row" layout-align-gt-sm="start center" layout-align="space-between center">
-                    <button mat-icon-button [hidden]="!(showCloseToolbar())" aria-label="close-toolbar" class="close-action" (click)="closeToolbar()" attr.matTooltip="{{ 'dashboard.close-toolbar' | translate }}" matTooltipPosition="below">
-                        
+                    <button mat-icon-button [hidden]="!showCloseToolbar()" aria-label="close-toolbar" class="close-action" (click)="closeToolbar()"
+                            [matTooltip]="'dashboard.close-toolbar' | translate" matTooltipPosition="below">
                         <mat-icon aria-label="close-toolbar" class="material-icons">arrow_forward</mat-icon>
                     </button>
-                    @if (!isPublicUser() && $any(this).forceFullscreen) {
-                      <tb-user-menu hide-xs hide-sm [displayUserInfo]="true">
-                    </tb-user-menu>
+                    @if (!isPublicUser() && rootScope['forceFullscreen']) {
+                      <tb-user-menu hide-xs hide-sm [displayUserInfo]="true"></tb-user-menu>
                     }
-                    <button mat-icon-button [hidden]="!(showRightLayoutSwitch())" aria-label="switch-layouts" (click)="toggleLayouts()" attr.matTooltip="{{ (isRightLayoutOpened ? 'dashboard.hide-details' : 'dashboard.show-details') | translate }}" matTooltipPosition="below">
-                        <mat-icon options='{"easing": "circ-in-out", "duration": 375, "rotation": "none"}'>{{isRightLayoutOpened ? 'arrow_back' : 'menu'}}</mat-icon>
-                        
+                    <button mat-icon-button [hidden]="!showRightLayoutSwitch()" aria-label="switch-layouts" (click)="toggleLayouts()"
+                            [matTooltip]="(isRightLayoutOpened ? 'dashboard.hide-details' : 'dashboard.show-details') | translate" matTooltipPosition="below">
+                        <mat-icon>{{isRightLayoutOpened ? 'arrow_back' : 'menu'}}</mat-icon>
                     </button>
-                    <button mat-icon-button id="dashboard-expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}">
+                    <button mat-icon-button id="dashboard-expand-button" [attr.aria-label]="'fullscreen.fullscreen' | translate">
                     </button>
-                    <button mat-icon-button [hidden]="!(isEdit || displayExport())" attr.aria-label="{{ 'action.export' | translate }}" (click)="exportDashboard($event)" attr.matTooltip="{{ 'dashboard.export' | translate }}" matTooltipPosition="below">
-                        
-                        <mat-icon attr.aria-label="{{ 'action.export' | translate }}" class="material-icons">file_download</mat-icon>
+                    <button mat-icon-button [hidden]="!(isEdit || displayExport())" [attr.aria-label]="'action.export' | translate" (click)="exportDashboard($event)"
+                            [matTooltip]="'dashboard.export' | translate" matTooltipPosition="below">
+                        <mat-icon [attr.aria-label]="'action.export' | translate" class="material-icons">file_download</mat-icon>
                     </button>
-                    <tb-timewindow [hidden]="!(isEdit || displayDashboardTimewindow())" is-toolbar (isEdit)="isEdit" direction="left" tooltip-direction="bottom" aggregation="true" [(ngModel)]="dashboardCtx.dashboardTimewindow">
+                    <tb-timewindow [hidden]="!(isEdit || displayDashboardTimewindow())" is-toolbar direction="left" tooltip-direction="bottom" aggregation="true"
+                                   [(ngModel)]="dashboardCtx.dashboardTimewindow">
                     </tb-timewindow>
-                    <tb-aliases-entity-select [hidden]="!(!isEdit && displayEntitiesSelect())" tooltip-direction="bottom" [(aliasController)]="dashboardCtx.aliasController">
+                    <tb-aliases-entity-select [hidden]="!(!isEdit && displayEntitiesSelect())" tooltip-direction="bottom" [aliasController]="dashboardCtx.aliasController">
                     </tb-aliases-entity-select>
-                    <button mat-icon-button [hidden]="!(isEdit)" attr.aria-label="{{ 'entity.aliases' | translate }}" (click)="openEntityAliases($event)" attr.matTooltip="{{ 'entity.aliases' | translate }}" matTooltipPosition="below">
-                        
-                        <mat-icon attr.aria-label="{{ 'entity.aliases' | translate }}" class="material-icons">devices_other</mat-icon>
+                    <button mat-icon-button [hidden]="!isEdit" [attr.aria-label]="'entity.aliases' | translate" (click)="openEntityAliases($event)"
+                            [matTooltip]="'entity.aliases' | translate" matTooltipPosition="below">
+                        <mat-icon [attr.aria-label]="'entity.aliases' | translate" class="material-icons">devices_other</mat-icon>
                     </button>
-                    <button mat-icon-button [hidden]="!(isEdit)" attr.aria-label="{{ 'dashboard.settings' | translate }}" (click)="openDashboardSettings($event)" attr.matTooltip="{{ 'dashboard.settings' | translate }}" matTooltipPosition="below">
-                        
-                        <mat-icon attr.aria-label="{{ 'dashboard.settings' | translate }}" class="material-icons">settings</mat-icon>
+                    <button mat-icon-button [hidden]="!isEdit" [attr.aria-label]="'dashboard.settings' | translate" (click)="openDashboardSettings($event)"
+                            [matTooltip]="'dashboard.settings' | translate" matTooltipPosition="below">
+                        <mat-icon [attr.aria-label]="'dashboard.settings' | translate" class="material-icons">settings</mat-icon>
                     </button>
-                    <tb-dashboard-select [hidden]="!(!isEdit && !widgetEditMode && displayDashboardsSelect())" [(ngModel)]="currentDashboardId" dashboardsScope="{{currentDashboardScope}}" [(customerId)]="currentCustomerId">
+                    <tb-dashboard-select [hidden]="!(!isEdit && !widgetEditMode && displayDashboardsSelect())" [(ngModel)]="currentDashboardId"
+                                         [dashboardsScope]="currentDashboardScope" [(customerId)]="currentCustomerId">
                     </tb-dashboard-select>
                 </div>
                 <div class="tb-dashboard-action-panel" flex-md="70" layout="row" layout-align-gt-sm="end center" layout-align="space-between center">
-                    @if (!isPublicUser() && $any(this).forceFullscreen) {
-                      <tb-user-menu hide-gt-sm [displayUserInfo]="true">
-                    </tb-user-menu>
+                    @if (!isPublicUser() && rootScope['forceFullscreen']) {
+                      <tb-user-menu hide-gt-sm [displayUserInfo]="true"></tb-user-menu>
                     }
-                    <div flex-xs flex-sm layout="row" layout-align-gt-sm="start center" layout-align="space-between center" [hidden]="!(isEdit)">
-                        <button mat-icon-button attr.aria-label="{{ 'dashboard.manage-states' | translate }}" (click)="manageDashboardStates($event)" attr.matTooltip="{{ 'dashboard.manage-states' | translate }}" matTooltipPosition="below">
-                            
-                            <mat-icon attr.aria-label="{{ 'dashboard.manage-states' | translate }}" class="material-icons">layers</mat-icon>
+                    <div flex-xs flex-sm layout="row" layout-align-gt-sm="start center" layout-align="space-between center" [hidden]="!isEdit">
+                        <button mat-icon-button [attr.aria-label]="'dashboard.manage-states' | translate" (click)="manageDashboardStates($event)"
+                                [matTooltip]="'dashboard.manage-states' | translate" matTooltipPosition="below">
+                            <mat-icon [attr.aria-label]="'dashboard.manage-states' | translate" class="material-icons">layers</mat-icon>
                         </button>
-                        <button mat-icon-button attr.aria-label="{{ 'layout.manage' | translate }}" (click)="manageDashboardLayouts($event)" attr.matTooltip="{{ 'layout.manage' | translate }}" matTooltipPosition="below">
-                            
-                            <mat-icon attr.aria-label="{{ 'layout.manage' | translate }}" class="material-icons">view_compact</mat-icon>
+                        <button mat-icon-button [attr.aria-label]="'layout.manage' | translate" (click)="manageDashboardLayouts($event)"
+                                [matTooltip]="'layout.manage' | translate" matTooltipPosition="below">
+                            <mat-icon [attr.aria-label]="'layout.manage' | translate" class="material-icons">view_compact</mat-icon>
                         </button>
                     </div>
                     @if (isEdit) {
-                      <tb-states-component flex-xs flex-sm [statesControllerId]="'default'" [(dashboardCtrl)]="$any(this).vm" [(states)]="dashboardConfiguration.states">
-                    </tb-states-component>
+                      <tb-states-component flex-xs flex-sm [statesControllerId]="'default'" [dashboardCtrl]="this" [(states)]="dashboardConfiguration.states">
+                      </tb-states-component>
                     }
                     @if (!isEdit) {
-                      <tb-states-component flex-xs flex-sm [(statesControllerId)]="dashboardConfiguration.settings.stateControllerId" [(dashboardCtrl)]="$any(this).vm" [(states)]="dashboardConfiguration.states">
-                    </tb-states-component>
+                      <tb-states-component flex-xs flex-sm [(statesControllerId)]="dashboardConfiguration.settings.stateControllerId" [dashboardCtrl]="this" [(states)]="dashboardConfiguration.states">
+                      </tb-states-component>
                     }
                  </div>
             </div>
         </tb-dashboard-toolbar>
     </section>
-    <section class="tb-dashboard-container tb-absolute-fill" [ngClass]="{ 'is-fullscreen': $any(this).forceFullscreen, 'tb-dashboard-toolbar-opened': isToolbarOpened, 'tb-dashboard-toolbar-closed': !isToolbarOpened }">
-        <section [hidden]="!(!rootScope?.loading && dashboardConfigurationError())" layout-align="center center" [ngStyle]="{'color': dashboard?.configuration?.settings?.titleColor}" [ngClass]="{'tb-padded' : !widgetEditMode}" style="text-transform: uppercase; display: flex; z-index: 1;" class="md-headline tb-absolute-fill">
-            <span translate>
-                dashboard.configuration-error
-            </span>
+    <section class="tb-dashboard-container tb-absolute-fill"
+             [ngClass]="{ 'is-fullscreen': rootScope['forceFullscreen'], 'tb-dashboard-toolbar-opened': toolbarOpened, 'tb-dashboard-toolbar-closed': !toolbarOpened }">
+        <section [hidden]="!(!rootScope['loading'] && dashboardConfigurationError())" layout-align="center center"
+                 [ngStyle]="{'color': dashboard?.configuration?.settings?.titleColor}" [ngClass]="{'tb-padded' : !widgetEditMode}"
+                 style="text-transform: uppercase; display: flex; z-index: 1;" class="md-headline tb-absolute-fill">
+            <span>{{ 'dashboard.configuration-error' | translate }}</span>
         </section>
         @if (!widgetEditMode) {
           <section class="tb-dashboard-title" layout="row" layout-align="center center" [ngStyle]="{'color': dashboard?.configuration?.settings?.titleColor}">
             <h3 [hidden]="!(!isEdit && displayTitle())">{{ dashboard?.title }}</h3>
-            <mat-form-field [hidden]="!(isEdit)" class="md-block" style="height: 30px;">
-                <mat-label translate [ngStyle]="{'color': dashboard?.configuration?.settings?.titleColor}">dashboard.title</mat-label>
+            <mat-form-field [hidden]="!isEdit" class="md-block" style="height: 30px;">
+                <mat-label [ngStyle]="{'color': dashboard?.configuration?.settings?.titleColor}">{{ 'dashboard.title' | translate }}</mat-label>
                 <input matInput class="tb-dashboard-title" [ngStyle]="{'color': dashboard?.configuration?.settings?.titleColor}" required name="title" [(ngModel)]="dashboard.title">
             </mat-form-field>
-        </section>
+          </section>
         }
-        <div class="tb-absolute-fill tb-dashboard-layouts" attr.layout="{{forceDashboardMobileMode ? 'column' : 'row'}}" [ngClass]="{ 'tb-padded' : !widgetEditMode && (isEdit || displayTitle()), 'tb-shrinked' : isEditingWidget }">
-            <div [hidden]="!(layouts?.main?.show)" id="tb-main-layout" [ngStyle]="{width: mainLayoutWidth(),
-                            height: mainLayoutHeight()}">
-                <tb-dashboard-layout [(layoutCtx)]="layouts.main.layoutCtx" [(dashboardCtx)]="dashboardCtx" [(isEdit)]="isEdit" [(isMobile)]="forceDashboardMobileMode" [(widgetEditMode)]="widgetEditMode">
+        <div class="tb-absolute-fill tb-dashboard-layouts" [attr.layout]="forceDashboardMobileMode ? 'column' : 'row'"
+             [ngClass]="{ 'tb-padded' : !widgetEditMode && (isEdit || displayTitle()), 'tb-shrinked' : isEditingWidget }">
+            <div [hidden]="!layouts?.main?.show" id="tb-main-layout" [ngStyle]="{width: mainLayoutWidth(), height: mainLayoutHeight()}">
+                <tb-dashboard-layout [layoutCtx]="layouts.main.layoutCtx" [dashboardCtx]="dashboardCtx" [isEdit]="isEdit"
+                                     [isMobile]="forceDashboardMobileMode" [widgetEditMode]="widgetEditMode">
                 </tb-dashboard-layout>
             </div>
-            <!-- TODO(port): md-sidenav: a mat-sidenav inside a mat-sidenav-container -->@if (layouts?.right?.show) {
-              <md-sidenav id="tb-right-layout" class="md-sidenav-right" [ngStyle]="{minWidth: rightLayoutWidth(),
-                                   maxWidth: rightLayoutWidth(),
-                                   height: rightLayoutHeight(),
-                                   zIndex: 25}" md-component-id="right-dashboard-layout" aria-label="Right dashboard layout" md-is-open="vm.rightLayoutOpened" md-is-locked-open="!vm.isMobile">
-                <tb-dashboard-layout style="height: 100%;" [(layoutCtx)]="layouts.right.layoutCtx" [(dashboardCtx)]="dashboardCtx" [(isEdit)]="isEdit" [(isMobile)]="forceDashboardMobileMode" [(widgetEditMode)]="widgetEditMode">
+            @if (layouts?.right?.show) {
+              <!-- md-sidenav: locked open beside the main layout, over it on mobile when switched to -->
+              <div id="tb-right-layout" class="md-sidenav-right" [hidden]="!rightLayoutOpened" aria-label="Right dashboard layout"
+                   [ngStyle]="{minWidth: rightLayoutWidth(), maxWidth: rightLayoutWidth(), height: rightLayoutHeight(), zIndex: 25,
+                               position: isMobile ? 'absolute' : 'relative', top: 0, right: 0, background: isMobile ? '#fff' : null}">
+                <tb-dashboard-layout style="height: 100%;" [layoutCtx]="layouts.right.layoutCtx" [dashboardCtx]="dashboardCtx" [isEdit]="isEdit"
+                                     [isMobile]="forceDashboardMobileMode" [widgetEditMode]="widgetEditMode">
                 </tb-dashboard-layout>
-            </md-sidenav>
+              </div>
             }
         </div>
-        <tb-details-sidenav class="tb-widget-details-sidenav" headerTitle="{{editingWidget?.config?.title}}" headerSubtitle="{{editingWidgetSubtitle}}" [isReadOnly]="false" [(isOpen)]="isEditingWidget" [isAlwaysEdit]="true" (onCloseDetails)="onEditWidgetClosed()" (onToggleDetailsEditMode)="onRevertWidgetEdit($any(this).widgetForm)" (onApplyDetails)="saveWidget($any(this).widgetForm)" [(theForm)]="$any(this).widgetForm">
-            <!-- TODO(port): tb-details-buttons: a details header help/action buttons bar -->
+        <tb-details-sidenav class="tb-widget-details-sidenav" [headerTitle]="editingWidget?.config?.title" [headerSubtitle]="editingWidgetSubtitle"
+                            [isReadOnly]="false" [(isOpen)]="isEditingWidget" [isAlwaysEdit]="true"
+                            (onCloseDetails)="onEditWidgetClosed()" (onToggleDetailsEditMode)="onRevertWidgetEdit(widgetForm)"
+                            (onApplyDetails)="saveWidget(widgetForm)" [theForm]="widgetForm">
             <div class="tb-details-buttons" [attr.tb-help]="helpLinkIdForWidgetType()" help-container-id="help-container">
                 <div id="help-container"></div>
             </div>
             @if (isEditingWidget) {
-              <form name="vm.widgetForm">
-                <tb-edit-widget [(dashboard)]="dashboard" [(aliasController)]="dashboardCtx.aliasController" [(widgetEditMode)]="widgetEditMode" [(widget)]="editingWidget" [(widgetLayout)]="editingWidgetLayout" [(theForm)]="$any(this).widgetForm">
+              <form #widgetNgForm="ngForm" name="widgetForm">
+                <tb-edit-widget [dashboard]="dashboard" [aliasController]="dashboardCtx.aliasController" [widgetEditMode]="widgetEditMode"
+                                [(widget)]="editingWidget" [(widgetLayout)]="editingWidgetLayout" [theForm]="widgetForm">
                 </tb-edit-widget>
-            </form>
+              </form>
             }
         </tb-details-sidenav>
         @if (!widgetEditMode) {
-          <tb-details-sidenav class="tb-select-widget-sidenav" headerTitle="{{'dashboard.select-widget-title' | translate}}" headerHeightPx="120" [isReadOnly]="true" [(isOpen)]="isAddingWidget" [isEdit]="false" (onCloseDetails)="onAddWidgetClosed()">
+          <tb-details-sidenav class="tb-select-widget-sidenav" [headerTitle]="'dashboard.select-widget-title' | translate" headerHeightPx="120"
+                              [isReadOnly]="true" [(isOpen)]="isAddingWidget" [isEdit]="false" (onCloseDetails)="onAddWidgetClosed()">
             @if (isAddingWidget) {
-              <!-- TODO(port): tb-header-pane: a simple header container -->
               <div class="tb-header-pane">
                 <div layout="row">
                     <span class="tb-details-subtitle">{{ 'widgets-bundle.current' | translate }}</span>
                     <tb-widgets-bundle-select flex-offset="5" flex [(ngModel)]="widgetsBundle" [tbRequired]="true" [selectFirstBundle]="false">
                     </tb-widgets-bundle-select>
                 </div>
-            </div>
-            }
-            @if (isAddingWidget) {
+              </div>
               <div>
                 @if (timeseriesWidgetTypes?.length > 0 || latestWidgetTypes?.length > 0 ||
-                                rpcWidgetTypes?.length > 0 || alarmWidgetTypes?.length > 0 ||
-                                staticWidgetTypes?.length > 0) {
+                     rpcWidgetTypes?.length > 0 || alarmWidgetTypes?.length > 0 || staticWidgetTypes?.length > 0) {
                   <mat-tab-group flex class="tb-absolute-fill">
                     @if (timeseriesWidgetTypes?.length > 0) {
-                      <mat-tab style="height: 100%;" label="{{ 'widget.timeseries' | translate }}">
-                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="timeseriesWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
+                      <mat-tab style="height: 100%;" [label]="'widget.timeseries' | translate">
+                        <tb-dashboard [aliasController]="dashboardCtx.aliasController" [(widgets)]="timeseriesWidgetTypes" [isEdit]="false" [isMobile]="true"
+                                      [isEditActionEnabled]="false" [isRemoveActionEnabled]="false"
+                                      (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
                         </tb-dashboard>
-                    </mat-tab>
+                      </mat-tab>
                     }
                     @if (latestWidgetTypes?.length > 0) {
-                      <mat-tab style="height: 100%;" label="{{ 'widget.latest-values' | translate }}">
-                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="latestWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
+                      <mat-tab style="height: 100%;" [label]="'widget.latest-values' | translate">
+                        <tb-dashboard [aliasController]="dashboardCtx.aliasController" [(widgets)]="latestWidgetTypes" [isEdit]="false" [isMobile]="true"
+                                      [isEditActionEnabled]="false" [isRemoveActionEnabled]="false"
+                                      (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
                         </tb-dashboard>
-                    </mat-tab>
+                      </mat-tab>
                     }
                     @if (rpcWidgetTypes?.length > 0) {
-                      <mat-tab style="height: 100%;" label="{{ 'widget.rpc' | translate }}">
-                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="rpcWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
+                      <mat-tab style="height: 100%;" [label]="'widget.rpc' | translate">
+                        <tb-dashboard [aliasController]="dashboardCtx.aliasController" [(widgets)]="rpcWidgetTypes" [isEdit]="false" [isMobile]="true"
+                                      [isEditActionEnabled]="false" [isRemoveActionEnabled]="false"
+                                      (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
                         </tb-dashboard>
-                    </mat-tab>
+                      </mat-tab>
                     }
                     @if (alarmWidgetTypes?.length > 0) {
-                      <mat-tab style="height: 100%;" label="{{ 'widget.alarm' | translate }}">
-                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="alarmWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
+                      <mat-tab style="height: 100%;" [label]="'widget.alarm' | translate">
+                        <tb-dashboard [aliasController]="dashboardCtx.aliasController" [(widgets)]="alarmWidgetTypes" [isEdit]="false" [isMobile]="true"
+                                      [isEditActionEnabled]="false" [isRemoveActionEnabled]="false"
+                                      (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
                         </tb-dashboard>
-                    </mat-tab>
+                      </mat-tab>
                     }
                     @if (staticWidgetTypes?.length > 0) {
-                      <mat-tab style="height: 100%;" label="{{ 'widget.static' | translate }}">
-                        <tb-dashboard [(aliasController)]="dashboardCtx.aliasController" [(widgets)]="staticWidgetTypes" [isEdit]="false" [isMobile]="true" [isEditActionEnabled]="false" [isRemoveActionEnabled]="false" (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
+                      <mat-tab style="height: 100%;" [label]="'widget.static' | translate">
+                        <tb-dashboard [aliasController]="dashboardCtx.aliasController" [(widgets)]="staticWidgetTypes" [isEdit]="false" [isMobile]="true"
+                                      [isEditActionEnabled]="false" [isRemoveActionEnabled]="false"
+                                      (onWidgetClicked)="addWidgetFromType($event.event, $event.widget)">
                         </tb-dashboard>
-                    </mat-tab>
+                      </mat-tab>
                     }
-                </mat-tab-group>
+                  </mat-tab-group>
                 }
                 @if (timeseriesWidgetTypes?.length === 0 && latestWidgetTypes?.length === 0 &&
-                                       rpcWidgetTypes?.length === 0 && alarmWidgetTypes?.length === 0 &&
-                                       staticWidgetTypes?.length === 0 && widgetsBundle) {
-                  <span translate layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill">widgets-bundle.empty</span>
+                     rpcWidgetTypes?.length === 0 && alarmWidgetTypes?.length === 0 &&
+                     staticWidgetTypes?.length === 0 && widgetsBundle) {
+                  <span layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill">{{ 'widgets-bundle.empty' | translate }}</span>
                 }
                 @if (!widgetsBundle) {
-                  <span translate layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill">widget.select-widgets-bundle</span>
+                  <span layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill">{{ 'widget.select-widgets-bundle' | translate }}</span>
                 }
-            </div>
+              </div>
             }
-        </tb-details-sidenav>
+          </tb-details-sidenav>
         }
         <section layout="row" layout-wrap class="tb-footer-buttons md-fab" layout-align="start end">
-            <div [hidden]="!(!isAddingWidget && isEdit && !widgetEditMode)" class="md-scale tb-fab-speed-dial">
+            <!-- md-fab-speed-dial (md-direction="up"): the actions open above the trigger on hover or click -->
+            <div [hidden]="!(!isAddingWidget && isEdit && !widgetEditMode)" class="md-scale tb-fab-speed-dial" layout="column-reverse" layout-align="start center"
+                 (mouseenter)="fabOpen = true" (mouseleave)="fabOpen = false">
                 <div class="tb-fab-trigger">
-                    <button mat-fab color="accent" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'dashboard.add-widget' | translate }}" attr.matTooltip="{{ 'dashboard.add-widget' | translate }}" matTooltipPosition="above">
-                        
+                    <button mat-fab color="accent" [disabled]="rootScope['loading']" class="tb-btn-footer md-hue-2" (click)="fabOpen = !fabOpen"
+                            [attr.aria-label]="'dashboard.add-widget' | translate" [matTooltip]="'dashboard.add-widget' | translate" matTooltipPosition="above">
                         <mat-icon>add</mat-icon>
                     </button>
                 </div>
-                <div class="tb-fab-actions">
-                    <button mat-fab [disabled]="rootScope?.loading" class="tmd-accent md-hue-2" (click)="addWidget($event)" attr.aria-label="{{ 'action.create' | translate }}" attr.matTooltip="{{ 'dashboard.create-new-widget' | translate }}" matTooltipPosition="above">
-                        
+                @if (fabOpen) {
+                <div class="tb-fab-actions" layout="column" layout-align="start center">
+                    <button mat-mini-fab color="accent" [disabled]="rootScope['loading']" class="tmd-accent md-hue-2" (click)="fabOpen = false; addWidget($event)"
+                            [attr.aria-label]="'action.create' | translate" [matTooltip]="'dashboard.create-new-widget' | translate" matTooltipPosition="above">
                         <mat-icon>insert_drive_file</mat-icon>
                     </button>
-                    <button mat-fab [disabled]="rootScope?.loading" class="tmd-accent md-hue-2" (click)="importWidget($event)" attr.aria-label="{{ 'action.import' | translate }}" attr.matTooltip="{{ 'dashboard.import-widget' | translate }}" matTooltipPosition="above">
-                        
+                    <button mat-mini-fab color="accent" [disabled]="rootScope['loading']" class="tmd-accent md-hue-2" (click)="fabOpen = false; importWidget($event)"
+                            [attr.aria-label]="'action.import' | translate" [matTooltip]="'dashboard.import-widget' | translate" matTooltipPosition="above">
                         <mat-icon>file_upload</mat-icon>
                     </button>
                 </div>
+                }
             </div>
-            @if ((isTenantAdmin() || isSystemAdmin()) && !$any(this).forceFullscreen) {
-              <button mat-fab color="accent" [hidden]="!(isEdit && !isAddingWidget && !rootScope?.loading)" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'action.apply' | translate }}" (click)="saveDashboard()" attr.matTooltip="{{ 'action.apply-changes' | translate }}" matTooltipPosition="above">
-                
+            @if ((isTenantAdmin() || isSystemAdmin()) && !rootScope['forceFullscreen']) {
+              <button mat-fab color="accent" [hidden]="!(isEdit && !isAddingWidget && !rootScope['loading'])" [disabled]="rootScope['loading']" class="tb-btn-footer md-hue-2"
+                      [attr.aria-label]="'action.apply' | translate" (click)="saveDashboard()" [matTooltip]="'action.apply-changes' | translate" matTooltipPosition="above">
                 <mat-icon>done</mat-icon>
-            </button>
+              </button>
             }
-            @if ((isTenantAdmin() || isSystemAdmin()) && !$any(this).forceFullscreen) {
-              <button mat-fab color="accent" [hidden]="!(!isAddingWidget && !rootScope?.loading)" [disabled]="rootScope?.loading" class="tb-btn-footer md-hue-2" attr.aria-label="{{ 'action.edit-mode' | translate }}" (click)="toggleDashboardEditMode()" attr.matTooltip="{{ (isEdit ? 'action.decline-changes' : 'action.enter-edit-mode') | translate }}" matTooltipPosition="above">
-                
-                <mat-icon options='{"easing": "circ-in-out", "duration": 375, "rotation": "none"}'>{{isEdit ? 'close' : 'edit'}}</mat-icon>
-            </button>
+            @if ((isTenantAdmin() || isSystemAdmin()) && !rootScope['forceFullscreen']) {
+              <button mat-fab color="accent" [hidden]="!(!isAddingWidget && !rootScope['loading'])" [disabled]="rootScope['loading']" class="tb-btn-footer md-hue-2"
+                      [attr.aria-label]="'action.edit-mode' | translate" (click)="toggleDashboardEditMode()"
+                      [matTooltip]="(isEdit ? 'action.decline-changes' : 'action.enter-edit-mode') | translate" matTooltipPosition="above">
+                <mat-icon>{{isEdit ? 'close' : 'edit'}}</mat-icon>
+              </button>
             }
         </section>
     </section>
     <section class="tb-powered-by-footer" [ngStyle]="{'color': dashboard?.configuration?.settings?.titleColor}">
         <span>Powered by <a href="https://thingsboard.io" target="_blank">Thingsboard v.{{ thingsboardVersion }}</a></span>
     </section>
-</div>
+  </div>
 }

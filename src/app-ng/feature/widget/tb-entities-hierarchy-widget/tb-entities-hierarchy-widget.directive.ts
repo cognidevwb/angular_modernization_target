@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, model } from '@angular/core';
+import { Component, DestroyRef, effect, forwardRef, inject, model, untracked } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { EntityRelationService } from '../../api/services/entity-relation.service';
 import { EntityService } from '../../api/services/entity.service';
@@ -15,17 +15,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
-import { $q, $timeout } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let angular: any;
-declare let $scope: any;
-declare let toast: any;
-declare let entityService: any;
-declare let entityRelationService: any;
+import { $q } from '../../../core/q';
+import { legacyCopy, legacyEquals } from '../../components/widget/legacy-helpers';
+import { onWidgetEvent } from '../../components/widget/widget-scope';
 
 /**
  * Ported from the AngularJS directive `tbEntitiesHierarchyWidget` (module `thingsboard.widgets.entitiesHierarchyWidget`) in src/app/widget/lib/entities-hierarchy-widget.js:24.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 4 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The widget runtime renders it for the template `<tb-entities-hierarchy-widget hierarchy-id="hierarchyId" ctx="ctx">`;
+ * the widget type's script broadcasts `entities-hierarchy-data-updated` on `ctx.$scope` when data arrives.
  */
 @Component({
   selector: 'tb-entities-hierarchy-widget',
@@ -38,9 +35,7 @@ export class TbEntitiesHierarchyWidgetDirective {
   readonly ctx = model<any>();
 
   protected readonly element = inject(ElementRef);
-  // TODO(port): '$scope' — component state: fields and signals on this class
-  // TODO(port): '$q' — use Promise, or an Observable
-  // TODO(port): '$timeout' — use setTimeout, or an rxjs timer
+  protected readonly destroyRef = inject(DestroyRef);
   protected readonly toast = inject(ToastService);
   protected readonly entityService = inject(EntityService);
   protected readonly entityRelationService = inject(EntityRelationService);
@@ -65,49 +60,57 @@ export class TbEntitiesHierarchyWidgetDirective {
   settings: any;
   subscription: any;
   widgetConfig: any;
-
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
+  /** The node loader handed to the tree once the datasources are known (the legacy controller set its loadNodes then). */
+  treeLoader: any = null;
+  private offDataUpdated: (() => void) | null = null;
+  private prevSearch: any = null;
 
   constructor() {
-    let vm = this;
     this.searchAction = {
         name: 'action.search',
         show: true,
-        onAction: (...rest: any[]) => {
+        onAction: () => {
             this.enterFilterMode();
         },
         icon: 'search'
     };
-    this.onNodesInserted = this.onNodesInserted;
-    this.onNodeSelected = this.onNodeSelected;
-    this.enterFilterMode = this.enterFilterMode;
-    this.exitFilterMode = this.exitFilterMode;
-    this.searchCallback = this.searchCallback;
-    $scope.$watch('vm.ctx', () => {
-        if (this.ctx() && this.ctx().defaultSubscription) {
-            this.settings = this.ctx().settings;
-            this.widgetConfig = this.ctx().widgetConfig;
-            this.subscription = this.ctx().defaultSubscription;
+    effect(() => {
+      const ctx = this.ctx();
+      untracked(() => {
+        if (ctx && ctx.defaultSubscription) {
+            this.settings = ctx.settings;
+            this.widgetConfig = ctx.widgetConfig;
+            this.subscription = ctx.defaultSubscription;
             this.datasources = this.subscription.datasources;
+            this.listenForData(ctx);
             this.initializeConfig();
             this.updateDatasources();
         }
+      });
     });
-    $scope.$watch("vm.query.search", (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal) && this.query.search != null) {
-            this.updateSearchNodes();
-        }
-    });
-    $scope.$on('entities-hierarchy-data-updated', (event?: any, hierarchyId?: any) => {
-        if (this.hierarchyId() == hierarchyId) {
+    this.destroyRef.onDestroy(() => this.offDataUpdated?.());
+  }
+
+  /** The widget type's script broadcasts on its widget scope when new data arrived for this hierarchy. */
+  private listenForData(ctx: any): void {
+    this.offDataUpdated?.();
+    this.offDataUpdated = onWidgetEvent(ctx, 'entities-hierarchy-data-updated', (_event: any, hierarchyId: any) => {
+          if (this.hierarchyId() == hierarchyId) {
             if (this.subscription) {
                 this.updateNodeData(this.subscription.data);
             }
-        }
-    });
+          }
+        });
+  }
+
+  /** The search input: the legacy watch on the query's search text. */
+  onSearchChange(newVal: any): void {
+    const prevVal = this.prevSearch;
+    this.query.search = newVal;
+    this.prevSearch = newVal;
+    if (!legacyEquals(newVal, prevVal) && this.query.search != null) {
+        this.updateSearchNodes();
+    }
   }
 
   initializeConfig(...rest: any[]): any {
@@ -125,7 +128,7 @@ export class TbEntitiesHierarchyWidgetDirective {
         data: {},
         level: 2
     };
-    var parentNodeCtx: any = structuredClone(testNodeCtx);
+    var parentNodeCtx: any = legacyCopy(testNodeCtx);
     parentNodeCtx.level = 1;
     testNodeCtx.parentNodeCtx = parentNodeCtx;
 
@@ -136,7 +139,7 @@ export class TbEntitiesHierarchyWidgetDirective {
     var nodeOpenedFunction: any = this.loadNodeCtxFunction(this.settings.nodeOpenedFunction, 'nodeCtx', testNodeCtx);
     var nodeHasChildrenFunction: any = this.loadNodeCtxFunction(this.settings.nodeHasChildrenFunction, 'nodeCtx', testNodeCtx);
 
-    var testNodeCtx2: any = structuredClone(testNodeCtx);
+    var testNodeCtx2: any = legacyCopy(testNodeCtx);
     testNodeCtx2.entity.name = 'TEST DEV2';
 
     var nodesSortFunction: any = this.loadNodeCtxFunction(this.settings.nodesSortFunction, 'nodeCtx1,nodeCtx2', testNodeCtx, testNodeCtx2);
@@ -169,13 +172,14 @@ export class TbEntitiesHierarchyWidgetDirective {
   enterFilterMode = (...rest: any[]): any => {
     this.query.search = '';
     this.ctx().hideTitlePanel = true;
-    setTimeout(()=>{
+    setTimeout(() => {
         $(this.ctx().$container).find('.searchInput').focus();
-    })
+    });
   };
 
   exitFilterMode = (...rest: any[]): any => {
     this.query.search = null;
+    this.prevSearch = null;
     this.updateSearchNodes();
     this.ctx().hideTitlePanel = false;
   };
@@ -189,7 +193,7 @@ export class TbEntitiesHierarchyWidgetDirective {
   };
 
   updateDatasources(...rest: any[]): any {
-    this.loadNodes = this.loadNodes;
+    this.treeLoader = this.loadNodes;
   }
 
   updateSearchNodes(...rest: any[]): any {
@@ -200,7 +204,7 @@ export class TbEntitiesHierarchyWidgetDirective {
     }
   }
 
-  onNodesInserted = (nodes?: any, /*, parent*/: any, ...rest: any[]): any => {
+  onNodesInserted = (nodes?: any, ..._parent: any[]): any => {
     if (nodes) {
         nodes.forEach((nodeId?: any) => {
             var task: any = this.pendingUpdateNodeTasks[nodeId];
@@ -266,12 +270,12 @@ export class TbEntitiesHierarchyWidgetDirective {
 
   updateNodeStyle(node?: any, ...rest: any[]): any {
     var newText: any = this.prepareNodeText(node);
-    if (!angular.equals(node.text, newText)) {
+    if (!legacyEquals(node.text, newText)) {
         node.text = newText;
         this.nodeEditCallbacks.updateNode(node.id, node.text);
     }
     var newDisabled: any = this.nodeDisabledFunction(node.data.nodeCtx);
-    if (!angular.equals(node.state.disabled, newDisabled)) {
+    if (!legacyEquals(node.state.disabled, newDisabled)) {
         node.state.disabled = newDisabled;
         if (node.state.disabled) {
             this.nodeEditCallbacks.disableNode(node.id);
@@ -280,7 +284,7 @@ export class TbEntitiesHierarchyWidgetDirective {
         }
     }
     var newHasChildren: any = this.nodeHasChildrenFunction(node.data.nodeCtx);
-    if (!angular.equals(node.children, newHasChildren)) {
+    if (!legacyEquals(node.children, newHasChildren)) {
         node.children = newHasChildren;
         this.nodeEditCallbacks.setNodeHasChildren(node.id, node.children);
     }

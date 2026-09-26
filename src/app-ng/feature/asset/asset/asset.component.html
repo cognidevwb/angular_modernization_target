@@ -1,64 +1,35 @@
-<!-- Scaffolded by the playbook from src/app/asset/assets.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
-<!--
-
-    Copyright © 2016-2020 The Thingsboard Authors
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<tb-grid (gridConfiguration)="assetGridConfig">
-    <!-- TODO(port): tb-help-popup (contextual help, helpId 'assets') not yet ported -->
-    <div class="details-buttons">
-        <div id="help-container"></div>
+<!-- Ported from src/app/asset/assets.tpl.html (Copyright © 2016-2020 The Thingsboard Authors, Apache License 2.0) -->
+<tb-grid [config]="assetGridConfig" [itemCardComponent]="assetCard" [addItemComponent]="addAssetDialog">
+    <div details-buttons>
+        <tb-grid-help helpId="assets"></tb-grid-help>
     </div>
-    <mat-tab-group [ngClass]="{'tb-headless': grid?.detailsConfig?.isDetailsEditMode}" id="tabs" flex class="tb-absolute-fill">
-        <mat-tab label="{{ 'asset.details' | translate }}">
-            <tb-asset [asset]="grid?.operatingItem?.()" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [(assetScope)]="assetsScope" [(theForm)]="grid.detailsForm" (onAssignToCustomer)="assignToCustomer($event, [ grid.detailsConfig.currentItem.id.id ])" (onMakePublic)="makePublic($event, grid.detailsConfig.currentItem)" (onUnassignFromCustomer)="unassignFromCustomer($event, grid.detailsConfig.currentItem, $event.isPublic)" (onDeleteAsset)="grid.deleteItem($event, grid.detailsConfig.currentItem)"></tb-asset>
+    @if (grid && grid.operatingItem(); as asset) {
+      <mat-tab-group [ngClass]="{'tb-headless': grid.detailsConfig.isDetailsEditMode}" id="tabs" flex class="tb-absolute-fill" (selectedTabChange)="grid.triggerResize()">
+        <mat-tab [label]="'asset.details' | translate">
+            <tb-asset [asset]="asset" [(isEdit)]="grid.detailsConfig.isDetailsEditMode" [assetScope]="assetsScope" [theForm]="grid.detailsForm" (onAssignToCustomer)="assignToCustomer($event.event, [grid.detailsConfig.currentItem.id.id])" (onMakePublic)="makePublic($event.event, grid.detailsConfig.currentItem)" (onUnassignFromCustomer)="unassignFromCustomer($event.event, grid.detailsConfig.currentItem, $event.isPublic)" (onDeleteAsset)="grid.deleteItem($event.event, grid.detailsConfig.currentItem)"></tb-asset>
         </mat-tab>
-        @if (!grid?.detailsConfig?.isDetailsEditMode) {
-          <mat-tab md-on-select="vm.grid.triggerResize()" label="{{ 'attribute.attributes' | translate }}">
-            <tb-attribute-table flex [entityId]="grid?.operatingItem?.()?.id?.id" attr.entity-type="{{types?.entityType?.asset}}" [entityName]="grid?.operatingItem?.()?.name" attr.default-attribute-scope="{{types?.attributesScope?.server?.value}}">
-            </tb-attribute-table>
-        </mat-tab>
+        @if (!grid.detailsConfig.isDetailsEditMode) {
+          <mat-tab [label]="'attribute.attributes' | translate">
+            <tb-attribute-table flex [entityId]="asset.id?.id" [entityType]="types.entityType.asset" [entityName]="asset.name" [defaultAttributeScope]="types.attributesScope.server.value"></tb-attribute-table>
+          </mat-tab>
+          <mat-tab [label]="'attribute.latest-telemetry' | translate">
+            <tb-attribute-table flex [entityId]="asset.id?.id" [entityType]="types.entityType.asset" [entityName]="asset.name" [defaultAttributeScope]="types.latestTelemetry.value" [disableAttributeScopeSelection]="true"></tb-attribute-table>
+          </mat-tab>
+          <mat-tab [label]="'alarm.alarms' | translate">
+            <tb-alarm-table flex [entityType]="types.entityType.asset" [entityId]="asset.id?.id"></tb-alarm-table>
+          </mat-tab>
+          <mat-tab [label]="'asset.events' | translate">
+            <tb-event-table flex [entityType]="types.entityType.asset" [entityId]="asset.id?.id" [tenantId]="asset.tenantId?.id" [attr.default-event-type]="types.eventType.error.value"></tb-event-table>
+          </mat-tab>
+          <mat-tab [label]="'relation.relations' | translate">
+            <tb-relation-table flex [entityId]="asset.id?.id" [entityType]="types.entityType.asset"></tb-relation-table>
+          </mat-tab>
+          @if (grid.isTenantAdmin()) {
+            <mat-tab [label]="'audit-log.audit-logs' | translate">
+              <tb-audit-log-table flex [entityType]="types.entityType.asset" [entityId]="asset.id?.id" [auditLogMode]="types.auditLogMode.entity"></tb-audit-log-table>
+            </mat-tab>
+          }
         }
-        @if (!grid?.detailsConfig?.isDetailsEditMode) {
-          <mat-tab md-on-select="vm.grid.triggerResize()" label="{{ 'attribute.latest-telemetry' | translate }}">
-            <tb-attribute-table flex [entityId]="grid?.operatingItem?.()?.id?.id" attr.entity-type="{{types?.entityType?.asset}}" [entityName]="grid?.operatingItem?.()?.name" attr.default-attribute-scope="{{types?.latestTelemetry?.value}}" disableAttributeScopeSelection="true">
-            </tb-attribute-table>
-        </mat-tab>
-        }
-        @if (!grid?.detailsConfig?.isDetailsEditMode) {
-          <mat-tab md-on-select="vm.grid.triggerResize()" label="{{ 'alarm.alarms' | translate }}">
-            <tb-alarm-table flex [(entityType)]="types.entityType.asset" [entityId]="grid?.operatingItem?.()?.id?.id">
-            </tb-alarm-table>
-        </mat-tab>
-        }
-        @if (!grid?.detailsConfig?.isDetailsEditMode) {
-          <mat-tab md-on-select="vm.grid.triggerResize()" label="{{ 'asset.events' | translate }}">
-            <tb-event-table flex [(entityType)]="types.entityType.asset" [entityId]="grid?.operatingItem?.()?.id?.id" [tenantId]="grid?.operatingItem?.()?.tenantId?.id" attr.default-event-type="{{types?.eventType?.error?.value}}">
-            </tb-event-table>
-        </mat-tab>
-        }
-        @if (!grid?.detailsConfig?.isDetailsEditMode) {
-          <mat-tab md-on-select="vm.grid.triggerResize()" label="{{ 'relation.relations' | translate }}">
-            <tb-relation-table flex [entityId]="grid?.operatingItem?.()?.id?.id" entityType="{{types?.entityType?.asset}}">
-            </tb-relation-table>
-        </mat-tab>
-        }
-        @if (!grid?.detailsConfig?.isDetailsEditMode && grid?.isTenantAdmin?.()) {
-          <mat-tab md-on-select="vm.grid.triggerResize()" label="{{ 'audit-log.audit-logs' | translate }}">
-            <tb-audit-log-table flex [(entityType)]="types.entityType.asset" [entityId]="grid?.operatingItem?.()?.id?.id" auditLogMode="{{types?.auditLogMode?.entity}}">
-            </tb-audit-log-table>
-        </mat-tab>
-        }
-</mat-tab-group></tb-grid>
+      </mat-tab-group>
+    }
+</tb-grid>

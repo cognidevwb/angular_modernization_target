@@ -1,0 +1,173 @@
+<!-- Ported from src/app/components/datasource-entity.tpl.html (md-chips + md-autocomplete: mat-chip-grid + mat-autocomplete) -->
+<section flex layout="column" layout-align="center" layout-gt-sm="row" layout-align-gt-sm="start center">
+    <tb-entity-alias-select [tbRequired]="true" [aliasController]="aliasController()"
+                            [ngModel]="entityAlias" (ngModelChange)="onEntityAliasChange($event)"
+                            [onCreateEntityAlias]="onCreateEntityAlias()">
+    </tb-entity-alias-select>
+    <section flex layout="column">
+        <section flex layout="column" layout-align="center" style="padding-left: 4px;">
+            @if (widgetType() != types.widgetType.alarm.value) {
+            <mat-form-field flex subscriptSizing="dynamic">
+                <mat-chip-grid #dataKeyGrid id="datakey_chips" cdkDropList cdkDropListOrientation="mixed"
+                               (cdkDropListDropped)="dropDataKey($event, false)">
+                    @for (chip of dataKeys; track $index) {
+                    <mat-chip-row cdkDrag (removed)="removeDataKey(chip, false)">
+                        <div layout="row" layout-align="start center" class="tb-attribute-chip">
+                            <div class="tb-chip-drag-handle" style="margin-right: 5px; cursor: move;" cdkDragHandle>
+                                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">drag_handle</mat-icon>
+                            </div>
+                            <div class="tb-color-preview" (click)="showColorPicker($event, chip)" style="margin-right: 5px;">
+                                <div class="tb-color-result" [style.background]="chip.color"></div>
+                            </div>
+                            <div layout="row" flex>
+                                <div class="tb-chip-label">
+                                    @if (chip.type == types.dataKeyType.attribute) {
+                                    <mat-icon class="tb-md-20" [matTooltip]="'datakey.attributes' | translate" svgIcon="alpha-a-circle-outline"></mat-icon>
+                                    }
+                                    @if (chip.type == types.dataKeyType.entityField) {
+                                    <mat-icon class="tb-md-20" [matTooltip]="'datakey.entity-field' | translate" svgIcon="alpha-e-circle-outline"></mat-icon>
+                                    }
+                                    @if (chip.type == types.dataKeyType.timeseries) {
+                                    <mat-icon class="tb-md-20" [matTooltip]="'datakey.timeseries' | translate">timeline</mat-icon>
+                                    }
+                                    {{ chip.label }}
+                                </div>
+                                <div class="tb-chip-separator">: </div>
+                                <div class="tb-chip-label">
+                                    @if (!chip.postFuncBody) {
+                                    <strong>{{ chip.name }}</strong>
+                                    } @else {
+                                    <strong>f({{ chip.name }})</strong>
+                                    }
+                                </div>
+                            </div>
+                            <button mat-icon-button type="button" class="tb-md-32" (click)="editDataKey($event, chip)">
+                                <mat-icon aria-label="edit" class="material-icons tb-md-20">edit</mat-icon>
+                            </button>
+                        </div>
+                        <button matChipRemove type="button" aria-label="remove"><mat-icon>close</mat-icon></button>
+                    </mat-chip-row>
+                    }
+                    <input id="datakey" [matChipInputFor]="dataKeyGrid" [matAutocomplete]="dataKeyAuto"
+                           [ngModel]="dataKeySearchText" (ngModelChange)="onSearchTextChange($event, false)"
+                           [ngModelOptions]="{standalone: true}"
+                           (focus)="onSearchTextChange(dataKeySearchText, false)"
+                           (matChipInputTokenEnd)="onChipInputEnd($event, false)">
+                </mat-chip-grid>
+                <mat-autocomplete #dataKeyAuto="matAutocomplete" class="tb-datakey-autocomplete" [displayWith]="displayKey"
+                                  (optionSelected)="onDataKeySelected($event, false)">
+                    @for (item of dataKeyItems; track $index) {
+                    <mat-option [value]="item">
+                        @if (item.type == types.dataKeyType.attribute) {
+                        <mat-icon class="tb-md-16" [matTooltip]="'datakey.attributes' | translate" svgIcon="alpha-a-circle-outline"></mat-icon>
+                        }
+                        @if (item.type == types.dataKeyType.entityField) {
+                        <mat-icon class="tb-md-16" [matTooltip]="'datakey.entity-field' | translate" svgIcon="alpha-e-circle-outline"></mat-icon>
+                        }
+                        @if (item.type == types.dataKeyType.timeseries) {
+                        <mat-icon class="tb-md-16" [matTooltip]="'datakey.timeseries' | translate">timeline</mat-icon>
+                        }
+                        <span>{{ item.name }}</span>
+                    </mat-option>
+                    }
+                    @if (!dataKeyItems.length) {
+                    <mat-option disabled class="tb-not-found">
+                        @if (!textIsNotEmpty(dataKeySearchText)) {
+                        <div class="tb-no-entries"><span>{{ 'entity.no-keys-found' | translate }}</span></div>
+                        } @else {
+                        <div>
+                            <span>{{ 'entity.no-key-matching' | translate: { key: (dataKeySearchText | truncate: true: 6: '...') } }}</span>
+                            <span>{{ 'entity.create-new-key' | translate }}  </span>
+                            @if (widgetType() == types.widgetType.latest.value) {
+                            <mat-icon class="tb-md-16" style="pointer-events: all; cursor: pointer;" [matTooltip]="'datakey.attributes' | translate"
+                                      svgIcon="alpha-a-circle-outline" (mousedown)="createKey($event, types.dataKeyType.attribute, false)"></mat-icon>
+                            <mat-icon class="tb-md-16" style="pointer-events: all; cursor: pointer;" [matTooltip]="'datakey.entity-field' | translate"
+                                      svgIcon="alpha-e-circle-outline" (mousedown)="createKey($event, types.dataKeyType.entityField, false)"></mat-icon>
+                            }
+                            <mat-icon class="tb-md-16" style="pointer-events: all; cursor: pointer;" [matTooltip]="'datakey.timeseries' | translate"
+                                      (mousedown)="createKey($event, types.dataKeyType.timeseries, false)">timeline</mat-icon>
+                        </div>
+                        }
+                    </mat-option>
+                    }
+                </mat-autocomplete>
+            </mat-form-field>
+            }
+            @if (widgetType() == types.widgetType.alarm.value) {
+            <mat-form-field flex subscriptSizing="dynamic">
+                <mat-chip-grid #alarmKeyGrid id="alarm_datakey_chips" [required]="true" cdkDropList cdkDropListOrientation="mixed"
+                               (cdkDropListDropped)="dropDataKey($event, true)">
+                    @for (chip of alarmDataKeys; track $index) {
+                    <mat-chip-row cdkDrag (removed)="removeDataKey(chip, true)">
+                        <div layout="row" layout-align="start center" class="tb-attribute-chip">
+                            <div class="tb-chip-drag-handle" style="margin-right: 5px; cursor: move;" cdkDragHandle>
+                                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">drag_handle</mat-icon>
+                            </div>
+                            <div class="tb-color-preview" (click)="showColorPicker($event, chip)" style="margin-right: 5px;">
+                                <div class="tb-color-result" [style.background]="chip.color"></div>
+                            </div>
+                            <div layout="row" flex>
+                                <div class="tb-chip-label">{{ chip.label }}</div>
+                                <div class="tb-chip-separator">: </div>
+                                <div class="tb-chip-label">
+                                    @if (!chip.postFuncBody) {
+                                    <strong>{{ chip.name }}</strong>
+                                    } @else {
+                                    <strong>f({{ chip.name }})</strong>
+                                    }
+                                </div>
+                            </div>
+                            <button mat-icon-button type="button" class="tb-md-32" (click)="editDataKey($event, chip)">
+                                <mat-icon aria-label="edit" class="material-icons tb-md-20">edit</mat-icon>
+                            </button>
+                        </div>
+                        <button matChipRemove type="button" aria-label="remove"><mat-icon>close</mat-icon></button>
+                    </mat-chip-row>
+                    }
+                    <input id="alarm_datakey" [placeholder]="'datakey.alarm' | translate" [matChipInputFor]="alarmKeyGrid" [matAutocomplete]="alarmKeyAuto"
+                           [ngModel]="alarmDataKeySearchText" (ngModelChange)="onSearchTextChange($event, true)"
+                           [ngModelOptions]="{standalone: true}"
+                           (focus)="onSearchTextChange(alarmDataKeySearchText, true)"
+                           (matChipInputTokenEnd)="onChipInputEnd($event, true)">
+                </mat-chip-grid>
+                <mat-autocomplete #alarmKeyAuto="matAutocomplete" class="tb-alarm-datakey-autocomplete" [displayWith]="displayKey"
+                                  (optionSelected)="onDataKeySelected($event, true)">
+                    @for (item of alarmDataKeyItems; track $index) {
+                    <mat-option [value]="item"><span>{{ item }}</span></mat-option>
+                    }
+                    @if (!alarmDataKeyItems.length) {
+                    <mat-option disabled class="tb-not-found">
+                        @if (!textIsNotEmpty(alarmDataKeySearchText)) {
+                        <div class="tb-no-entries"><span>{{ 'entity.no-keys-found' | translate }}</span></div>
+                        } @else {
+                        <div>
+                            <span>{{ 'entity.no-key-matching' | translate: { key: (alarmDataKeySearchText | truncate: true: 6: '...') } }}</span>
+                            <span>
+                                <a style="pointer-events: all; cursor: pointer;" (mousedown)="createKey($event, types.dataKeyType.alarm, true)">{{ 'entity.create-new-key' | translate }}</a>
+                            </span>
+                        </div>
+                        }
+                    </mat-option>
+                    }
+                </mat-autocomplete>
+            </mat-form-field>
+            }
+        </section>
+        @if ($error['entityKeys']) {
+        <div class="tb-error-messages" role="alert">
+            @if (widgetType() === types.widgetType.timeseries.value) {
+            <div class="tb-error-message">{{ 'datakey.timeseries-required' | translate }}</div>
+            }
+            @if (widgetType() === types.widgetType.latest.value) {
+            <div class="tb-error-message">{{ 'datakey.timeseries-or-attributes-required' | translate }}</div>
+            }
+            @if (widgetType() === types.widgetType.alarm.value) {
+            <div class="tb-error-message">{{ 'datakey.alarm-fields-required' | translate }}</div>
+            }
+        </div>
+        }
+        @if (maxDataKeys() > -1) {
+        <div class="md-caption" style="color: rgba(0,0,0,0.57);">{{ 'datakey.maximum-timeseries-or-attributes' | translate: { count: maxDataKeys() } }}</div>
+        }
+    </section>
+</section>

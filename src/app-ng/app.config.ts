@@ -3,12 +3,13 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { provideRouter, withComponentInputBinding, withRouterConfig } from '@angular/router';
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateCompiler, provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
 import { PUBLIC_PATH } from './app-globals';
 import { authGuard } from './core/auth.guard';
 import { authInterceptor } from './core/auth.interceptor';
+import { LegacyTranslateCompiler } from './core/translate-compiler';
 
 // The legacy app.config, as Angular providers: html5 URLs (the Router's
 // default), the global interceptor, the static-file translations with en_US as
@@ -35,6 +36,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     provideTranslateService({
       loader: provideTranslateHttpLoader({ prefix: PUBLIC_PATH + 'locale/locale.constant-', suffix: '.json' }),
+      compiler: provideTranslateCompiler(LegacyTranslateCompiler),
       fallbackLang: 'en_US',
       lang: preferredLanguage(),
     }),

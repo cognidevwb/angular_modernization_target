@@ -1,141 +1,82 @@
-import { Component, forwardRef, inject } from '@angular/core';
-import { DeviceService } from '../../api/services/device.service';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TbScopeElementDirective } from '../../components/tb-scope-element/tb-scope-element.directive';
-import { inject as injectRoot } from '@angular/core';
-import { RootState } from '../../../root-state';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { TranslatePipe } from '@ngx-translate/core';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { TranslatePipe } from '@ngx-translate/core';
+import { RootState } from '../../../root-state';
+import { PagedListState, fetchMorePage, newPagedList, onPagedListScrolled } from '../../components/tb-grid/paged-list';
+import { DeviceService } from '../../api/services/device.service';
+
+/** What the customer's devices page opens the dialog with: the customer and the first page of tenant devices. */
+export interface AddDevicesToCustomerData {
+  customerId: string;
+  devices: PagedListState;
+}
 
 /**
- * Ported from the AngularJS controller `AddDevicesToCustomerController` (module `thingsboard.device`) in src/app/device/index.js:29.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Ported from the AngularJS controller `AddDevicesToCustomerController` (module `thingsboard.device`)
+ * with its template src/app/device/add-devices-to-customer.tpl.html. Closes with `true` once the selected devices are assigned.
  */
 @Component({
   selector: 'add-devices-to-customer',
   standalone: true,
-  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, ScrollingModule, forwardRef(() => TbScopeElementDirective)],
+  imports: [TranslatePipe, FormsModule, ScrollingModule, MatDialogModule, MatToolbarModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule],
   templateUrl: './add-devices-to-customer.component.html',
 })
 export class AddDevicesToCustomerComponent {
-  protected readonly rootScope = injectRoot(RootState);
+  protected readonly rootScope = inject(RootState);
   protected readonly deviceService = inject(DeviceService);
-  protected readonly dialog = inject(MatDialog);
-  protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
-  devices: any;
-  searchText: any = '';
-  theDevices: any;
+  protected readonly dialogRef = inject(MatDialogRef<AddDevicesToCustomerComponent, boolean>);
+  protected readonly dialogData: AddDevicesToCustomerData = inject(MAT_DIALOG_DATA);
 
-  constructor() {
-    this.devices = this.dialogData.devices;
-    this.assign = this.assign;
-    this.cancel = this.cancel;
-    this.hasData = this.hasData;
-    this.noData = this.noData;
-    this.searchDeviceTextUpdated = this.searchDeviceTextUpdated;
-    this.toggleDeviceSelection = this.toggleDeviceSelection;
-    this.theDevices = {
-        getItemAtIndex: (index?: any, ...rest: any[]) => {
-            if (index > this.devices.data.length) {
-                this.theDevices.fetchMoreItems_(index);
-                return null;
-            }
-            var item: any = this.devices.data[index];
-            if (item) {
-                item.indexNumber = index + 1;
-            }
-            return item;
-        },
+  devices: PagedListState = this.dialogData.devices;
+  searchText = '';
 
-        getLength: (...rest: any[]) => {
-            if (this.devices.hasNext) {
-                return this.devices.data.length + this.devices.nextPageLink.limit;
-            } else {
-                return this.devices.data.length;
-            }
-            return undefined;
-        },
+  private readonly fetchDevices = (pageLink: any) => this.deviceService.getTenantDevices(pageLink, false);
 
-        fetchMoreItems_: (...rest: any[]) => {
-            if (this.devices.hasNext && !this.devices.pending) {
-                this.devices.pending = true;
-                this.deviceService.getTenantDevices(this.devices.nextPageLink, false).then(
-                    (devices?: any) => {
-                        this.devices.data = this.devices.data.concat(devices.data);
-                        this.devices.nextPageLink = devices.nextPageLink;
-                        this.devices.hasNext = devices.hasNext;
-                        if (this.devices.hasNext) {
-                            this.devices.nextPageLink.limit = this.devices.pageSize;
-                        }
-                        this.devices.pending = false;
-                    },
-                    () => {
-                        this.devices.hasNext = false;
-                        this.devices.pending = false;
-                    });
-            }
-        }
-    };
+  cancel(): void {
+    this.dialogRef.close();
   }
 
-  cancel = (...rest: any[]): any => {
-    (this.dialog as any).cancel();
-  };
+  assign(): void {
+    const tasks = Object.keys(this.devices['selections']).map((id) => this.deviceService.assignDeviceToCustomer(this.dialogData.customerId, id));
+    Promise.all(tasks).then(() => this.dialogRef.close(true));
+  }
 
-  assign = (...rest: any[]): any => {
-    var tasks: any = [];
-    for (var deviceId in this.devices.selections) {
-        tasks.push(this.deviceService.assignDeviceToCustomer(this.dialogData.customerId, deviceId));
-    }
-    Promise.all(tasks).then(() => {
-    (this.dialog as any).hide();
-    });
-  };
-
-  noData = (...rest: any[]): any => {
+  noData(): boolean {
     return this.devices.data.length == 0 && !this.devices.hasNext;
-  };
+  }
 
-  hasData = (...rest: any[]): any => {
+  hasData(): boolean {
     return this.devices.data.length > 0;
-  };
+  }
 
-  toggleDeviceSelection = ($event?: any, device?: any, ...rest: any[]): any => {
-    $event.stopPropagation();
-    var selected: any = (device.selected !== undefined) && device.selected;
+  onScrolled(index: number): void {
+    onPagedListScrolled(this.devices, index, this.fetchDevices);
+  }
+
+  toggleDeviceSelection(device: any): void {
+    const selected = device.selected !== undefined && device.selected;
     device.selected = !selected;
     if (device.selected) {
-        this.devices.selections[device.id.id] = true;
-        this.devices.selectedCount++;
+      this.devices['selections'][device.id.id] = true;
+      this.devices['selectedCount']++;
     } else {
-        delete this.devices.selections[device.id.id];
-        this.devices.selectedCount--;
+      delete this.devices['selections'][device.id.id];
+      this.devices['selectedCount']--;
     }
-  };
+  }
 
-  searchDeviceTextUpdated = (...rest: any[]): any => {
-    this.devices = {
-        pageSize: this.devices.pageSize,
-        data: [],
-        nextPageLink: {
-            limit: this.devices.pageSize,
-            textSearch: this.searchText
-        },
-        selections: {},
-        selectedCount: 0,
-        hasNext: true,
-        pending: false
-    };
-  };
+  searchDeviceTextUpdated(): void {
+    this.devices = newPagedList(this.devices.pageSize, this.searchText, { selections: {}, selectedCount: 0 });
+    fetchMorePage(this.devices, this.fetchDevices);
+  }
 }

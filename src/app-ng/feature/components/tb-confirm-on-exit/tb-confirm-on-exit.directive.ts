@@ -1,84 +1,137 @@
-import { Component, inject } from '@angular/core';
-import { ElementRef } from '@angular/core';
+import { DestroyRef, Directive, ElementRef, HostListener, Injectable, inject, input, output } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { ActivatedRoute, CanDeactivateFn } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { UserService } from '../../api/services/user.service';
-import { linkAttrs } from '../../../legacy-link';
-import { goState } from '../../../state-paths';
-import { RootState } from '../../../root-state';
 import { TranslateService } from '@ngx-translate/core';
+import { UserService } from '../../api/services/user.service';
+import { showConfirm } from '../../rulechain/confirm-dialog/confirm-dialog.component';
+
+/** Every live `tb-confirm-on-exit`, so one route guard can ask them all. */
+@Injectable({ providedIn: 'root' })
+export class ConfirmOnExitRegistry {
+  private readonly active = new Set<TbConfirmOnExitDirective>();
+
+  add(directive: TbConfirmOnExitDirective): void {
+    this.active.add(directive);
+  }
+
+  remove(directive: TbConfirmOnExitDirective): void {
+    this.active.delete(directive);
+  }
+
+  /** The first registered page with unsaved changes, if any. */
+  dirtyOne(): TbConfirmOnExitDirective | undefined {
+    for (const directive of this.active) {
+      if (directive.hasUnsavedChanges()) {
+        return directive;
+      }
+    }
+    return undefined;
+  }
+}
 
 /**
- * Ported from the AngularJS directive `tbConfirmOnExit` (module `thingsboard.directives.confirmOnExit`) in src/app/components/confirm-on-exit.directive.js:16.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The legacy `$stateChangeStart` check as a route guard: leaving a page whose
+ * `tb-confirm-on-exit` form (or `isDirty`) has changes asks first; on OK the
+ * changes are dropped (form set pristine / `isDirtyChange(false)`) and the navigation goes on.
  */
-@Component({
-  selector: 'tb-confirm-on-exit, [tb-confirm-on-exit]',
+export const confirmOnExitGuard: CanDeactivateFn<unknown> = () => {
+  const dirty = inject(ConfirmOnExitRegistry).dirtyOne();
+  if (!dirty) {
+    return true;
+  }
+  return dirty.confirmExit();
+};
+
+/**
+ * Ported from the AngularJS directive `tbConfirmOnExit` (module `thingsboard.directives.confirmOnExit`)
+ * in src/app/components/confirm-on-exit.directive.js:16 — an attribute directive: warns before the
+ * page unloads (beforeunload) or the route changes (confirmOnExitGuard) while there are unsaved changes.
+ * The changes are the host form's dirty state (the `<form>` it sits on, or `[confirmForm]`), or `[isDirty]`.
+ */
+@Directive({
+  selector: '[tb-confirm-on-exit]',
   standalone: true,
-  template: '', // TODO(port): no template found
 })
 export class TbConfirmOnExitDirective {
-  protected readonly dialog = inject(MatDialog);
-  protected readonly translate = inject(TranslateService);
-  protected readonly router = inject(Router);
-  protected readonly rootScope = inject(RootState);
-  protected readonly userService = inject(UserService);
-  protected readonly element = inject(ElementRef);
+  /** A form to watch instead of the host `<form>` (an NgForm, or anything with `dirty`). */
+  readonly confirmForm = input<any>(undefined);
+  readonly isDirty = input<boolean | undefined>(undefined);
+  readonly isDirtyChange = output<boolean>();
 
-  confirmForm: any;
-
-  // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
-  // TODO(port): $state.go — $state.go: this.router.navigate([...])
-  // TODO(port): link($scope, $element, $attributes) — `$element` is the element (ElementRef.nativeElement) and `$attributes` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  private readonly hostForm = inject(NgForm, { optional: true, self: true });
+  private readonly element = inject(ElementRef);
+  private readonly dialog = inject(MatDialog);
+  private readonly translate = inject(TranslateService);
+  private readonly userService = inject(UserService);
+  private readonly registry = inject(ConfirmOnExitRegistry);
 
   constructor() {
-    this.confirmForm = this.evalAttr(this.attrs.confirmForm);
-    window.onbeforeunload = () => {
-                if (this.userService.isAuthenticated() && ((this.confirmForm && this.confirmForm.$dirty) || this.evalAttr(this.attrs.isDirty))) {
-                    return this.translate.instant('confirm-on-exit.message');
-                }
-                return undefined;
-            };
-    this.rootScope.on('$stateChangeStart', (event?: any, next?: any, current?: any, params?: any) => {
-                if (this.userService.isAuthenticated() && ((this.confirmForm && this.confirmForm.$dirty) || this.evalAttr(this.attrs.isDirty))) {
-                    event.preventDefault();
-                    if (window.confirm(this.translate.instant('confirm-on-exit.html-message'))) {
-                        if (this.confirmForm) {
-                            this.confirmForm.$setPristine();
-                        } else {
-                            this.assignAttr(this.attrs.isDirty, false);
-                            //$scope.isDirty = false;
-                        }
-                        goState(this.router, next.name, params);
-                    }
-                }
-            });
+    this.registry.add(this);
+    inject(DestroyRef).onDestroy(() => this.registry.remove(this));
+    this.guardRoute();
   }
 
-  private evalAttr(expr: string | undefined): any {
-    if (!expr) {
-      return undefined;
+  /** The legacy `$window.onbeforeunload`: the browser's own leave-page prompt. */
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent): string | undefined {
+    if (this.hasUnsavedChanges()) {
+      const message = this.translate.instant('confirm-on-exit.message');
+      event.preventDefault();
+      event.returnValue = message;
+      return message;
     }
-    try {
-      return new Function('with(this) { return (' + expr + '); }').call(this);
-    } catch {
-      return undefined;
-    }
+    return undefined;
   }
 
-  private assignAttr(expr: string | undefined, value: any): void {
-    if (!expr) {
-      return;
+  hasUnsavedChanges(): boolean {
+    if (!this.userService.isAuthenticated()) {
+      return false;
     }
-    try {
-      new Function('value', 'with(this) { ' + expr + ' = value; }').call(this, value);
-    } catch {
-      // ignore assignment errors
-    }
+    const form = this.form();
+    return !!(form && (form.dirty || form.$dirty)) || this.dirtyFlag();
   }
 
-  /** The link's `attrs`: the host element's attributes, read live. */
-  protected get attrs(): any {
-    return linkAttrs(this.element.nativeElement);
+  /** Asks to leave; on OK drops the changes. Resolves whether the navigation may go on. */
+  confirmExit(): Promise<boolean> {
+    return showConfirm(this.dialog, {
+      title: this.translate.instant('confirm-on-exit.title'),
+      htmlContent: this.translate.instant('confirm-on-exit.html-message'),
+      cancel: this.translate.instant('action.cancel'),
+      ok: this.translate.instant('action.ok'),
+    }).then(
+      () => {
+        const form = this.form();
+        if (form) {
+          form.form ? form.form.markAsPristine() : form.markAsPristine?.();
+        } else {
+          this.isDirtyChange.emit(false);
+          this.element.nativeElement.setAttribute('is-dirty', 'false');
+        }
+        return true;
+      },
+      () => false,
+    );
+  }
+
+  private form(): any {
+    return this.confirmForm() ?? this.hostForm;
+  }
+
+  /** `[isDirty]`, or the host's `is-dirty` attribute (`[attr.is-dirty]`) when that is how it is bound. */
+  private dirtyFlag(): boolean {
+    const bound = this.isDirty();
+    if (bound !== undefined) {
+      return !!bound;
+    }
+    return this.element.nativeElement.getAttribute('is-dirty') === 'true';
+  }
+
+  /** Adds the leave check to the route this page is on (once), as the legacy `$stateChangeStart` hook did. */
+  private guardRoute(): void {
+    const config = inject(ActivatedRoute, { optional: true })?.routeConfig;
+    if (config && !config.canDeactivate?.includes(confirmOnExitGuard)) {
+      config.canDeactivate = [...(config.canDeactivate ?? []), confirmOnExitGuard];
+    }
   }
 }

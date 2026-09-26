@@ -1,8 +1,8 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, DestroyRef, effect, inject, InjectionToken, Injector, model, untracked } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { DOCUMENT } from '@angular/common';
 import { ElementRef } from '@angular/core';
 import { Overlay } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
 import { TranslateService } from '@ngx-translate/core';
 import { UtilsService } from '../../common/services/utils.service';
 import { types } from '../../common/constants/types';
@@ -10,60 +10,69 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
-import displayColumnsPanelTemplate from '../../../../app/widget/lib/display-columns-panel.tpl.html';
 import tinycolor from 'tinycolor2';
 import cssjs from '../../../../vendor/css.js/css';
-import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
+import { onWidgetEvent } from '../../components/widget/widget-scope';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
-import { $timeout } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let angular: any;
-declare let $filter: any;
-declare let $scope: any;
-declare let utils: any;
+import { createLegacyFilter, legacyCopy, legacyEquals } from '../../components/widget/legacy-helpers';
 
-// Helpers at the legacy file's top level, beside the registration (as written).
-function DisplayColumnsPanelController(this: any, columns?: any) {  //eslint-disable-line
+const DISPLAY_COLUMNS_PANEL_DATA = new InjectionToken<any>('DISPLAY_COLUMNS_PANEL_DATA');
 
-    var vm: any = this;
-    vm.columns = columns;
+/** Ported from `DisplayColumnsPanelController` + src/app/widget/lib/display-columns-panel.tpl.html. */
+@Component({
+  selector: 'tb-entities-display-columns-panel',
+  standalone: true,
+  imports: [TranslatePipe, MatCheckboxModule, FormsModule],
+  template: `
+    <div style="height: 100%" class="md-padding tb-display-columns-panel" layout="column">
+      <label class="tb-title">{{ 'entity.columns-to-display' | translate }}</label>
+      @for (column of columns; track $index) {
+        <mat-checkbox [attr.aria-label]="'entity.columns-to-display' | translate" [(ngModel)]="column.display">{{ column.title }}</mat-checkbox>
+      }
+    </div>
+  `,
+})
+export class EntitiesDisplayColumnsPanelComponent {
+  protected readonly columns: any[] = inject(DISPLAY_COLUMNS_PANEL_DATA).columns;
 }
 
 /**
  * Ported from the AngularJS directive `tbEntitiesTableWidget` (module `thingsboard.widgets.entitiesTableWidget`) in src/app/widget/lib/entities-table-widget.js:30.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 4 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The widget runtime renders it for the template `<tb-entities-table-widget table-id="tableId" ctx="ctx">`;
+ * the widget type's script broadcasts `entities-table-data-updated` on `ctx.$scope` when data arrives.
  */
 @Component({
   selector: 'tb-entities-table-widget',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, CommonModule, FormsModule],
+  imports: [TranslatePipe, MatPaginatorModule, MatTooltipModule, MatToolbarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, CommonModule, FormsModule],
   templateUrl: './tb-entities-table-widget.directive.html',
 })
 export class TbEntitiesTableWidgetDirective {
-  protected readonly rootScope = injectRoot(RootState);
+  protected readonly rootScope = inject(RootState);
   readonly tableId = model<any>();
   readonly ctx = model<any>();
 
   protected readonly elementRef = inject(ElementRef);
-  // TODO(port): '$scope' — component state: fields and signals on this class
-  // TODO(port): '$filter' — inject the pipe class and call transform()
   protected readonly breakpoints = inject(BreakpointObserver);
   protected readonly overlay = inject(Overlay);
-  protected readonly document = inject(DOCUMENT);
+  protected readonly injector = inject(Injector);
+  protected readonly destroyRef = inject(DestroyRef);
   protected readonly translate = inject(TranslateService);
-  // TODO(port): '$timeout' — use setTimeout, or an rxjs timer
   protected readonly utils = inject(UtilsService);
-  // TODO(port): elements not resolved to a component: md-table-container, md-table-pagination
-  // TODO(port): template: 1 × md-table-container left in place
-  // TODO(port): template: 1 × md-table-pagination left in place
+  /** `$filter` as the cell content functions receive it (`filter('date')(value, format)`). */
+  protected readonly $filter = createLegacyFilter((key, params) => this.translate.instant(key, params));
+  private offDataUpdated: (() => void) | null = null;
+  private prevSearch: any = null;
 
   stylesInfo: any = {};
   contentsInfo: any = {};
@@ -97,13 +106,7 @@ export class TbEntitiesTableWidgetDirective {
   subscription: any;
   widgetConfig: any;
 
-  // TODO(port): $scope.$digest — $digest is not needed: Angular detects the change
-  // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-
   constructor() {
-    let vm = this;
     this.query = {
         order: this.defaultSortOrder,
         limit: this.defaultPageSize,
@@ -113,7 +116,7 @@ export class TbEntitiesTableWidgetDirective {
     this.searchAction = {
         name: 'action.search',
         show: true,
-        onAction: (...rest: any[]) => {
+        onAction: () => {
             this.enterFilterMode();
         },
         icon: 'search'
@@ -121,57 +124,100 @@ export class TbEntitiesTableWidgetDirective {
     this.columnDisplayAction = {
         name: 'entity.columns-to-display',
         show: true,
-        onAction: ($event?: any, ...rest: any[]) => {
+        onAction: ($event?: any) => {
             this.editColumnsToDisplay($event);
         },
         icon: 'view_column'
     };
-    this.enterFilterMode = this.enterFilterMode;
-    this.exitFilterMode = this.exitFilterMode;
-    this.onReorder = this.onReorder;
-    this.onPaginate = this.onPaginate;
-    this.onRowClick = this.onRowClick;
-    this.onActionButtonClick = this.onActionButtonClick;
-    this.isCurrent = this.isCurrent;
-    this.cellStyle = this.cellStyle;
-    this.cellContent = this.cellContent;
-    this.editColumnsToDisplay = this.editColumnsToDisplay;
-    $scope.$watch('vm.ctx', () => {
-        if (this.ctx() && this.ctx().defaultSubscription) {
-            this.settings = this.ctx().settings;
-            this.widgetConfig = this.ctx().widgetConfig;
-            this.subscription = this.ctx().defaultSubscription;
+    effect(() => {
+      const ctx = this.ctx();
+      untracked(() => {
+        if (ctx && ctx.defaultSubscription) {
+            this.settings = ctx.settings;
+            this.widgetConfig = ctx.widgetConfig;
+            this.subscription = ctx.defaultSubscription;
             this.datasources = this.subscription.datasources;
+            this.listenForData(ctx);
             this.initializeConfig();
             this.updateDatasources();
             this.updateEntities();
         }
+      });
     });
-    $scope.$watch("vm.query.search", (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal) && this.query.search != null) {
-            this.updateEntities();
-        }
+    // $mdMedia('gt-xs') / $mdMedia('gt-md')
+    const gtXs = this.breakpoints.observe('(min-width: 600px)').subscribe((state) => {
+        this.isGtXs = state.matches;
     });
-    $scope.$on('entities-table-data-updated', (event?: any, tableId?: any) => {
-        if (this.tableId() == tableId) {
-            if (this.subscription) {
-                this.updateEntitiesData(this.subscription.data);
-                this.updateEntities();
-                
-            }
-        }
-    });
-    $scope.$watch(() => { return this.breakpoints('gt-xs'); }, (isGtXs?: any) => {
-        this.isGtXs = isGtXs;
-    });
-    $scope.$watch(() => { return this.breakpoints('gt-md'); }, (isGtMd?: any) => {
-        this.isGtMd = isGtMd;
+    const gtMd = this.breakpoints.observe('(min-width: 1280px)').subscribe((state) => {
+        this.isGtMd = state.matches;
         if (this.isGtMd) {
             this.limitOptions = [this.defaultPageSize, this.defaultPageSize*2, this.defaultPageSize*3];
         } else {
             this.limitOptions = null;
         }
     });
+    this.destroyRef.onDestroy(() => {
+        gtXs.unsubscribe();
+        gtMd.unsubscribe();
+        this.offDataUpdated?.();
+    });
+  }
+
+  /** The widget type's script broadcasts on its widget scope when new data arrived for this table. */
+  private listenForData(ctx: any): void {
+    this.offDataUpdated?.();
+    this.offDataUpdated = onWidgetEvent(ctx, 'entities-table-data-updated', (_event: any, tableId: any) => {
+          if (this.tableId() == tableId) {
+            if (this.subscription) {
+                this.updateEntitiesData(this.subscription.data);
+                this.updateEntities();
+            }
+          }
+        });
+  }
+
+  /** The search input: the legacy watch on the query's search text. */
+  onSearchChange(newVal: any): void {
+    const prevVal = this.prevSearch;
+    this.query.search = newVal;
+    this.prevSearch = newVal;
+    if (!legacyEquals(newVal, prevVal) && this.query.search != null) {
+        this.updateEntities();
+    }
+  }
+
+  /** The label a sort order (`-"label"`, `'label'`) orders by. */
+  private orderLabel(order: any): string {
+    let key = String(order ?? '');
+    if (key.charAt(0) === '-' || key.charAt(0) === '+') {
+      key = key.substring(1);
+    }
+    return key.replace(/^(['"])(.*)\1$/, '$2');
+  }
+
+  /** A click on a column header (md-order-by): a new column sorts ascending, the same column toggles. */
+  sortBy(label: string): void {
+    const desc = String(this.query.order ?? '').charAt(0) === '-';
+    if (this.orderLabel(this.query.order) === label) {
+      this.query.order = (desc ? '' : '-') + '"' + label + '"';
+    } else {
+      this.query.order = '"' + label + '"';
+    }
+    this.onReorder();
+  }
+
+  sortDirection(label: string): string {
+    if (this.orderLabel(this.query.order) !== label) {
+      return '';
+    }
+    return String(this.query.order).charAt(0) === '-' ? 'arrow_downward' : 'arrow_upward';
+  }
+
+  /** md-table-pagination's page and limit. */
+  onPage(event: PageEvent): void {
+    this.query.limit = event.pageSize;
+    this.query.page = event.pageIndex + 1;
+    this.onPaginate();
   }
 
   initializeConfig(...rest: any[]): any {
@@ -302,13 +348,14 @@ export class TbEntitiesTableWidgetDirective {
   enterFilterMode = (...rest: any[]): any => {
     this.query.search = '';
     this.ctx().hideTitlePanel = true;
-    setTimeout(()=>{
+    setTimeout(() => {
         $(this.ctx().$container).find('.searchInput').focus();
-    })
+    });
   };
 
   exitFilterMode = (...rest: any[]): any => {
     this.query.search = null;
+    this.prevSearch = null;
     this.updateEntities();
     this.ctx().hideTitlePanel = false;
   };
@@ -360,9 +407,9 @@ export class TbEntitiesTableWidgetDirective {
   };
 
   updateEntities(...rest: any[]): any {
-    var result: any = $filter('orderBy')(this.allEntities, this.query.order);
+    var result: any = this.$filter('orderBy')(this.allEntities, this.query.order);
     if (this.query.search != null) {
-        result = $filter('filter')(result, {$: this.query.search});
+        result = this.$filter('filter')(result, {$: this.query.search});
     }
     this.entitiesCount = result.length;
 
@@ -411,7 +458,7 @@ export class TbEntitiesTableWidgetDirective {
             }
             var content: any = strContent;
             try {
-                content = contentInfo.cellContentFunction(value, entity, $filter);
+                content = contentInfo.cellContentFunction(value, entity, this.$filter);
             } catch (e: any) {
                 content = strContent;
             }
@@ -426,7 +473,7 @@ export class TbEntitiesTableWidgetDirective {
     }
   };
 
-  defaultStyle(/*key, value*/: any, ...rest: any[]): any {
+  defaultStyle(..._keyAndValue: any[]): any {
     return {};
   }
 
@@ -459,29 +506,31 @@ export class TbEntitiesTableWidgetDirective {
     }
   }
 
-  editColumnsToDisplay = ($event?: any, ...rest: any[]): any => {
-    let vm = this;
-    var element: any = $($event.target);
-    var position: any = this.overlay.newPanelPosition()
-        .relativeTo(element)
-        .addPanelPosition(this.overlay.xPosition.ALIGN_END, this.overlay.yPosition.BELOW);
-    var config: any = {
-        attachTo: $(this.document.body),
-        controller: DisplayColumnsPanelController,
-        controllerAs: 'vm',
-        templateUrl: displayColumnsPanelTemplate,
-        panelClass: 'tb-display-columns-panel',
-        position: position,
-        fullscreen: false,
-        locals: {
-            'columns': this.columns
-        },
-        openFrom: $event,
-        clickOutsideToClose: true,
-        escapeToClose: true,
-        focusOnOpen: false
-    };
-    this.overlay.open(config);
+  /** `$mdPanel.open` of the columns panel: below the clicked button, aligned to its end; closes on outside click or Escape. */
+  editColumnsToDisplay = ($event?: any): void => {
+    const target = $event && $event.target ? $event.target : this.elementRef.nativeElement;
+    const positionStrategy = this.overlay.position()
+      .flexibleConnectedTo(target)
+      .withPositions([{ originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }]);
+    const overlayRef = this.overlay.create({
+      positionStrategy,
+      panelClass: 'tb-display-columns-panel',
+      hasBackdrop: true,
+      backdropClass: 'cdk-overlay-transparent-backdrop',
+      scrollStrategy: this.overlay.scrollStrategies.reposition()
+    });
+    overlayRef.backdropClick().subscribe(() => overlayRef.dispose());
+    overlayRef.keydownEvents().subscribe((event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        overlayRef.dispose();
+      }
+    });
+    const injector = Injector.create({
+      providers: [{ provide: DISPLAY_COLUMNS_PANEL_DATA, useValue: { columns: this.columns } }],
+      parent: this.injector
+    });
+    overlayRef.attach(new ComponentPortal(EntitiesDisplayColumnsPanelComponent, null, injector));
+    this.destroyRef.onDestroy(() => overlayRef.dispose());
   };
 
   updateDatasources(...rest: any[]): any {
@@ -555,7 +604,7 @@ export class TbEntitiesTableWidgetDirective {
     }
 
     for (var d: any = 0; d < datasource.dataKeys.length; d++ ) {
-        dataKey = structuredClone(datasource.dataKeys[d]);
+        dataKey = legacyCopy(datasource.dataKeys[d]);
         if (dataKey.type == types.dataKeyType.function) {
             dataKey.name = dataKey.label;
         }

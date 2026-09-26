@@ -23,6 +23,7 @@
     "@angular/material": "^22.0.0",
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
+    "@messageformat/core": "^3.4.0",
     "@ngx-translate/core": "^18.0.0",
     "@ngx-translate/http-loader": "^18.0.0",
     "base64-js": "^1.2.1",

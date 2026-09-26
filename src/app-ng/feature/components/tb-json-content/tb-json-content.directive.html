@@ -16,25 +16,24 @@
     limitations under the License.
 
 -->
-<!-- TODO(port): expression not parsed: `` -->
-<div style="background: #fff;" [ngClass]="{'fill-height': fillHeight()}" tbExpandFullscreen (fullscreenZindex)="100" expand-button-id="expand-button" (onFullscreenChanged)="onFullscreenChanged()" layout="column">
+<div style="background: #fff;" [ngClass]="{'fill-height': fillHeight()}" tb-expand-fullscreen fullscreenZindex="100" expand-button-id="expand-button" (onFullscreenChanged)="onFullscreenChanged()" layout="column">
     <div layout="row" layout-align="start center" style="height: 40px;" class="tb-json-content-toolbar">
-        <label class="tb-title no-padding" [ngClass]="{'tb-error': !contentValid}">{{ label }}</label>
+        <label class="tb-title no-padding" [ngClass]="{'tb-error': !contentValid}">{{ label() }}</label>
         <span flex></span>
         @if (!readonly()) {
-          <button mat-button class="tidy" attr.aria-label="{{ 'js-func.tidy' | translate }}" (click)="beautifyJSON()">{{
+          <button mat-button type="button" class="tidy" attr.aria-label="{{ 'js-func.tidy' | translate }}" (click)="beautifyJSON()">{{
             'js-func.tidy' | translate }}
         </button>
         }
         @if (!readonly()) {
-          <button mat-button class="tidy" attr.aria-label="{{ 'js-func.mini' | translate }}" (click)="minifyJSON()">{{
+          <button mat-button type="button" class="tidy" attr.aria-label="{{ 'js-func.mini' | translate }}" (click)="minifyJSON()">{{
             'js-func.mini' | translate }}
         </button>
         }
-        <button mat-icon-button id="expand-button" aria-label="Fullscreen" class="tb-md-32 tb-fullscreen-button-style"></button>
+        <button mat-icon-button type="button" id="expand-button" aria-label="Fullscreen" class="tb-md-32 tb-fullscreen-button-style"></button>
     </div>
     <div flex id="tb-json-panel" class="tb-json-content-panel" layout="column">
-        <div flex id="tb-json-input" [ngClass]="{'fill-height': fillHeight()}" [attr.readonly]="readonly() ? '' : null" ui-ace="jsonEditorOptions" [(ngModel)]="contentBody">
+        <div flex id="tb-json-input" [ngClass]="{'fill-height': fillHeight()}" [readonly]="readonly()" [ui-ace]="jsonEditorOptions" [ngModel]="contentBody" (ngModelChange)="contentBody = $event">
         </div>
     </div>
 </div>

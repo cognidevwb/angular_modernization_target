@@ -1,162 +1,208 @@
-import { Component, inject, model, output, effect } from '@angular/core';
-import { ElementRef } from '@angular/core';
+import { Component, input, model } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTabsModule } from '@angular/material/tabs';
+import { TranslatePipe } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
+import { TbJsFuncDirective } from '../tb-js-func/tb-js-func.directive';
+import { TbJsonFormDirective } from '../tb-json-form/tb-json-form.directive';
 
-import $ from 'jquery';
-import { $q } from '../../../core/q';
-const datakeyConfigTemplate: string = '';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let ngModelCtrl: any;
+/** What the host looks keys up with (legacy `fetchEntityKeys` `&` callback, whose promise was read). */
+export type FetchEntityKeys = (args: { entityAliasId: string; query: string; type: string }) => Promise<string[]>;
 
 /**
- * Ported from the AngularJS directive `tbDatakeyConfig` (module `thingsboard.directives.datakeyConfig`) in src/app/components/datakey-config.directive.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbDatakeyConfig` (module `thingsboard.directives.datakeyConfig`)
+ * in src/app/components/datakey-config.directive.js:28: edits a data key (name, label, color, units,
+ * decimals, generation / post-processing functions, and the widget's key settings) bound through `[(ngModel)]`.
  */
 @Component({
   selector: 'tb-datakey-config',
   standalone: true,
-  template: '', // TODO(port): no template found
+  imports: [NgTemplateOutlet, FormsModule, MatAutocompleteModule, MatCheckboxModule, MatFormFieldModule, MatInputModule, MatTabsModule, TranslatePipe,
+    TbJsFuncDirective, TbJsonFormDirective],
+  template: `
+@if (datakeySettingsSchema()?.schema) {
+<mat-tab-group class="tb-datakey-config">
+    <mat-tab [label]="'datakey.settings' | translate">
+        <ng-container *ngTemplateOutlet="settings"></ng-container>
+    </mat-tab>
+    <mat-tab [label]="'datakey.advanced' | translate">
+        <div class="md-padding" layout="column">
+            <div style="overflow: auto;" layout="column" layout-padding>
+                <tb-json-form [schema]="datakeySettingsSchema().schema" [form]="datakeySettingsSchema().form || ['*']"
+                              [model]="model.settings"></tb-json-form>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>
+} @else {
+<ng-container *ngTemplateOutlet="settings"></ng-container>
+}
+<ng-template #settings>
+<div class="md-padding" layout="column">
+    @if (model.type !== types.dataKeyType.function) {
+    <mat-form-field style="padding-bottom: 8px;">
+        <mat-label>{{ 'entity.key' | translate }}</mat-label>
+        <input matInput id="key" required [placeholder]="'entity.key-name' | translate"
+               [ngModel]="model.name" (ngModelChange)="onKeyTextChange($event)"
+               (focus)="onKeyTextChange(model.name || '')" [matAutocomplete]="keyAuto">
+        <mat-autocomplete #keyAuto="matAutocomplete" (optionSelected)="setField('name', $event.option.value)">
+            @for (item of keys; track $index) {
+            <mat-option [value]="item">{{ item }}</mat-option>
+            }
+        </mat-autocomplete>
+    </mat-form-field>
+    }
+    <div layout="row" layout-align="start center">
+        <mat-form-field flex class="md-block">
+            <mat-label>{{ 'datakey.label' | translate }}</mat-label>
+            <input matInput required name="label" [ngModel]="model.label" (ngModelChange)="setField('label', $event)">
+        </mat-form-field>
+        <mat-form-field flex>
+            <mat-label>{{ 'datakey.color' | translate }}</mat-label>
+            <input matInput type="color" required [ngModel]="model.color || '#999999'" (ngModelChange)="setField('color', $event)">
+        </mat-form-field>
+    </div>
+    @if (model.type !== types.dataKeyType.alarm) {
+    <div layout="row" layout-align="start center">
+        <mat-form-field flex>
+            <mat-label>{{ 'datakey.units' | translate }}</mat-label>
+            <input matInput name="units" [ngModel]="model.units" (ngModelChange)="setField('units', $event)">
+        </mat-form-field>
+        <mat-form-field flex>
+            <mat-label>{{ 'datakey.decimals' | translate }}</mat-label>
+            <input matInput name="decimals" type="number" min="0" max="15" step="1" pattern="^\\d*$"
+                   [ngModel]="model.decimals" (ngModelChange)="setField('decimals', $event)">
+        </mat-form-field>
+    </div>
+    }
+    @if (model.type === types.dataKeyType.function) {
+    <section layout="column">
+        <span>{{ 'datakey.data-generation-func' | translate }}</span>
+        <br/>
+        <tb-js-func [ngModel]="model.funcBody" (ngModelChange)="setField('funcBody', $event)"
+                    [functionArgs]="['time', 'prevValue']"
+                    [validationArgs]="[[1, 1],[1, '1']]"
+                    result-type="any">
+        </tb-js-func>
+    </section>
+    }
+    @if (model.type === types.dataKeyType.timeseries || model.type === types.dataKeyType.attribute) {
+    <section layout="column">
+        <mat-checkbox [ngModel]="model.usePostProcessing" (ngModelChange)="setField('usePostProcessing', $event)"
+                      [attr.aria-label]="'datakey.use-data-post-processing-func' | translate">
+            {{ 'datakey.use-data-post-processing-func' | translate }}
+        </mat-checkbox>
+        @if (model.usePostProcessing) {
+        <tb-js-func [ngModel]="model.postFuncBody" (ngModelChange)="setField('postFuncBody', $event)"
+                    [functionArgs]="['time', 'value', 'prevValue', 'timePrev', 'prevOrigValue']"
+                    [validationArgs]="[[1, 1, 1, 1, 1],[1, '1', '1', 1, '1']]"
+                    result-type="any">
+        </tb-js-func>
+        <label class="tb-title" style="margin-left: 15px;">
+            time - {{ 'datakey.time-description' | translate }}<br/>
+            value - {{ 'datakey.value-description' | translate }}<br/>
+            prevValue - {{ 'datakey.prev-value-description' | translate }}<br/>
+            timePrev - {{ 'datakey.time-prev-description' | translate }}<br/>
+            prevOrigValue - {{ 'datakey.prev-orig-value-description' | translate }}
+        </label>
+        }
+    </section>
+    }
+</div>
+</ng-template>
+`,
+  providers: ngModelProviders(TbDatakeyConfigDirective),
 })
-export class TbDatakeyConfigDirective {
+export class TbDatakeyConfigDirective extends NgModelController {
   readonly entityAlias = model<any>();
-  readonly fetchEntityKeys = output<any>();
+  readonly fetchEntityKeys = input<FetchEntityKeys>();
   readonly datakeySettingsSchema = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$q' — use Promise, or an Observable
-  // TODO(port): '$templateCache' — templateUrl on the component
-  protected readonly typesRef: any = types;
-  protected readonly element = inject(ElementRef);
+  readonly types: any = types;
+  alarmFields: string[] = Object.keys((types as any).alarmFields);
+  model: any = {};
+  keys: string[] = [];
 
-  protected template: any = datakeyConfigTemplate;
-  types: any;
-  alarmFields: any = [];
-  selectedKey: any = null;
-  keySearchText: any = null;
-  usePostProcessing: any = false;
-  functions: any = {};
-  $watch: any;
-  dataKeyForm: any;
-  dataKeySchema: any;
-  model: any;
-  writeValue: any;
-  onChange: any;
-  _value: any;
-  _prevModel: any;
-
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): `scope.fetchEntityKeys(…)` — its result was read; an output emits and returns nothing: take the value from an input callback instead
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
-  constructor() {
-    if (this.datakeySettingsSchema().schema) {
-            this.dataKeySchema = this.datakeySettingsSchema().schema;
-            this.dataKeyForm = this.datakeySettingsSchema().form || ['*'];
-            this.template = '<md-tabs md-border-bottom class="tb-datakey-config">\n' +
-                '<md-tab label="{{\'datakey.settings\' | translate}}">\n' +
-                this.template +
-                '</md-tab>\n' +
-                '<md-tab label="{{\'datakey.advanced\' | translate}}">\n' +
-                '<md-content class="md-padding" layout="column">\n' +
-                '<div style="overflow: auto;">\n' +
-                '<ng-form name="ngform" ' +
-                'layout="column" ' +
-                'layout-padding>' +
-                '<tb-json-form schema="dataKeySchema"' +
-                'form="dataKeyForm"' +
-                'model="model.settings"' +
-                'form-control="ngform">' +
-                '</tb-json-form>' +
-                '</ng-form>\n' +
-                '</div>\n' +
-                '</md-content>\n' +
-                '</md-tab>\n' +
-                '</md-tabs>';
-        }
-    $(this.element.nativeElement).html(this.template);
-    this.types = this.typesRef;
-    for (var alarmField in this.typesRef.alarmFields) {
-            this.alarmFields.push(alarmField);
-        }
-    this.writeValue = (value?: any) => {
-            this.model = {};
-            if (value) {
-                this.model.type = value.type;
-                this.model.name = value.name;
-                this.model.label = value.label;
-                this.model.color = value.color;
-                this.model.units = value.units;
-                this.model.decimals = value.decimals;
-                this.model.funcBody = value.funcBody;
-                this.model.postFuncBody = value.postFuncBody;
-                this.model.usePostProcessing = this.model.postFuncBody ? true : false;
-                this.model.settings = value.settings;
-            }
-        };
-    effect(() => {
-            const newVal = this.model;
-            const oldVal = this._prevModel;
-            if (newVal.usePostProcessing != oldVal?.usePostProcessing) {
-                if (this.model.usePostProcessing && !this.model.postFuncBody) {
-                    this.model.postFuncBody = "return value;";
-                } else if (!this.model.usePostProcessing && this.model.postFuncBody) {
-                    delete this.model.postFuncBody;
-                }
-            }
-            if (this._value) {
-                var value: any = this._value;
-                value.type = this.model.type;
-                value.name = this.model.name;
-                value.label = this.model.label;
-                value.color = this.model.color;
-                value.units = this.model.units;
-                value.decimals = this.model.decimals;
-                value.funcBody = this.model.funcBody;
-                if (!this.model.postFuncBody) {
-                    delete value.postFuncBody;
-                } else {
-                    value.postFuncBody = this.model.postFuncBody;
-                }
-                this.onChange(value);
-            }
-            this._prevModel = newVal;
-        });
-  }
-
-  keysSearch(searchText?: any, ...rest: any[]): any {
-    if (this.model.type === this.typesRef.dataKeyType.alarm) {
-        var dataKeys: any = searchText ? this.alarmFields.filter(
-            this.createFilterForDataKey(searchText)) : this.alarmFields;
-        dataKeys.push(searchText);
-        return dataKeys;
-    } else {
-        if (this.entityAlias()) {
-            var deferred: any = $q.defer();
-            (this.fetchEntityKeys.emit({
-                entityAliasId: this.entityAlias().id,
-                query: searchText,
-                type: this.model.type
-            }) as any)
-                .then(function (keys?: any) {
-                    keys.push(searchText);
-                    deferred.resolve(keys);
-                }, function (e?: any) {
-                    deferred.reject(e);
-                });
-            return deferred.promise;
-        } else {
-            return Promise.resolve([]);
-        }
+  override $render(): void {
+    this.model = {};
+    const value = this.$viewValue;
+    if (value) {
+      this.model.type = value.type;
+      this.model.name = value.name;
+      this.model.label = value.label;
+      this.model.color = value.color;
+      this.model.units = value.units;
+      this.model.decimals = value.decimals;
+      this.model.funcBody = value.funcBody;
+      this.model.postFuncBody = value.postFuncBody;
+      this.model.usePostProcessing = this.model.postFuncBody ? true : false;
+      this.model.settings = value.settings;
     }
-    return undefined;
   }
 
-  createFilterForDataKey(query?: any, ...rest: any[]): any {
-    var lowercaseQuery: any = query.toLowerCase();
-    return function filterFn(dataKey?: any) {
-        return (dataKey.toLowerCase().indexOf(lowercaseQuery) === 0);
-    };
+  /** One field of the model changed: the legacy deep `scope.$watch('model', …)`. */
+  setField(field: string, value: any): void {
+    const prevUsePostProcessing = this.model.usePostProcessing;
+    this.model[field] = value;
+    if (this.model.usePostProcessing != prevUsePostProcessing) {
+      if (this.model.usePostProcessing && !this.model.postFuncBody) {
+        this.model.postFuncBody = 'return value;';
+      } else if (!this.model.usePostProcessing && this.model.postFuncBody) {
+        delete this.model.postFuncBody;
+      }
+    }
+    if (this.$viewValue) {
+      const target = this.$viewValue;
+      target.type = this.model.type;
+      target.name = this.model.name;
+      target.label = this.model.label;
+      target.color = this.model.color;
+      target.units = this.model.units;
+      target.decimals = this.model.decimals;
+      target.funcBody = this.model.funcBody;
+      if (!this.model.postFuncBody) {
+        delete target.postFuncBody;
+      } else {
+        target.postFuncBody = this.model.postFuncBody;
+      }
+      this.$setViewValue(target);
+    }
+  }
+
+  onKeyTextChange(text: string): void {
+    if (text !== this.model.name) {
+      this.setField('name', text);
+    }
+    Promise.resolve(this.keysSearch(text)).then(
+      (keys) => (this.keys = keys),
+      () => (this.keys = []),
+    );
+  }
+
+  keysSearch(searchText: string): Promise<string[]> | string[] {
+    if (this.model.type === this.types.dataKeyType.alarm) {
+      const dataKeys = searchText ? this.alarmFields.filter(this.createFilterForDataKey(searchText)) : [...this.alarmFields];
+      dataKeys.push(searchText);
+      return dataKeys;
+    }
+    const fetch = this.fetchEntityKeys();
+    if (this.entityAlias() && fetch) {
+      return fetch({ entityAliasId: this.entityAlias().id, query: searchText, type: this.model.type }).then((keys) => {
+        keys.push(searchText);
+        return keys;
+      });
+    }
+    return Promise.resolve([]);
+  }
+
+  createFilterForDataKey(query: string): (dataKey: string) => boolean {
+    const lowercaseQuery = query.toLowerCase();
+    return (dataKey: string) => dataKey.toLowerCase().indexOf(lowercaseQuery) === 0;
   }
 }

@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/dashboard/layouts/dashboard-layout.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/dashboard/layouts/dashboard-layout.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -22,24 +22,52 @@
                     'background-attachment': 'scroll',
                     'background-size': layoutCtx()?.gridSettings?.backgroundSizeMode || '100%',
                     'background-position': '0% 0%'}" class="md-content">
-    <section [hidden]="!(!rootScope?.loading && noData())" layout-align="center center" [ngStyle]="{'color': layoutCtx()?.gridSettings?.color}" style="text-transform: uppercase; display: flex; z-index: 1; pointer-events: none;" class="md-headline tb-absolute-fill">
-            @if (!isEdit()) {
-              <span translate>
-                dashboard.no-widgets
-            </span>
-            }
+    <section [hidden]="!(!rootScope['loading'] && noData())" layout-align="center center" [ngStyle]="{'color': layoutCtx()?.gridSettings?.color}"
+             style="text-transform: uppercase; display: flex; z-index: 1; pointer-events: none;" class="md-headline tb-absolute-fill">
+        @if (!isEdit()) {
+          <span>{{ 'dashboard.no-widgets' | translate }}</span>
+        }
         @if (isEdit() && !widgetEditMode()) {
-          <button mat-button class="tb-add-new-widget" (click)="addWidget({event: $event})">
-            <mat-icon attr.aria-label="{{ 'action.add' | translate }}" class="material-icons tb-md-96">add</mat-icon>
+          <button mat-button class="tb-add-new-widget" style="pointer-events: all;" (click)="addWidget($event)">
+            <mat-icon [attr.aria-label]="'action.add' | translate" class="material-icons tb-md-96">add</mat-icon>
             {{ 'dashboard.add-widget' | translate }}
-        </button>
+          </button>
         }
     </section>
-    <tb-dashboard [dashboardStyle]="{'background-color': layoutCtx()?.gridSettings?.backgroundColor,
-                            'background-image': 'url('+layoutCtx()?.gridSettings?.backgroundImageUrl+')',
+    @if (layoutCtx(); as ctx) {
+    <tb-dashboard [dashboardStyle]="{'background-color': ctx.gridSettings?.backgroundColor,
+                            'background-image': 'url('+ctx.gridSettings?.backgroundImageUrl+')',
                             'background-repeat': 'no-repeat',
                             'background-attachment': 'scroll',
-                            'background-size': layoutCtx()?.gridSettings?.backgroundSizeMode || '100%',
-                            'background-position': '0% 0%'}" [widgets]="layoutCtx().widgets" (widgetsChange)="layoutCtx().widgets = $event" [widgetLayouts]="layoutCtx().widgetLayouts" (widgetLayoutsChange)="layoutCtx().widgetLayouts = $event" [columns]="layoutCtx().gridSettings.columns" (columnsChange)="layoutCtx().gridSettings.columns = $event" [margins]="layoutCtx().gridSettings.margins" (marginsChange)="layoutCtx().gridSettings.margins = $event" [aliasController]="dashboardCtx().aliasController" (aliasControllerChange)="dashboardCtx().aliasController = $event" [stateController]="dashboardCtx().stateController" (stateControllerChange)="dashboardCtx().stateController = $event" [dashboardTimewindow]="dashboardCtx().dashboardTimewindow" (dashboardTimewindowChange)="dashboardCtx().dashboardTimewindow = $event" [(isEdit)]="isEdit" [autofillHeight]="layoutCtx()?.gridSettings?.autoFillHeight && !isEdit()" [mobileAutofillHeight]="layoutCtx()?.gridSettings?.mobileAutoFillHeight && !isEdit()" [mobileRowHeight]="layoutCtx().gridSettings.mobileRowHeight" (mobileRowHeightChange)="layoutCtx().gridSettings.mobileRowHeight = $event" [(isMobile)]="isMobile" [(isMobileDisabled)]="widgetEditMode" [(isEditActionEnabled)]="isEdit" [isExportActionEnabled]="isEdit() && !widgetEditMode()" [isRemoveActionEnabled]="isEdit() && !widgetEditMode()" (onEditWidget)="editWidget($event.event, $event.widget)" (onExportWidget)="exportWidget($event.event, $event.widget)" (onWidgetMouseDown)="widgetMouseDown($event.event, $event.widget)" (onWidgetClicked)="widgetClicked($event.event, $event.widget)" (prepareDashboardContextMenu)="prepareDashboardContextMenu()" (prepareWidgetContextMenu)="prepareWidgetContextMenu($event)" (onRemoveWidget)="removeWidget($event.event, $event.widget)" (onInit)="dashboardInited($event)" (onInitFailed)="dashboardInitFailed()" [ignoreLoading]="layoutCtx().ignoreLoading" (ignoreLoadingChange)="layoutCtx().ignoreLoading = $event">
+                            'background-size': ctx.gridSettings?.backgroundSizeMode || '100%',
+                            'background-position': '0% 0%'}"
+                  [widgets]="ctx.widgets" (widgetsChange)="ctx.widgets = $event"
+                  [widgetLayouts]="ctx.widgetLayouts" (widgetLayoutsChange)="ctx.widgetLayouts = $event"
+                  [columns]="ctx.gridSettings?.columns"
+                  [margins]="ctx.gridSettings?.margins"
+                  [aliasController]="dashboardCtx()?.aliasController"
+                  [stateController]="dashboardCtx()?.stateController"
+                  [dashboardTimewindow]="dashboardCtx()?.dashboardTimewindow" (dashboardTimewindowChange)="dashboardCtx().dashboardTimewindow = $event"
+                  [isEdit]="isEdit()"
+                  [autofillHeight]="ctx.gridSettings?.autoFillHeight && !isEdit()"
+                  [mobileAutofillHeight]="ctx.gridSettings?.mobileAutoFillHeight && !isEdit()"
+                  [mobileRowHeight]="ctx.gridSettings?.mobileRowHeight"
+                  [isMobile]="isMobile()"
+                  [isMobileDisabled]="widgetEditMode()"
+                  [isEditActionEnabled]="isEdit()"
+                  [isExportActionEnabled]="isEdit() && !widgetEditMode()"
+                  [isRemoveActionEnabled]="isEdit() && !widgetEditMode()"
+                  (onEditWidget)="editWidget($event.event, $event.widget)"
+                  (onExportWidget)="exportWidget($event.event, $event.widget)"
+                  (onWidgetMouseDown)="widgetMouseDown($event.event, $event.widget)"
+                  (onWidgetClicked)="widgetClicked($event.event, $event.widget)"
+                  (prepareDashboardContextMenu)="prepareDashboardContextMenu($event)"
+                  (prepareWidgetContextMenu)="prepareWidgetContextMenu($event)"
+                  (loadWidgets)="loadWidgets($event)"
+                  (onRemoveWidget)="removeWidget($event.event, $event.widget)"
+                  (onInit)="dashboardInited($event?.dashboard)"
+                  (onInitFailed)="dashboardInitFailed()"
+                  [ignoreLoading]="ctx.ignoreLoading" (ignoreLoadingChange)="ctx.ignoreLoading = $event">
     </tb-dashboard>
+    }
 </div>

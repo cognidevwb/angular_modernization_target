@@ -13,13 +13,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $animate: any;
-declare let $mdUtil: any;
 
 /**
  * Ported from the AngularJS directive `tbDetailsSidenav` (module `thingsboard.directives.detailsSidenav`) in src/app/components/details-sidenav.directive.js:24.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The legacy `headerPane` / `detailsButtons` transclusion slots are `<ng-content select>` slots:
+ * `[header-pane]` / `.tb-header-pane` and `[details-buttons]` / `.tb-details-buttons`.
  */
 @Component({
   selector: 'tb-details-sidenav',
@@ -41,25 +39,17 @@ export class TbDetailsSidenavDirective {
   readonly onToggleDetailsEditMode = output<any>();
   readonly onApplyDetails = output<any>();
 
-  // TODO(port): '$animate' — @angular/animations
-  // TODO(port): '$mdUtil' — AngularJS Material's internals: debounce/throttle → rxjs; nextTick → queueMicrotask
   protected readonly element = inject(ElementRef);
   protected readonly destroyRef = inject(DestroyRef);
-  // TODO(port): elements not resolved to a component: md-sidenav
-  // TODO(port): template: 1 × md-sidenav left in place
-  // TODO(port): template: 2 × ng-transclude left in place
 
   protected backdrop: any;
   protected previousContainerStyles: any;
-  $watch: any;
-
-  // TODO(port): link(scope, element, attrs) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
     if ((this.attrs.isReadOnly === undefined)) {
             this.attrs.isReadOnly = false;
         }
-    if ((this.headerHeightPx === undefined)) {
+    if (this.headerHeightPx() === undefined) {
             this.headerHeightPx.set(100);
         }
     if ((this.attrs.isAlwaysEdit !== undefined) && this.attrs.isAlwaysEdit) {

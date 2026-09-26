@@ -1,155 +1,178 @@
-import { Component, inject, input, model } from '@angular/core';
-import { DashboardService } from '../../api/services/dashboard.service';
-import { ElementRef } from '@angular/core';
-import { UserService } from '../../api/services/user.service';
-
-import $ from 'jquery';
+import { Component, OnInit, effect, inject, input, model } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { TranslatePipe } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
-import { $q } from '../../../core/q';
-declare function require(id: string): any;
-const dashboardAutocompleteTemplate: string = require('../../../../app/components/dashboard-autocomplete.tpl.html');
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { DashboardService } from '../../api/services/dashboard.service';
+import { UserService } from '../../api/services/user.service';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
- * Ported from the AngularJS directive `tbDashboardAutocomplete` (module `thingsboard.directives.dashboardAutocomplete`) in src/app/components/dashboard-autocomplete.directive.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbDashboardAutocomplete` (module `thingsboard.directives.dashboardAutocomplete`)
+ * in src/app/components/dashboard-autocomplete.directive.js:28: picks a dashboard by title;
+ * `[(ngModel)]` is the dashboard id (string).
  */
 @Component({
   selector: 'tb-dashboard-autocomplete',
   standalone: true,
-  template: '', // TODO(port): no template found
+  imports: [FormsModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, TranslatePipe],
+  template: `
+<mat-form-field class="tb-dashboard-autocomplete" style="width: 100%;">
+    <input matInput type="text" name="dashboard"
+           [placeholder]="'dashboard.select-dashboard' | translate"
+           [required]="!!tbRequired()"
+           [disabled]="!!disabled()"
+           [ngModel]="dashboardSearchText"
+           (ngModelChange)="onSearchTextChange($event)"
+           (focus)="onFocus()"
+           [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete" class="tb-dashboard-autocomplete" [displayWith]="displayDashboard"
+                      (optionSelected)="onDashboardSelected($event)">
+        @for (item of dashboards; track item?.id?.id) {
+        <mat-option [value]="item">
+            <div class="tb-dashboard-item"><span>{{ item.title }}</span></div>
+        </mat-option>
+        }
+        @if (!dashboards.length) {
+        <mat-option disabled>
+            <div class="tb-not-found">
+                <span>{{ 'dashboard.no-dashboards-matching' | translate: { entity: dashboardSearchText } }}</span>
+            </div>
+        </mat-option>
+        }
+    </mat-autocomplete>
+    @if (tbRequired() && !dashboard) {
+    <mat-error>{{ 'dashboard.dashboard-required' | translate }}</mat-error>
+    }
+</mat-form-field>
+`,
+  providers: ngModelProviders(TbDashboardAutocompleteDirective),
 })
-export class TbDashboardAutocompleteDirective {
+export class TbDashboardAutocompleteDirective extends NgModelController implements OnInit {
   readonly dashboardsScope = input<any>();
   readonly tenantId = model<any>();
   readonly customerId = model<any>();
   readonly theForm = model<any>();
-  readonly tbRequired = model<any>();
+  readonly tbRequired = model<any>(false);
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
   readonly selectFirstDashboard = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$q' — use Promise, or an Observable
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly dashboardService = inject(DashboardService);
   protected readonly userService = inject(UserService);
-  protected readonly element = inject(ElementRef);
 
-  protected template: any = dashboardAutocompleteTemplate;
   dashboard: any = null;
   dashboardSearchText: any = '';
-  $watch: any;
-  dashboardFetchFunction: any;
-  writeValue: any;
-  onChange: any;
-
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  dashboards: any[] = [];
+  private watching = false;
+  private prevDisabled: any;
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
-    this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
-    this.writeValue = (value: any) => {
-            if (value) {
-                this.dashboardService.getDashboardInfo(value).then(
-                    (dashboard?: any) => {
-                        this.dashboard = dashboard;
-                        this.startWatchers();
-                    },
-                    () => {
-                        this.dashboard = null;
-                        this.updateView();
-                        this.startWatchers();
-                    }
-                );
-            } else {
-                this.dashboard = null;
-                this.startWatchers();
-            }
-        }
-    if (this.selectFirstDashboard()) {
-            var pageLink: any = {limit: 1, textSearch: ''};
-            this.dashboardFetchFunction(pageLink).then((result?: any) => {
-                var dashboards: any = result.data;
-                if (dashboards.length > 0) {
-                    this.dashboard = dashboards[0];
-                    this.updateView();
-                }
-            }, function fail() {
-            });
-        }
-    if (this.selectFirstDashboard()) {
-            var pageLink: any = {limit: 1, textSearch: ''};
-            this.dashboardFetchFunction(pageLink).then((result?: any) => {
-                var dashboards: any = result.data;
-                if (dashboards.length > 0) {
-                    this.dashboard = dashboards[0];
-                    this.updateView();
-                }
-            }, function fail() {
-            });
-        }
-    $(this.element.nativeElement).contents();
-  }
-
-  fetchDashboards(searchText?: any, ...rest: any[]): any {
-    var pageLink: any = {limit: 50, textSearch: searchText};
-
-    var deferred: any = {};
-    deferred.promise = new Promise((resolve, reject) => { deferred.resolve = resolve; deferred.reject = reject; });
-
-    var promise: any;
-    if (this.dashboardsScope() === 'customer' || this.userService.getAuthority() === 'CUSTOMER_USER') {
-        if (this.customerId()) {
-            promise = this.dashboardService.getCustomerDashboards(this.customerId(), pageLink, {ignoreLoading: true});
-        } else {
-            promise = Promise.resolve({data: []});
-        }
-    } else {
-        if (this.userService.getAuthority() === 'SYS_ADMIN') {
-            if (this.tenantId()) {
-                promise = this.dashboardService.getTenantDashboardsByTenantId(this.tenantId(), pageLink, {ignoreLoading: true});
-            } else {
-                promise = Promise.resolve({data: []});
-            }
-        } else {
-            promise = this.dashboardService.getTenantDashboards(pageLink, {ignoreLoading: true});
-        }
-    }
-
-    promise.then(function success(result?: any) {
-        deferred.resolve(result.data);
-    }, function fail() {
-        deferred.reject();
+    super();
+    // `scope.$watch('disabled', …)` once the value was rendered
+    effect(() => {
+      const disabled = this.disabled();
+      if (this.watching && !isEqual(disabled, this.prevDisabled)) {
+        this.updateView();
+      }
+      this.prevDisabled = disabled;
     });
-
-    return deferred.promise;
   }
 
-  dashboardSearchTextChanged(...rest: any[]): any {
+  ngOnInit(): void {
+    if (this.selectFirstDashboard()) {
+      this.fetchDashboards('').then(
+        (dashboards: any[]) => {
+          if (dashboards.length > 0) {
+            this.setDashboard(dashboards[0]);
           }
-
-  updateView(...rest: any[]): any {
-    if (!this.disabled()) {
-        this.onChange(this.dashboard ? this.dashboard.id.id : null);
+        },
+        () => {},
+      );
     }
   }
 
-  startWatchers(...rest: any[]): any {
-    this.$watch = this.$watch || {};
-    if (!isEqual(this.dashboard, this.$watch.dashboard)) {
-        this.$watch.dashboard = this.dashboard;
-        this.updateView();
+  override $render(): void {
+    if (this.$viewValue) {
+      this.dashboardService.getDashboardInfo(this.$viewValue).then(
+        (dashboard: any) => {
+          this.dashboard = dashboard;
+          this.dashboardSearchText = dashboard;
+          this.watching = true;
+        },
+        () => {
+          this.dashboard = null;
+          this.updateView();
+          this.watching = true;
+        },
+      );
+    } else {
+      this.dashboard = null;
+      this.dashboardSearchText = '';
+      this.watching = true;
     }
-    if (!isEqual(this.disabled(), this.$watch.disabled)) {
-        this.$watch.disabled = this.disabled();
-        this.updateView();
+  }
+
+  readonly displayDashboard = (item: any): string => (item && typeof item === 'object' ? item.title : item ?? '');
+
+  onSearchTextChange(text: any): void {
+    this.dashboardSearchText = text;
+    if (typeof text === 'string') {
+      if (this.dashboard) {
+        this.setDashboard(null);
+      }
+      this.loadDashboards(text);
+    }
+  }
+
+  /** md-min-length="0": the list opens on focus. */
+  onFocus(): void {
+    this.loadDashboards(typeof this.dashboardSearchText === 'string' ? this.dashboardSearchText : '');
+  }
+
+  onDashboardSelected(event: MatAutocompleteSelectedEvent): void {
+    this.setDashboard(event.option.value);
+  }
+
+  fetchDashboards(searchText: string): Promise<any[]> {
+    const pageLink = { limit: 50, textSearch: searchText };
+    let promise: Promise<any>;
+    if (this.dashboardsScope() === 'customer' || this.userService.getAuthority() === 'CUSTOMER_USER') {
+      promise = this.customerId()
+        ? this.dashboardService.getCustomerDashboards(this.customerId(), pageLink, { ignoreLoading: true })
+        : Promise.resolve({ data: [] });
+    } else if (this.userService.getAuthority() === 'SYS_ADMIN') {
+      promise = this.tenantId()
+        ? this.dashboardService.getTenantDashboardsByTenantId(this.tenantId(), pageLink, { ignoreLoading: true })
+        : Promise.resolve({ data: [] });
+    } else {
+      promise = this.dashboardService.getTenantDashboards(pageLink, { ignoreLoading: true });
+    }
+    return Promise.resolve(promise).then((result: any) => result.data);
+  }
+
+  updateView(): void {
+    if (!this.disabled()) {
+      this.$setViewValue(this.dashboard ? this.dashboard.id.id : null);
+    }
+  }
+
+  private loadDashboards(text: string): void {
+    this.fetchDashboards(text).then(
+      (dashboards) => (this.dashboards = dashboards),
+      () => (this.dashboards = []),
+    );
+  }
+
+  /** `scope.$watch('dashboard', …)`: a changed selection goes to the form. */
+  private setDashboard(dashboard: any): void {
+    if (!isEqual(dashboard, this.dashboard)) {
+      this.dashboard = dashboard;
+      if (dashboard) {
+        this.dashboardSearchText = dashboard;
+      }
+      this.updateView();
     }
   }
 }

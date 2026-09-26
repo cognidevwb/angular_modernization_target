@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { AfterViewInit, Component, effect, inject, model, untracked } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -7,12 +7,12 @@ import $ from 'jquery';
 import CanvasDigitalGauge from '../../../../app/widget/lib/CanvasDigitalGauge';
 import tinycolor from 'tinycolor2';
 import { isNumber } from '../../../../app/widget/lib/widget-utils';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $scope: any;
+import { RootState } from '../../../root-state';
 
 /**
  * Ported from the AngularJS directive `tbKnob` (module `thingsboard.widgets.rpc.knob`) in src/app/widget/lib/rpc/knob.directive.js:29.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The widget runtime renders it for a widget type whose template is `<tb-knob ctx="ctx">`; it (re)initialises
+ * whenever `ctx` is set, once its template is in the DOM (the legacy `$scope.$watch('vm.ctx')`).
  */
 @Component({
   selector: 'tb-knob',
@@ -20,12 +20,14 @@ declare let $scope: any;
   imports: [CommonModule],
   templateUrl: './tb-knob.directive.html',
 })
-export class TbKnobDirective {
+export class TbKnobDirective implements AfterViewInit {
   readonly ctx = model<any>();
 
   protected readonly element = inject(ElementRef);
-  // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly document = inject(DOCUMENT);
+  protected readonly rootScope = inject(RootState);
+  private viewReady = false;
+  private initedCtx: any = null;
 
   value: any = 0;
   error: any = '';
@@ -63,14 +65,18 @@ export class TbKnobDirective {
   scheduledValue: any;
   setValueMethod: any;
   title: any;
-  widgetEditMode: any;
-
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
 
   constructor() {
-    let vm = this;
-    this.knob = $('.knob', $(this.element.nativeElement));
-    this.knobContainer = $('#knob-container', $(this.element.nativeElement));
+    effect(() => {
+      const ctx = this.ctx();
+      untracked(() => this.ctxChanged(ctx));
+    });
+  }
+
+  ngAfterViewInit(): void {
+    const host = $(this.element.nativeElement);
+    this.knob = $('.knob', host);
+    this.knobContainer = $('#knob-container', host);
     this.knobTopPointerContainer = this.knob.find('.top-pointer-container');
     this.knobTopPointer = this.knob.find('.top-pointer');
     this.knobValueContainer = this.knob.find('.value-container');
@@ -82,12 +88,16 @@ export class TbKnobDirective {
     this.knobMinmaxContainer = this.knob.find('.minmax-container');
     this.minmaxLabel = this.knob.find('.minmax-label');
     this.textMeasure = this.knob.find('#text-measure');
-    this.canvasBarElement = $('#canvasBar', $(this.element.nativeElement));
-    $scope.$watch('vm.ctx', () => {
-        if (this.ctx()) {
-            this.init();
-        }
-    });
+    this.canvasBarElement = $('#canvasBar', host);
+    this.viewReady = true;
+    this.ctxChanged(this.ctx());
+  }
+
+  private ctxChanged(ctx: any): void {
+    if (ctx && this.viewReady && ctx !== this.initedCtx) {
+      this.initedCtx = ctx;
+      this.init();
+    }
   }
 
   init(...rest: any[]): any {
@@ -236,7 +246,7 @@ export class TbKnobDirective {
     var subscription: any = this.ctx().defaultSubscription;
     var rpcEnabled: any = subscription.rpcEnabled;
 
-    this.isSimulated = this.widgetEditMode;
+    this.isSimulated = this.rootScope['widgetEditMode'];
 
     this.requestTimeout = 500;
     if (this.ctx().settings.requestTimeout) {

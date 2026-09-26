@@ -1,69 +1,68 @@
-/// <reference types="vite/client" />
-import { Directive, inject } from '@angular/core';
-import { ElementRef } from '@angular/core';
+import { Component, input } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
-
-import $ from 'jquery';
-import { linkAttrs } from '../../../legacy-link';
-import eventHeaderLcEventTemplate from '../../../../app/event/event-header-lc-event.tpl.html?raw';
-import eventHeaderStatsTemplate from '../../../../app/event/event-header-stats.tpl.html?raw';
-import eventHeaderErrorTemplate from '../../../../app/event/event-header-error.tpl.html?raw';
-import eventHeaderDebugRuleNodeTemplate from '../../../../app/event/event-header-debug-rulenode.tpl.html?raw';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let element: any;
 
 /**
  * Ported from the AngularJS directive `tbEventHeader` (module `thingsboard.event`) in src/app/event/index.js:23.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The four header templates the legacy link compiled in by `event-type` are the `@switch` arms below.
  */
-@Directive({
+@Component({
   selector: '[tb-event-header]',
   standalone: true,
+  imports: [TranslatePipe],
+  template: `
+@switch (headerKind()) {
+@case ('lcEvent') {
+<div class="tb-cell" flex="30">{{ 'event.event-time' | translate }}</div>
+<div class="tb-cell" flex="20">{{ 'event.server' | translate }}</div>
+<div class="tb-cell" flex="20">{{ 'event.event' | translate }}</div>
+<div class="tb-cell" flex="20">{{ 'event.status' | translate }}</div>
+<div class="tb-cell" flex="20">{{ 'event.error' | translate }}</div>
+}
+@case ('stats') {
+<div class="tb-cell" flex>{{ 'event.event-time' | translate }}</div>
+<div class="tb-cell" flex>{{ 'event.server' | translate }}</div>
+<div class="tb-cell tb-number" flex>{{ 'event.messages-processed' | translate }}</div>
+<div class="tb-cell tb-number" flex>{{ 'event.errors-occurred' | translate }}</div>
+}
+@case ('error') {
+<div class="tb-cell" flex="30">{{ 'event.event-time' | translate }}</div>
+<div class="tb-cell" flex="20">{{ 'event.server' | translate }}</div>
+<div class="tb-cell" flex="20">{{ 'event.method' | translate }}</div>
+<div class="tb-cell" flex="20">{{ 'event.error' | translate }}</div>
+}
+@case ('debugRuleNode') {
+<div hide-xs hide-sm class="tb-cell" flex="25">{{ 'event.event-time' | translate }}</div>
+<div class="tb-cell" flex="20">{{ 'event.server' | translate }}</div>
+<div class="tb-cell" flex="10">{{ 'event.type' | translate }}</div>
+<div class="tb-cell" flex="15">{{ 'event.entity' | translate }}</div>
+<div class="tb-cell" flex="20">{{ 'event.message-id' | translate }}</div>
+<div class="tb-cell" flex="20">{{ 'event.message-type' | translate }}</div>
+<div class="tb-cell" flex="15">{{ 'event.relation-type' | translate }}</div>
+<div class="tb-cell" flex="10">{{ 'event.data' | translate }}</div>
+<div class="tb-cell" flex="10">{{ 'event.metadata' | translate }}</div>
+<div class="tb-cell" flex="10">{{ 'event.error' | translate }}</div>
+}
+}
+`,
 })
 export class TbEventHeaderDirective {
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
-  protected readonly element = inject(ElementRef);
+  readonly eventType = input<string>();
 
-  // TODO(port): link(scope, element, attrs) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
-  constructor() {
-    this.attrs.$observe('eventType', () => {
-            this.loadTemplate();
-        });
-  }
-
-  getTemplate(eventType?: any, ...rest: any[]): any {
-    var template: any = '';
-    switch(eventType) {
-        case types.eventType.lcEvent.value:
-            template = eventHeaderLcEventTemplate;
-            break;
-        case types.eventType.stats.value:
-            template = eventHeaderStatsTemplate;
-            break;
-        case types.eventType.error.value:
-            template = eventHeaderErrorTemplate;
-            break;
-        case types.debugEventType.debugRuleNode.value:
-            template = eventHeaderDebugRuleNodeTemplate;
-            break;
-        case types.debugEventType.debugRuleChain.value:
-            template = eventHeaderDebugRuleNodeTemplate;
-            break;
+  /** Which header template the event type selects (legacy `getTemplate`). */
+  protected headerKind(): 'lcEvent' | 'stats' | 'error' | 'debugRuleNode' | null {
+    switch (this.eventType()) {
+      case types.eventType.lcEvent.value:
+        return 'lcEvent';
+      case types.eventType.stats.value:
+        return 'stats';
+      case types.eventType.error.value:
+        return 'error';
+      case types.debugEventType.debugRuleNode.value:
+      case types.debugEventType.debugRuleChain.value:
+        return 'debugRuleNode';
+      default:
+        return null;
     }
-    return $templateCache.get(template);
-  }
-
-  loadTemplate(...rest: any[]): any {
-    $(this.element.nativeElement).html(this.getTemplate(this.attrs.eventType));
-    $compile($(this.element.nativeElement).contents())(this);
-  }
-
-  /** The link's `attrs`: the host element's attributes, read live. */
-  protected get attrs(): any {
-    return linkAttrs(this.element.nativeElement);
   }
 }

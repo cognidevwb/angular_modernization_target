@@ -1,4 +1,5 @@
-import { Component, forwardRef, inject, model, output } from '@angular/core';
+import { Component, forwardRef, inject, input, model } from '@angular/core';
+import { CreateEntityAliasFn, FetchEntityKeysFn, GenerateDataKeyFn } from './datasource-callbacks';
 import { UtilsService } from '../../common/services/utils.service';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
@@ -29,9 +30,9 @@ export class TbDatasourceDirective extends NgModelController {
   readonly widgetType = model<any>();
   readonly functionsOnly = model<any>();
   readonly datakeySettingsSchema = model<any>();
-  readonly generateDataKey = output<any>();
-  readonly fetchEntityKeys = output<any>();
-  readonly onCreateEntityAlias = output<any>();
+  readonly generateDataKey = input<GenerateDataKeyFn | undefined>();
+  readonly fetchEntityKeys = input<FetchEntityKeysFn | undefined>();
+  readonly onCreateEntityAlias = input<CreateEntityAliasFn | undefined>();
 
   protected readonly typesRef: any = types;
   protected readonly utils = inject(UtilsService);

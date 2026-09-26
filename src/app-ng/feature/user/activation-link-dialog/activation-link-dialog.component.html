@@ -1,51 +1,29 @@
-<!-- Scaffolded by the playbook from src/app/user/activation-link.dialog.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
-<!--
-
-    Copyright © 2016-2020 The Thingsboard Authors
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<div attr.aria-label="{{ 'user.activation-link' | translate }}" style="min-width: 400px;" class="md-dialog">
-    <form>
-        <mat-toolbar>
-            <div class="md-toolbar-tools">
-                <h2 translate="user.activation-link"></h2>
-                <span flex></span>
-                <button mat-icon-button (click)="close()">
-                    <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
-                </button>
-            </div>
-        </mat-toolbar>
-        <mat-dialog-content>
-            <div id="activation-link-dialog-content" class="md-dialog-content">
-                <div class="md-content md-padding" layout="column">
-                    <span translate="user.activation-link-text" translate-values="{activationLink: vm.activationLink}"></span>
-                    <div layout="row" layout-align="start center">
-                        <pre class="tb-highlight" flex><code>{{ activationLink }}</code></pre>
-                        <button mat-icon-button ngclipboard attr.data-clipboard-text="{{ activationLink }}" ngclipboard-success="vm.onActivationLinkCopied(e)" attr.matTooltip="{{ 'user.copy-activation-link' | translate }}" matTooltipPosition="above">
-                            <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
-                            
-                        </button>
-                    </div>
+<!-- Ported from src/app/user/activation-link.dialog.tpl.html (Copyright © 2016-2020 The Thingsboard Authors, Apache License 2.0) -->
+<form [attr.aria-label]="'user.activation-link' | translate" style="min-width: 400px;">
+    <mat-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>{{ 'user.activation-link' | translate }}</h2>
+            <span flex></span>
+            <button mat-icon-button type="button" (click)="close()">
+                <mat-icon [attr.aria-label]="'dialog.close' | translate">close</mat-icon>
+            </button>
+        </div>
+    </mat-toolbar>
+    <mat-dialog-content>
+        <div id="activation-link-dialog-content" class="md-dialog-content">
+            <div class="md-content md-padding" layout="column">
+                <span [innerHTML]="'user.activation-link-text' | translate: { activationLink: activationLink }"></span>
+                <div layout="row" layout-align="start center">
+                    <pre class="tb-highlight" flex><code>{{ activationLink }}</code></pre>
+                    <button mat-icon-button type="button" (click)="copyActivationLink($event)" [matTooltip]="'user.copy-activation-link' | translate" matTooltipPosition="above">
+                        <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
+                    </button>
                 </div>
             </div>
-        </mat-dialog-content>
-        <mat-dialog-actions layout="row">
-            <span flex></span>
-            <button mat-button (click)="close()">{{ 'action.ok' |
-                translate }}
-            </button>
-        </mat-dialog-actions>
-    </form>
-</div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions layout="row">
+        <span flex></span>
+        <button mat-button type="button" (click)="close()">{{ 'action.ok' | translate }}</button>
+    </mat-dialog-actions>
+</form>

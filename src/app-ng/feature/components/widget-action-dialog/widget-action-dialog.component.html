@@ -119,11 +119,11 @@
                         </div>
                         }
                         @if (action?.type == types?.widgetActionTypes?.custom?.value) {
-                          <tb-js-func [(ngModel)]="action.customFunction" attr.function-args="{{ ['$event', 'widgetContext', 'entityId', 'entityName', 'additionalParams'] }}" attr.validation-args="{{ [] }}">
+                          <tb-js-func [(ngModel)]="action.customFunction" [functionArgs]="['$event', 'widgetContext', 'entityId', 'entityName', 'additionalParams']" [validationArgs]="[]">
                         </tb-js-func>
                         }
                         @if (action?.type == types?.widgetActionTypes?.customPretty?.value) {
-                          <tb-custom-action-pretty-editor [(ngModel)]="action" [(theForm)]="theForm"></tb-custom-action-pretty-editor>
+                          <tb-custom-action-pretty-editor name="customAction" [(ngModel)]="action"></tb-custom-action-pretty-editor>
                         }
                     </fieldset>
                 </div>

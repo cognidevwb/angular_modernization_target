@@ -1,26 +1,18 @@
-import { Component, forwardRef, inject, model } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { ElementRef } from '@angular/core';
+import { Component, effect, forwardRef, inject, model, untracked } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import { MatDialog } from '@angular/material/dialog';
 import { WidgetService } from '../../api/services/widget.service';
-import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { TbWidgetConfigDirective } from '../../components/tb-widget-config/tb-widget-config.directive';
-
-import $ from 'jquery';
-import { inject as injectRoot } from '@angular/core';
+import { EntityAliasDialogComponent } from '../../entity/entity-alias-dialog/entity-alias-dialog.component';
 import { RootState } from '../../../root-state';
 import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let scope: any;
 
 /**
- * Ported from the AngularJS directive `tbEditWidget` (module `thingsboard.dashboard`) in src/app/dashboard/index.js:50.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbEditWidget` (src/app/dashboard/edit-widget.directive.js):
+ * the widget details panel's editor — the widget config of the widget being edited, with the
+ * key/state lookups and alias creation it needs from the dashboard.
  */
 @Component({
   selector: 'tb-edit-widget',
@@ -29,7 +21,7 @@ declare let scope: any;
   templateUrl: './tb-edit-widget.directive.html',
 })
 export class TbEditWidgetDirective {
-  protected readonly rootScope = injectRoot(RootState);
+  protected readonly rootScope = inject(RootState);
   readonly dashboard = model<any>();
   readonly aliasController = model<any>();
   readonly widgetEditMode = model<any>();
@@ -37,68 +29,64 @@ export class TbEditWidgetDirective {
   readonly widgetLayout = model<any>();
   readonly theForm = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly widgetService = inject(WidgetService);
   protected readonly entityService = inject(EntityService);
-  // TODO(port): '$q' — use Promise, or an Observable
-  protected readonly document = inject(DOCUMENT);
   protected readonly dialog = inject(MatDialog);
-  protected readonly element = inject(ElementRef);
 
-  $watch: any;
   widgetConfig: any;
   typeParameters: any;
   actionSources: any;
   isDataEnabled: any;
   settingsSchema: any;
   dataKeySettingsSchema: any;
+  functionsOnly: any;
 
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): `success` — a named function expression that calls itself; as an arrow it has no name: name it as a method
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  /** The callbacks the widget config calls (the legacy `&` bindings), bound to this editor. */
+  readonly fetchEntityKeysFn = (entityAliasId: string, query: string, type: string) => this.fetchEntityKeys(entityAliasId, query, type);
+  readonly fetchDashboardStatesFn = (query: string) => this.fetchDashboardStates(query);
+  readonly createEntityAliasFn = (event: Event | undefined, alias: string, allowedEntityTypes?: any) =>
+    this.createEntityAlias(event, alias, allowedEntityTypes);
 
   constructor() {
-    this.$watch('widget', () => {
-            if (this.widget()) {
-                this.widgetService.getWidgetInfo(this.widget().bundleAlias,
-                    this.widget().typeAlias,
-                    this.widget().isSystemType).then(
-                    (widgetInfo?: any) => {
-                        queueMicrotask(() => {
-                            this.widgetConfig = {
-                                config: this.widget().config,
-                                layout: this.widgetLayout()
-                            };
-                            var settingsSchema: any = widgetInfo.typeSettingsSchema || widgetInfo.settingsSchema;
-                            var dataKeySettingsSchema: any = widgetInfo.typeDataKeySettingsSchema || widgetInfo.dataKeySettingsSchema;
-                            this.typeParameters = widgetInfo.typeParameters;
-                            this.actionSources = widgetInfo.actionSources;
-                            this.isDataEnabled = !widgetInfo.typeParameters.useCustomDatasources;
-                            if (!settingsSchema || settingsSchema === '') {
-                                this.settingsSchema = {};
-                            } else {
-                                this.settingsSchema = JSON.parse(settingsSchema);
-                            }
-                            if (!dataKeySettingsSchema || dataKeySettingsSchema === '') {
-                                this.dataKeySettingsSchema = {};
-                            } else {
-                                this.dataKeySettingsSchema = JSON.parse(dataKeySettingsSchema);
-                            }
+    // `scope.$watch('widget', …)`: load the widget type's schemas for the edited widget
+    effect(() => {
+      const widget = this.widget();
+      untracked(() => {
+        if (widget) {
+          this.widgetService.getWidgetInfo(widget.bundleAlias, widget.typeAlias, widget.isSystemType).then((widgetInfo?: any) => {
+            queueMicrotask(() => this.applyWidgetInfo(widgetInfo));
+          });
+        }
+      });
+    });
+    // `scope.$watch('widgetLayout', …)`
+    effect(() => {
+      const widgetLayout = this.widgetLayout();
+      untracked(() => {
+        if (widgetLayout && this.widgetConfig) {
+          this.widgetConfig.layout = widgetLayout;
+        }
+      });
+    });
+  }
 
-                            this.widgetEditMode.set(this.dashboard() ? false : true);
-
-                            this.theForm().$setPristine();
-                        });
-                    }
-                );
-            }
-        });
-    this.$watch('widgetLayout', () => {
-            if (this.widgetLayout() && this.widgetConfig) {
-                this.widgetConfig.layout = this.widgetLayout();
-            }
-        });
+  private applyWidgetInfo(widgetInfo: any): void {
+    this.widgetConfig = {
+      config: this.widget().config,
+      layout: this.widgetLayout(),
+    };
+    const settingsSchema: any = widgetInfo.typeSettingsSchema || widgetInfo.settingsSchema;
+    const dataKeySettingsSchema: any = widgetInfo.typeDataKeySettingsSchema || widgetInfo.dataKeySettingsSchema;
+    this.typeParameters = widgetInfo.typeParameters;
+    this.actionSources = widgetInfo.actionSources;
+    this.isDataEnabled = !widgetInfo.typeParameters.useCustomDatasources;
+    this.settingsSchema = !settingsSchema || settingsSchema === '' ? {} : JSON.parse(settingsSchema);
+    this.dataKeySettingsSchema = !dataKeySettingsSchema || dataKeySettingsSchema === '' ? {} : JSON.parse(dataKeySettingsSchema);
+    this.functionsOnly = this.dashboard() ? false : true;
+    const form = this.theForm();
+    if (form && typeof form.$setPristine === 'function') {
+      form.$setPristine();
+    }
   }
 
   fetchEntityKeys(entityAliasId?: any, query?: any, type?: any, ...rest: any[]): any {
@@ -108,10 +96,10 @@ export class TbEditWidgetDirective {
             var entity: any = aliasInfo.currentEntity;
             if (entity) {
                 this.entityService.getEntityKeys(entity.entityType, entity.id, query, type, {ignoreLoading: true}).then(
-                    function success(keys?: any) {
+                    (keys?: any) => {
                         deferred.resolve(keys);
                     },
-                    function fail() {
+                    () => {
                         deferred.resolve([]);
                     }
                 );
@@ -119,7 +107,7 @@ export class TbEditWidgetDirective {
                 deferred.resolve([]);
             }
         },
-        function fail() {
+        () => {
             deferred.resolve([]);
         }
     );
@@ -146,33 +134,23 @@ export class TbEditWidgetDirective {
     };
   }
 
-  createEntityAlias(event?: any, alias?: any, allowedEntityTypes?: any, ...rest: any[]): any {
-    let vm = this;
-
-    var deferred: any = $q.defer();
-    var singleEntityAlias: any = {id: null, alias: alias, filter: {}};
-
-    (this.dialog as any).show({
-        controller: 'EntityAliasDialogController',
-        controllerAs: 'vm',
-        locals: {
+  createEntityAlias(event?: any, alias?: any, allowedEntityTypes?: any): Promise<any> {
+    const singleEntityAlias: any = {id: null, alias: alias, filter: {}};
+    return firstValueFrom(this.dialog.open(EntityAliasDialogComponent, {
+        data: {
             isAdd: true,
             allowedEntityTypes: allowedEntityTypes,
             entityAliases: this.dashboard().configuration.entityAliases,
             alias: singleEntityAlias
         },
-        parent: $(this.document.body),
-        fullscreen: true,
-        multiple: true,
-        targetEvent: event
-    }).then((singleEntityAlias?: any) => {
-        this.dashboard().configuration.entityAliases[singleEntityAlias.id] = singleEntityAlias;
+        panelClass: 'tb-dialog'
+    }).afterClosed()).then((result?: any) => {
+        if (result === undefined) {
+            return Promise.reject();
+        }
+        this.dashboard().configuration.entityAliases[result.id] = result;
         this.aliasController().updateEntityAliases(this.dashboard().configuration.entityAliases);
-        deferred.resolve(singleEntityAlias);
-    }, function () {
-        deferred.reject();
+        return result;
     });
-
-    return deferred.promise;
   }
 }

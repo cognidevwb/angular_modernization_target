@@ -1,20 +1,21 @@
 import { Component, inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialog } from '@angular/material/dialog';
-import { ToastService } from '../../services/toast.service';
-import { TranslateService } from '@ngx-translate/core';
-
-import $ from 'jquery';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ClipboardService } from '../../services/clipboard.service';
+import { ToastService } from '../../services/toast.service';
+
+/** What the users page / add-user dialog open the dialog with. */
+export interface ActivationLinkDialogData {
+  activationLink: string;
+}
 
 /**
- * Ported from the AngularJS controller `ActivationLinkDialogController` (module `thingsboard.user`) in src/app/user/index.js:27.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Ported from the AngularJS controller `ActivationLinkDialogController` (module `thingsboard.user`)
+ * with its template src/app/user/activation-link.dialog.tpl.html. Closes with `true` on OK / close.
  */
 @Component({
   selector: 'activation-link-dialog',
@@ -23,24 +24,24 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './activation-link-dialog.component.html',
 })
 export class ActivationLinkDialogComponent {
-  protected readonly dialog = inject(MatDialog);
+  protected readonly dialogRef = inject(MatDialogRef<ActivationLinkDialogComponent, boolean>);
   protected readonly translate = inject(TranslateService);
   protected readonly toast = inject(ToastService);
-  protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
+  protected readonly clipboardService = inject(ClipboardService);
+  protected readonly dialogData: ActivationLinkDialogData = inject(MAT_DIALOG_DATA);
 
-  activationLink: any;
+  activationLink: string = this.dialogData.activationLink;
 
-  constructor() {
-    this.activationLink = this.dialogData.activationLink;
-    this.onActivationLinkCopied = this.onActivationLinkCopied;
-    this.close = this.close;
+  copyActivationLink(e: any): void {
+    const trigger: any = e.delegateTarget || e.currentTarget;
+    this.clipboardService.copyToClipboard(trigger, this.activationLink).then(() => this.onActivationLinkCopied());
   }
 
-  onActivationLinkCopied = (...rest: any[]): any => {
-    this.toast.showSuccess(this.translate.instant('user.activation-link-copied-message'), 750, $('#activation-link-dialog-content'), 'bottom left');
-  };
+  onActivationLinkCopied(): void {
+    this.toast.showSuccess(this.translate.instant('user.activation-link-copied-message'), 750, document.getElementById('activation-link-dialog-content'), 'bottom left');
+  }
 
-  close = (...rest: any[]): any => {
-    this.dialog.closeAll();
-  };
+  close(): void {
+    this.dialogRef.close(true);
+  }
 }

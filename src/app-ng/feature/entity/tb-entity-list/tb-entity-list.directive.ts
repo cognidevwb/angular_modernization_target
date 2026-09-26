@@ -1,12 +1,13 @@
-import { Component, effect, forwardRef, inject, model } from '@angular/core';
+import { Component, effect, inject, model } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbEntityList` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -16,15 +17,9 @@ import { isEqual } from 'lodash-es';
   standalone: true,
   imports: [TranslatePipe, FormsModule, MatChipsModule, MatAutocompleteModule, MatFormFieldModule, MatIconModule],
   templateUrl: './tb-entity-list.directive.html',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => TbEntityListDirective),
-      multi: true,
-    },
-  ],
+  providers: ngModelProviders(TbEntityListDirective),
 })
-export class TbEntityListDirective implements ControlValueAccessor {
+export class TbEntityListDirective extends NgModelController {
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
   readonly tbRequired = model<any>();
   readonly entityType = model<any>();
@@ -38,10 +33,8 @@ export class TbEntityListDirective implements ControlValueAccessor {
   protected invalid = false;
 
   private previousEntityType: any = this.entityType();
-  private onChange: (value: any) => void = () => {};
-  private onTouched: () => void = () => {};
-
   constructor() {
+    super();
     effect(() => {
       const currentEntityType = this.entityType();
       if (!isEqual(currentEntityType, this.previousEntityType)) {
@@ -51,7 +44,8 @@ export class TbEntityListDirective implements ControlValueAccessor {
     });
   }
 
-  writeValue(value: any): void {
+  override $render(): void {
+    const value = this.$viewValue;
     this.entityList = [];
     if (value && value.length > 0) {
       this.entityService.getEntities(this.entityType(), value).then((entities: any) => {
@@ -63,15 +57,8 @@ export class TbEntityListDirective implements ControlValueAccessor {
     }
   }
 
-  registerOnChange(fn: (value: any) => void): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
+  override setDisabledState(isDisabled: boolean): void {
+    super.setDisabledState(isDisabled);
     this.disabled.set(isDisabled);
   }
 
@@ -103,12 +90,13 @@ export class TbEntityListDirective implements ControlValueAccessor {
 
   private updateModelValue(): void {
     const ids: any[] = this.entityList.map((entity: any) => entity.id.id);
-    this.onChange(ids);
-    this.onTouched();
+    this.$setViewValue(ids);
+    this.$setTouched();
     this.updateValidity();
   }
 
   private updateValidity(): void {
     this.invalid = !!this.tbRequired() && !(this.entityList && this.entityList.length > 0);
+    this.$setValidity('entityList', !this.invalid);
   }
 }
