@@ -1,1 +1,0 @@
-{"answers":{"controller_kind":{"choice":"unknown","confidence":0.49,"probabilities":{"entry_flow_controller":0.03,"form_controller":0.33,"page_controller":0.03,"unknown":0.61},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":1125,"output_tokens":50}}

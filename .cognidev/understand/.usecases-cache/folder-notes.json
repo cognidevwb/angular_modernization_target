@@ -1,1657 +1,2886 @@
 {
-  "src/app/components": {
-    "hash": "3b2581658d8e40b5",
-    "purpose": "Reusable UI building blocks (widgets config controls, dashboard pickers, form inputs) used across the ThingsBoard admin UI",
+  "src/app/feature/api/services": {
+    "hash": "f57f2b336d1f8e7a",
+    "purpose": "Core API client layer providing access to all ThingsBoard backend domain data (devices, assets, dashboards, alarms, users, telemetry, rule chains, etc.)",
     "useCases": [
       {
-        "title": "Select or search for a dashboard to open or embed",
-        "evidence": "DashboardSelect, DashboardAutocomplete, DashboardSelectPanelController"
+        "title": "Register and manage IoT devices",
+        "evidence": "DeviceService, assignDeviceToCustomer"
       },
       {
-        "title": "Preview and interact with a dashboard's widgets",
-        "evidence": "Dashboard directive, DashboardController, dashboard.tpl.html"
+        "title": "Register and manage assets",
+        "evidence": "AssetService, assignAssetToCustomer"
       },
       {
-        "title": "Configure a widget's data key (label, color, aggregation, units)",
-        "evidence": "DatakeyConfig, DatakeyConfigDialogController"
+        "title": "Monitor and acknowledge alarms raised by devices",
+        "evidence": "AlarmService, ackAlarm, cancelPollAlarms"
       },
       {
-        "title": "Bind a widget to a data source entity (device/asset/customer)",
-        "evidence": "DatasourceEntity, Datasource, DatasourceFunc"
+        "title": "Build and share dashboards with customers",
+        "evidence": "DashboardService, addDashboardCustomers, assignDashboardToCustomer"
       },
       {
-        "title": "Customize a widget's legend and display appearance",
-        "evidence": "Legend, LegendConfig, LegendConfigPanelController"
-      }
-    ],
-    "files": [
-      "src/app/components/ace-editor-fix.js",
-      "src/app/components/circular-progress.directive.js",
-      "src/app/components/confirm-on-exit.directive.js",
-      "src/app/components/contact-short.filter.js",
-      "src/app/components/contact.directive.js",
-      "src/app/components/contact.tpl.html",
-      "src/app/components/dashboard-autocomplete.directive.js",
-      "src/app/components/dashboard-autocomplete.scss",
-      "src/app/components/dashboard-autocomplete.tpl.html",
-      "src/app/components/dashboard-select-panel.controller.js",
-      "src/app/components/dashboard-select-panel.tpl.html",
-      "src/app/components/dashboard-select.directive.js",
-      "src/app/components/dashboard-select.scss",
-      "src/app/components/dashboard-select.tpl.html",
-      "src/app/components/dashboard.directive.js",
-      "src/app/components/dashboard.scss",
-      "src/app/components/dashboard.tpl.html",
-      "src/app/components/datakey-config-dialog.controller.js",
-      "src/app/components/datakey-config-dialog.tpl.html",
-      "src/app/components/datakey-config.directive.js",
-      "src/app/components/datakey-config.scss",
-      "src/app/components/datakey-config.tpl.html",
-      "src/app/components/datasource-entity.directive.js",
-      "src/app/components/datasource-entity.scss",
-      "src/app/components/datasource-entity.tpl.html",
-      "src/app/components/datasource-func.directive.js",
-      "src/app/components/datasource-func.scss",
-      "src/app/components/datasource-func.tpl.html",
-      "src/app/components/datasource.directive.js",
-      "src/app/components/datasource.scss",
-      "src/app/components/datasource.tpl.html",
-      "src/app/components/datetime-period.directive.js",
-      "src/app/components/datetime-period.scss",
-      "src/app/components/datetime-period.tpl.html",
-      "src/app/components/details-sidenav.directive.js",
-      "src/app/components/details-sidenav.scss",
-      "src/app/components/details-sidenav.tpl.html",
-      "src/app/components/entity-alias-select.directive.js",
-      "src/app/components/entity-alias-select.scss",
-      "src/app/components/entity-alias-select.tpl.html",
-      "src/app/components/expand-fullscreen.directive.js",
-      "src/app/components/expand-fullscreen.scss",
-      "src/app/components/finish-render.directive.js",
-      "src/app/components/grid.directive.js",
-      "src/app/components/grid.scss",
-      "src/app/components/grid.tpl.html",
-      "src/app/components/js-func.directive.js",
-      "src/app/components/js-func.scss",
-      "src/app/components/js-func.tpl.html",
-      "src/app/components/json-content.directive.js",
-      "src/app/components/json-content.scss",
-      "src/app/components/json-content.tpl.html",
-      "src/app/components/json-form.directive.js",
-      "src/app/components/json-form.scss",
-      "src/app/components/json-form.tpl.html",
-      "src/app/components/json-object-edit.directive.js",
-      "src/app/components/json-object-edit.scss",
-      "src/app/components/json-object-edit.tpl.html",
-      "src/app/components/keyboard-shortcut.filter.js",
-      "src/app/components/kv-map.directive.js",
-      "src/app/components/kv-map.scss",
-      "src/app/components/kv-map.tpl.html",
-      "src/app/components/led-light.directive.js",
-      "src/app/components/legend-config-button.tpl.html",
-      "src/app/components/legend-config-panel.controller.js",
-      "src/app/components/legend-config-panel.tpl.html",
-      "src/app/components/legend-config.directive.js",
-      "src/app/components/legend-config.scss",
-      "src/app/components/legend.directive.js",
-      "src/app/components/legend.scss",
-      "src/app/components/legend.tpl.html",
-      "src/app/components/material-icon-select.directive.js",
-      "src/app/components/material-icon-select.scss",
-      "src/app/components/material-icon-select.tpl.html",
-      "src/app/components/material-icons-dialog.controller.js",
-      "src/app/components/material-icons-dialog.scss",
-      "src/app/components/material-icons-dialog.tpl.html",
-      "src/app/components/md-chip-draggable.directive.js",
-      "src/app/components/md-chip-draggable.scss",
-      "src/app/components/menu-link.directive.js",
-      "src/app/components/menu-link.scss",
-      "src/app/components/menu-link.tpl.html",
-      "src/app/components/menu-toggle.tpl.html",
-      "src/app/components/mousepoint-menu.directive.js",
-      "src/app/components/nav-tree.directive.js",
-      "src/app/components/nav-tree.scss",
-      "src/app/components/nav-tree.tpl.html",
-      "src/app/components/no-animate.directive.js",
-      "src/app/components/related-entity-autocomplete.directive.js",
-      "src/app/components/related-entity-autocomplete.scss",
-      "src/app/components/related-entity-autocomplete.tpl.html",
-      "src/app/components/scope-element.directive.js",
-      "src/app/components/side-menu.directive.js",
-      "src/app/components/side-menu.scss",
-      "src/app/components/side-menu.tpl.html",
-      "src/app/components/socialshare-panel.directive.js",
-      "src/app/components/socialshare-panel.tpl.html",
-      "src/app/components/tb-event-directives.js",
-      "src/app/components/tb-json-to-string.directive.js",
-      "src/app/components/timeinterval.directive.js",
-      "src/app/components/timeinterval.scss",
-      "src/app/components/timeinterval.tpl.html",
-      "src/app/components/timewindow-button.tpl.html",
-      "src/app/components/timewindow-panel.controller.js",
-      "src/app/components/timewindow-panel.tpl.html",
-      "src/app/components/timewindow.directive.js",
-      "src/app/components/timewindow.scss",
-      "src/app/components/timewindow.tpl.html",
-      "src/app/components/truncate.filter.js",
-      "src/app/components/widgets-bundle-select.directive.js",
-      "src/app/components/widgets-bundle-select.scss",
-      "src/app/components/widgets-bundle-select.tpl.html"
-    ]
-  },
-  "src/app/widget/lib": {
-    "hash": "b485f5498ae82de2",
-    "purpose": "Implementations of the dashboard widget types (gauges, maps, tables, alarms) users see and configure on ThingsBoard dashboards",
-    "useCases": [
-      {
-        "title": "Visualize live device telemetry as gauges/charts",
-        "evidence": "TbAnalogueRadialGauge, TbAnalogueLinearGauge, TbCanvasDigitalGauge, TbFlot"
+        "title": "View live and historical telemetry/attribute data",
+        "evidence": "AttributeService, TelemetryWebsocketService, DatasourceSubscription"
       },
       {
-        "title": "View device/asset locations on a map",
-        "evidence": "TbGoogleMap, TbOpenStreetMap, TbImageMap, TbMapWidget"
-      },
-      {
-        "title": "Browse and manage entities (devices/assets) in a table",
-        "evidence": "EntitiesTableWidget, EntitiesTableWidgetController"
-      },
-      {
-        "title": "Monitor and acknowledge active alarms",
-        "evidence": "AlarmsTableWidget, AlarmsTableWidgetController, AlarmStatusFilterPanelController"
-      },
-      {
-        "title": "Explore relationships between entities in a hierarchy view",
-        "evidence": "EntitiesHierarchyWidget, EntitiesHierarchyWidgetController"
-      },
-      {
-        "title": "View historic telemetry values in tabular form",
-        "evidence": "TimeseriesTableWidget, TimeseriesTableWidgetController"
-      },
-      {
-        "title": "Watch a live camera feed device widget",
-        "evidence": "WebCameraWidgetController"
-      },
-      {
-        "title": "Enter data or commands into a device via an input widget",
-        "evidence": "MultipleInputWidget, MultipleInputWidgetController"
-      }
-    ],
-    "files": [
-      "src/app/widget/lib/CanvasDigitalGauge.js",
-      "src/app/widget/lib/add-entity-panel.scss",
-      "src/app/widget/lib/add-entity-panel.tpl.html",
-      "src/app/widget/lib/alarm-status-filter-panel.scss",
-      "src/app/widget/lib/alarm-status-filter-panel.tpl.html",
-      "src/app/widget/lib/alarms-table-widget.js",
-      "src/app/widget/lib/alarms-table-widget.scss",
-      "src/app/widget/lib/alarms-table-widget.tpl.html",
-      "src/app/widget/lib/analogue-compass.js",
-      "src/app/widget/lib/analogue-linear-gauge.js",
-      "src/app/widget/lib/analogue-radial-gauge.js",
-      "src/app/widget/lib/canvas-digital-gauge.js",
-      "src/app/widget/lib/display-columns-panel.scss",
-      "src/app/widget/lib/display-columns-panel.tpl.html",
-      "src/app/widget/lib/entities-hierarchy-widget.js",
-      "src/app/widget/lib/entities-hierarchy-widget.scss",
-      "src/app/widget/lib/entities-hierarchy-widget.tpl.html",
-      "src/app/widget/lib/entities-table-widget.js",
-      "src/app/widget/lib/entities-table-widget.scss",
-      "src/app/widget/lib/entities-table-widget.tpl.html",
-      "src/app/widget/lib/extensions-table-widget.js",
-      "src/app/widget/lib/extensions-table-widget.scss",
-      "src/app/widget/lib/extensions-table-widget.tpl.html",
-      "src/app/widget/lib/flot-widget.js",
-      "src/app/widget/lib/google-map.js",
-      "src/app/widget/lib/image-map.js",
-      "src/app/widget/lib/map-widget.js",
-      "src/app/widget/lib/map-widget2.js",
-      "src/app/widget/lib/multiple-input-widget.js",
-      "src/app/widget/lib/multiple-input-widget.scss",
-      "src/app/widget/lib/multiple-input-widget.tpl.html",
-      "src/app/widget/lib/openstreet-map.js",
-      "src/app/widget/lib/tencent-map.js",
-      "src/app/widget/lib/timeseries-table-widget.js",
-      "src/app/widget/lib/timeseries-table-widget.scss",
-      "src/app/widget/lib/timeseries-table-widget.tpl.html",
-      "src/app/widget/lib/web-camera-input-widget.js",
-      "src/app/widget/lib/web-camera-input-widget.scss",
-      "src/app/widget/lib/web-camera-input-widget.tpl.html",
-      "src/app/widget/lib/widget-utils.js"
-    ]
-  },
-  "src/app/api": {
-    "hash": "2cf4b93bfa58f608",
-    "purpose": "Client-side API layer connecting the UI to backend services for devices, telemetry, users, and dashboards",
-    "useCases": [
-      {
-        "title": "Manage devices, assets, and entity views (create, view, delete)",
-        "evidence": "DeviceService, AssetService, EntityViewService"
-      },
-      {
-        "title": "Subscribe to and view real-time telemetry data on widgets",
-        "evidence": "TelemetryWebsocketService, Subscription, DatasourceSubscription, DataAggregator"
-      },
-      {
-        "title": "View and configure device/entity attributes",
-        "evidence": "AttributeService"
-      },
-      {
-        "title": "Monitor and manage alarms raised by devices",
-        "evidence": "AlarmService"
-      },
-      {
-        "title": "Manage rule chains for processing incoming device data",
+        "title": "Configure data processing rule chains",
         "evidence": "RuleChainService"
       },
       {
-        "title": "Manage tenants, customers, and users with role-based access",
-        "evidence": "TenantService, CustomerService, UserService"
+        "title": "Manage customers, tenants, and users",
+        "evidence": "CustomerService, TenantService, UserService"
       },
       {
-        "title": "Log in to the platform",
-        "evidence": "LoginService"
+        "title": "Review audit logs and system events for compliance",
+        "evidence": "AuditLogService, EventService"
       },
       {
-        "title": "Save and load dashboards and their widgets",
-        "evidence": "DashboardService, WidgetService"
+        "title": "Log in and administer platform settings",
+        "evidence": "LoginService, AdminService"
       },
       {
-        "title": "Review audit logs of platform actions",
-        "evidence": "AuditLogService"
-      },
-      {
-        "title": "Track relationships between entities",
-        "evidence": "EntityRelationService"
+        "title": "Link related entities and entity views together",
+        "evidence": "EntityRelationService, EntityViewService, EntityService"
       }
     ],
     "files": [
-      "src/app/api/admin.service.js",
-      "src/app/api/alarm.service.js",
-      "src/app/api/alias-controller.js",
-      "src/app/api/asset.service.js",
-      "src/app/api/attribute.service.js",
-      "src/app/api/audit-log.service.js",
-      "src/app/api/component-descriptor.service.js",
-      "src/app/api/customer.service.js",
-      "src/app/api/dashboard.service.js",
-      "src/app/api/data-aggregator.js",
-      "src/app/api/datasource.service.js",
-      "src/app/api/device.service.js",
-      "src/app/api/entity-relation.service.js",
-      "src/app/api/entity-view.service.js",
-      "src/app/api/entity.service.js",
-      "src/app/api/event.service.js",
-      "src/app/api/login.service.js",
-      "src/app/api/queue.service.js",
-      "src/app/api/rule-chain.service.js",
-      "src/app/api/subscription.js",
-      "src/app/api/telemetry-websocket.service.js",
-      "src/app/api/tenant.service.js",
-      "src/app/api/time.service.js",
-      "src/app/api/user.service.js",
-      "src/app/api/widget.service.js"
+      "src/app/feature/api/services/admin.service.ts",
+      "src/app/feature/api/services/alarm.service.ts",
+      "src/app/feature/api/services/asset.service.ts",
+      "src/app/feature/api/services/attribute.service.ts",
+      "src/app/feature/api/services/audit-log.service.ts",
+      "src/app/feature/api/services/component-descriptor.service.ts",
+      "src/app/feature/api/services/customer.service.ts",
+      "src/app/feature/api/services/dashboard.service.ts",
+      "src/app/feature/api/services/datasource.service.ts",
+      "src/app/feature/api/services/device.service.ts",
+      "src/app/feature/api/services/entity-relation.service.ts",
+      "src/app/feature/api/services/entity-view.service.ts",
+      "src/app/feature/api/services/entity.service.ts",
+      "src/app/feature/api/services/event.service.ts",
+      "src/app/feature/api/services/login.service.ts",
+      "src/app/feature/api/services/queue.service.ts",
+      "src/app/feature/api/services/rule-chain.service.ts",
+      "src/app/feature/api/services/telemetry-websocket.service.ts",
+      "src/app/feature/api/services/tenant.service.ts",
+      "src/app/feature/api/services/time.service.ts",
+      "src/app/feature/api/services/user.service.ts",
+      "src/app/feature/api/services/widget.service.ts"
     ]
   },
-  "src/app/components/react": {
-    "hash": "a64a9935cba0465b",
-    "purpose": "React-based dynamic JSON-schema form components used to render configuration UIs (e.g., widget/device settings) inside the AngularJS app",
+  "src/app/feature/components/tb-dashboard": {
+    "hash": "dedb3f48f762e81d",
+    "purpose": "Renders the interactive dashboard grid where widgets are laid out, resized, and edited",
     "useCases": [
       {
-        "title": "Configure widget or device settings through an auto-generated settings form",
-        "evidence": "ReactSchemaForm, ThingsboardSchemaForm"
+        "title": "Build and arrange dashboard widgets in a grid layout",
+        "evidence": "TbDashboardDirective, GridRect, loadDashboard"
       },
       {
-        "title": "Edit custom JavaScript/CSS/HTML code within a settings form",
-        "evidence": "ThingsboardJavaScript, ThingsboardCss, ThingsboardHtml, ThingsboardAceEditor"
+        "title": "Edit widget layout on a dashboard",
+        "evidence": "canEditLayout, editWidget, dropWidgetShadow"
       },
       {
-        "title": "Pick colors and icons when customizing a widget or dashboard",
-        "evidence": "ThingsboardColor, ThingsboardIcon"
+        "title": "View a dashboard widget in fullscreen",
+        "evidence": "enableWidgetFullscreen"
       },
       {
-        "title": "Upload or select an image for a widget/dashboard",
-        "evidence": "ThingsboardImage"
+        "title": "Export a dashboard widget",
+        "evidence": "exportWidget"
       }
     ],
     "files": [
-      "src/app/components/react/json-form-ace-editor.jsx",
-      "src/app/components/react/json-form-ace-editor.scss",
-      "src/app/components/react/json-form-array.jsx",
-      "src/app/components/react/json-form-base-component.jsx",
-      "src/app/components/react/json-form-checkbox.jsx",
-      "src/app/components/react/json-form-color.jsx",
-      "src/app/components/react/json-form-color.scss",
-      "src/app/components/react/json-form-css.jsx",
-      "src/app/components/react/json-form-date.jsx",
-      "src/app/components/react/json-form-fieldset.jsx",
-      "src/app/components/react/json-form-html.jsx",
-      "src/app/components/react/json-form-icon.jsx",
-      "src/app/components/react/json-form-image.jsx",
-      "src/app/components/react/json-form-image.scss",
-      "src/app/components/react/json-form-javascript.jsx",
-      "src/app/components/react/json-form-json.jsx",
-      "src/app/components/react/json-form-number.jsx",
-      "src/app/components/react/json-form-rc-select.jsx",
-      "src/app/components/react/json-form-react.jsx",
-      "src/app/components/react/json-form-schema-form.jsx",
-      "src/app/components/react/json-form-text.jsx",
-      "src/app/components/react/json-form.scss"
+      "src/app/feature/components/tb-dashboard/tb-dashboard-grid.ts",
+      "src/app/feature/components/tb-dashboard/tb-dashboard.directive.html",
+      "src/app/feature/components/tb-dashboard/tb-dashboard.directive.ts"
     ]
   },
-  "src/app/common": {
-    "hash": "6947e0a794d69eb1",
-    "purpose": "Shared frontend utilities for dashboard behavior, time/date pickers, fullscreen mode, and low-level data helpers",
+  "src/app/feature/components/widget": {
+    "hash": "3c0d25346eb50856",
+    "purpose": "Runtime engine that instantiates, configures, and displays individual dashboard widgets and their live data subscriptions",
     "useCases": [
       {
-        "title": "View a dashboard in fullscreen mode",
-        "evidence": "Fullscreen"
+        "title": "Display live device/asset data via dashboard widgets (charts, gauges, maps)",
+        "evidence": "WidgetComponent, createSubscription, createDefaultSubscription"
       },
       {
-        "title": "Pick a date or time range when viewing historical telemetry",
-        "evidence": "DatePickerCtrl, TimePickerCtrl, mdpDatePicker, mdpTimePicker"
+        "title": "Trigger widget actions and header controls",
+        "evidence": "buildActionDescriptors, createHeaderActions"
       },
       {
-        "title": "Customize dashboard layout and widget arrangement",
-        "evidence": "DashboardUtils"
+        "title": "Handle RPC calls to devices from a widget",
+        "evidence": "clearRpcError"
+      },
+      {
+        "title": "Resize and reconfigure widgets on a dashboard",
+        "evidence": "checkSize, configureWidgetElement"
       }
     ],
     "files": [
-      "src/app/common/dashboard-utils.service.js",
-      "src/app/common/raf.provider.js",
-      "src/app/common/thirdparty-fix.js",
-      "src/app/common/types.constant.js",
-      "src/app/common/utf8-support.js",
-      "src/app/common/utils.service.js"
+      "src/app/feature/components/widget/legacy-helpers.ts",
+      "src/app/feature/components/widget/legacy-injector.ts",
+      "src/app/feature/components/widget/widget-directives.ts",
+      "src/app/feature/components/widget/widget-scope.ts",
+      "src/app/feature/components/widget/widget.component.html",
+      "src/app/feature/components/widget/widget.component.ts"
     ]
   },
-  "src/app/dashboard": {
-    "hash": "fd2122c740e81135",
-    "purpose": "Screens and controls for creating, editing, organizing, and sharing IoT dashboards",
+  "src/app/feature/common/services": {
+    "hash": "2f07cc58bbc322d4",
+    "purpose": "Shared UI utility services supporting dashboard editing, styling, and helper tooling across the app",
     "useCases": [
       {
-        "title": "Create a new dashboard",
-        "evidence": "add-dashboard.tpl.html, DashboardsController"
+        "title": "Customize dashboard layouts and states",
+        "evidence": "DashboardUtilsService, createDefaultLayouts, addWidgetToLayout, createDefaultState"
       },
       {
-        "title": "View and browse a list of existing dashboards",
-        "evidence": "dashboards.tpl.html, DashboardsController"
+        "title": "Create a single-entity or single-widget dashboard quickly",
+        "evidence": "createSingleEntityFilter, createSingleWidgetDashboard"
       },
       {
-        "title": "Add and configure widgets on a dashboard",
-        "evidence": "AddWidgetController, EditWidgetDirective"
+        "title": "View a widget or dashboard in fullscreen mode",
+        "evidence": "FullscreenService"
       },
       {
-        "title": "Edit dashboard settings (title, layout, timewindow)",
-        "evidence": "DashboardSettingsController"
+        "title": "Pick colors and icons when styling widgets/dashboards",
+        "evidence": "$mdColorPickerService, getMaterialColor, getMaterialIcons"
       },
       {
-        "title": "Assign a dashboard to a customer",
-        "evidence": "AddDashboardsToCustomerController, ManageAssignedCustomersController"
-      },
-      {
-        "title": "Share a dashboard publicly via a link",
-        "evidence": "MakeDashboardPublicDialogController"
-      },
-      {
-        "title": "Navigate dashboard toolbar actions (edit, export, settings)",
-        "evidence": "DashboardToolbar, DashboardToolbarController"
+        "title": "Search and filter entities in dashboard views",
+        "evidence": "filterSearchTextEntities"
       }
     ],
     "files": [
-      "src/app/dashboard/add-dashboard.tpl.html",
-      "src/app/dashboard/add-dashboards-to-customer.controller.js",
-      "src/app/dashboard/add-dashboards-to-customer.tpl.html",
-      "src/app/dashboard/add-widget.controller.js",
-      "src/app/dashboard/add-widget.tpl.html",
-      "src/app/dashboard/dashboard-card.scss",
-      "src/app/dashboard/dashboard-card.tpl.html",
-      "src/app/dashboard/dashboard-fieldset.tpl.html",
-      "src/app/dashboard/dashboard-settings.controller.js",
-      "src/app/dashboard/dashboard-settings.scss",
-      "src/app/dashboard/dashboard-settings.tpl.html",
-      "src/app/dashboard/dashboard-toolbar.directive.js",
-      "src/app/dashboard/dashboard-toolbar.scss",
-      "src/app/dashboard/dashboard-toolbar.tpl.html",
-      "src/app/dashboard/dashboard.controller.js",
-      "src/app/dashboard/dashboard.directive.js",
-      "src/app/dashboard/dashboard.routes.js",
-      "src/app/dashboard/dashboard.scss",
-      "src/app/dashboard/dashboard.tpl.html",
-      "src/app/dashboard/dashboards.controller.js",
-      "src/app/dashboard/dashboards.tpl.html",
-      "src/app/dashboard/edit-widget.directive.js",
-      "src/app/dashboard/edit-widget.tpl.html",
-      "src/app/dashboard/index.js",
-      "src/app/dashboard/make-dashboard-public-dialog.tpl.html",
-      "src/app/dashboard/manage-assigned-customers.controller.js",
-      "src/app/dashboard/manage-assigned-customers.tpl.html"
+      "src/app/feature/common/services/$md-color-picker.service.ts",
+      "src/app/feature/common/services/$mdp-date-picker.service.ts",
+      "src/app/feature/common/services/$mdp-time-picker.service.ts",
+      "src/app/feature/common/services/dashboard-utils.service.ts",
+      "src/app/feature/common/services/fullscreen.service.ts",
+      "src/app/feature/common/services/material-icon-codepoints.ts",
+      "src/app/feature/common/services/tb-raf.service.ts",
+      "src/app/feature/common/services/utils.service.ts"
     ]
   },
-  "src/app/rulechain": {
-    "hash": "079a30a6436125e9",
-    "purpose": "Build and manage data-processing rule chains that define how incoming device data is routed, filtered, and acted upon",
+  "src/app/feature/components/tb-json-form": {
+    "hash": "7ca18cea5f039afe",
+    "purpose": "Dynamic form rendering engine that generates configuration forms from JSON schemas, used for widget/device settings",
     "useCases": [
       {
-        "title": "Create a rule chain to process device telemetry",
-        "evidence": "AddRuleNodeController, add-rulechain.tpl.html, RuleChainController"
+        "title": "Configure device/widget settings through auto-generated forms",
+        "evidence": "TbJsonFormDirective, TbJsonFormFieldComponent, mergeSchemaForm"
       },
       {
-        "title": "Connect rule nodes together to define processing logic",
-        "evidence": "LinkDirective, AddRuleNodeLinkController, link.directive.js"
+        "title": "Validate configuration input fields",
+        "evidence": "ValidationResult, onChangeValidate"
       },
       {
-        "title": "Configure a rule node's behavior and message filters",
-        "evidence": "RuleNodeConfigDirective, RuleNodeDefinedConfigDirective, rulenode-config.tpl.html"
+        "title": "Add/remove repeatable configuration entries (arrays) in a form",
+        "evidence": "ArrayRow, onAppend, emptyArrayItem"
       },
       {
-        "title": "Browse and manage the list of existing rule chains",
-        "evidence": "RuleChainsController, rulechains.tpl.html"
-      },
-      {
-        "title": "Search and select message types when configuring rule links",
-        "evidence": "MessageTypeAutocomplete, message-type-autocomplete.directive.js"
+        "title": "Pick colors, icons, images, or dates within a settings form",
+        "evidence": "onClearColor, onClearIcon, onClearImage, onColorSwatchClick, onDateInput"
       }
     ],
     "files": [
-      "src/app/rulechain/add-link.tpl.html",
-      "src/app/rulechain/add-rulechain.tpl.html",
-      "src/app/rulechain/add-rulenode.tpl.html",
-      "src/app/rulechain/index.js",
-      "src/app/rulechain/link-fieldset.tpl.html",
-      "src/app/rulechain/link.directive.js",
-      "src/app/rulechain/link.scss",
-      "src/app/rulechain/message-type-autocomplete.directive.js",
-      "src/app/rulechain/message-type-autocomplete.scss",
-      "src/app/rulechain/message-type-autocomplete.tpl.html",
-      "src/app/rulechain/rulechain-card.tpl.html",
-      "src/app/rulechain/rulechain-fieldset.tpl.html",
-      "src/app/rulechain/rulechain.controller.js",
-      "src/app/rulechain/rulechain.directive.js",
-      "src/app/rulechain/rulechain.routes.js",
-      "src/app/rulechain/rulechain.scss",
-      "src/app/rulechain/rulechain.tpl.html",
-      "src/app/rulechain/rulechains.controller.js",
-      "src/app/rulechain/rulechains.tpl.html",
-      "src/app/rulechain/rulenode-config.directive.js",
-      "src/app/rulechain/rulenode-config.tpl.html",
-      "src/app/rulechain/rulenode-defined-config.directive.js",
-      "src/app/rulechain/rulenode-fieldset.tpl.html",
-      "src/app/rulechain/rulenode.directive.js",
-      "src/app/rulechain/rulenode.scss",
-      "src/app/rulechain/rulenode.tpl.html"
+      "src/app/feature/components/tb-json-form/json-form-context.ts",
+      "src/app/feature/components/tb-json-form/json-form-schema.ts",
+      "src/app/feature/components/tb-json-form/tb-json-form-field.component.html",
+      "src/app/feature/components/tb-json-form/tb-json-form-field.component.ts",
+      "src/app/feature/components/tb-json-form/tb-json-form.directive.ts"
     ]
   },
-  "src/app/entity": {
-    "hash": "30731c1a8d3d6263",
-    "purpose": "Reusable UI components for finding, filtering, and selecting platform entities (devices, assets, customers, etc.) across the app",
+  "src/app/feature/rulechain/rule-chain-canvas": {
+    "hash": "bb55b67e7936f561",
+    "purpose": "Visual flowchart editor for designing and wiring IoT data-processing rule chains",
     "useCases": [
       {
-        "title": "Search for an entity by name while configuring a feature",
-        "evidence": "EntityAutocomplete, entity-autocomplete.directive.js"
+        "title": "Design a rule chain by connecting processing nodes on a visual canvas",
+        "evidence": "RuleChainCanvasComponent, FlowchartModelService, FcNode, FcConnector"
       },
       {
-        "title": "Filter data or dashboards by entity or entity type",
-        "evidence": "EntityFilterDirective, EntityFilterViewDirective, entity-filter.tpl.html"
+        "title": "Connect and disconnect rule nodes to define data flow",
+        "evidence": "connectorMouseDown, connectorMouseUp, finishEdge, edgeDelete"
       },
       {
-        "title": "Select one or more entities from a list",
-        "evidence": "EntityListDirective, EntitySelect, entity-list.tpl.html"
+        "title": "Select, move, and delete rule chain nodes/links",
+        "evidence": "deleteSelected, deselectAll, isSelected"
       },
       {
-        "title": "Filter and select entities by subtype",
-        "evidence": "EntitySubtypeAutocomplete, EntitySubtypeSelect, EntitySubtypeListDirective"
-      },
-      {
-        "title": "Choose an entity type when setting up a rule or filter",
-        "evidence": "EntityTypeListDirective, EntityTypeSelect, entity-type-list.directive.js"
+        "title": "Edit labels/conditions on rule chain connections",
+        "evidence": "edgeEdit, edgeDblClick"
       }
     ],
     "files": [
-      "src/app/entity/entity-autocomplete.directive.js",
-      "src/app/entity/entity-autocomplete.scss",
-      "src/app/entity/entity-autocomplete.tpl.html",
-      "src/app/entity/entity-filter-view.directive.js",
-      "src/app/entity/entity-filter-view.scss",
-      "src/app/entity/entity-filter-view.tpl.html",
-      "src/app/entity/entity-filter.directive.js",
-      "src/app/entity/entity-filter.scss",
-      "src/app/entity/entity-filter.tpl.html",
-      "src/app/entity/entity-list.directive.js",
-      "src/app/entity/entity-list.scss",
-      "src/app/entity/entity-list.tpl.html",
-      "src/app/entity/entity-select.directive.js",
-      "src/app/entity/entity-select.scss",
-      "src/app/entity/entity-select.tpl.html",
-      "src/app/entity/entity-subtype-autocomplete.directive.js",
-      "src/app/entity/entity-subtype-autocomplete.scss",
-      "src/app/entity/entity-subtype-autocomplete.tpl.html",
-      "src/app/entity/entity-subtype-list.directive.js",
-      "src/app/entity/entity-subtype-list.scss",
-      "src/app/entity/entity-subtype-list.tpl.html",
-      "src/app/entity/entity-subtype-select.directive.js",
-      "src/app/entity/entity-subtype-select.scss",
-      "src/app/entity/entity-subtype-select.tpl.html",
-      "src/app/entity/entity-type-list.directive.js",
-      "src/app/entity/entity-type-list.scss",
-      "src/app/entity/entity-type-list.tpl.html",
-      "src/app/entity/entity-type-select.directive.js",
-      "src/app/entity/entity-type-select.scss",
-      "src/app/entity/entity-type-select.tpl.html",
-      "src/app/entity/index.js"
+      "src/app/feature/rulechain/rule-chain-canvas/flowchart-model.ts",
+      "src/app/feature/rulechain/rule-chain-canvas/rule-chain-canvas.component.html",
+      "src/app/feature/rulechain/rule-chain-canvas/rule-chain-canvas.component.ts"
     ]
   },
-  "src/app/widget/lib/rpc": {
-    "hash": "3342078ebec9ff58",
-    "purpose": "Interactive dashboard widgets that let users view and remotely control device state via RPC commands",
+  "src/app/feature/dashboard/dashboard": {
+    "hash": "6a2bd4ec94f33b36",
+    "purpose": "Renders and manages the interactive dashboard canvas where widgets are laid out, edited, and operated",
     "useCases": [
       {
-        "title": "Adjust a device setting visually using a knob control",
-        "evidence": "Knob, KnobController, knob.directive.js"
+        "title": "View a live IoT dashboard",
+        "evidence": "DashboardComponent, loadDashboard"
       },
       {
-        "title": "View a device's on/off status via an indicator light",
-        "evidence": "LedIndicator, LedIndicatorController, led-indicator.directive.js"
+        "title": "Edit widgets on a dashboard (add/remove/copy/paste)",
+        "evidence": "editWidget, copyWidget, pasteWidget, removeWidget"
       },
       {
-        "title": "Toggle a device remotely using a switch widget",
-        "evidence": "Switch, SwitchController, switch.directive.js"
+        "title": "Export a widget for reuse elsewhere",
+        "evidence": "exportWidget"
       },
       {
-        "title": "Toggle a device remotely using a round switch control",
-        "evidence": "RoundSwitch, RoundSwitchController, round-switch.directive.js"
+        "title": "Switch dashboard states and open detail/right-side panels",
+        "evidence": "currentStateName, openRightLayout, toggleLayouts"
       }
     ],
     "files": [
-      "src/app/widget/lib/rpc/index.js",
-      "src/app/widget/lib/rpc/knob.directive.js",
-      "src/app/widget/lib/rpc/knob.scss",
-      "src/app/widget/lib/rpc/knob.tpl.html",
-      "src/app/widget/lib/rpc/led-indicator.directive.js",
-      "src/app/widget/lib/rpc/led-indicator.scss",
-      "src/app/widget/lib/rpc/led-indicator.tpl.html",
-      "src/app/widget/lib/rpc/round-switch.directive.js",
-      "src/app/widget/lib/rpc/round-switch.scss",
-      "src/app/widget/lib/rpc/round-switch.tpl.html",
-      "src/app/widget/lib/rpc/switch.directive.js",
-      "src/app/widget/lib/rpc/switch.scss",
-      "src/app/widget/lib/rpc/switch.tpl.html"
+      "src/app/feature/dashboard/dashboard/dashboard.component.html",
+      "src/app/feature/dashboard/dashboard/dashboard.component.ts"
     ]
   },
-  "src/app/widget": {
-    "hash": "372fb618d14edeb2",
-    "purpose": "Create, edit, and organize custom dashboard widgets and widget bundles for visualizing device data",
+  "src/app/feature/import-export/services": {
+    "hash": "2baa35ffe6d9655c",
+    "purpose": "Provides import/export of dashboards, widgets, rule chains, and entity data so configurations can be backed up, shared, or migrated between tenants",
     "useCases": [
       {
-        "title": "Design a custom widget's appearance and behavior",
-        "evidence": "WidgetEditorController, widget-editor.tpl.html"
+        "title": "Export a dashboard to a file",
+        "evidence": "exportDashboard, prepareDashboardExport"
       },
       {
-        "title": "Save a new widget type based on an existing one",
-        "evidence": "SaveWidgetTypeAsController, save-widget-type-as.tpl.html"
+        "title": "Import a dashboard, widget, or widget bundle",
+        "evidence": "importDashboard, importWidget, importWidgetsBundle"
       },
       {
-        "title": "Pick a widget type to add to a dashboard",
-        "evidence": "SelectWidgetTypeController, select-widget-type.tpl.html"
+        "title": "Export or import a rule chain configuration",
+        "evidence": "exportRuleChain, importRuleChain"
       },
       {
-        "title": "Browse the widget library to reuse existing widgets",
-        "evidence": "WidgetLibraryController, widget-library.tpl.html"
-      },
-      {
-        "title": "Group related widgets into a bundle for easy reuse",
-        "evidence": "WidgetsBundleController, WidgetsBundleDirective, add-widgets-bundle.tpl.html"
+        "title": "Bulk-import entities from a CSV file",
+        "evidence": "importEntities, convertCSVToJson, openImportDialogCSV"
       }
     ],
     "files": [
-      "src/app/widget/add-widgets-bundle.tpl.html",
-      "src/app/widget/index.js",
-      "src/app/widget/save-widget-type-as.controller.js",
-      "src/app/widget/save-widget-type-as.tpl.html",
-      "src/app/widget/select-widget-type.controller.js",
-      "src/app/widget/select-widget-type.tpl.html",
-      "src/app/widget/widget-editor.controller.js",
-      "src/app/widget/widget-editor.scss",
-      "src/app/widget/widget-editor.tpl.html",
-      "src/app/widget/widget-library.controller.js",
-      "src/app/widget/widget-library.routes.js",
-      "src/app/widget/widget-library.tpl.html",
-      "src/app/widget/widgets-bundle-card.tpl.html",
-      "src/app/widget/widgets-bundle-fieldset.tpl.html",
-      "src/app/widget/widgets-bundle.controller.js",
-      "src/app/widget/widgets-bundle.directive.js",
-      "src/app/widget/widgets-bundles.tpl.html"
+      "src/app/feature/import-export/services/import-export.service.ts"
     ]
   },
-  "src/app/dashboard/states": {
-    "hash": "cf65933a9def1cc8",
-    "purpose": "Define and navigate between different views (states) within a dashboard, including entity-specific and default views",
+  "src/app/feature/rulechain/rule-chain": {
+    "hash": "6a595ed1372a6aa4",
+    "purpose": "Visual editor for building and configuring device data-processing rule chains",
     "useCases": [
       {
-        "title": "Add and manage multiple states/views within a dashboard",
-        "evidence": "ManageDashboardStatesController, manage-dashboard-states.tpl.html"
+        "title": "Build a rule chain by adding and connecting nodes",
+        "evidence": "addRuleNode, addRuleNodeLink, RuleChainComponent"
       },
       {
-        "title": "Rename or configure a dashboard state",
-        "evidence": "DashboardStateDialogController, dashboard-state-dialog.tpl.html"
+        "title": "Configure an individual rule node's behavior",
+        "evidence": "saveRuleNode, openNodeDetails"
       },
       {
-        "title": "Navigate to a target dashboard state, e.g. via widget click",
-        "evidence": "SelectTargetStateController, select-target-state.tpl.html"
+        "title": "Copy and paste rule nodes to reuse logic",
+        "evidence": "copyNode, copyRuleNodes, pasteRuleNodes"
       },
       {
-        "title": "View a default landing state when opening a dashboard",
-        "evidence": "DefaultStateController, default-state-controller.tpl.html"
-      },
-      {
-        "title": "Drill down into an entity-specific dashboard state",
-        "evidence": "EntityStateController, entity-state-controller.tpl.html"
+        "title": "Search and load rule node library components",
+        "evidence": "loadRuleChainLibrary, setRuleNodeSearch"
       }
     ],
     "files": [
-      "src/app/dashboard/states/dashboard-state-dialog.controller.js",
-      "src/app/dashboard/states/dashboard-state-dialog.tpl.html",
-      "src/app/dashboard/states/default-state-controller.js",
-      "src/app/dashboard/states/default-state-controller.scss",
-      "src/app/dashboard/states/default-state-controller.tpl.html",
-      "src/app/dashboard/states/entity-state-controller.js",
-      "src/app/dashboard/states/entity-state-controller.scss",
-      "src/app/dashboard/states/entity-state-controller.tpl.html",
-      "src/app/dashboard/states/index.js",
-      "src/app/dashboard/states/manage-dashboard-states.controller.js",
-      "src/app/dashboard/states/manage-dashboard-states.scss",
-      "src/app/dashboard/states/manage-dashboard-states.tpl.html",
-      "src/app/dashboard/states/select-target-state.controller.js",
-      "src/app/dashboard/states/select-target-state.tpl.html",
-      "src/app/dashboard/states/states-component.directive.js",
-      "src/app/dashboard/states/states-controller.service.js"
+      "src/app/feature/rulechain/rule-chain/rule-chain.component.html",
+      "src/app/feature/rulechain/rule-chain/rule-chain.component.ts"
     ]
   },
-  "src/app/device": {
-    "hash": "668bd092f09dc341",
-    "purpose": "Register, configure, and manage IoT devices and their assignment to customers",
+  "src/app/feature/widget/tb-alarms-table-widget": {
+    "hash": "bdd0abcc27638149",
+    "purpose": "Dashboard widget that displays and lets operators act on device/asset alarms",
     "useCases": [
       {
-        "title": "Add a new device to the platform",
-        "evidence": "add-device.tpl.html, DeviceController"
+        "title": "View alarms raised on monitored devices/assets",
+        "evidence": "TbAlarmsTableWidgetDirective, listenForData"
       },
       {
-        "title": "Assign a device to a customer",
-        "evidence": "AssignDeviceToCustomerController, assign-to-customer.tpl.html"
+        "title": "Acknowledge one or more alarms",
+        "evidence": "ackAlarm, ackAlarms"
       },
       {
-        "title": "Assign multiple devices to a customer at once",
-        "evidence": "AddDevicesToCustomerController, add-devices-to-customer.tpl.html"
+        "title": "Clear one or more alarms",
+        "evidence": "clearAlarm, clearAlarms"
       },
       {
-        "title": "View and manage device credentials for connecting a device",
-        "evidence": "ManageDeviceCredentialsController, device-credentials.tpl.html"
-      },
-      {
-        "title": "Browse the list of registered devices",
-        "evidence": "devices.tpl.html, DeviceRoutes"
+        "title": "Filter and customize which alarms/columns are shown",
+        "evidence": "AlarmStatusFilterPanelComponent, editAlarmStatusFilter, editColumnsToDisplay"
       }
     ],
     "files": [
-      "src/app/device/add-device.tpl.html",
-      "src/app/device/add-devices-to-customer.controller.js",
-      "src/app/device/add-devices-to-customer.tpl.html",
-      "src/app/device/assign-to-customer.controller.js",
-      "src/app/device/assign-to-customer.tpl.html",
-      "src/app/device/device-card.tpl.html",
-      "src/app/device/device-credentials.controller.js",
-      "src/app/device/device-credentials.tpl.html",
-      "src/app/device/device-fieldset.tpl.html",
-      "src/app/device/device.controller.js",
-      "src/app/device/device.directive.js",
-      "src/app/device/device.routes.js",
-      "src/app/device/devices.tpl.html",
-      "src/app/device/index.js"
+      "src/app/feature/widget/tb-alarms-table-widget/tb-alarms-table-widget.directive.html",
+      "src/app/feature/widget/tb-alarms-table-widget/tb-alarms-table-widget.directive.ts"
     ]
   },
-  "src/app/entity-view": {
-    "hash": "887c814dd72fd74e",
-    "purpose": "Manages 'entity views' \u2014 scoped, restricted views into device/asset data that can be shared with customers.",
+  "src/app/feature/services": {
+    "hash": "e5bda2d101a6c044",
+    "purpose": "Shared UI-support services for dashboard editing, navigation menus, clipboard actions, and user notifications",
     "useCases": [
       {
-        "title": "Create an entity view over a device or asset",
-        "evidence": "add-entity-view.tpl.html, EntityViewController"
+        "title": "Copy and paste widgets/rule nodes between dashboards or chains",
+        "evidence": "ItembufferService, copyWidget, pasteWidget, copyRuleNodes"
       },
       {
-        "title": "Assign an entity view to a customer",
-        "evidence": "AssignEntityViewToCustomerController, assign-to-customer.tpl.html"
+        "title": "Navigate the application via a home/section menu",
+        "evidence": "MenuService, buildMenu, getHomeSections"
       },
       {
-        "title": "Bulk-add entity views to a customer",
-        "evidence": "AddEntityViewsToCustomerController, add-entity-views-to-customer.tpl.html"
+        "title": "Copy data to the system clipboard",
+        "evidence": "ClipboardService, copyToClipboard"
       },
       {
-        "title": "Browse and manage the list of entity views",
-        "evidence": "entity-views.tpl.html, EntityViewCardController"
+        "title": "See success/error/info notifications for actions performed",
+        "evidence": "ToastService, showSuccess, showError"
       }
     ],
     "files": [
-      "src/app/entity-view/add-entity-view.tpl.html",
-      "src/app/entity-view/add-entity-views-to-customer.controller.js",
-      "src/app/entity-view/add-entity-views-to-customer.tpl.html",
-      "src/app/entity-view/assign-to-customer.controller.js",
-      "src/app/entity-view/assign-to-customer.tpl.html",
-      "src/app/entity-view/entity-view-card.tpl.html",
-      "src/app/entity-view/entity-view-fieldset.tpl.html",
-      "src/app/entity-view/entity-view.controller.js",
-      "src/app/entity-view/entity-view.directive.js",
-      "src/app/entity-view/entity-view.routes.js",
-      "src/app/entity-view/entity-view.scss",
-      "src/app/entity-view/entity-views.tpl.html",
-      "src/app/entity-view/index.js"
+      "src/app/feature/services/buffer-store.service.ts",
+      "src/app/feature/services/clipboard.service.ts",
+      "src/app/feature/services/itembuffer.service.ts",
+      "src/app/feature/services/menu.service.ts",
+      "src/app/feature/services/toast.service.ts"
     ]
   },
-  "src/app/components/gateway": {
-    "hash": "516c248a290447a6",
-    "purpose": "Provides UI for configuring IoT gateway connectors that bridge external devices/protocols into the platform.",
+  "src/app/legacy-lib/widget/lib": {
+    "hash": "9e3d47ff6c475320",
+    "purpose": "Library of visualization widgets (gauges, maps, charts) rendered on dashboards to display device/asset telemetry",
     "useCases": [
       {
-        "title": "Configure a gateway device's connector settings",
-        "evidence": "GatewayConfigController, gateway-config.tpl.html"
+        "title": "Monitor telemetry via analogue/digital gauge widgets",
+        "evidence": "TbAnalogueRadialGauge, TbAnalogueLinearGauge, TbCanvasDigitalGauge"
       },
       {
-        "title": "Select and apply a gateway configuration template",
-        "evidence": "GatewayConfigSelect, gateway-config-select.tpl.html"
+        "title": "View device location and status on a map widget",
+        "evidence": "TbGoogleMap, TbOpenStreetMap, TbMapWidget, TbTencentMap, TbImageMap"
       },
       {
-        "title": "Edit gateway settings via a dialog",
-        "evidence": "GatewayDialogController, gateway-config-dialog.tpl.html"
+        "title": "View time-series telemetry as charts",
+        "evidence": "TbFlot, flot-widget.js"
       },
       {
-        "title": "Fill out gateway form fields when provisioning a gateway",
-        "evidence": "GatewayFormController, gateway-form.tpl.html"
+        "title": "Add an entity from a map widget panel",
+        "evidence": "openAddEntityPanel, add-entity-panel.js"
       }
     ],
     "files": [
-      "src/app/components/gateway/gateway-config-dialog.tpl.html",
-      "src/app/components/gateway/gateway-config-select.directive.js",
-      "src/app/components/gateway/gateway-config-select.scss",
-      "src/app/components/gateway/gateway-config-select.tpl.html",
-      "src/app/components/gateway/gateway-config.directive.js",
-      "src/app/components/gateway/gateway-config.scss",
-      "src/app/components/gateway/gateway-config.tpl.html",
-      "src/app/components/gateway/gateway-form.directive.js",
-      "src/app/components/gateway/gateway-form.scss",
-      "src/app/components/gateway/gateway-form.tpl.html"
+      "src/app/legacy-lib/widget/lib/CanvasDigitalGauge.js",
+      "src/app/legacy-lib/widget/lib/add-entity-panel.js",
+      "src/app/legacy-lib/widget/lib/add-entity-panel.scss",
+      "src/app/legacy-lib/widget/lib/alarm-status-filter-panel.scss",
+      "src/app/legacy-lib/widget/lib/alarms-table-widget.scss",
+      "src/app/legacy-lib/widget/lib/analogue-compass.js",
+      "src/app/legacy-lib/widget/lib/analogue-linear-gauge.js",
+      "src/app/legacy-lib/widget/lib/analogue-radial-gauge.js",
+      "src/app/legacy-lib/widget/lib/canvas-digital-gauge.js",
+      "src/app/legacy-lib/widget/lib/display-columns-panel.scss",
+      "src/app/legacy-lib/widget/lib/entities-hierarchy-widget.scss",
+      "src/app/legacy-lib/widget/lib/entities-table-widget.scss",
+      "src/app/legacy-lib/widget/lib/extensions-table-widget.scss",
+      "src/app/legacy-lib/widget/lib/flot-widget.js",
+      "src/app/legacy-lib/widget/lib/google-map.js",
+      "src/app/legacy-lib/widget/lib/image-map.js",
+      "src/app/legacy-lib/widget/lib/map-widget.js",
+      "src/app/legacy-lib/widget/lib/map-widget2.js",
+      "src/app/legacy-lib/widget/lib/multiple-input-widget.scss",
+      "src/app/legacy-lib/widget/lib/openstreet-map.js",
+      "src/app/legacy-lib/widget/lib/tencent-map.js",
+      "src/app/legacy-lib/widget/lib/timeseries-table-widget.scss",
+      "src/app/legacy-lib/widget/lib/web-camera-input-widget.scss",
+      "src/app/legacy-lib/widget/lib/widget-utils.js"
     ]
   },
-  "src/app/asset": {
-    "hash": "6945e599c3ceb9e9",
-    "purpose": "Manages assets (non-device entities such as buildings, fleets, or sites) in the IoT platform.",
+  "src/app/feature/entity/tb-attribute-table": {
+    "hash": "e9d151b8a5b1873e",
+    "purpose": "Lets users view, edit, and manage attributes (key/value metadata) belonging to devices, assets, and other entities, and turn attribute data into dashboard widgets.",
     "useCases": [
       {
-        "title": "Register a new asset",
-        "evidence": "add-asset.tpl.html, AssetController"
+        "title": "View an entity's attributes with filtering, sorting, and pagination",
+        "evidence": "TbAttributeTableDirective: getEntityAttributes, sortBy, search, onPaginate, resetFilter"
       },
       {
-        "title": "Assign an asset to a customer",
-        "evidence": "AssignAssetToCustomerController, assign-to-customer.tpl.html"
+        "title": "Add a new attribute to an entity",
+        "evidence": "addAttribute, EditAttributeValueDialogComponent"
       },
       {
-        "title": "Bulk-add assets to a customer",
-        "evidence": "AddAssetsToCustomerController, add-assets-to-customer.tpl.html"
+        "title": "Edit an existing attribute's value (including as raw JSON)",
+        "evidence": "editAttribute, editJSON"
       },
       {
-        "title": "Browse assets in a list/card view",
-        "evidence": "assets.tpl.html, AssetCardController"
+        "title": "Delete one or more selected attributes",
+        "evidence": "deleteAttributes, isSelected, toggleSelected, allSelected"
+      },
+      {
+        "title": "Add a live widget to a dashboard from an entity's attribute data",
+        "evidence": "addWidgetToDashboard, toPreviewWidget, onWidgetsBundleChange"
       }
     ],
     "files": [
-      "src/app/asset/add-asset.tpl.html",
-      "src/app/asset/add-assets-to-customer.controller.js",
-      "src/app/asset/add-assets-to-customer.tpl.html",
-      "src/app/asset/asset-card.tpl.html",
-      "src/app/asset/asset-fieldset.tpl.html",
-      "src/app/asset/asset.controller.js",
-      "src/app/asset/asset.directive.js",
-      "src/app/asset/asset.routes.js",
-      "src/app/asset/assets.tpl.html",
-      "src/app/asset/assign-to-customer.controller.js",
-      "src/app/asset/assign-to-customer.tpl.html",
-      "src/app/asset/index.js"
+      "src/app/feature/entity/tb-attribute-table/edit-attribute-value-dialog.component.ts",
+      "src/app/feature/entity/tb-attribute-table/tb-attribute-table.directive.html",
+      "src/app/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts"
     ]
   },
-  "src/app/audit": {
-    "hash": "fdd7c4cedd0fe5b2",
-    "purpose": "Provides audit logging views so admins/tenants can review a history of actions taken in the platform.",
+  "src/app/feature/extension/tb-extension-table": {
+    "hash": "2d80fcc20a23123c",
+    "purpose": "Manages the list of gateway/data-processing extensions (connectors) that can be added, configured, ordered, and shared.",
     "useCases": [
       {
-        "title": "Review a table of audit log entries",
-        "evidence": "AuditLogsController, audit-log-table.tpl.html"
+        "title": "Add a new extension/connector",
+        "evidence": "addExtension, openExtensionDialog"
       },
       {
-        "title": "View details of a specific audit log entry",
-        "evidence": "AuditLogDetailsDialogController, audit-log-details-dialog.tpl.html"
+        "title": "Edit an existing extension's configuration",
+        "evidence": "editExtension"
       },
       {
-        "title": "Navigate to audit logs from the app menu",
-        "evidence": "AuditLogRoutes, audit-log.routes.js"
+        "title": "Delete one or more extensions",
+        "evidence": "deleteExtension, deleteExtensions"
+      },
+      {
+        "title": "Import and export extension configurations",
+        "evidence": "importExtensions, exportExtension, exportExtensions"
+      },
+      {
+        "title": "Reorder extensions to control processing priority",
+        "evidence": "onReorder, reorder"
       }
     ],
     "files": [
-      "src/app/audit/audit-log-details-dialog.controller.js",
-      "src/app/audit/audit-log-details-dialog.scss",
-      "src/app/audit/audit-log-details-dialog.tpl.html",
-      "src/app/audit/audit-log-header.directive.js",
-      "src/app/audit/audit-log-header.tpl.html",
-      "src/app/audit/audit-log-row.directive.js",
-      "src/app/audit/audit-log-row.tpl.html",
-      "src/app/audit/audit-log-table.directive.js",
-      "src/app/audit/audit-log-table.tpl.html",
-      "src/app/audit/audit-log.routes.js",
-      "src/app/audit/audit-log.scss",
-      "src/app/audit/audit-logs.controller.js",
-      "src/app/audit/audit-logs.tpl.html",
-      "src/app/audit/index.js"
+      "src/app/feature/extension/tb-extension-table/tb-extension-table.directive.html",
+      "src/app/feature/extension/tb-extension-table/tb-extension-table.directive.ts"
     ]
   },
-  "src/app/layout": {
-    "hash": "0934a7ae59185d31",
-    "purpose": "Provides the application shell/navigation for the platform: home dashboard entry, breadcrumbs, and user account menu.",
+  "src/app/feature/components/tb-gateway-form": {
+    "hash": "01169dfb678c901e",
+    "purpose": "Configures an IoT gateway device, its connectors, credentials, and logging, and generates the deployable gateway configuration files.",
     "useCases": [
       {
-        "title": "Land on a home page after login",
-        "evidence": "HomeController, home.tpl.html"
+        "title": "Create a new gateway device",
+        "evidence": "createDevice"
       },
       {
-        "title": "Navigate the app via breadcrumb trail",
-        "evidence": "BreadcrumbLabel, BreadcrumbIcon, breadcrumb.tpl.html"
+        "title": "Configure a gateway's connectors (e.g., protocol/data-source setup)",
+        "evidence": "processConfigurationDrafts, processCurrentConfiguration, getDraftConnectorJSON, gatewayConnectorConfigJSON"
       },
       {
-        "title": "Access account settings/logout via user menu",
-        "evidence": "UserMenuController, user-menu.tpl.html"
+        "title": "Retrieve the gateway's access token/credentials for provisioning",
+        "evidence": "getAccessToken, getDeviceCredentials"
+      },
+      {
+        "title": "Export the gateway configuration and logging settings as files (e.g. YAML)",
+        "evidence": "generateYAMLConfigurationFile, generateConfigConnectorFiles, generateLogConfigFile, exportConfig"
       }
     ],
     "files": [
-      "src/app/layout/breadcrumb-icon.filter.js",
-      "src/app/layout/breadcrumb-label.filter.js",
-      "src/app/layout/breadcrumb.tpl.html",
-      "src/app/layout/home.controller.js",
-      "src/app/layout/home.routes.js",
-      "src/app/layout/home.scss",
-      "src/app/layout/home.tpl.html",
-      "src/app/layout/index.js",
-      "src/app/layout/user-menu.directive.js",
-      "src/app/layout/user-menu.scss",
-      "src/app/layout/user-menu.tpl.html"
-    ]
-  },
-  "src/app/import-export": {
-    "hash": "30caa5490e22fdbe",
-    "purpose": "Lets users import and export platform entities (e.g., device/asset data) via CSV and other formats.",
-    "useCases": [
-      {
-        "title": "Import entities from a CSV file",
-        "evidence": "ImportDialogCsvController, import-dialog-csv.tpl.html"
-      },
-      {
-        "title": "Import/export entity configuration through a dialog",
-        "evidence": "ImportDialogController, import-dialog.tpl.html"
-      },
-      {
-        "title": "Map CSV columns to entity fields during import",
-        "evidence": "TableColumnsAssignmentController, table-columns-assignment.tpl.html"
-      },
-      {
-        "title": "Export platform data for backup or transfer",
-        "evidence": "ImportExport service (import-export.service.js)"
-      }
-    ],
-    "files": [
-      "src/app/import-export/import-dialog-csv.controller.js",
-      "src/app/import-export/import-dialog-csv.tpl.html",
-      "src/app/import-export/import-dialog.controller.js",
-      "src/app/import-export/import-dialog.scss",
-      "src/app/import-export/import-dialog.tpl.html",
-      "src/app/import-export/import-export.service.js",
-      "src/app/import-export/index.js",
-      "src/app/import-export/table-columns-assignment.directive.js",
-      "src/app/import-export/table-columns-assignment.tpl.html"
-    ]
-  },
-  "src/app/entity/attribute": {
-    "hash": "4f10027163b662ac",
-    "purpose": "Lets users view, add, and edit key-value attributes (and telemetry-derived values) associated with a device or entity.",
-    "useCases": [
-      {
-        "title": "Add a new attribute to a device/entity",
-        "evidence": "AddAttributeDialogController (add-attribute-dialog.controller.js)"
-      },
-      {
-        "title": "Edit an existing attribute's value, including raw JSON",
-        "evidence": "EditAttributeValueController, AttributeDialogEditJsonController"
-      },
-      {
-        "title": "Browse an entity's attributes in a table",
-        "evidence": "AttributeTableDirective (attribute-table.directive.js)"
-      },
-      {
-        "title": "Add a widget showing this attribute/telemetry data to a dashboard",
-        "evidence": "AddWidgetToDashboardDialogController"
-      }
-    ],
-    "files": [
-      "src/app/entity/attribute/add-attribute-dialog.controller.js",
-      "src/app/entity/attribute/add-attribute-dialog.tpl.html",
-      "src/app/entity/attribute/add-widget-to-dashboard-dialog.controller.js",
-      "src/app/entity/attribute/add-widget-to-dashboard-dialog.tpl.html",
-      "src/app/entity/attribute/attribute-dialog-edit-json.controller.js",
-      "src/app/entity/attribute/attribute-dialog-edit-json.scss",
-      "src/app/entity/attribute/attribute-dialog-edit-json.tpl.html",
-      "src/app/entity/attribute/attribute-table.directive.js",
-      "src/app/entity/attribute/attribute-table.scss",
-      "src/app/entity/attribute/attribute-table.tpl.html",
-      "src/app/entity/attribute/edit-attribute-value.controller.js",
-      "src/app/entity/attribute/edit-attribute-value.tpl.html"
-    ]
-  },
-  "src/app/services": {
-    "hash": "bfecaec47ecba395",
-    "purpose": "Cross-cutting UI infrastructure (notifications, clipboard, navigation menu, in-memory buffer) used throughout the application.",
-    "useCases": [],
-    "files": [
-      "src/app/services/clipboard.service.js",
-      "src/app/services/error-toast.tpl.html",
-      "src/app/services/info-toast.tpl.html",
-      "src/app/services/item-buffer.service.js",
-      "src/app/services/menu.service.js",
-      "src/app/services/success-toast.tpl.html",
-      "src/app/services/toast.controller.js",
-      "src/app/services/toast.js",
-      "src/app/services/toast.scss",
-      "src/app/services/toast.service.js"
-    ]
-  },
-  "src/app/entity/relation": {
-    "hash": "043be57f044362de",
-    "purpose": "Lets users create, view, and filter relationships between entities (e.g. devices, assets, customers) in the IoT hierarchy.",
-    "useCases": [
-      {
-        "title": "Create or edit a relation between two entities",
-        "evidence": "RelationDialogController (relation-dialog.controller.js)"
-      },
-      {
-        "title": "Browse an entity's relations in a table",
-        "evidence": "RelationTable, RelationTableController (relation-table.directive.js)"
-      },
-      {
-        "title": "Filter relations by type or direction",
-        "evidence": "RelationFilters (relation-filters.directive.js)"
-      },
-      {
-        "title": "Select a relation type via autocomplete when defining a relation",
-        "evidence": "RelationTypeAutocomplete (relation-type-autocomplete.directive.js)"
-      }
-    ],
-    "files": [
-      "src/app/entity/relation/relation-dialog.controller.js",
-      "src/app/entity/relation/relation-dialog.scss",
-      "src/app/entity/relation/relation-dialog.tpl.html",
-      "src/app/entity/relation/relation-filters.directive.js",
-      "src/app/entity/relation/relation-filters.scss",
-      "src/app/entity/relation/relation-filters.tpl.html",
-      "src/app/entity/relation/relation-table.directive.js",
-      "src/app/entity/relation/relation-table.scss",
-      "src/app/entity/relation/relation-table.tpl.html",
-      "src/app/entity/relation/relation-type-autocomplete.directive.js",
-      "src/app/entity/relation/relation-type-autocomplete.scss",
-      "src/app/entity/relation/relation-type-autocomplete.tpl.html"
-    ]
-  },
-  "src/app/user": {
-    "hash": "c84391b207f213de",
-    "purpose": "Manages platform user accounts \u2014 creation, activation, and profile administration.",
-    "useCases": [
-      {
-        "title": "Add a new user account",
-        "evidence": "AddUserController (add-user.controller.js)"
-      },
-      {
-        "title": "Activate a user account via an activation link",
-        "evidence": "ActivationLinkDialogController (activation-link.controller.js)"
-      },
-      {
-        "title": "View and manage a user's profile",
-        "evidence": "UserController, UserDirective (user.controller.js, user.directive.js)"
-      },
-      {
-        "title": "Browse the list of platform users",
-        "evidence": "users.tpl.html, UserRoutes"
-      }
-    ],
-    "files": [
-      "src/app/user/activation-link.controller.js",
-      "src/app/user/activation-link.dialog.tpl.html",
-      "src/app/user/add-user.controller.js",
-      "src/app/user/add-user.tpl.html",
-      "src/app/user/index.js",
-      "src/app/user/user-card.tpl.html",
-      "src/app/user/user-fieldset.scss",
-      "src/app/user/user-fieldset.tpl.html",
-      "src/app/user/user.controller.js",
-      "src/app/user/user.directive.js",
-      "src/app/user/user.routes.js",
-      "src/app/user/users.tpl.html"
-    ]
-  },
-  "src/app/login": {
-    "hash": "884c837a34f7c91d",
-    "purpose": "Handles user authentication and credential recovery for accessing the platform.",
-    "useCases": [
-      {
-        "title": "Log in to the platform",
-        "evidence": "LoginController (login.controller.js), LoginRoutes"
-      },
-      {
-        "title": "Request a password reset",
-        "evidence": "ResetPasswordRequestController (reset-password-request.controller.js)"
-      },
-      {
-        "title": "Reset a forgotten password",
-        "evidence": "ResetPasswordController (reset-password.controller.js)"
-      },
-      {
-        "title": "Create a password when activating an account",
-        "evidence": "CreatePasswordController (create-password.controller.js)"
-      }
-    ],
-    "files": [
-      "src/app/login/create-password.controller.js",
-      "src/app/login/create-password.tpl.html",
-      "src/app/login/index.js",
-      "src/app/login/login.controller.js",
-      "src/app/login/login.routes.js",
-      "src/app/login/login.scss",
-      "src/app/login/login.tpl.html",
-      "src/app/login/reset-password-request.controller.js",
-      "src/app/login/reset-password-request.tpl.html",
-      "src/app/login/reset-password.controller.js",
-      "src/app/login/reset-password.tpl.html"
-    ]
-  },
-  "src/app/components/widget/action": {
-    "hash": "a9e40a6c487cf397",
-    "purpose": "Lets users configure custom interactive actions (e.g. click behaviors) attached to dashboard widgets.",
-    "useCases": [
-      {
-        "title": "Configure and manage actions triggered by a dashboard widget",
-        "evidence": "ManageWidgetActions, ManageWidgetActionsController (manage-widget-actions.directive.js)"
-      },
-      {
-        "title": "Define a custom action for a widget via a dialog",
-        "evidence": "WidgetActionDialogController (widget-action-dialog.controller.js)"
-      },
-      {
-        "title": "Write custom JavaScript logic for a widget action with a code editor",
-        "evidence": "CustomActionPrettyEditor (custom-action-pretty-editor.directive.js)"
-      }
-    ],
-    "files": [
-      "src/app/components/widget/action/custom-action-pretty-editor.directive.js",
-      "src/app/components/widget/action/custom-action-pretty-editor.scss",
-      "src/app/components/widget/action/custom-action-pretty-editor.tpl.html",
-      "src/app/components/widget/action/manage-widget-actions.directive.js",
-      "src/app/components/widget/action/manage-widget-actions.scss",
-      "src/app/components/widget/action/manage-widget-actions.tpl.html",
-      "src/app/components/widget/action/widget-action-dialog.controller.js",
-      "src/app/components/widget/action/widget-action-dialog.tpl.html"
-    ]
-  },
-  "src/app/extension": {
-    "hash": "d8fa1de14ec50938",
-    "purpose": "Manages configurable UI extensions/widget bundle extensions and their settings within the platform",
-    "useCases": [
-      {
-        "title": "Configure a UI extension's settings via a dialog",
-        "evidence": "ExtensionDialogController"
-      },
-      {
-        "title": "View and manage a list of available extensions",
-        "evidence": "ExtensionTableController / ExtensionTableDirective"
-      }
-    ],
-    "files": [
-      "src/app/extension/extension-dialog.controller.js",
-      "src/app/extension/extension-dialog.tpl.html",
-      "src/app/extension/extension-table.directive.js",
-      "src/app/extension/extension-table.scss",
-      "src/app/extension/extension-table.tpl.html",
-      "src/app/extension/index.js"
-    ]
-  },
-  "src/app/event": {
-    "hash": "825daee2db3f446c",
-    "purpose": "Displays and inspects system/device events such as rule node debug traces, errors, lifecycle events, and statistics",
-    "useCases": [
-      {
-        "title": "View a table of events for a device or entity",
-        "evidence": "EventTableDirective"
-      },
-      {
-        "title": "Inspect rule node debug events to troubleshoot data processing",
-        "evidence": "event-row-debug-rulenode.tpl.html / event-header-debug-rulenode.tpl.html"
-      },
-      {
-        "title": "Review error events raised by an entity",
-        "evidence": "event-header-error.tpl.html / event-row-error.tpl.html"
-      },
-      {
-        "title": "View lifecycle events and statistics for connectivity/data volume",
-        "evidence": "event-row-lc-event.tpl.html / event-row-stats.tpl.html"
-      },
-      {
-        "title": "Open full event content/details for review",
-        "evidence": "EventContentDialogController"
-      }
-    ],
-    "files": [
-      "src/app/event/event-content-dialog.controller.js",
-      "src/app/event/event-content-dialog.tpl.html",
-      "src/app/event/event-header-debug-rulenode.tpl.html",
-      "src/app/event/event-header-error.tpl.html",
-      "src/app/event/event-header-lc-event.tpl.html",
-      "src/app/event/event-header-stats.tpl.html",
-      "src/app/event/event-header.directive.js",
-      "src/app/event/event-row-debug-rulenode.tpl.html",
-      "src/app/event/event-row-error.tpl.html",
-      "src/app/event/event-row-lc-event.tpl.html",
-      "src/app/event/event-row-stats.tpl.html",
-      "src/app/event/event-row.directive.js",
-      "src/app/event/event-table.directive.js",
-      "src/app/event/event-table.tpl.html",
-      "src/app/event/event.scss",
-      "src/app/event/index.js"
-    ]
-  },
-  "src/app/entity/alias": {
-    "hash": "984dd72e619fb9a5",
-    "purpose": "Lets users define and manage entity aliases used to bind dashboard widgets dynamically to entities",
-    "useCases": [
-      {
-        "title": "Create or edit an entity alias for dashboard widgets",
-        "evidence": "EntityAliasDialogController"
-      },
-      {
-        "title": "Select entities to associate with an alias",
-        "evidence": "AliasesEntitySelectDirective / AliasesEntitySelectPanelController"
-      },
-      {
-        "title": "Manage the list of entity aliases used across a dashboard",
-        "evidence": "EntityAliasesController"
-      }
-    ],
-    "files": [
-      "src/app/entity/alias/aliases-entity-select-button.tpl.html",
-      "src/app/entity/alias/aliases-entity-select-panel.controller.js",
-      "src/app/entity/alias/aliases-entity-select-panel.tpl.html",
-      "src/app/entity/alias/aliases-entity-select.directive.js",
-      "src/app/entity/alias/aliases-entity-select.scss",
-      "src/app/entity/alias/entity-alias-dialog.controller.js",
-      "src/app/entity/alias/entity-alias-dialog.scss",
-      "src/app/entity/alias/entity-alias-dialog.tpl.html",
-      "src/app/entity/alias/entity-aliases.controller.js",
-      "src/app/entity/alias/entity-aliases.scss",
-      "src/app/entity/alias/entity-aliases.tpl.html"
+      "src/app/feature/components/tb-gateway-form/tb-gateway-form.directive.html",
+      "src/app/feature/components/tb-gateway-form/tb-gateway-form.directive.ts"
     ]
   },
   "src/app": {
-    "hash": "2fec13d2fbee1a78",
-    "purpose": "Application-wide bootstrap, routing, global request handling, and cross-cutting configuration for the platform UI",
+    "hash": "b9ffcb1b86bafe9b",
+    "purpose": "Application shell: bootstraps the app, defines routing/state, and holds global cross-cutting UI infrastructure.",
     "useCases": [],
     "files": [
-      "src/app/app.config.js",
-      "src/app/app.js",
-      "src/app/app.run.js",
-      "src/app/global-interceptor.service.js",
-      "src/app/ie.support.js",
-      "src/app/url.handler.js"
+      "src/app/app-globals.ts",
+      "src/app/app.config.ts",
+      "src/app/app.html",
+      "src/app/app.routes.ts",
+      "src/app/app.scss",
+      "src/app/app.ts",
+      "src/app/bind-methods.ts",
+      "src/app/legacy-globals.ts",
+      "src/app/legacy-init.directive.ts",
+      "src/app/legacy-link.ts",
+      "src/app/legacy-prototypes.d.ts",
+      "src/app/root-state.ts",
+      "src/app/state-paths.ts"
     ]
   },
-  "src/app/alarm": {
-    "hash": "1cd7ea922031171b",
-    "purpose": "Enables users to view, filter, and manage alarms raised by devices/entities in the platform",
+  "src/app/feature/extension/tb-extension-form-mqtt": {
+    "hash": "c2ea1a89c20ecccc",
+    "purpose": "Provides the configuration form for an MQTT extension/connector, letting users define broker connections and data mapping rules.",
     "useCases": [
       {
-        "title": "View a table of alarms for devices/entities",
-        "evidence": "AlarmTableDirective"
+        "title": "Configure an MQTT broker connection for a gateway",
+        "evidence": "addBroker, changeCredentials, pemCredentialsValid"
       },
       {
-        "title": "Inspect the details of a specific alarm",
-        "evidence": "AlarmDetailsDialogController"
+        "title": "Define attribute request and update mappings for MQTT-connected devices",
+        "evidence": "addAttributeRequest, addAttributeUpdate, changeAttrKeyExpression"
       },
       {
-        "title": "Browse alarm rows with severity/status info",
-        "evidence": "AlarmRowDirective / AlarmHeaderDirective"
+        "title": "Configure server-side RPC calls over MQTT",
+        "evidence": "addServerSideRpc"
+      },
+      {
+        "title": "Set up custom data converters and validate them",
+        "evidence": "changeConverterType, validateCustomConverter"
       }
     ],
     "files": [
-      "src/app/alarm/alarm-details-dialog.controller.js",
-      "src/app/alarm/alarm-details-dialog.scss",
-      "src/app/alarm/alarm-details-dialog.tpl.html",
-      "src/app/alarm/alarm-header.directive.js",
-      "src/app/alarm/alarm-header.tpl.html",
-      "src/app/alarm/alarm-row.directive.js",
-      "src/app/alarm/alarm-row.tpl.html",
-      "src/app/alarm/alarm-table.directive.js",
-      "src/app/alarm/alarm-table.tpl.html",
-      "src/app/alarm/alarm.scss",
-      "src/app/alarm/index.js"
+      "src/app/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+      "src/app/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts"
     ]
   },
-  "src/app/dashboard/layouts": {
-    "hash": "58f640b90625d31b",
-    "purpose": "Lets users design and manage the layout arrangement of widgets within a dashboard",
-    "useCases": [
-      {
-        "title": "Arrange widgets on a dashboard layout",
-        "evidence": "DashboardLayout / DashboardLayoutController"
-      },
-      {
-        "title": "Manage multiple dashboard layouts (e.g. main/right)",
-        "evidence": "ManageDashboardLayoutsController"
-      },
-      {
-        "title": "Select a target layout when moving/copying a widget",
-        "evidence": "SelectTargetLayoutController"
-      }
-    ],
-    "files": [
-      "src/app/dashboard/layouts/dashboard-layout.directive.js",
-      "src/app/dashboard/layouts/dashboard-layout.tpl.html",
-      "src/app/dashboard/layouts/index.js",
-      "src/app/dashboard/layouts/manage-dashboard-layouts.controller.js",
-      "src/app/dashboard/layouts/manage-dashboard-layouts.tpl.html",
-      "src/app/dashboard/layouts/select-target-layout.controller.js",
-      "src/app/dashboard/layouts/select-target-layout.tpl.html"
-    ]
-  },
-  "src/app/extension/extensions-forms": {
-    "hash": "d9b8f2f81672f0c9",
-    "purpose": "Provides configuration forms for connecting external device protocols (HTTP, Modbus, MQTT, OPC-UA) as data ingestion extensions",
-    "useCases": [
-      {
-        "title": "Configure an HTTP-based device integration",
-        "evidence": "ExtensionFormHttpDirective, extension-form-http.tpl.html"
-      },
-      {
-        "title": "Configure a Modbus device integration",
-        "evidence": "ExtensionFormModbusDirective, extension-form-modbus.tpl.html"
-      },
-      {
-        "title": "Configure an MQTT device integration",
-        "evidence": "extension-form-mqtt.directive.js, extension-form-mqtt.tpl.html"
-      },
-      {
-        "title": "Configure an OPC-UA device integration",
-        "evidence": "ExtensionFormOpcDirective, extension-form-opc.tpl.html"
-      }
-    ],
-    "files": [
-      "src/app/extension/extensions-forms/extension-form-http.directive.js",
-      "src/app/extension/extensions-forms/extension-form-http.tpl.html",
-      "src/app/extension/extensions-forms/extension-form-modbus.directive.js",
-      "src/app/extension/extensions-forms/extension-form-modbus.tpl.html",
-      "src/app/extension/extensions-forms/extension-form-mqtt.directive.js",
-      "src/app/extension/extensions-forms/extension-form-mqtt.tpl.html",
-      "src/app/extension/extensions-forms/extension-form-opc.directive.js",
-      "src/app/extension/extensions-forms/extension-form-opc.tpl.html",
-      "src/app/extension/extensions-forms/extension-form.scss"
-    ]
-  },
-  "src/app/components/widget": {
-    "hash": "28c9c95ea068c2eb",
-    "purpose": "Renders and configures dashboard widgets used to visualize device telemetry and data",
-    "useCases": [
-      {
-        "title": "View a data visualization widget on a dashboard",
-        "evidence": "Widget, widget.directive.js"
-      },
-      {
-        "title": "Configure a widget's settings and data sources",
-        "evidence": "WidgetConfig, widget-config.tpl.html"
-      },
-      {
-        "title": "Manage widget behavior via controller logic",
-        "evidence": "WidgetController, widget.controller.js"
-      }
-    ],
-    "files": [
-      "src/app/components/widget/widget-config.directive.js",
-      "src/app/components/widget/widget-config.scss",
-      "src/app/components/widget/widget-config.tpl.html",
-      "src/app/components/widget/widget.controller.js",
-      "src/app/components/widget/widget.directive.js",
-      "src/app/components/widget/widget.scss"
-    ]
-  },
-  "src/app/admin": {
-    "hash": "bea90bfbe5873e2e",
-    "purpose": "Lets administrators configure platform-wide system settings such as mail and security",
-    "useCases": [
-      {
-        "title": "Configure general platform settings",
-        "evidence": "AdminController, general-settings.tpl.html"
-      },
-      {
-        "title": "Set up outgoing mail server configuration",
-        "evidence": "outgoing-mail-settings.tpl.html"
-      },
-      {
-        "title": "Manage security/authentication settings",
-        "evidence": "SecuritySettingsController, security-settings.tpl.html"
-      }
-    ],
-    "files": [
-      "src/app/admin/admin.controller.js",
-      "src/app/admin/admin.routes.js",
-      "src/app/admin/general-settings.tpl.html",
-      "src/app/admin/index.js",
-      "src/app/admin/outgoing-mail-settings.tpl.html",
-      "src/app/admin/security-settings.controller.js",
-      "src/app/admin/security-settings.tpl.html",
-      "src/app/admin/settings-card.scss"
-    ]
-  },
-  "src/app/customer": {
-    "hash": "5789469da6d51c7b",
-    "purpose": "Manages customer records within a tenant, representing organizations/users that own device fleets",
-    "useCases": [
-      {
-        "title": "Add a new customer",
-        "evidence": "add-customer.tpl.html, CustomerController"
-      },
-      {
-        "title": "View and browse a list of customers",
-        "evidence": "customers.tpl.html, customer-card.tpl.html"
-      },
-      {
-        "title": "Edit customer details",
-        "evidence": "customer-fieldset.tpl.html, CustomerDirective"
-      }
-    ],
-    "files": [
-      "src/app/customer/add-customer.tpl.html",
-      "src/app/customer/customer-card.tpl.html",
-      "src/app/customer/customer-fieldset.tpl.html",
-      "src/app/customer/customer.controller.js",
-      "src/app/customer/customer.directive.js",
-      "src/app/customer/customer.routes.js",
-      "src/app/customer/customers.tpl.html",
-      "src/app/customer/index.js"
-    ]
-  },
-  "src/app/tenant": {
-    "hash": "0b5cc980092dfb75",
-    "purpose": "Manages tenant accounts (organizations) within the multi-tenant IoT platform",
-    "useCases": [
-      {
-        "title": "Add a new tenant",
-        "evidence": "add-tenant.tpl.html, TenantController"
-      },
-      {
-        "title": "View and browse the list of tenants",
-        "evidence": "tenants.tpl.html, tenant-card.tpl.html"
-      },
-      {
-        "title": "Edit tenant details",
-        "evidence": "tenant-fieldset.tpl.html, TenantDirective"
-      }
-    ],
-    "files": [
-      "src/app/tenant/add-tenant.tpl.html",
-      "src/app/tenant/index.js",
-      "src/app/tenant/tenant-card.tpl.html",
-      "src/app/tenant/tenant-fieldset.tpl.html",
-      "src/app/tenant/tenant.controller.js",
-      "src/app/tenant/tenant.directive.js",
-      "src/app/tenant/tenant.routes.js",
-      "src/app/tenant/tenants.tpl.html"
-    ]
-  },
-  "src/app/profile": {
-    "hash": "0011cb3216293f12",
-    "purpose": "Lets a logged-in user manage their own account profile and credentials",
-    "useCases": [
-      {
-        "title": "View and edit personal profile information",
-        "evidence": "ProfileController, profile.tpl.html"
-      },
-      {
-        "title": "Change account password",
-        "evidence": "ChangePasswordController, change-password.tpl.html"
-      }
-    ],
-    "files": [
-      "src/app/profile/change-password.controller.js",
-      "src/app/profile/change-password.tpl.html",
-      "src/app/profile/index.js",
-      "src/app/profile/profile.controller.js",
-      "src/app/profile/profile.routes.js",
-      "src/app/profile/profile.tpl.html"
-    ]
-  },
-  "src/app/widget/lib/tripAnimation": {
-    "hash": "5ced5dac9af7318a",
-    "purpose": "Widget that animates and visualizes a device's positional/GPS telemetry as a moving trip over a map",
-    "useCases": [
-      {
-        "title": "Play back a device's route/trip animation from historical telemetry",
-        "evidence": "tripAnimationController, tripAnimationWidget"
-      },
-      {
-        "title": "Visualize movement of an asset or vehicle on a map over time",
-        "evidence": "trip-animation-widget.tpl.html"
-      }
-    ],
-    "files": [
-      "src/app/widget/lib/tripAnimation/trip-animation-widget.js",
-      "src/app/widget/lib/tripAnimation/trip-animation-widget.scss",
-      "src/app/widget/lib/tripAnimation/trip-animation-widget.tpl.html"
-    ]
-  },
-  "src/app/rulechain/script": {
-    "hash": "591fee08ea127a27",
-    "purpose": "Lets rule chain builders test transformation/filter scripts used in data ingestion rule nodes",
-    "useCases": [
-      {
-        "title": "Test a rule node script against sample telemetry/message data before deploying it",
-        "evidence": "NodeScriptTestController, NodeScriptTest"
-      },
-      {
-        "title": "Debug and validate custom JS logic used to filter or transform incoming device data",
-        "evidence": "node-script-test.service.js"
-      }
-    ],
-    "files": [
-      "src/app/rulechain/script/node-script-test.controller.js",
-      "src/app/rulechain/script/node-script-test.scss",
-      "src/app/rulechain/script/node-script-test.service.js",
-      "src/app/rulechain/script/node-script-test.tpl.html"
-    ]
-  },
-  "src/app/widget/lib/date-range-navigator": {
-    "hash": "521f9e6266b86cff",
-    "purpose": "Widget control allowing dashboard users to select and navigate a date/time range for displayed data",
-    "useCases": [
-      {
-        "title": "Select a date range to filter telemetry/data shown on a dashboard widget",
-        "evidence": "DateRangeNavigatorWidgetController"
-      },
-      {
-        "title": "Navigate forward/backward through time periods to review historical device data",
-        "evidence": "DateRangeNavigatorWidget"
-      }
-    ],
-    "files": [
-      "src/app/widget/lib/date-range-navigator/date-range-navigator.js",
-      "src/app/widget/lib/date-range-navigator/date-range-navigator.scss",
-      "src/app/widget/lib/date-range-navigator/date-range-navigator.tpl.html"
-    ]
-  },
-  "src/app/jsonform": {
-    "hash": "5d863400198d1eb8",
-    "purpose": "Renders dynamic configuration forms generated from JSON schemas across the platform",
-    "useCases": [
-      {
-        "title": "Fill out a schema-driven form to configure a device, widget, or rule node's settings",
-        "evidence": "JsonFormController"
-      }
-    ],
-    "files": [
-      "src/app/jsonform/index.js",
-      "src/app/jsonform/jsonform.controller.js",
-      "src/app/jsonform/jsonform.routes.js",
-      "src/app/jsonform/jsonform.scss",
-      "src/app/jsonform/jsonform.tpl.html"
-    ]
-  },
-  "src/app/home": {
-    "hash": "a818be56bbe02c97",
-    "purpose": "Provides the platform's home/landing page with quick links to key sections",
-    "useCases": [
-      {
-        "title": "Navigate from a home landing page to key areas of the platform (devices, dashboards, rule chains, etc.)",
-        "evidence": "HomeLinksController, HomeLinksRoutes"
-      }
-    ],
-    "files": [
-      "src/app/home/home-links.controller.js",
-      "src/app/home/home-links.routes.js",
-      "src/app/home/home-links.scss",
-      "src/app/home/home-links.tpl.html",
-      "src/app/home/index.js"
-    ]
-  },
-  "src/app/locale": {
-    "hash": "f79b9e1c378135ba",
-    "purpose": "Supplies UI translations so the platform can be used in multiple languages",
-    "useCases": [
-      {
-        "title": "Use the platform's interface in the user's preferred language (e.g. German, Chinese, Russian)",
-        "evidence": "locale.constant-de_DE.json, locale.constant-zh_CN.json"
-      },
-      {
-        "title": "Gracefully fall back to a default label when a translation is missing",
-        "evidence": "ThingsboardMissingTranslateHandler"
-      }
-    ],
-    "files": [
-      "src/app/locale/locale.constant-cs_CZ.json",
-      "src/app/locale/locale.constant-de_DE.json",
-      "src/app/locale/locale.constant-el_GR.json",
-      "src/app/locale/locale.constant-en_US.json",
-      "src/app/locale/locale.constant-es_ES.json",
-      "src/app/locale/locale.constant-fa_IR.json",
-      "src/app/locale/locale.constant-fr_FR.json",
-      "src/app/locale/locale.constant-it_IT.json",
-      "src/app/locale/locale.constant-ja_JA.json",
-      "src/app/locale/locale.constant-ko_KR.json",
-      "src/app/locale/locale.constant-lv_LV.json",
-      "src/app/locale/locale.constant-ro_RO.json",
-      "src/app/locale/locale.constant-ru_RU.json",
-      "src/app/locale/locale.constant-tr_TR.json",
-      "src/app/locale/locale.constant-uk_UA.json",
-      "src/app/locale/locale.constant-zh_CN.json",
-      "src/app/locale/locale.constant-zh_TW.json",
-      "src/app/locale/translate-handler.js"
-    ]
-  },
-  "src/app/help": {
-    "hash": "cd253891b78b1d57",
-    "purpose": "Provides in-app contextual help links so users can access documentation while using the platform",
-    "useCases": [
-      {
-        "title": "View contextual help documentation for a screen",
-        "evidence": "Help directive (help.directive.js) rendering links defined in help-links.constant.js"
-      }
-    ],
-    "files": [
-      "src/app/help/help-links.constant.js",
-      "src/app/help/help.directive.js",
-      "src/app/help/help.scss"
-    ]
-  },
-  "src/app/components/queue": {
-    "hash": "88eb2b20161e5089",
-    "purpose": "Lets tenant administrators view and select message queue types used by the rule engine for processing device data",
-    "useCases": [
-      {
-        "title": "View available message queue types for rule engine processing",
-        "evidence": "QueueTypeList directive / queue-type-list.tpl.html"
-      },
-      {
-        "title": "Select a queue type when configuring data processing",
-        "evidence": "queue-type-list.directive.js"
-      }
-    ],
-    "files": [
-      "src/app/components/queue/index.js",
-      "src/app/components/queue/queue-type-list.directive.js",
-      "src/app/components/queue/queue-type-list.scss",
-      "src/app/components/queue/queue-type-list.tpl.html"
-    ]
-  },
-  "src/scss": {
-    "hash": "441f70eb231c1024",
-    "purpose": "Global stylesheet definitions (theme constants, fonts, animations, mixins) for the application's visual appearance",
+  "src/app/feature/components/tb-grid": {
+    "hash": "e33681033706b960",
+    "purpose": "Reusable scrollable/paginated list-grid UI infrastructure used to render collections elsewhere in the app.",
     "useCases": [],
     "files": [
-      "src/scss/animations.scss",
-      "src/scss/constants.scss",
-      "src/scss/fonts.scss",
-      "src/scss/main.scss",
-      "src/scss/mixins.scss"
+      "src/app/feature/components/tb-grid/grid-help-button.component.ts",
+      "src/app/feature/components/tb-grid/legacy-form.ts",
+      "src/app/feature/components/tb-grid/paged-list.ts",
+      "src/app/feature/components/tb-grid/tb-grid.directive.html",
+      "src/app/feature/components/tb-grid/tb-grid.directive.ts"
     ]
   },
-  "src/app/widget/lib/rpc/svg": {
-    "hash": "76abe2401ce7e231",
-    "purpose": "Provides the visual graphics (knob, switch/thumb controls) used by dashboard RPC widgets for issuing device commands",
+  "src/app/feature/entity/tb-relation-table": {
+    "hash": "6e82b487680205be",
+    "purpose": "Manages relationships (links) between entities, letting users view, filter, add, edit, and delete relations in a table UI.",
     "useCases": [
       {
-        "title": "Adjust a device setting using a knob control widget on a dashboard",
-        "evidence": "knob.svg"
+        "title": "View all relations for a device/asset in a sortable, paginated table",
+        "evidence": "TbRelationTableDirective, displayedColumns, onPaginate, orderBy"
       },
       {
-        "title": "Toggle a device on/off using a switch/thumb control widget on a dashboard",
-        "evidence": "thumb.svg, thumb-checked.svg, thumb-bar.svg, thumb-bar-checked.svg"
+        "title": "Create a new relation between two entities",
+        "evidence": "RelationDialogComponent, addRelation, openRelationDialog"
+      },
+      {
+        "title": "Edit an existing relation's type or direction",
+        "evidence": "editRelation, setDirection, save"
+      },
+      {
+        "title": "Search/filter relations and remove one or multiple relations",
+        "evidence": "setSearch, enterFilterMode, deleteRelation, deleteRelations, toggleAll"
       }
     ],
     "files": [
-      "src/app/widget/lib/rpc/svg/knob.svg",
-      "src/app/widget/lib/rpc/svg/thumb-bar-checked.svg",
-      "src/app/widget/lib/rpc/svg/thumb-bar.svg",
-      "src/app/widget/lib/rpc/svg/thumb-checked.svg",
-      "src/app/widget/lib/rpc/svg/thumb.svg"
+      "src/app/feature/entity/tb-relation-table/relation-dialog.component.html",
+      "src/app/feature/entity/tb-relation-table/relation-dialog.component.ts",
+      "src/app/feature/entity/tb-relation-table/tb-relation-table.directive.html",
+      "src/app/feature/entity/tb-relation-table/tb-relation-table.directive.ts"
     ]
   },
-  "src/app/components/react/styles": {
-    "hash": "d4d71b80221b627b",
-    "purpose": "Defines the visual theme configuration used by React-based UI components",
-    "useCases": [],
+  "src/app/feature/dashboard/tb-dashboard-layout": {
+    "hash": "ae0385e28300ab36",
+    "purpose": "Renders and manages the interactive dashboard canvas where users arrange, edit, and manipulate widgets.",
+    "useCases": [
+      {
+        "title": "Add a widget to a dashboard",
+        "evidence": "addWidget, loadWidgets"
+      },
+      {
+        "title": "Edit, copy, paste, or remove a widget on the dashboard",
+        "evidence": "editWidget, copyWidget, pasteWidget, removeWidget"
+      },
+      {
+        "title": "Export a widget's configuration for reuse",
+        "evidence": "exportWidget"
+      },
+      {
+        "title": "Reposition/highlight widgets and use keyboard shortcuts while editing a dashboard",
+        "evidence": "eventGridPosition, highlightWidget, onKeyDown, hotKeysEnabled"
+      }
+    ],
     "files": [
-      "src/app/components/react/styles/thingsboardTheme.js"
+      "src/app/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.html",
+      "src/app/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.ts"
     ]
   },
-  "src/svg": {
-    "hash": "fd41830020ac339a",
-    "purpose": "Holds branding and icon graphic assets (logos, icon set) used across the application UI",
-    "useCases": [],
+  "src/app/feature/widget/date-range-navigator-widget": {
+    "hash": "0bc5b4ac4c58299a",
+    "purpose": "A dashboard widget that lets users pick and navigate a date/time range to control the data window shown in other widgets.",
+    "useCases": [
+      {
+        "title": "Select a custom date range to filter dashboard data",
+        "evidence": "onRangePicked, DateRangeTemplate"
+      },
+      {
+        "title": "Step backward/forward through time intervals (day/week/etc.)",
+        "evidence": "goBack, goForth, changeInterval"
+      },
+      {
+        "title": "Choose a preset date range template",
+        "evidence": "selectTemplate, getLocalizationMap"
+      },
+      {
+        "title": "Sync the selected date range with the dashboard's global time window",
+        "evidence": "updateTimewindow, widgetContextTimewindowSync"
+      }
+    ],
     "files": [
-      "src/svg/logo_title_white.svg",
-      "src/svg/logo_white.svg",
-      "src/svg/mdi.svg"
+      "src/app/feature/widget/date-range-navigator-widget/date-range-navigator-widget.directive.html",
+      "src/app/feature/widget/date-range-navigator-widget/date-range-navigator-widget.directive.ts"
     ]
   },
-  "src": {
-    "hash": "ebe94afc074e98a0",
-    "purpose": "Application entry point/HTML shell that bootstraps the ThingsBoard AngularJS web UI",
+  "src/app/feature/widget/widget-editor": {
+    "hash": "9575860547aac82d",
+    "purpose": "Provides a code editor environment for authoring and testing custom dashboard widgets (HTML/JS/CSS with live preview).",
+    "useCases": [
+      {
+        "title": "Write and preview custom widget code live before saving",
+        "evidence": "WidgetEditorComponent, listenToPreviewFrame, iframe"
+      },
+      {
+        "title": "Save a widget or save it as a new widget type",
+        "evidence": "commitSaveWidget, commitSaveWidgetAs"
+      },
+      {
+        "title": "Switch between widget types while editing",
+        "evidence": "onWidgetTypeChanged, setWidgetType"
+      },
+      {
+        "title": "Use keyboard shortcuts and split-screen layout while editing widget code",
+        "evidence": "initHotKeys, onHotKey, initSplitLayout"
+      }
+    ],
+    "files": [
+      "src/app/feature/widget/widget-editor/widget-editor.component.html",
+      "src/app/feature/widget/widget-editor/widget-editor.component.ts"
+    ]
+  },
+  "src/app/feature/components/tb-widget-config": {
+    "hash": "abcaa4435d0af1f8",
+    "purpose": "UI for configuring a widget's data sources, actions, alarms, legend, and settings before it's placed on a dashboard.",
+    "useCases": [
+      {
+        "title": "Configure which entities/telemetry a widget displays by adding data sources",
+        "evidence": "addDatasource, generateDataKey, onDatasourcesChange"
+      },
+      {
+        "title": "Bind a widget to a target device or alarm source",
+        "evidence": "onTargetDeviceAliasChange, onAlarmSourceChange"
+      },
+      {
+        "title": "Customize widget appearance, legend, and time window settings",
+        "evidence": "onLegendConfigChange, onSettingsChange, onTimewindowChange"
+      },
+      {
+        "title": "Define custom actions triggered from a widget",
+        "evidence": "onActionsChange"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-widget-config/tb-widget-config.directive.html",
+      "src/app/feature/components/tb-widget-config/tb-widget-config.directive.ts"
+    ]
+  },
+  "src/app/feature/entity-view/tb-entity-view": {
+    "hash": "887935f1a0131263",
+    "purpose": "Manages entity view configuration, letting users define which attributes/telemetry keys and time ranges an entity view exposes.",
+    "useCases": [
+      {
+        "title": "Configure which attribute and timeseries keys are exposed by an entity view",
+        "evidence": "addAttributeKey, addTimeseriesKey, searchAttributeDataKeys, searchTimeseriesDataKeys"
+      },
+      {
+        "title": "Set the start and end time range for historical data in an entity view",
+        "evidence": "setStartTime, setEndTime, updateMinMaxDates"
+      },
+      {
+        "title": "Copy an entity view's ID for use elsewhere",
+        "evidence": "copyEntityViewId, onEntityViewIdCopied"
+      },
+      {
+        "title": "Remove keys from an entity view's configuration",
+        "evidence": "removeAttributeKey, removeTimeseriesKey"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity-view/tb-entity-view/tb-entity-view.directive.html",
+      "src/app/feature/entity-view/tb-entity-view/tb-entity-view.directive.ts"
+    ]
+  },
+  "src/app/feature/widget/tb-entities-hierarchy-widget": {
+    "hash": "fb8c895b01fad817",
+    "purpose": "Renders a dashboard widget that visualizes IoT entities (devices/assets) and their relations as an interactive tree/hierarchy.",
+    "useCases": [
+      {
+        "title": "View a hierarchy/tree of related devices and assets on a dashboard",
+        "evidence": "TbEntitiesHierarchyWidgetDirective, prepareNodes, prepareNodeRelationQuery"
+      },
+      {
+        "title": "Search for a specific entity within the hierarchy tree",
+        "evidence": "onSearchChange, updateSearchNodes"
+      },
+      {
+        "title": "Drill into an entity node to see its details or related data",
+        "evidence": "resolveEntity, loadNodeCtxFunction, entityIdToNode"
+      }
+    ],
+    "files": [
+      "src/app/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html",
+      "src/app/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-datasource-entity": {
+    "hash": "5a8409d3f3f1f723",
+    "purpose": "Configuration UI for binding a dashboard widget's data source to a specific entity's telemetry/attribute keys.",
+    "useCases": [
+      {
+        "title": "Pick an entity (or entity alias) as the data source when building a widget",
+        "evidence": "onEntityAliasChange, selectedEntityAliasChange"
+      },
+      {
+        "title": "Add, edit, or remove telemetry/attribute data keys shown by a widget",
+        "evidence": "onDataKeySelected, editDataKey, dropDataKey, updateDataKeys"
+      },
+      {
+        "title": "Customize the color and filters used for each data key on a widget",
+        "evidence": "showColorPicker, createFilterForDataKey"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-datasource-entity/tb-datasource-entity.directive.html",
+      "src/app/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts"
+    ]
+  },
+  "src/app/feature/widget/tb-timeseries-table-widget": {
+    "hash": "4e780105e35d3ae3",
+    "purpose": "Renders a dashboard widget that displays historical/live time-series telemetry data as a sortable, paginated table.",
+    "useCases": [
+      {
+        "title": "View telemetry history for one or more devices/assets in a tabular widget",
+        "evidence": "TbTimeseriesTableWidgetDirective, convertData, dataUpdated"
+      },
+      {
+        "title": "Sort and page through time-series data records",
+        "evidence": "sortBy, sortDirection, onPage, onPaginate"
+      },
+      {
+        "title": "Switch between multiple data sources shown in the table",
+        "evidence": "onSourceIndexChange, updateSourceData, updateActiveEntityInfo"
+      }
+    ],
+    "files": [
+      "src/app/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.html",
+      "src/app/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-datasource-func": {
+    "hash": "fd7967723a93b6d2",
+    "purpose": "Configuration UI for defining a dashboard widget's data source using custom generator functions instead of live entities.",
+    "useCases": [
+      {
+        "title": "Define a custom function-based data source when building a widget (e.g. for demo/test data)",
+        "evidence": "TbDatasourceFuncDirective, onDatasourceNameChange, createKey"
+      },
+      {
+        "title": "Add, edit, or remove function-generated data keys for a widget",
+        "evidence": "onDataKeySelected, editDataKey, dropDataKey, updateDataKeys"
+      },
+      {
+        "title": "Style function-based data keys with colors and filters",
+        "evidence": "showColorPicker, createFilterForDataKey"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-datasource-func/tb-datasource-func.directive.html",
+      "src/app/feature/components/tb-datasource-func/tb-datasource-func.directive.ts"
+    ]
+  },
+  "src/app/feature/event/tb-event-table": {
+    "hash": "08dbe622e575c9c1",
+    "purpose": "Provides a table view for browsing and filtering audit/debug events raised by an entity.",
+    "useCases": [
+      {
+        "title": "View the event log (errors, lifecycle, debug events) for a device or entity",
+        "evidence": "TbEventTableDirective, eventTypeList, onEntityIdChange"
+      },
+      {
+        "title": "Filter events by event type and time window",
+        "evidence": "onEventTypeChange, onTimewindowChange, resetFilter"
+      },
+      {
+        "title": "Scroll to load more historical events",
+        "evidence": "fetchMoreItems, onScrolledIndexChange"
+      }
+    ],
+    "files": [
+      "src/app/feature/event/tb-event-table/tb-event-table.directive.html",
+      "src/app/feature/event/tb-event-table/tb-event-table.directive.ts"
+    ]
+  },
+  "src/app/legacy-lib/api": {
+    "hash": "413462cafd97fc72",
+    "purpose": "Internal legacy library providing telemetry aggregation, entity alias resolution, and live data subscription mechanics used behind dashboard widgets.",
     "useCases": [],
     "files": [
-      "src/index.html"
+      "src/app/legacy-lib/api/alias-controller.js",
+      "src/app/legacy-lib/api/data-aggregator.js",
+      "src/app/legacy-lib/api/subscription.js"
+    ]
+  },
+  "src/app/feature/extension/tb-extension-form-modbus": {
+    "hash": "be73028ba1cfeed0",
+    "purpose": "Configuration UI for setting up Modbus protocol connections (TCP/UDP/RTU) to gateway devices for IoT data collection",
+    "useCases": [
+      {
+        "title": "Configure a Modbus gateway connection (TCP, UDP, or RTU transport)",
+        "evidence": "TcpTransport, UdpTransport, RtuTransport, onTransportChanged"
+      },
+      {
+        "title": "Register a device to be polled via Modbus",
+        "evidence": "Device, addDevice"
+      },
+      {
+        "title": "Map device registers to telemetry attributes and time series data",
+        "evidence": "addNewAttribute, addNewTimeseries, Tag"
+      },
+      {
+        "title": "Set up a Modbus server for slave communication",
+        "evidence": "Server, addServer"
+      }
+    ],
+    "files": [
+      "src/app/feature/extension/tb-extension-form-modbus/tb-extension-form-modbus.directive.html",
+      "src/app/feature/extension/tb-extension-form-modbus/tb-extension-form-modbus.directive.ts"
+    ]
+  },
+  "src/app/feature/widget/tb-knob": {
+    "hash": "b7dde89fdcda0aa5",
+    "purpose": "A dashboard widget that renders a rotary knob control for displaying and adjusting a device value",
+    "useCases": [
+      {
+        "title": "Visualize a live telemetry value as a rotary knob gauge on a dashboard",
+        "evidence": "onValue, formatValue, setValue"
+      },
+      {
+        "title": "Adjust a device's setpoint by turning the knob and sending an RPC command",
+        "evidence": "turn, rpcRequestValue, rpcUpdateValue"
+      }
+    ],
+    "files": [
+      "src/app/feature/widget/tb-knob/tb-knob.directive.html",
+      "src/app/feature/widget/tb-knob/tb-knob.directive.ts"
+    ]
+  },
+  "src/app/feature/audit/tb-audit-log-table": {
+    "hash": "17a9b2a5bf43cfcc",
+    "purpose": "UI component for displaying and filtering audit trail records of user/system actions",
+    "useCases": [
+      {
+        "title": "Review a table of audit log entries for a device, entity, or tenant",
+        "evidence": "TbAuditLogTableDirective, getAuditLogsPromise, prepareAuditLogsData"
+      },
+      {
+        "title": "Filter audit logs by search text or time window",
+        "evidence": "filterAuditLogs, searchText, updateTimeWindowRange, resetFilter"
+      },
+      {
+        "title": "Scroll/page through historical audit records",
+        "evidence": "onScroll, loading, noData"
+      }
+    ],
+    "files": [
+      "src/app/feature/audit/tb-audit-log-table/tb-audit-log-table.directive.html",
+      "src/app/feature/audit/tb-audit-log-table/tb-audit-log-table.directive.ts"
+    ]
+  },
+  "src/app/feature/widget/tb-web-camera-widget": {
+    "hash": "c07fcfce46eac2e4",
+    "purpose": "A dashboard widget that captures photos from a webcam and attaches them to a device/entity as telemetry or attribute data",
+    "useCases": [
+      {
+        "title": "Capture a photo via webcam and save it as an entity attribute or timeseries value",
+        "evidence": "takePhoto, savePhoto, saveEntityAttributes, saveEntityTimeseries"
+      },
+      {
+        "title": "Select and switch between available cameras",
+        "evidence": "getDevices, gotDevices, switchWebCamera"
+      },
+      {
+        "title": "Preview and cancel a captured photo before saving",
+        "evidence": "createPhoto, cancelPhoto, closeCamera"
+      }
+    ],
+    "files": [
+      "src/app/feature/widget/tb-web-camera-widget/tb-web-camera-widget.directive.html",
+      "src/app/feature/widget/tb-web-camera-widget/tb-web-camera-widget.directive.ts"
+    ]
+  },
+  "src/app/feature/entity": {
+    "hash": "93d4be0d939614a7",
+    "purpose": "Manages entity aliases used to bind dashboard widgets/datasources to actual devices, assets, or entity groups",
+    "useCases": [
+      {
+        "title": "Build a dashboard whose widgets reference entities dynamically via aliases instead of fixed IDs",
+        "evidence": "AliasController, getEntityAliases, resolveDatasources"
+      },
+      {
+        "title": "Change which entity a dashboard state points to (e.g., switching selected device/asset)",
+        "evidence": "dashboardStateChanged, updateCurrentAliasEntity, AliasStateController"
+      },
+      {
+        "title": "Resolve alarm sources and datasource keys for live dashboard rendering",
+        "evidence": "resolveAlarmSource, resolveDatasource, updateDatasourceKeyLabels"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/alias-controller.ts"
+    ]
+  },
+  "src/app/feature/widget/tb-entities-table-widget": {
+    "hash": "e7202eb80aadf3a2",
+    "purpose": "A dashboard widget that shows a searchable, sortable, paginated table of entities and their telemetry/attribute values",
+    "useCases": [
+      {
+        "title": "View a list of devices/assets with live telemetry values in a table widget on a dashboard",
+        "evidence": "updateEntitiesData, getEntityValue, listenForData"
+      },
+      {
+        "title": "Search and filter the entities shown in the table",
+        "evidence": "onSearchChange"
+      },
+      {
+        "title": "Sort and paginate through entity results",
+        "evidence": "sortBy, sortDirection, onPage"
+      },
+      {
+        "title": "Customize which columns are displayed in the entities table",
+        "evidence": "EntitiesDisplayColumnsPanelComponent"
+      }
+    ],
+    "files": [
+      "src/app/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.html",
+      "src/app/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts"
+    ]
+  },
+  "src/app/feature/extension/tb-extension-form-opc": {
+    "hash": "65717e4820103af8",
+    "purpose": "Provides the configuration UI for the OPC-UA device connector/extension, letting users map device data to platform attributes and telemetry.",
+    "useCases": [
+      {
+        "title": "Configure an OPC-UA server connection for device integration",
+        "evidence": "addServer, TbExtensionFormOpcDirective"
+      },
+      {
+        "title": "Map OPC data points to device attributes",
+        "evidence": "addNewAttribute"
+      },
+      {
+        "title": "Map OPC data points to time-series telemetry",
+        "evidence": "addNewTimeseries"
+      },
+      {
+        "title": "Upload a mapping/configuration file for the OPC extension",
+        "evidence": "fileAdded, onFileDrop, onFileInput"
+      }
+    ],
+    "files": [
+      "src/app/feature/extension/tb-extension-form-opc/tb-extension-form-opc.directive.html",
+      "src/app/feature/extension/tb-extension-form-opc/tb-extension-form-opc.directive.ts"
+    ]
+  },
+  "src/app/core": {
+    "hash": "54270d7e1f4f2e4f",
+    "purpose": "Cross-cutting application infrastructure (authentication guarding/interception, HTTP options, translations, media queries).",
+    "useCases": [],
+    "files": [
+      "src/app/core/app-store.ts",
+      "src/app/core/auth.guard.ts",
+      "src/app/core/auth.interceptor.ts",
+      "src/app/core/http-options.ts",
+      "src/app/core/md-media.ts",
+      "src/app/core/ng-model-controller.ts",
+      "src/app/core/q.ts",
+      "src/app/core/translate-compiler.ts"
+    ]
+  },
+  "src/app/feature/alarm/tb-alarm-table": {
+    "hash": "cf6a34187c7846fb",
+    "purpose": "Displays and manages a scrollable, filterable table of alarms raised for entities/devices.",
+    "useCases": [
+      {
+        "title": "View and monitor alarms for a device or asset",
+        "evidence": "TbAlarmTableDirective, reload, fetchMoreItems"
+      },
+      {
+        "title": "Filter alarms by search status",
+        "evidence": "onAlarmSearchStatusChange, resetFilter"
+      },
+      {
+        "title": "Narrow alarm history by time window",
+        "evidence": "onTimewindowChange, updateTimeWindowRange"
+      }
+    ],
+    "files": [
+      "src/app/feature/alarm/tb-alarm-table/tb-alarm-table.directive.html",
+      "src/app/feature/alarm/tb-alarm-table/tb-alarm-table.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-timewindow": {
+    "hash": "2fc2ed1e055ac290",
+    "purpose": "Reusable control that lets a user select and display the time range for viewing dashboard data.",
+    "useCases": [
+      {
+        "title": "Select a time window to view real-time or historical device data",
+        "evidence": "TbTimewindowDirective, openEditMode"
+      },
+      {
+        "title": "See the currently selected time range at a glance",
+        "evidence": "milliSecondsToTimeString, updateDisplayValue"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-timewindow/tb-timewindow.directive.ts"
+    ]
+  },
+  "src/app/feature/components/timewindow-panel": {
+    "hash": "22ff8c4fc130eeed",
+    "purpose": "Provides the detailed editor panel for configuring a dashboard/widget's realtime or historical time window and aggregation settings.",
+    "useCases": [
+      {
+        "title": "Configure a realtime or historical time window for a dashboard widget",
+        "evidence": "TimewindowPanelComponent, update, onSelectedTabChange"
+      },
+      {
+        "title": "Set data aggregation intervals and datapoint limits for charts",
+        "evidence": "maxRealtimeAggInterval, maxHistoryAggInterval, showLimit"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/timewindow-panel/timewindow-panel.component.html",
+      "src/app/feature/components/timewindow-panel/timewindow-panel.component.ts"
+    ]
+  },
+  "src/app/feature/widget/tb-multiple-input-widget": {
+    "hash": "d9ecde503f409834",
+    "purpose": "Implements a dashboard widget that lets users enter and submit multiple attribute/telemetry values for an entity.",
+    "useCases": [
+      {
+        "title": "Enter and save multiple attribute values for a device/asset from a dashboard widget",
+        "evidence": "TbMultipleInputWidgetDirective, save, inputChanged"
+      },
+      {
+        "title": "Discard unsaved changes to widget input values",
+        "evidence": "discardAll"
+      },
+      {
+        "title": "Pick a date/time value within a dashboard input widget",
+        "evidence": "onDatePicked, onTimePicked"
+      }
+    ],
+    "files": [
+      "src/app/feature/widget/tb-multiple-input-widget/tb-multiple-input-widget.directive.html",
+      "src/app/feature/widget/tb-multiple-input-widget/tb-multiple-input-widget.directive.ts"
+    ]
+  },
+  "src/app/feature/dashboard/dashboard-settings": {
+    "hash": "c3981fec3647d4d5",
+    "purpose": "Lets a user configure the appearance and behavior settings of a dashboard, including colors and background images.",
+    "useCases": [
+      {
+        "title": "Configure dashboard settings (title, timezone, layout)",
+        "evidence": "DashboardSettingsComponent"
+      },
+      {
+        "title": "Set a background image for a dashboard",
+        "evidence": "onImageDropped, onImageSelected"
+      },
+      {
+        "title": "Pick a custom color for dashboard elements",
+        "evidence": "MdColorPickerComponent"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/dashboard-settings/dashboard-settings.component.html",
+      "src/app/feature/dashboard/dashboard-settings/dashboard-settings.component.ts",
+      "src/app/feature/dashboard/dashboard-settings/md-color-picker.component.ts"
+    ]
+  },
+  "src/app/feature/rulechain/tb-rule-node-defined-config": {
+    "hash": "11a436431d3dbc3f",
+    "purpose": "Renders and manages the custom configuration UI for a rule node inside a rule chain used for IoT data processing.",
+    "useCases": [
+      {
+        "title": "Configure a rule node's processing settings within a rule chain",
+        "evidence": "TbRuleNodeDefinedConfigDirective, writeConfiguration"
+      },
+      {
+        "title": "Register and load custom configuration templates for different rule node types",
+        "evidence": "RuleNodeConfigRegistry, loadTemplate, register"
+      }
+    ],
+    "files": [
+      "src/app/feature/rulechain/tb-rule-node-defined-config/rule-node-config-registry.ts",
+      "src/app/feature/rulechain/tb-rule-node-defined-config/tb-rule-node-defined-config.directive.ts"
+    ]
+  },
+  "src/app/feature/widget/tb-switch": {
+    "hash": "3c1195c4d0b58168",
+    "purpose": "Implements a switch/toggle dashboard widget that displays and controls a device's on/off value.",
+    "useCases": [
+      {
+        "title": "Toggle a device attribute or control on/off from a dashboard widget",
+        "evidence": "TbSwitchDirective, rpcRequestValue, rpcUpdateValue"
+      },
+      {
+        "title": "View the live state of a device value updated in real time",
+        "evidence": "onDataUpdated, subscribeForValue"
+      }
+    ],
+    "files": [
+      "src/app/feature/widget/tb-switch/tb-switch.directive.html",
+      "src/app/feature/widget/tb-switch/tb-switch.directive.ts"
+    ]
+  },
+  "src/app/feature/dashboard/entity-state-controller": {
+    "hash": "a2178a5703ab482f",
+    "purpose": "Manages navigation between dashboard states that are bound to specific entities (devices/assets).",
+    "useCases": [
+      {
+        "title": "Navigate between dashboard states tied to a selected entity",
+        "evidence": "EntityStateControllerComponent, gotoState, navigatePrevState"
+      },
+      {
+        "title": "Open a dashboard state showing details for a resolved entity",
+        "evidence": "resolveEntity, isEntityResolved, openState"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/entity-state-controller/entity-state-controller.component.ts",
+      "src/app/feature/dashboard/entity-state-controller/entity-state-controller.scss"
+    ]
+  },
+  "src/app/feature/components/tb-manage-widget-actions": {
+    "hash": "d4296f837037b22a",
+    "purpose": "Lets a user define and manage custom click/interaction actions attached to a dashboard widget.",
+    "useCases": [
+      {
+        "title": "Add a custom action to a widget (e.g., open a dashboard state or run a function)",
+        "evidence": "addAction, openWidgetActionDialog"
+      },
+      {
+        "title": "Edit or delete an existing widget action",
+        "evidence": "editAction, deleteAction"
+      },
+      {
+        "title": "Search and filter the list of configured widget actions",
+        "evidence": "enterFilterMode, filterFilter"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-manage-widget-actions/tb-manage-widget-actions.directive.html",
+      "src/app/feature/components/tb-manage-widget-actions/tb-manage-widget-actions.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-entity-alias-select": {
+    "hash": "257be59477098cab",
+    "purpose": "Provides selection and creation of entity aliases used to bind dashboard widgets to sets of devices/assets.",
+    "useCases": [
+      {
+        "title": "Select an existing entity alias as a widget's data source",
+        "evidence": "TbEntityAliasSelectDirective, onAliasSelected, setEntityAlias"
+      },
+      {
+        "title": "Create a new entity alias with a custom entity filter",
+        "evidence": "createEntityAlias, createFilterForEntityAlias"
+      },
+      {
+        "title": "Search for an entity alias by name",
+        "evidence": "entityAliasSearch, onSearchTextChange"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts"
+    ]
+  },
+  "src/app/feature/extension/tb-extension-form-http": {
+    "hash": "10bbe051c7450b2f",
+    "purpose": "Form directive for configuring HTTP-based device data converters (attributes and converter mappings) in device/extension integration setup",
+    "useCases": [
+      {
+        "title": "Configure an HTTP integration's data converter",
+        "evidence": "TbExtensionFormHttpDirective, addConverter, addConverterConfig, removeConverter"
+      },
+      {
+        "title": "Map incoming HTTP payload fields to device attributes",
+        "evidence": "addAttribute, removeAttribute"
+      },
+      {
+        "title": "Validate custom data transformer scripts before saving",
+        "evidence": "validateTransformer, transformerTypeChange"
+      }
+    ],
+    "files": [
+      "src/app/feature/extension/tb-extension-form-http/tb-extension-form-http.directive.html",
+      "src/app/feature/extension/tb-extension-form-http/tb-extension-form-http.directive.ts"
+    ]
+  },
+  "src/app/feature/widget/tb-round-switch": {
+    "hash": "b92d376f2ec8563f",
+    "purpose": "Dashboard widget directive rendering a round on/off switch bound to a device's telemetry/RPC state",
+    "useCases": [
+      {
+        "title": "Toggle a connected device on/off from a dashboard widget",
+        "evidence": "TbRoundSwitchDirective, rpcRequestValue, rpcUpdateValue"
+      },
+      {
+        "title": "View live device state visualized as a switch",
+        "evidence": "subscribeForValue, onValue, setValue"
+      }
+    ],
+    "files": [
+      "src/app/feature/widget/tb-round-switch/tb-round-switch.directive.html",
+      "src/app/feature/widget/tb-round-switch/tb-round-switch.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-json-content": {
+    "hash": "480b3e37794e8171",
+    "purpose": "Reusable JSON code editor field used across the UI for editing/viewing raw JSON configuration content",
+    "useCases": [
+      {
+        "title": "Edit and validate JSON configuration (e.g. device/rule chain settings) inline",
+        "evidence": "TbJsonContentDirective, validateBody, updateValidity, showError"
+      },
+      {
+        "title": "Beautify or minify JSON content for readability",
+        "evidence": "beautifyJSON, minifyJSON"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-json-content/tb-json-content.directive.html",
+      "src/app/feature/components/tb-json-content/tb-json-content.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-confirm-on-exit": {
+    "hash": "84b7451ae8ad534b",
+    "purpose": "Navigation guard that warns users about unsaved changes before leaving a form/page",
+    "useCases": [
+      {
+        "title": "Be warned before losing unsaved changes when navigating away from an edit form",
+        "evidence": "confirmOnExitGuard, hasUnsavedChanges, confirmExit"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-confirm-on-exit/tb-confirm-on-exit.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-timeinterval": {
+    "hash": "016e540b61b85841",
+    "purpose": "Reusable time-interval picker control (days/hours/mins/secs) used in scheduling and data query settings",
+    "useCases": [
+      {
+        "title": "Set a data query or scheduling time interval (e.g. for telemetry history or alarms)",
+        "evidence": "TbTimeintervalDirective, calculateIntervalMs, watchDays, watchHours, watchMins, watchSecs"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-timeinterval/tb-timeinterval.directive.html",
+      "src/app/feature/components/tb-timeinterval/tb-timeinterval.directive.ts"
+    ]
+  },
+  "src/app/feature/entity/tb-entity-type-list": {
+    "hash": "496e216e371a0b91",
+    "purpose": "Reusable multi-select control for choosing entity types (device, asset, customer, etc.) used to filter/scope other entity-related settings",
+    "useCases": [
+      {
+        "title": "Select which entity types (devices, assets, customers) an action or filter applies to",
+        "evidence": "TbEntityTypeListDirective, entityTypeFromValue, updateEntityTypeList, fetchEntityTypes"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.html",
+      "src/app/feature/entity/tb-entity-type-list/tb-entity-type-list.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-json-object-edit": {
+    "hash": "d3fb302ea112604c",
+    "purpose": "Provides a reusable JSON editing widget used within forms to view, validate, and beautify JSON content.",
+    "useCases": [
+      {
+        "title": "Edit and validate JSON configuration for a device/widget/rule",
+        "evidence": "TbJsonObjectEditDirective, parseContent, updateValidity"
+      },
+      {
+        "title": "Format JSON for readability",
+        "evidence": "beautifyJSON, minifyJSON"
+      },
+      {
+        "title": "See clear error feedback when JSON is invalid",
+        "evidence": "showError, cleanupJsonErrors"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts"
+    ]
+  },
+  "src/app/feature/dashboard/default-state-controller": {
+    "hash": "94935b467a1755bd",
+    "purpose": "Manages navigation between dashboard states, letting users move through different views/screens within a dashboard.",
+    "useCases": [
+      {
+        "title": "Navigate between different views of a dashboard",
+        "evidence": "DefaultStateControllerComponent, gotoState, openState"
+      },
+      {
+        "title": "Drill down into an entity's dedicated dashboard state",
+        "evidence": "getEntityId, getStateName"
+      },
+      {
+        "title": "Go back to a previous dashboard state",
+        "evidence": "navigatePrevState"
+      },
+      {
+        "title": "Share a dashboard view via URL that preserves state",
+        "evidence": "updateLocation, parseState"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/default-state-controller/default-state-controller.component.ts",
+      "src/app/feature/dashboard/default-state-controller/default-state-controller.scss"
+    ]
+  },
+  "src/app/feature/components/tb-gateway-config-select": {
+    "hash": "c47494cb64c3dd2a",
+    "purpose": "Provides a picker for selecting or creating an IoT gateway to associate with a device configuration.",
+    "useCases": [
+      {
+        "title": "Select an existing gateway when configuring a device",
+        "evidence": "TbGatewayConfigSelectDirective, onGatewaySelected"
+      },
+      {
+        "title": "Search for a gateway by name",
+        "evidence": "gatewayNameSearch, createFilterForGatewayName"
+      },
+      {
+        "title": "Create a new gateway on the fly during configuration",
+        "evidence": "createNewGatewayDialog"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-gateway-config-select/tb-gateway-config-select.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-custom-action-pretty-editor": {
+    "hash": "2970c6e318f937ad",
+    "purpose": "Provides a code editor for authoring custom HTML/CSS/JS actions attached to dashboard widgets.",
+    "useCases": [
+      {
+        "title": "Write and edit custom widget actions with HTML/CSS/JS",
+        "evidence": "TbCustomActionPrettyEditorDirective, onActionChanged"
+      },
+      {
+        "title": "Format custom action code for readability",
+        "evidence": "beautifyCss, beautifyHtml"
+      },
+      {
+        "title": "Attach external resources (scripts/styles) to a custom action",
+        "evidence": "addResource, removeResource"
+      },
+      {
+        "title": "Start from a sample custom action template",
+        "evidence": "custom-action-samples.ts"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-custom-action-pretty-editor/custom-action-samples.ts",
+      "src/app/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.html",
+      "src/app/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts"
+    ]
+  },
+  "src/app/feature/dashboard/dashboards": {
+    "hash": "f3643c8fa604cc44",
+    "purpose": "Manages the list of dashboards and their assignment to customers.",
+    "useCases": [
+      {
+        "title": "Create a new dashboard",
+        "evidence": "AddDashboardDialogComponent"
+      },
+      {
+        "title": "Assign a dashboard to one or more customers",
+        "evidence": "addDashboardsToCustomer, assignDashboardsToCustomers"
+      },
+      {
+        "title": "Unassign a dashboard from a customer",
+        "evidence": "unassignDashboardsFromCustomer, unassignDashboardsFromCustomers"
+      },
+      {
+        "title": "Manage which customers have access to a dashboard",
+        "evidence": "showManageAssignedCustomersDialog"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/dashboards/add-dashboard-dialog.component.ts",
+      "src/app/feature/dashboard/dashboards/dashboards.component.html",
+      "src/app/feature/dashboard/dashboards/dashboards.component.ts"
+    ]
+  },
+  "src/app/feature/widget/tb-led-indicator": {
+    "hash": "315207453fed9757",
+    "purpose": "Implements an LED-style status indicator widget for visualizing a single device/telemetry value on a dashboard.",
+    "useCases": [
+      {
+        "title": "Visualize a live telemetry/attribute value as an LED indicator on a dashboard",
+        "evidence": "TbLedIndicatorDirective, subscribeForValue, setValue"
+      },
+      {
+        "title": "See color change reflecting the current status/value",
+        "evidence": "setColor... updateColor"
+      },
+      {
+        "title": "Be notified when the widget's data source has an error",
+        "evidence": "onError"
+      }
+    ],
+    "files": [
+      "src/app/feature/widget/tb-led-indicator/tb-led-indicator.directive.html",
+      "src/app/feature/widget/tb-led-indicator/tb-led-indicator.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-js-func": {
+    "hash": "4ce71aa1fa85cc16",
+    "purpose": "Provides an in-browser JavaScript function editor widget used to write and validate custom scripts (e.g. transformation/filter functions) within the platform UI",
+    "useCases": [
+      {
+        "title": "Write and validate a custom JavaScript function for processing device/telemetry data",
+        "evidence": "TbJsFuncDirective, validateFunction, functionBody"
+      },
+      {
+        "title": "See syntax errors while editing a script",
+        "evidence": "showError, cleanupJsErrors"
+      },
+      {
+        "title": "Auto-format a script for readability",
+        "evidence": "beautifyJs"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-js-func/tb-js-func.directive.html",
+      "src/app/feature/components/tb-js-func/tb-js-func.directive.ts"
+    ]
+  },
+  "src/app/feature/entity/tb-entity-subtype-list": {
+    "hash": "2aabec815fc41f4b",
+    "purpose": "Lets a user manage the list of entity subtypes (e.g. device/asset types) used to categorize entities",
+    "useCases": [
+      {
+        "title": "Search and select existing device/asset subtypes",
+        "evidence": "onSearchTextChanged, loadSubTypes, fetchEntitySubtypes"
+      },
+      {
+        "title": "Add a new entity subtype tag",
+        "evidence": "onSubtypeSelected"
+      },
+      {
+        "title": "Remove an entity subtype from the list",
+        "evidence": "removeSubtype"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.html",
+      "src/app/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-dashboard-autocomplete": {
+    "hash": "4bc1bff83288c324",
+    "purpose": "Provides a search/select control for choosing a dashboard by name elsewhere in the UI",
+    "useCases": [
+      {
+        "title": "Search for and pick a dashboard to link/assign",
+        "evidence": "fetchDashboards, onDashboardSelected, onSearchTextChange"
+      },
+      {
+        "title": "Select a dashboard as a default target (e.g. for a customer or state)",
+        "evidence": "setDashboard"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-dashboard-autocomplete/tb-dashboard-autocomplete.directive.ts"
+    ]
+  },
+  "src/app/feature/components/ui-ace": {
+    "hash": "48f6682d5fe34c7a",
+    "purpose": "Wraps the Ace code editor for use throughout the UI where users edit code/config (scripts, JSON, rule node configs)",
+    "useCases": [
+      {
+        "title": "Edit code/configuration text with a full code editor (syntax highlighting, resizing)",
+        "evidence": "UiAceDirective, UiAceOptions"
+      },
+      {
+        "title": "View code in read-only mode when editing is not permitted",
+        "evidence": "isReadonly, setDisabledState"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/ui-ace/ace-editor-fix.ts",
+      "src/app/feature/components/ui-ace/ui-ace.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-related-entity-autocomplete": {
+    "hash": "3388867f16ad3401",
+    "purpose": "Provides a search/select control for choosing an entity related to another entity (e.g. linking devices, assets, customers)",
+    "useCases": [
+      {
+        "title": "Search for and link a related entity (device, asset, customer, etc.)",
+        "evidence": "fetchEntities, filterEntities, onEntitySelected"
+      },
+      {
+        "title": "Assign a selected related entity to a relation or configuration field",
+        "evidence": "setEntity"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-related-entity-autocomplete/tb-related-entity-autocomplete.directive.ts"
+    ]
+  },
+  "src/app/feature/dashboard/manage-dashboard-states": {
+    "hash": "7cee8eb7c2b04a0b",
+    "purpose": "Lets dashboard owners define and organize the set of states (views) a dashboard can navigate between",
+    "useCases": [
+      {
+        "title": "Create or edit a dashboard state (a named view within a dashboard)",
+        "evidence": "openStateDialog, saveState"
+      },
+      {
+        "title": "Reorder and search dashboard states",
+        "evidence": "orderByFilter, searchFilter"
+      },
+      {
+        "title": "Update the set of states for a dashboard",
+        "evidence": "updateStates, ManageDashboardStatesComponent"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/manage-dashboard-states/manage-dashboard-states.component.html",
+      "src/app/feature/dashboard/manage-dashboard-states/manage-dashboard-states.component.ts"
+    ]
+  },
+  "src/app/feature/dashboard/add-widget": {
+    "hash": "07fc41995a1019ce",
+    "purpose": "Provides the UI form logic for adding a widget to a dashboard state/layout",
+    "useCases": [
+      {
+        "title": "Add a widget to a dashboard",
+        "evidence": "AddWidgetComponent"
+      },
+      {
+        "title": "Filter widget placement by dashboard state",
+        "evidence": "createFilterForDashboardState"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/add-widget/add-widget.component.html",
+      "src/app/feature/dashboard/add-widget/add-widget.component.ts"
+    ]
+  },
+  "src/app/feature/entity/tb-entity-subtype-autocomplete": {
+    "hash": "140f7d7ab5b730ca",
+    "purpose": "Reusable autocomplete input for selecting an entity subtype (e.g. device/asset profile type) when configuring entities",
+    "useCases": [
+      {
+        "title": "Search and select an entity subtype while configuring a device or asset",
+        "evidence": "TbEntitySubtypeAutocompleteDirective, subTypeSearchTextChanged"
+      },
+      {
+        "title": "Filter available subtypes by entity type",
+        "evidence": "fetchSubTypes, loadSubTypes"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive.html",
+      "src/app/feature/entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive.ts"
+    ]
+  },
+  "src/app/feature/rulechain/tb-rule-node-link": {
+    "hash": "4ed7e750216de62f",
+    "purpose": "UI control for editing the connection labels between nodes in a rule chain graph",
+    "useCases": [
+      {
+        "title": "Label and configure the connection between two rule chain nodes",
+        "evidence": "TbRuleNodeLinkDirective, createLinkLabel, updateLabels"
+      },
+      {
+        "title": "Search and select existing link labels when wiring rule chain logic",
+        "evidence": "labelsSearch, onLabelSelected"
+      }
+    ],
+    "files": [
+      "src/app/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.html",
+      "src/app/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-expand-fullscreen": {
+    "hash": "fce6ab43fb551c2c",
+    "purpose": "UI utility that adds a fullscreen expand/collapse toggle to a page element (e.g. dashboard or widget view)",
+    "useCases": [
+      {
+        "title": "Expand a dashboard or widget to fullscreen for easier monitoring",
+        "evidence": "TbExpandFullscreenDirective, applyExpanded, expanded"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-expand-fullscreen/tb-expand-fullscreen.directive.ts"
+    ]
+  },
+  "src/app/feature/entity/tb-entity-list": {
+    "hash": "a017c46400817261",
+    "purpose": "Reusable multi-select input for searching and picking a list of entities (devices, assets, etc.) within forms",
+    "useCases": [
+      {
+        "title": "Search for and select multiple entities to associate with a configuration",
+        "evidence": "TbEntityListDirective, fetchEntities, onEntitySelected"
+      },
+      {
+        "title": "Remove a previously selected entity from a list",
+        "evidence": "removeEntity"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/tb-entity-list/tb-entity-list.directive.html",
+      "src/app/feature/entity/tb-entity-list/tb-entity-list.directive.ts"
+    ]
+  },
+  "src/app/feature/asset/assign-asset-to-customer": {
+    "hash": "fcc664b2ebb62dc5",
+    "purpose": "Dialog UI allowing an operator to assign an asset to a specific customer",
+    "useCases": [
+      {
+        "title": "Assign an asset to a customer",
+        "evidence": "AssignAssetToCustomerComponent, assign"
+      },
+      {
+        "title": "Search for a customer when assigning an asset",
+        "evidence": "searchCustomerTextUpdated, toggleCustomerSelection"
+      }
+    ],
+    "files": [
+      "src/app/feature/asset/assign-asset-to-customer/assign-asset-to-customer.component.html",
+      "src/app/feature/asset/assign-asset-to-customer/assign-asset-to-customer.component.ts"
+    ]
+  },
+  "src/app/feature/device/assign-device-to-customer": {
+    "hash": "325bc324043590e0",
+    "purpose": "Provides the dialog UI for linking one or more devices to a specific customer account.",
+    "useCases": [
+      {
+        "title": "Assign a device to a customer",
+        "evidence": "AssignDeviceToCustomerComponent, assign()"
+      },
+      {
+        "title": "Search and select a customer to receive a device",
+        "evidence": "searchCustomerTextUpdated, toggleCustomerSelection"
+      }
+    ],
+    "files": [
+      "src/app/feature/device/assign-device-to-customer/assign-device-to-customer.component.html",
+      "src/app/feature/device/assign-device-to-customer/assign-device-to-customer.component.ts"
+    ]
+  },
+  "src/app/feature/entity-view/assign-entity-view-to-customer": {
+    "hash": "a1a239d855ab630a",
+    "purpose": "Provides the dialog UI for linking one or more entity views to a specific customer account.",
+    "useCases": [
+      {
+        "title": "Assign an entity view to a customer",
+        "evidence": "AssignEntityViewToCustomerComponent, assign()"
+      },
+      {
+        "title": "Search and select a customer to receive an entity view",
+        "evidence": "searchCustomerTextUpdated, toggleCustomerSelection"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity-view/assign-entity-view-to-customer/assign-entity-view-to-customer.component.html",
+      "src/app/feature/entity-view/assign-entity-view-to-customer/assign-entity-view-to-customer.component.ts"
+    ]
+  },
+  "src/app/feature/device/device": {
+    "hash": "4a547295dcfb4657",
+    "purpose": "Manages the device list screen: registering new devices and controlling their customer assignment.",
+    "useCases": [
+      {
+        "title": "Register a new device",
+        "evidence": "AddDeviceDialogComponent"
+      },
+      {
+        "title": "Assign devices to a customer",
+        "evidence": "assignDevicesToCustomer, addDevicesToCustomer"
+      },
+      {
+        "title": "Unassign devices from a customer",
+        "evidence": "unassignDevicesFromCustomer"
+      }
+    ],
+    "files": [
+      "src/app/feature/device/device/add-device-dialog.component.ts",
+      "src/app/feature/device/device/device.component.html",
+      "src/app/feature/device/device/device.component.ts"
+    ]
+  },
+  "src/app/feature/asset/asset": {
+    "hash": "dbe8520b29720c91",
+    "purpose": "Manages the asset list screen: registering new assets and controlling their customer assignment.",
+    "useCases": [
+      {
+        "title": "Register a new asset",
+        "evidence": "AddAssetDialogComponent"
+      },
+      {
+        "title": "Assign assets to a customer",
+        "evidence": "assignAssetsToCustomer, addAssetsToCustomer"
+      },
+      {
+        "title": "Unassign assets from a customer",
+        "evidence": "unassignAssetsFromCustomer"
+      }
+    ],
+    "files": [
+      "src/app/feature/asset/asset/add-asset-dialog.component.ts",
+      "src/app/feature/asset/asset/asset.component.html",
+      "src/app/feature/asset/asset/asset.component.ts"
+    ]
+  },
+  "src/app/feature/entity-view/entity-view": {
+    "hash": "6392554fcb220cba",
+    "purpose": "Manages the entity view list screen: creating new entity views and controlling their customer assignment.",
+    "useCases": [
+      {
+        "title": "Create a new entity view",
+        "evidence": "AddEntityViewDialogComponent"
+      },
+      {
+        "title": "Assign entity views to a customer",
+        "evidence": "assignEntityViewsToCustomer, addEntityViewsToCustomer"
+      },
+      {
+        "title": "Unassign entity views from a customer",
+        "evidence": "unassignEntityViewsFromCustomer"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity-view/entity-view/add-entity-view-dialog.component.ts",
+      "src/app/feature/entity-view/entity-view/entity-view.component.html",
+      "src/app/feature/entity-view/entity-view/entity-view.component.ts"
+    ]
+  },
+  "src/app/feature/components/widget-action-dialog": {
+    "hash": "e21a556c21b6be78",
+    "purpose": "Provides the dialog for defining custom click/interaction actions on dashboard widgets.",
+    "useCases": [
+      {
+        "title": "Configure a custom action for a dashboard widget",
+        "evidence": "WidgetActionDialogComponent, checkActionName"
+      },
+      {
+        "title": "Set a widget action to navigate to another dashboard state",
+        "evidence": "createFilterForDashboardState, targetDashboardStateSearchTextChanged"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/widget-action-dialog/widget-action-dialog.component.html",
+      "src/app/feature/components/widget-action-dialog/widget-action-dialog.component.ts"
+    ]
+  },
+  "src/app/feature/dashboard/services": {
+    "hash": "62fe684b38125512",
+    "purpose": "Manages the lifecycle and state of dashboard 'state controllers' that drive dashboard navigation/state transitions",
+    "useCases": [
+      {
+        "title": "Navigate between dashboard states while viewing a dashboard",
+        "evidence": "StatesControllerService, getStateController"
+      },
+      {
+        "title": "Preserve dashboard state when switching views and restore it later",
+        "evidence": "preserveStateControllerState, withdrawStateControllerState"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/services/states-controller-base.ts",
+      "src/app/feature/dashboard/services/states-controller.service.ts"
+    ]
+  },
+  "src/app/feature/entity/tb-entity-subtype-select": {
+    "hash": "9b161952ba098105",
+    "purpose": "Provides a form control for selecting an entity subtype (device profile/asset type) when configuring or filtering entities",
+    "useCases": [
+      {
+        "title": "Filter or configure entities by selecting an entity subtype (e.g. device type)",
+        "evidence": "TbEntitySubtypeSelectDirective, loadSubTypes"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.html",
+      "src/app/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-gateway-config": {
+    "hash": "88a76d1868b1d34c",
+    "purpose": "Provides UI for configuring IoT gateway connectors that bridge external devices/protocols into the platform",
+    "useCases": [
+      {
+        "title": "Add and configure a gateway connector for connecting devices to the platform",
+        "evidence": "addNewConnector, openConfigDialog"
+      },
+      {
+        "title": "Rename or change the type of an existing gateway connector",
+        "evidence": "changeConnectorName, changeConnectorType"
+      },
+      {
+        "title": "Remove a gateway connector no longer needed",
+        "evidence": "removeConnector"
+      },
+      {
+        "title": "Validate connector configuration before saving",
+        "evidence": "validateConnectorName, validateJSON"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-gateway-config/tb-gateway-config.directive.html",
+      "src/app/feature/components/tb-gateway-config/tb-gateway-config.directive.ts"
+    ]
+  },
+  "src/app/feature/rulechain/tb-message-type-autocomplete": {
+    "hash": "1ea50b2160d58ccc",
+    "purpose": "Provides an autocomplete input for selecting message types when building rule chain nodes for data processing",
+    "useCases": [
+      {
+        "title": "Select or search a message type while configuring a rule chain node",
+        "evidence": "TbMessageTypeAutocompleteDirective, onMessageTypeSelected, fetchMessageTypes"
+      }
+    ],
+    "files": [
+      "src/app/feature/rulechain/tb-message-type-autocomplete/tb-message-type-autocomplete.directive.html",
+      "src/app/feature/rulechain/tb-message-type-autocomplete/tb-message-type-autocomplete.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-datetime-period": {
+    "hash": "b0474185a3c8d7bd",
+    "purpose": "Provides a date/time range picker component used to select time periods for filtering telemetry or dashboard data",
+    "useCases": [
+      {
+        "title": "Select a start and end date/time range to filter device telemetry or reports",
+        "evidence": "setStartDate, setEndDate, TbDatetimePeriodDirective"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-datetime-period/tb-datetime-period.directive.html",
+      "src/app/feature/components/tb-datetime-period/tb-datetime-period.directive.ts"
+    ]
+  },
+  "src/app/feature/entity/tb-entity-type-select": {
+    "hash": "c935fd82502eb4b4",
+    "purpose": "Provides a form control for selecting an entity type (device, asset, customer, etc.) when configuring platform features",
+    "useCases": [
+      {
+        "title": "Select an entity type when configuring dashboards, rules, or filters",
+        "evidence": "TbEntityTypeSelectDirective, entityType"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.html",
+      "src/app/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts"
+    ]
+  },
+  "src/app/feature/asset/add-assets-to-customer": {
+    "hash": "55a6c8591e605606",
+    "purpose": "Lets an operator assign existing assets to a specific customer",
+    "useCases": [
+      {
+        "title": "Search and select assets to assign to a customer",
+        "evidence": "searchAssetTextUpdated, toggleAssetSelection"
+      },
+      {
+        "title": "Assign selected assets to a customer",
+        "evidence": "AddAssetsToCustomerComponent.assign"
+      },
+      {
+        "title": "Browse a paginated list of assignable assets",
+        "evidence": "onScrolled, noData/hasData"
+      }
+    ],
+    "files": [
+      "src/app/feature/asset/add-assets-to-customer/add-assets-to-customer.component.html",
+      "src/app/feature/asset/add-assets-to-customer/add-assets-to-customer.component.ts"
+    ]
+  },
+  "src/app/feature/dashboard/add-dashboards-to-customer": {
+    "hash": "37645a8ed0b5a363",
+    "purpose": "Lets an operator assign existing dashboards to a specific customer",
+    "useCases": [
+      {
+        "title": "Search and select dashboards to assign to a customer",
+        "evidence": "searchDashboardTextUpdated, toggleDashboardSelection"
+      },
+      {
+        "title": "Assign selected dashboards to a customer",
+        "evidence": "AddDashboardsToCustomerComponent.assign"
+      },
+      {
+        "title": "Browse a paginated list of assignable dashboards",
+        "evidence": "onScrolled, noData/hasData"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/add-dashboards-to-customer/add-dashboards-to-customer.component.html",
+      "src/app/feature/dashboard/add-dashboards-to-customer/add-dashboards-to-customer.component.ts"
+    ]
+  },
+  "src/app/feature/device/add-devices-to-customer": {
+    "hash": "3d79505ab0a24ead",
+    "purpose": "Lets an operator assign existing devices to a specific customer",
+    "useCases": [
+      {
+        "title": "Search and select devices to assign to a customer",
+        "evidence": "searchDeviceTextUpdated, toggleDeviceSelection"
+      },
+      {
+        "title": "Assign selected devices to a customer",
+        "evidence": "AddDevicesToCustomerComponent.assign"
+      },
+      {
+        "title": "Browse a paginated list of assignable devices",
+        "evidence": "onScrolled, noData/hasData"
+      }
+    ],
+    "files": [
+      "src/app/feature/device/add-devices-to-customer/add-devices-to-customer.component.html",
+      "src/app/feature/device/add-devices-to-customer/add-devices-to-customer.component.ts"
+    ]
+  },
+  "src/app/feature/entity-view/add-entity-views-to-customer": {
+    "hash": "6fbee85396e82be6",
+    "purpose": "Lets an operator assign existing entity views to a specific customer",
+    "useCases": [
+      {
+        "title": "Search and select entity views to assign to a customer",
+        "evidence": "searchEntityViewTextUpdated, toggleEntityViewSelection"
+      },
+      {
+        "title": "Assign selected entity views to a customer",
+        "evidence": "AddEntityViewsToCustomerComponent.assign"
+      },
+      {
+        "title": "Browse a paginated list of assignable entity views",
+        "evidence": "onScrolled, noData/hasData"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity-view/add-entity-views-to-customer/add-entity-views-to-customer.component.html",
+      "src/app/feature/entity-view/add-entity-views-to-customer/add-entity-views-to-customer.component.ts"
+    ]
+  },
+  "src/app/feature/rulechain/node-script-test": {
+    "hash": "a9e537b0863f16fc",
+    "purpose": "Lets a rule chain designer test a custom JavaScript node script against sample data before deploying it",
+    "useCases": [
+      {
+        "title": "Test a rule node script with sample input, metadata, and message type",
+        "evidence": "NodeScriptTestComponent.testNodeScript"
+      },
+      {
+        "title": "Validate script input parameters and metadata before running",
+        "evidence": "checkInputParamErrors, showMetadataError"
+      },
+      {
+        "title": "View script output alongside input in a resizable split-screen editor",
+        "evidence": "initSplitLayout, onDividerDrag"
+      }
+    ],
+    "files": [
+      "src/app/feature/rulechain/node-script-test/node-script-test.component.html",
+      "src/app/feature/rulechain/node-script-test/node-script-test.component.ts"
+    ]
+  },
+  "src/app/feature/entity/tb-entity-autocomplete": {
+    "hash": "6fd86004b8eeed69",
+    "purpose": "Provides a reusable search/autocomplete control for finding and selecting any platform entity (device, asset, customer, etc.)",
+    "useCases": [
+      {
+        "title": "Search for an entity by typing part of its name",
+        "evidence": "entitySearchTextChanged, fetchEntities"
+      },
+      {
+        "title": "Select an entity from autocomplete suggestions to link it elsewhere in the UI",
+        "evidence": "onEntitySelected"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/tb-entity-autocomplete/tb-entity-autocomplete.directive.html",
+      "src/app/feature/entity/tb-entity-autocomplete/tb-entity-autocomplete.directive.ts"
+    ]
+  },
+  "src/app/feature/entity/tb-entity-select": {
+    "hash": "86b6f607ff1c9ad1",
+    "purpose": "Reusable form control for picking a specific entity (device, asset, etc.) by type",
+    "useCases": [
+      {
+        "title": "Select an entity when configuring a dashboard, widget, or rule",
+        "evidence": "TbEntitySelectDirective, setEntityId, setEntityType"
+      },
+      {
+        "title": "Enforce required entity selection in configuration forms",
+        "evidence": "validateRequired"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/tb-entity-select/tb-entity-select.directive.html",
+      "src/app/feature/entity/tb-entity-select/tb-entity-select.directive.ts"
+    ]
+  },
+  "src/app/feature/entity/tb-relation-type-autocomplete": {
+    "hash": "29b1f1a90b726585",
+    "purpose": "Autocomplete input for choosing entity relation types when defining relations between entities",
+    "useCases": [
+      {
+        "title": "Search and pick an existing relation type when linking two entities",
+        "evidence": "fetchRelationTypes, relationTypeSearchTextChanged"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive.html",
+      "src/app/feature/entity/tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive.ts"
+    ]
+  },
+  "src/app/feature/device/manage-device-credentials": {
+    "hash": "87e3fffbbf3f38ba",
+    "purpose": "UI for viewing and updating a device's access credentials",
+    "useCases": [
+      {
+        "title": "View a device's current connection credentials",
+        "evidence": "loadDeviceCredentials"
+      },
+      {
+        "title": "Update/save new access credentials for a device",
+        "evidence": "ManageDeviceCredentialsComponent, save"
+      }
+    ],
+    "files": [
+      "src/app/feature/device/manage-device-credentials/manage-device-credentials.component.html",
+      "src/app/feature/device/manage-device-credentials/manage-device-credentials.component.ts"
+    ]
+  },
+  "src/app/feature/components/tb-widgets-bundle-select": {
+    "hash": "d3db95e06c66d9bc",
+    "purpose": "Form control for selecting a widgets bundle when building dashboards",
+    "useCases": [
+      {
+        "title": "Choose a system or custom widgets bundle when adding widgets to a dashboard",
+        "evidence": "TbWidgetsBundleSelectDirective, selectWidgetsBundleByAlias, isSystem"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive.html",
+      "src/app/feature/components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive.ts"
+    ]
+  },
+  "src/app/feature/entity/tb-entity-filter": {
+    "hash": "e1c55901d61736ce",
+    "purpose": "Configurable filter control for narrowing down entities (e.g., in dashboards or entity lists) by criteria",
+    "useCases": [
+      {
+        "title": "Filter entities (devices/assets) by type or attributes when browsing or building widgets",
+        "evidence": "TbEntityFilterDirective, updateFilter"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/tb-entity-filter/tb-entity-filter.directive.html",
+      "src/app/feature/entity/tb-entity-filter/tb-entity-filter.directive.ts"
+    ]
+  },
+  "src/app/feature/layout/home": {
+    "hash": "040a7886e56b7d36",
+    "purpose": "Main authenticated application shell/layout providing navigation and workspace for the IoT console",
+    "useCases": [
+      {
+        "title": "Navigate the console via a collapsible side menu",
+        "evidence": "HomeComponent, closeSidenav, setSidenavAnimationEnabled"
+      },
+      {
+        "title": "View a dashboard/entity list in fullscreen mode",
+        "evidence": "forceFullscreen"
+      },
+      {
+        "title": "Search and monitor entity subtypes (e.g., device/asset types) from the home layout",
+        "evidence": "watchEntitySubtype, searchConfig"
+      }
+    ],
+    "files": [
+      "src/app/feature/layout/home/home.component.html",
+      "src/app/feature/layout/home/home.component.ts"
+    ]
+  },
+  "src/app/feature/entity/entity-alias-dialog": {
+    "hash": "3b49647120b86f1e",
+    "purpose": "Lets a user define/edit a named alias that binds a dashboard widget to a set of entities (devices, assets, etc.) via a filter.",
+    "useCases": [
+      {
+        "title": "Create or rename an entity alias for use in dashboard widgets",
+        "evidence": "EntityAliasDialogComponent, onAliasNameChange"
+      },
+      {
+        "title": "Validate an entity alias definition before saving",
+        "evidence": "validate, theFormRef"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/entity-alias-dialog/entity-alias-dialog.component.html",
+      "src/app/feature/entity/entity-alias-dialog/entity-alias-dialog.component.ts"
+    ]
+  },
+  "src/app/feature/components/tb-details-sidenav": {
+    "hash": "ccce412d3a312166",
+    "purpose": "Provides the sliding details panel used across the console to view and edit an entity's details (e.g. device, asset, dashboard) inline.",
+    "useCases": [
+      {
+        "title": "Open an entity's detail panel to view/edit its properties",
+        "evidence": "TbDetailsSidenavDirective, detailsApply"
+      },
+      {
+        "title": "Toggle edit mode on entity details before applying changes",
+        "evidence": "toggleDetailsEditMode, closeDetails"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-details-sidenav/tb-details-sidenav.directive.html",
+      "src/app/feature/components/tb-details-sidenav/tb-details-sidenav.directive.ts"
+    ]
+  },
+  "src/app/feature/entity/add-attribute-dialog": {
+    "hash": "e3ac92969e917cc9",
+    "purpose": "Enables users to add custom attributes/key-value data to an entity (device, asset, etc.).",
+    "useCases": [
+      {
+        "title": "Add a custom attribute (name/type/value) to a device or asset",
+        "evidence": "AddAttributeDialogComponent, add, valueType"
+      },
+      {
+        "title": "Bulk-add attributes via JSON input",
+        "evidence": "addJSON"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/add-attribute-dialog/add-attribute-dialog.component.html",
+      "src/app/feature/entity/add-attribute-dialog/add-attribute-dialog.component.ts"
+    ]
+  },
+  "src/app/feature/entity/add-widget-to-dashboard-dialog": {
+    "hash": "79661e3dd697fb3d",
+    "purpose": "Supports adding a chosen widget onto an existing or new dashboard layout/state.",
+    "useCases": [
+      {
+        "title": "Add a widget to a dashboard",
+        "evidence": "AddWidgetToDashboardDialogComponent, addWidgetToDashboard"
+      },
+      {
+        "title": "Choose which dashboard layout or state to place the widget in",
+        "evidence": "selectTargetLayout, selectTargetState"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/add-widget-to-dashboard-dialog/add-widget-to-dashboard-dialog.component.html",
+      "src/app/feature/entity/add-widget-to-dashboard-dialog/add-widget-to-dashboard-dialog.component.ts"
+    ]
+  },
+  "src/app/feature/dashboard/tb-edit-widget": {
+    "hash": "d53171dabc5eb83f",
+    "purpose": "Provides the in-dashboard widget editor for configuring a widget's data sources, aliases, and filters.",
+    "useCases": [
+      {
+        "title": "Configure a dashboard widget's settings and apply changes",
+        "evidence": "TbEditWidgetDirective, applyWidgetInfo"
+      },
+      {
+        "title": "Create a new entity alias while editing a widget's data source",
+        "evidence": "createEntityAlias, fetchEntityKeys"
+      },
+      {
+        "title": "Filter widget data based on dashboard state",
+        "evidence": "createFilterForDashboardState, fetchDashboardStates"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.html",
+      "src/app/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts"
+    ]
+  },
+  "src/app/feature/components/pipes": {
+    "hash": "01d6e77d1c97b41a",
+    "purpose": "Shared display-formatting utilities (pipes) used to present data consistently across the UI.",
+    "useCases": [],
+    "files": [
+      "src/app/feature/components/pipes/contact-short.pipe.ts",
+      "src/app/feature/components/pipes/keyboard-shortcut.pipe.ts",
+      "src/app/feature/components/pipes/milli-seconds-to-time-string.pipe.ts",
+      "src/app/feature/components/pipes/nospace.pipe.ts",
+      "src/app/feature/components/pipes/range.pipe.ts",
+      "src/app/feature/components/pipes/truncate.pipe.ts"
+    ]
+  },
+  "src/app/feature/device/tb-device": {
+    "hash": "b90a22b6211e3509",
+    "purpose": "UI directive for displaying and managing individual device details, credentials, and metadata",
+    "useCases": [
+      {
+        "title": "Copy a device's access token for connecting it to the platform",
+        "evidence": "copyAccessToken"
+      },
+      {
+        "title": "Copy a device's ID for reference or integration",
+        "evidence": "copyDeviceId"
+      },
+      {
+        "title": "Set additional custom information/metadata on a device",
+        "evidence": "setAdditionalInfo"
+      }
+    ],
+    "files": [
+      "src/app/feature/device/tb-device/tb-device.directive.html",
+      "src/app/feature/device/tb-device/tb-device.directive.ts"
+    ]
+  },
+  "src/app/feature/components/datakey-config-dialog": {
+    "hash": "c6c497d46a2fc233",
+    "purpose": "Dialog for configuring data keys (telemetry/attribute keys) used in widgets and dashboards",
+    "useCases": [
+      {
+        "title": "Configure a data key (telemetry/attribute) for use in a dashboard widget",
+        "evidence": "DatakeyConfigDialogComponent, save"
+      },
+      {
+        "title": "Look up available entity keys when building a widget data source",
+        "evidence": "fetchEntityKeys"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/datakey-config-dialog/datakey-config-dialog.component.html",
+      "src/app/feature/components/datakey-config-dialog/datakey-config-dialog.component.ts"
+    ]
+  },
+  "src/app/feature/components/tb-queue-type-list": {
+    "hash": "d446abb411f83fe6",
+    "purpose": "UI component for selecting/managing message queues used in rule chain processing",
+    "useCases": [
+      {
+        "title": "Select a queue type when configuring rule chain message routing",
+        "evidence": "TbQueueTypeListDirective, queue"
+      },
+      {
+        "title": "View the list of available queues in the platform",
+        "evidence": "fetchQueues, loadQueues"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-queue-type-list/tb-queue-type-list.directive.html",
+      "src/app/feature/components/tb-queue-type-list/tb-queue-type-list.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-datakey-config": {
+    "hash": "56ae0589098b2be3",
+    "purpose": "Reusable UI directive for configuring and filtering data keys on dashboard widgets",
+    "useCases": [
+      {
+        "title": "Search and select telemetry/attribute keys when configuring a widget",
+        "evidence": "keysSearch, onKeyTextChange"
+      },
+      {
+        "title": "Set up a filter for a data key to refine widget data display",
+        "evidence": "createFilterForDataKey"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-datakey-config/tb-datakey-config.directive.ts"
+    ]
+  },
+  "src/app/feature/dashboard/dashboard-state-dialog": {
+    "hash": "1887053b7c74b462",
+    "purpose": "Dialog for creating/editing dashboard states used in interactive dashboard navigation",
+    "useCases": [
+      {
+        "title": "Create or edit a dashboard state to organize dashboard views",
+        "evidence": "DashboardStateDialogComponent"
+      },
+      {
+        "title": "Validate a dashboard state's ID and name for uniqueness/correctness",
+        "evidence": "checkStateId, checkStateName"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/dashboard-state-dialog/dashboard-state-dialog.component.html",
+      "src/app/feature/dashboard/dashboard-state-dialog/dashboard-state-dialog.component.ts"
+    ]
+  },
+  "src/app/feature/entity/tb-aliases-entity-select": {
+    "hash": "05e408dbb3cc0953",
+    "purpose": "UI directive for selecting entities bound to dashboard aliases (widget data sources)",
+    "useCases": [
+      {
+        "title": "Select which device/asset/entity an alias points to on a dashboard",
+        "evidence": "TbAliasesEntitySelectDirective, updateView"
+      },
+      {
+        "title": "Edit an existing entity alias mapping",
+        "evidence": "openEditMode, updateDisplayValue"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/tb-aliases-entity-select/tb-aliases-entity-select.directive.html",
+      "src/app/feature/entity/tb-aliases-entity-select/tb-aliases-entity-select.directive.ts"
+    ]
+  },
+  "src/app/feature/dashboard/tb-states-component": {
+    "hash": "766fd10b10d0b704",
+    "purpose": "Manages dashboard state controllers, enabling navigation between different dashboard views/states within a widget.",
+    "useCases": [
+      {
+        "title": "Navigate between dashboard states from a widget",
+        "evidence": "TbStatesComponentDirective, createStateController, destroyStateController"
+      },
+      {
+        "title": "Configure state-driven widget behavior on a dashboard",
+        "evidence": "setControllerProperty, init"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/tb-states-component/tb-states-component.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-chip-draggable": {
+    "hash": "7fc4df2dfc0866b7",
+    "purpose": "Provides drag-and-drop chip UI interaction used to reorganize or reassign items (e.g., datasources, keys) via drag-and-drop.",
+    "useCases": [
+      {
+        "title": "Drag and drop an item (e.g., data key) onto a target to reassign it",
+        "evidence": "TbChipDraggableDirective, onDrop, onDragOver"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-chip-draggable/tb-chip-draggable.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-datasource": {
+    "hash": "55eb02400eb82a64",
+    "purpose": "Provides the UI for configuring a widget's data source (device/entity/data keys) that feeds dashboard widgets.",
+    "useCases": [
+      {
+        "title": "Configure a widget's data source (entity/device and keys) when building a dashboard",
+        "evidence": "TbDatasourceDirective, datasource-callbacks.ts, tb-datasource.directive.html"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-datasource/datasource-callbacks.ts",
+      "src/app/feature/components/tb-datasource/tb-datasource.directive.html",
+      "src/app/feature/components/tb-datasource/tb-datasource.directive.ts"
+    ]
+  },
+  "src/app/feature/layout/tb-breadcrumb": {
+    "hash": "b1e76bac9e7d273f",
+    "purpose": "Renders navigational breadcrumbs showing the user's current location and path within the app.",
+    "useCases": [
+      {
+        "title": "See and navigate the current location trail across the app (e.g., dashboard states)",
+        "evidence": "TbBreadcrumbComponent, steps, stateLabels, interpolate"
+      }
+    ],
+    "files": [
+      "src/app/feature/layout/tb-breadcrumb/tb-breadcrumb.component.ts"
+    ]
+  },
+  "src/app/feature/components/tb-dashboard-select": {
+    "hash": "1c7cd6d77590c5ac",
+    "purpose": "Provides a UI control for selecting/picking a dashboard from a searchable panel.",
+    "useCases": [
+      {
+        "title": "Select a dashboard to link to or open from a picker panel",
+        "evidence": "TbDashboardSelectDirective, openDashboardSelectPanel, onDashboardIdChange"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-dashboard-select/tb-dashboard-select.directive.ts"
+    ]
+  },
+  "src/app/feature/rulechain/tb-rule-node-config": {
+    "hash": "e5be7fb3e0653b3f",
+    "purpose": "Renders and validates the dynamic configuration form for a rule chain node used in IoT data processing pipelines.",
+    "useCases": [
+      {
+        "title": "Configure a rule node's settings when building a rule chain for data processing",
+        "evidence": "TbRuleNodeConfigDirective, tb-rule-node-config.directive.html"
+      },
+      {
+        "title": "Validate rule node configuration input before saving a rule chain",
+        "evidence": "validateDefinedDirective, useDefinedDirective"
+      }
+    ],
+    "files": [
+      "src/app/feature/rulechain/tb-rule-node-config/tb-rule-node-config.directive.html",
+      "src/app/feature/rulechain/tb-rule-node-config/tb-rule-node-config.directive.ts"
+    ]
+  },
+  "src/app/feature/import-export/import-dialog-csv": {
+    "hash": "364938b9e6020b93",
+    "purpose": "Bulk-import entities (devices/assets/customers) into the platform from a CSV file",
+    "useCases": [
+      {
+        "title": "Import devices or assets in bulk from a CSV file",
+        "evidence": "ImportDialogCsvComponent, parseCSV, addEntities"
+      },
+      {
+        "title": "Map CSV columns to entity attributes before import",
+        "evidence": "createColumnsData"
+      }
+    ],
+    "files": [
+      "src/app/feature/import-export/import-dialog-csv/import-dialog-csv.component.html",
+      "src/app/feature/import-export/import-dialog-csv/import-dialog-csv.component.ts"
+    ]
+  },
+  "src/app/feature/entity/entity-aliases": {
+    "hash": "f0b8d92dc36e2254",
+    "purpose": "Define and manage named entity aliases used to bind dashboard widgets to specific devices/assets",
+    "useCases": [
+      {
+        "title": "Configure entity aliases so dashboard widgets reference the right devices/assets",
+        "evidence": "EntityAliasesComponent, initController"
+      },
+      {
+        "title": "Create or edit an entity alias via a dialog",
+        "evidence": "openAliasDialog"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/entity-aliases/entity-aliases.component.html",
+      "src/app/feature/entity/entity-aliases/entity-aliases.component.ts"
+    ]
+  },
+  "src/app/feature/alarm/alarm-details-dialog": {
+    "hash": "bb5084b0adbcde5b",
+    "purpose": "Show full details of a device/asset alarm in a dialog",
+    "useCases": [
+      {
+        "title": "View alarm details raised by a device or asset",
+        "evidence": "AlarmDetailsDialogComponent, loadAlarm"
+      },
+      {
+        "title": "Inspect alarm field-level data for troubleshooting",
+        "evidence": "loadAlarmFields"
+      }
+    ],
+    "files": [
+      "src/app/feature/alarm/alarm-details-dialog/alarm-details-dialog.component.html",
+      "src/app/feature/alarm/alarm-details-dialog/alarm-details-dialog.component.ts"
+    ]
+  },
+  "src/app/feature/user/user": {
+    "hash": "38d0329420253a87",
+    "purpose": "Manage individual user accounts within a tenant or customer",
+    "useCases": [
+      {
+        "title": "View and edit a user's profile/settings",
+        "evidence": "UserComponent, initController"
+      },
+      {
+        "title": "Send an account activation link to a new user",
+        "evidence": "openActivationLinkDialog"
+      },
+      {
+        "title": "View a summary card of a user in a list",
+        "evidence": "UserCardComponent"
+      }
+    ],
+    "files": [
+      "src/app/feature/user/user/user-card.component.ts",
+      "src/app/feature/user/user/user.component.html",
+      "src/app/feature/user/user/user.component.ts"
+    ]
+  },
+  "src/app/feature/components/tb-nav-tree": {
+    "hash": "883d55c964c16fec",
+    "purpose": "Generic reusable UI directive for rendering a navigable tree control",
+    "useCases": [],
+    "files": [
+      "src/app/feature/components/tb-nav-tree/tb-nav-tree.directive.html",
+      "src/app/feature/components/tb-nav-tree/tb-nav-tree.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-legend": {
+    "hash": "25c3ae23c0406d49",
+    "purpose": "Legend control for dashboard chart/widget data series",
+    "useCases": [
+      {
+        "title": "Show/hide individual data series in a dashboard chart widget via its legend",
+        "evidence": "TbLegendDirective, toggleHideData"
+      },
+      {
+        "title": "View chart legend in horizontal or vertical layout with headers",
+        "evidence": "displayHeader, isHorizontal, isRowDirection"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-legend/tb-legend.directive.html",
+      "src/app/feature/components/tb-legend/tb-legend.directive.ts"
+    ]
+  },
+  "src/app/feature/rulechain/tb-rule-node": {
+    "hash": "a7520ac7138bd74a",
+    "purpose": "UI directive for configuring an individual rule node within a rule chain (data processing pipeline)",
+    "useCases": [
+      {
+        "title": "Configure a rule chain node's target rule chain link",
+        "evidence": "TbRuleNodeDirective, applyTargetRuleChainId, watchTargetRuleChain"
+      }
+    ],
+    "files": [
+      "src/app/feature/rulechain/tb-rule-node/tb-rule-node.directive.html",
+      "src/app/feature/rulechain/tb-rule-node/tb-rule-node.directive.ts"
+    ]
+  },
+  "src/app/feature/asset/tb-asset": {
+    "hash": "19981c78727b6e35",
+    "purpose": "UI directive for viewing and editing details of an IoT asset",
+    "useCases": [
+      {
+        "title": "View and edit asset details",
+        "evidence": "TbAssetDirective, setAdditionalInfo"
+      },
+      {
+        "title": "Copy an asset's ID for integration/reference",
+        "evidence": "copyAssetId, onAssetIdCopied"
+      }
+    ],
+    "files": [
+      "src/app/feature/asset/tb-asset/tb-asset.directive.html",
+      "src/app/feature/asset/tb-asset/tb-asset.directive.ts"
+    ]
+  },
+  "src/app/legacy-lib/common": {
+    "hash": "78905c94ce2c130b",
+    "purpose": "Low-level UTF-8 encoding/decoding utility helpers",
+    "useCases": [],
+    "files": [
+      "src/app/legacy-lib/common/utf8-support.js"
+    ]
+  },
+  "src/app/feature/user/tb-user": {
+    "hash": "77045fbf57c03b8a",
+    "purpose": "UI directive for viewing and managing a platform user's profile and role information",
+    "useCases": [
+      {
+        "title": "View a user's details and additional info",
+        "evidence": "TbUserDirective, setAdditionalInfo"
+      },
+      {
+        "title": "Determine user role (customer user vs tenant admin) for access control",
+        "evidence": "isCustomerUser, isTenantAdmin"
+      },
+      {
+        "title": "Check whether a user's login credentials are enabled",
+        "evidence": "isUserCredentialsEnabled"
+      }
+    ],
+    "files": [
+      "src/app/feature/user/tb-user/tb-user.directive.html",
+      "src/app/feature/user/tb-user/tb-user.directive.ts"
+    ]
+  },
+  "src/app/feature/dashboard/tb-dashboard-details": {
+    "hash": "5b0a213145127be9",
+    "purpose": "UI directive for viewing and editing dashboard metadata and sharing settings",
+    "useCases": [
+      {
+        "title": "Edit a dashboard's description",
+        "evidence": "setDescription"
+      },
+      {
+        "title": "Share a dashboard publicly via a copyable public link",
+        "evidence": "copyPublicLink, onPublicLinkCopied"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/tb-dashboard-details/tb-dashboard-details.directive.html",
+      "src/app/feature/dashboard/tb-dashboard-details/tb-dashboard-details.directive.ts"
+    ]
+  },
+  "src/app/feature/components/material-icons-dialog": {
+    "hash": "adc59a7100818a69",
+    "purpose": "UI dialog for browsing and selecting a Material icon to use elsewhere in the app",
+    "useCases": [
+      {
+        "title": "Browse and select an icon (e.g., for a dashboard, device, or widget)",
+        "evidence": "MaterialIconsDialogComponent, selectIcon, showAll"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/material-icons-dialog/material-icons-dialog.component.html",
+      "src/app/feature/components/material-icons-dialog/material-icons-dialog.component.ts"
+    ]
+  },
+  "src/app/feature/layout/tb-user-menu": {
+    "hash": "83bce93609f19599",
+    "purpose": "Provides the user account menu shown in the app header for profile and session actions.",
+    "useCases": [
+      {
+        "title": "View current user's name and role in the app header",
+        "evidence": "userDisplayName, authorityName"
+      },
+      {
+        "title": "Open and edit own user profile",
+        "evidence": "openProfile"
+      },
+      {
+        "title": "Log out of the platform",
+        "evidence": "logout"
+      }
+    ],
+    "files": [
+      "src/app/feature/layout/tb-user-menu/tb-user-menu.directive.html",
+      "src/app/feature/layout/tb-user-menu/tb-user-menu.directive.ts"
+    ]
+  },
+  "src/app/feature/components/tb-key-val-map": {
+    "hash": "a89303e24ce51cf8",
+    "purpose": "Reusable UI control for editing arbitrary key/value pairs used across entity configuration forms.",
+    "useCases": [
+      {
+        "title": "Add custom key-value attributes to an entity or configuration",
+        "evidence": "addKeyVal"
+      },
+      {
+        "title": "Remove a key-value entry from a configuration",
+        "evidence": "removeKeyVal"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-key-val-map/tb-key-val-map.directive.html",
+      "src/app/feature/components/tb-key-val-map/tb-key-val-map.directive.ts"
+    ]
+  },
+  "src/app/feature/customer/tb-customer": {
+    "hash": "4217e95fb728bc03",
+    "purpose": "Manages the display and editing of customer entity details in the customer management UI.",
+    "useCases": [
+      {
+        "title": "View and edit customer details",
+        "evidence": "TbCustomerDirective"
+      },
+      {
+        "title": "Copy a customer's ID for reference or API use",
+        "evidence": "copyCustomerId, onCustomerIdCopied"
+      },
+      {
+        "title": "Add additional descriptive info to a customer record",
+        "evidence": "setAdditionalInfo"
+      }
+    ],
+    "files": [
+      "src/app/feature/customer/tb-customer/tb-customer.directive.html",
+      "src/app/feature/customer/tb-customer/tb-customer.directive.ts"
+    ]
+  },
+  "src/app/feature/widget/save-widget-type-as": {
+    "hash": "bb168fae21810ff9",
+    "purpose": "Lets users save a dashboard widget as a new reusable widget type.",
+    "useCases": [
+      {
+        "title": "Save a customized widget as a new widget type for reuse",
+        "evidence": "SaveWidgetTypeAsComponent, saveAs"
+      },
+      {
+        "title": "Cancel saving a widget type",
+        "evidence": "cancel"
+      }
+    ],
+    "files": [
+      "src/app/feature/widget/save-widget-type-as/save-widget-type-as.component.html",
+      "src/app/feature/widget/save-widget-type-as/save-widget-type-as.component.ts"
+    ]
+  },
+  "src/app/feature/dashboard/select-target-state": {
+    "hash": "2f167a12340445b6",
+    "purpose": "Provides a dialog for selecting which dashboard state an action (e.g. a widget click) should navigate to.",
+    "useCases": [
+      {
+        "title": "Configure a dashboard widget to navigate to a specific dashboard state",
+        "evidence": "SelectTargetStateComponent, save"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/select-target-state/select-target-state.component.html",
+      "src/app/feature/dashboard/select-target-state/select-target-state.component.ts"
+    ]
+  },
+  "src/app/feature/dashboard/manage-assigned-customers": {
+    "hash": "a82eaeec653e0aeb",
+    "purpose": "Lets tenant administrators assign or unassign customers to a dashboard for controlled visibility.",
+    "useCases": [
+      {
+        "title": "Assign customers to a dashboard so they can view it",
+        "evidence": "ManageAssignedCustomersComponent, submit"
+      },
+      {
+        "title": "Manage the list of customers assigned to a dashboard",
+        "evidence": "ManageAssignedCustomersData"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/manage-assigned-customers/manage-assigned-customers.component.html",
+      "src/app/feature/dashboard/manage-assigned-customers/manage-assigned-customers.component.ts"
+    ]
+  },
+  "src/app/feature/entity/attribute-dialog-edit-json": {
+    "hash": "eb29e09826fafef7",
+    "purpose": "Provides a dialog for viewing and editing an entity's attribute value as raw JSON.",
+    "useCases": [
+      {
+        "title": "Edit a device/entity attribute value as JSON",
+        "evidence": "AttributeDialogEditJsonComponent, save"
+      },
+      {
+        "title": "Cancel an attribute JSON edit without saving changes",
+        "evidence": "cancel"
+      },
+      {
+        "title": "Open the JSON editor for a selected attribute",
+        "evidence": "showAttributeJsonDialog, AttributeDialogEditJsonData"
+      }
+    ],
+    "files": [
+      "src/app/feature/entity/attribute-dialog-edit-json/attribute-dialog-edit-json.component.ts"
+    ]
+  },
+  "src/app/feature/components/tb-led-light": {
+    "hash": "05931e540a366263",
+    "purpose": "Renders a graphical LED-style indicator widget reflecting a device's on/off or status value on dashboards.",
+    "useCases": [
+      {
+        "title": "Visualize a device's live status as an LED indicator on a dashboard widget",
+        "evidence": "TbLedLightDirective, draw, update"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-led-light/tb-led-light.directive.ts"
+    ]
+  },
+  "src/app/feature/dashboard/make-dashboard-public-dialog": {
+    "hash": "6118fa4ec6c6cae9",
+    "purpose": "Lets a user publish a dashboard publicly and share the resulting public link.",
+    "useCases": [
+      {
+        "title": "Make a dashboard public so it can be viewed without login",
+        "evidence": "MakeDashboardPublicDialogComponent"
+      },
+      {
+        "title": "Copy the public dashboard link to share with others",
+        "evidence": "copyPublicLink, onPublicLinkCopied"
+      }
+    ],
+    "files": [
+      "src/app/feature/dashboard/make-dashboard-public-dialog/make-dashboard-public-dialog.component.html",
+      "src/app/feature/dashboard/make-dashboard-public-dialog/make-dashboard-public-dialog.component.ts"
+    ]
+  },
+  "src/app/feature/user/activation-link-dialog": {
+    "hash": "8c9df2699e4db9ef",
+    "purpose": "Lets an administrator retrieve and share a user account activation link.",
+    "useCases": [
+      {
+        "title": "Generate and view an account activation link for a new user",
+        "evidence": "ActivationLinkDialogComponent, ActivationLinkDialogData"
+      },
+      {
+        "title": "Copy the activation link to send to the user",
+        "evidence": "copyActivationLink, onActivationLinkCopied"
+      }
+    ],
+    "files": [
+      "src/app/feature/user/activation-link-dialog/activation-link-dialog.component.html",
+      "src/app/feature/user/activation-link-dialog/activation-link-dialog.component.ts"
+    ]
+  },
+  "src/app/feature/components/tb-material-icon-select": {
+    "hash": "22dc082e36c44be8",
+    "purpose": "Provides an icon picker control for choosing a Material icon (e.g., for assets, devices, dashboards).",
+    "useCases": [
+      {
+        "title": "Select a Material icon to represent an entity or dashboard item",
+        "evidence": "TbMaterialIconSelectDirective, openIconDialog"
+      }
+    ],
+    "files": [
+      "src/app/feature/components/tb-material-icon-select/tb-material-icon-select.directive.ts"
+    ]
+  },
+  "src/app/feature/rulechain/rule-chains": {
+    "hash": "9a3bd2b45706fa85",
+    "purpose": "Manages the list of rule chains used to define IoT data processing logic.",
+    "useCases": [
+      {
+        "title": "View and browse the list of rule chains",
+        "evidence": "RuleChainsComponent"
+      },
+      {
+        "title": "Create a new rule chain",
+        "evidence": "AddRuleChainDialogComponent"
+      },
+      {
+        "title": "View summary details of a rule chain via a card",
+        "evidence": "RuleChainCardComponent"
+      }
+    ],
+    "files": [
+      "src/app/feature/rulechain/rule-chains/add-rule-chain-dialog.component.ts",
+      "src/app/feature/rulechain/rule-chains/rule-chain-card.component.ts",
+      "src/app/feature/rulechain/rule-chains/rule-chains.component.html",
+      "src/app/feature/rulechain/rule-chains/rule-chains.component.ts"
+    ]
+  },
+  "src/app/feature/customer/customer": {
+    "hash": "57e89226fb5ead73",
+    "purpose": "Manage customer records within a tenant's IoT deployment",
+    "useCases": [
+      {
+        "title": "Register a new customer account",
+        "evidence": "AddCustomerDialogComponent"
+      },
+      {
+        "title": "Browse and review existing customers",
+        "evidence": "CustomerCardComponent"
+      },
+      {
+        "title": "View and manage the list of customers for a tenant",
+        "evidence": "CustomerComponent"
+      }
+    ],
+    "files": [
+      "src/app/feature/customer/customer/add-customer-dialog.component.ts",
+      "src/app/feature/customer/customer/customer-card.component.ts",
+      "src/app/feature/customer/customer/customer.component.html",
+      "src/app/feature/customer/customer/customer.component.ts"
+    ]
+  },
+  "src/app/feature/widget/widgets-bundle": {
+    "hash": "0bbfabfda9fb8369",
+    "purpose": "Organize dashboard widgets into reusable bundles",
+    "useCases": [
+      {
+        "title": "Create a new widgets bundle to group related widgets",
+        "evidence": "AddWidgetsBundleDialogComponent"
+      },
+      {
+        "title": "Browse available widget bundles",
+        "evidence": "WidgetsBundleCardComponent"
+      },
+      {
+        "title": "View and manage the list of widget bundles for use in dashboards",
+        "evidence": "WidgetsBundleComponent"
+      }
+    ],
+    "files": [
+      "src/app/feature/widget/widgets-bundle/add-widgets-bundle-dialog.component.ts",
+      "src/app/feature/widget/widgets-bundle/widgets-bundle-card.component.ts",
+      "src/app/feature/widget/widgets-bundle/widgets-bundle.component.html",
+      "src/app/feature/widget/widgets-bundle/widgets-bundle.component.ts"
     ]
   }
 }

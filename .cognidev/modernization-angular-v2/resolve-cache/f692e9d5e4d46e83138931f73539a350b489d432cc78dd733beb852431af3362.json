@@ -1,1 +1,0 @@
-{"answers":{"fits_pipe_transform":{"noul":0.43,"type":"noul"},"fits_plain_function":{"noul":0.5,"type":"noul"},"pick":{"choice":"pipe_transform","confidence":0.6,"probabilities":{"none":0.2,"pipe_transform":0.73,"plain_function":0.07},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":977,"output_tokens":77}}

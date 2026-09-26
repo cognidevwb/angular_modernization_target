@@ -1,0 +1,377 @@
+{
+  "version": 2,
+  "generatedFrom": "datamodel.json",
+  "policy": {
+    "maxClassesPerField": 8,
+    "maxClassesPerRoutineField": 12,
+    "maxSampleRows": 24,
+    "maxSampleColumns": 8,
+    "maxRoutineColumns": 32,
+    "note": "A routine's cases carry EVERY input parameter — a vector missing an argument cannot be replayed against the signature; `complete` is false and `droppedInputs` non-zero on the rare signature wider than the cap. A table's matrix is narrowed for readability. A trap class is never dropped by a cap, nor by class dedup."
+  },
+  "evidence": {
+    "evaluated": true,
+    "sources": [
+      "dataflow"
+    ],
+    "divisors": 0,
+    "stringCompared": 0
+  },
+  "callables": [
+    {
+      "routine": "log",
+      "file": "modernization/runtime-compare/probe-audit.mjs",
+      "line": 10,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "k",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "t",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 4,
+      "trapCount": 0
+    },
+    {
+      "routine": "log",
+      "file": "modernization/runtime-compare/probe-dashboard.mjs",
+      "line": 10,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "k",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "t",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 4,
+      "trapCount": 0
+    },
+    {
+      "routine": "log",
+      "file": "modernization/runtime-compare/quick.mjs",
+      "line": 10,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "k",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "t",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 4,
+      "trapCount": 0
+    },
+    {
+      "routine": "short",
+      "file": "modernization/runtime-compare/probe-audit.mjs",
+      "line": 9,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "t",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "short",
+      "file": "modernization/runtime-compare/quick.mjs",
+      "line": 9,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "t",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "step",
+      "file": "modernization/runtime-compare/probe-interactions.mjs",
+      "line": 18,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "fn",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 4,
+      "trapCount": 0
+    },
+    {
+      "routine": "step",
+      "file": "modernization/runtime-compare/probe-rulechain.mjs",
+      "line": 14,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "name",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "text",
+      "file": "modernization/runtime-compare/probe-interactions.mjs",
+      "line": 17,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 1,
+      "trapCount": 0
+    }
+  ],
+  "entities": [],
+  "traps": []
+}

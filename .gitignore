@@ -5,3 +5,11 @@ dist
 .cognidev/modernization-angular-v2/freehand/llm-cache
 .cognidev/modernization-angular-v2/freehand/pre-llm
 .cognidev/modernization-angular-v2/freehand/ngc-out
+.cognidev/llm-debug/
+.cognidev/llm/
+.cognidev/receipts/
+.cognidev/modernization-angular-v2/classify-cache/
+.cognidev/modernization-angular-v2/compare-cache/
+.cognidev/modernization-angular-v2/resolve-cache/
+.cognidev/modernization-angular-v2/freehand/
+.cognidev/modernization-angular-v2/steps/

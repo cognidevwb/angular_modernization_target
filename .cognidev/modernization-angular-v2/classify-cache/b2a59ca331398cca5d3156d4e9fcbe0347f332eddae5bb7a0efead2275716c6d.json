@@ -1,1 +1,0 @@
-{"answers":{"service_state":{"choice":"shared_mutable_state","confidence":0.27,"probabilities":{"caches_data":0.18,"other":0.34,"shared_mutable_state":0.45,"unknown":0.03},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":2525,"output_tokens":54}}

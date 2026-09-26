@@ -1,1 +1,0 @@
-{"answers":{"fits_root_service_field":{"noul":0.36,"type":"noul"},"fits_window_global":{"noul":0.23,"type":"noul"},"pick":{"choice":"root_service_field","confidence":0.53,"probabilities":{"none":0.22,"root_service_field":0.69,"window_global":0.09},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":922,"output_tokens":80}}

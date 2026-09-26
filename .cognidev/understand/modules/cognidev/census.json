@@ -1,0 +1,1 @@
+{"byCallee":{"json.load":26,"os.path.exists":10},"byContext":{},"byKind":{},"byUnknownCallee":{},"distinctCallees":2,"distinctUnknownCallees":0,"externalCalls":558,"filesParsed":11,"filesTruncated":0,"filesWithResidue":0,"receiverCheckSkipped":594,"totalItems":0,"unknownReceiverCalls":0,"unresolvedCalls":36}

@@ -1,389 +1,457 @@
 {
-  "domain": "Multi-tenant IoT device management and monitoring platform (web console)",
-  "summary": "This application is the web console for an IoT platform that lets organizations connect physical devices and assets, ingest and process the data they generate, and visualize that data on live dashboards. It serves several kinds of users within a multi-tenant structure: system administrators who run the platform and configure tenants, tenant administrators who onboard devices/assets and build the data-processing logic, and customers or operators who view dashboards, watch real-time telemetry over live subscriptions, receive alarms, and even remotely control connected equipment.\n\nThe core problems it solves are: getting devices and external systems (via HTTP, MQTT, Modbus, OPC-UA gateways) connected and credentialed; defining rule chains that filter, route, and transform incoming device data; turning that data into visual dashboards (digital gauges, maps, hierarchy trees, tables, trip animations) with live aggregation (min/max/avg/sum) that can be shared privately with customers through scoped 'entity views' or published as public links; surfacing problems quickly through alarms and audit/event logs; and letting operators interact back with devices through remote-control widgets (knobs, switches, multi-input forms, indicator lights) that issue RPC commands.\n\nStructurally, the product is organized around a small set of core business objects \u2014 tenants, customers, devices, assets, entity views, and users \u2014 each with its own management screens; a dashboard/widget layer for real-time data visualization and interaction; a rule-chain layer for data processing logic; and administrative/audit layers for platform configuration, security, and traceability. Together these pieces let an organization go from 'a physical device sends data' to 'a business user sees a chart and can act on it.'",
+  "domain": "IoT device management & monitoring platform (ThingsBoard-style web console)",
+  "summary": "This application is the web console for an IoT platform that lets organizations onboard, monitor, and operate connected devices and assets at scale. Its users are tenant administrators who run the deployment, operators who watch and act on live data, and customers who are granted scoped visibility into the devices, assets, and dashboards relevant to them. The platform turns raw device telemetry into something people can see and act on: registering hardware, visualizing its data on live dashboards, being alerted when something goes wrong, sending commands back to devices, and giving the right people access to the right equipment through JWT-based authenticated sessions.\n\nThe application is organized around a handful of core entities \u2014 devices, assets, entity views, customers, and users \u2014 each of which can be created, configured, and assigned to a customer for controlled access. On top of these entities sits a dashboard and widget system: administrators build dashboards from a large library of widgets (charts, gauges, maps, tables, switches, knobs, alarm lists, hierarchy trees, date-range navigators) that bind to live telemetry or attributes via entity-alias resolution, arrange them in responsive/mobile-aware grid layouts with multiple states, and copy/paste widgets between dashboards. A visual rule-chain editor lets administrators wire processing nodes together (with copy/paste of rule nodes) to define how incoming device data is filtered and routed.\n\nBeyond dashboards, the platform includes an alarm subsystem for operational oversight (filtering, selecting, and acting on alarms), an audit/event history subsystem for troubleshooting and compliance, a gateway/extension configuration layer for bridging external protocols (MQTT brokers, Modbus, OPC-UA, HTTP) into the platform, and import/export tooling \u2014 with built-in validation \u2014 for backing up or migrating dashboards, widgets, widget bundles, rule chains, and bulk entity data between tenants. Together these pieces give a single console to onboard, visualize, and operate an end-to-end IoT deployment.",
   "useCases": [
     {
-      "id": "authenticate-login",
-      "title": "Log in to the platform",
-      "actor": "Account holder",
-      "description": "A registered user signs in with their credentials to access their tenant or customer workspace, and can recover access if they forget their password.",
-      "steps": [
-        "User enters username and password on the login screen",
-        "Credentials are submitted to the authentication endpoint",
-        "Platform issues a session/auth token",
-        "User is redirected to their home landing page",
-        "User can request a password reset or activate a new account via an emailed link if needed"
-      ],
-      "evidence": "POST /api/auth/login, POST /api/auth/logout, POST /api/auth/token; server.js /api/* routing",
-      "files": [
-        "src/app/login/login.controller.js",
-        "src/app/login/login.routes.js",
-        "src/app/login/reset-password-request.controller.js",
-        "src/app/login/create-password.controller.js"
-      ],
-      "folders": [
-        "src/app/login"
-      ]
-    },
-    {
-      "id": "manage-devices",
-      "title": "Register and manage IoT devices",
+      "id": "register-assign-devices",
+      "title": "Register and assign devices to customers",
       "actor": "Tenant administrator",
-      "description": "Add new devices to the platform, obtain their connection credentials, and assign them to the customers that own them.",
+      "description": "Onboard a new IoT device onto the platform and control which customer account can view and manage it.",
       "steps": [
-        "Administrator adds a new device with a name and type",
-        "Platform generates device credentials used to connect the physical device",
-        "Administrator views/manages the credentials to configure the device",
-        "Administrator assigns the device (individually or in bulk) to a customer",
-        "Device appears in a browsable device list/card grid for ongoing management"
+        "Administrator opens the device list and creates a new device via a registration dialog",
+        "Device credentials (access token) are generated via getDeviceCredentials and can be viewed or updated with saveDeviceCredentials",
+        "Administrator searches for a customer and selects the device(s) to assign",
+        "Selected devices are linked to the customer account via assignDeviceToCustomer, or made public via makeDevicePublic",
+        "Administrator can unassign devices from a customer (unassignDeviceFromCustomer) when access should be revoked"
       ],
-      "evidence": "DeviceController, DeviceCardController (src/app/device/device.controller.js), ManageDeviceCredentialsController, AssignDeviceToCustomerController",
+      "evidence": "DeviceService.assignDeviceToCustomer/unassignDeviceFromCustomer/makeDevicePublic/getDeviceCredentials; AddDeviceDialogComponent; ManageDeviceCredentialsComponent",
       "files": [
-        "src/app/device/device.controller.js",
-        "src/app/device/add-device.tpl.html",
-        "src/app/device/device-credentials.controller.js",
-        "src/app/device/assign-to-customer.controller.js",
-        "src/app/device/add-devices-to-customer.controller.js"
+        "src/app/feature/device/device/add-device-dialog.component.ts",
+        "src/app/feature/device/device/device.component.ts",
+        "src/app/feature/device/assign-device-to-customer/assign-device-to-customer.component.ts",
+        "src/app/feature/device/manage-device-credentials/manage-device-credentials.component.ts",
+        "src/app/feature/api/services/device.service.ts"
       ],
       "folders": [
-        "src/app/device"
+        "src/app/feature/api/services",
+        "src/app/feature/device/assign-device-to-customer",
+        "src/app/feature/device/device",
+        "src/app/feature/device/manage-device-credentials"
       ]
     },
     {
-      "id": "manage-assets",
-      "title": "Register and manage assets",
+      "id": "register-assign-assets",
+      "title": "Register and assign assets to customers",
       "actor": "Tenant administrator",
-      "description": "Track non-device entities (buildings, fleets, sites) in the platform and assign them to customers.",
+      "description": "Add a new asset (e.g., a facility or equipment group) to the platform and grant a customer visibility over it.",
       "steps": [
-        "Administrator registers a new asset",
-        "Administrator browses assets in a list/card view",
-        "Administrator assigns an asset (individually or in bulk) to a customer"
+        "Administrator creates a new asset via a registration dialog",
+        "Administrator searches for a customer while viewing the asset list",
+        "Selected asset(s) are assigned to the customer",
+        "Administrator can unassign assets from a customer later"
       ],
-      "evidence": "AssetController, AssetCardController (src/app/asset/asset.controller.js), AssignAssetToCustomerController",
+      "evidence": "AssetService.assignAssetToCustomer; AddAssetDialogComponent; AssignAssetToCustomerComponent",
       "files": [
-        "src/app/asset/asset.controller.js",
-        "src/app/asset/add-asset.tpl.html",
-        "src/app/asset/add-assets-to-customer.controller.js"
+        "src/app/feature/asset/asset/add-asset-dialog.component.ts",
+        "src/app/feature/asset/asset/asset.component.ts",
+        "src/app/feature/asset/assign-asset-to-customer/assign-asset-to-customer.component.ts",
+        "src/app/feature/asset/add-assets-to-customer/add-assets-to-customer.component.ts"
       ],
       "folders": [
-        "src/app/asset"
+        "src/app/feature/asset/add-assets-to-customer",
+        "src/app/feature/asset/asset",
+        "src/app/feature/asset/assign-asset-to-customer"
       ]
     },
     {
-      "id": "entity-views",
-      "title": "Create and share scoped entity views with customers",
+      "id": "create-assign-entity-views",
+      "title": "Create and assign entity views to customers",
       "actor": "Tenant administrator",
-      "description": "Create restricted views into a device's or asset's data and grant customers access without exposing the full entity.",
+      "description": "Define a scoped view of an entity's attribute and timeseries keys over a fixed time range, and share it with a customer without exposing the full entity.",
       "steps": [
-        "Administrator creates an entity view over a device or asset",
-        "Administrator assigns the entity view to a customer",
-        "Multiple entity views can be bulk-added to a customer",
-        "Administrator browses the list of existing entity views"
+        "Administrator creates a new entity view and picks the source device/asset",
+        "Administrator adds the specific attribute keys (addAttributeKey) and timeseries keys (addTimeseriesKey) the view should expose",
+        "Administrator sets a start and end time window (setStartTime/setEndTime) that bounds the view's data",
+        "Administrator searches for a customer and assigns the entity view to that customer",
+        "Administrator can unassign entity views from a customer"
       ],
-      "evidence": "EntityViewController, EntityViewCardController (src/app/entity-view/entity-view.controller.js), AssignEntityViewToCustomerController",
+      "evidence": "TbEntityViewDirective.addAttributeKey/addTimeseriesKey/setStartTime/setEndTime; AddEntityViewDialogComponent; AssignEntityViewToCustomerComponent",
       "files": [
-        "src/app/entity-view/entity-view.controller.js",
-        "src/app/entity-view/add-entity-view.tpl.html",
-        "src/app/entity-view/assign-to-customer.controller.js",
-        "src/app/entity-view/add-entity-views-to-customer.controller.js"
+        "src/app/feature/entity-view/entity-view/add-entity-view-dialog.component.ts",
+        "src/app/feature/entity-view/entity-view/entity-view.component.ts",
+        "src/app/feature/entity-view/assign-entity-view-to-customer/assign-entity-view-to-customer.component.ts",
+        "src/app/feature/entity-view/tb-entity-view/tb-entity-view.directive.ts"
       ],
       "folders": [
-        "src/app/entity-view"
+        "src/app/feature/entity-view/assign-entity-view-to-customer",
+        "src/app/feature/entity-view/entity-view",
+        "src/app/feature/entity-view/tb-entity-view"
       ]
     },
     {
-      "id": "build-dashboards",
-      "title": "Build and organize dashboards",
-      "actor": "Dashboard designer",
-      "description": "Create dashboards, define their internal navigation states, and arrange widget layouts to present device data.",
-      "steps": [
-        "Designer creates a new dashboard (DashboardsController)",
-        "Designer defines dashboard states/views (e.g. default, entity-specific) for navigation",
-        "Designer arranges widgets across one or more layouts (e.g. main/right) inside the dashboard directive",
-        "Designer configures dashboard settings such as title and time window",
-        "Dashboard is saved and listed for browsing/opening via dashboard cards"
-      ],
-      "evidence": "DashboardsController, DashboardCardController (src/app/dashboard/dashboards.controller.js), Dashboard/DashboardController (src/app/components/dashboard.directive.js), DashboardStateDialogController, ManageDashboardLayoutsController",
-      "files": [
-        "src/app/dashboard/dashboards.controller.js",
-        "src/app/components/dashboard.directive.js",
-        "src/app/dashboard/add-dashboard.tpl.html",
-        "src/app/dashboard/states/default-state-controller.js",
-        "src/app/dashboard/states/entity-state-controller.js",
-        "src/app/dashboard/layouts/manage-dashboard-layouts.controller.js",
-        "src/app/dashboard/layouts/dashboard-layout.directive.js"
-      ],
-      "folders": [
-        "src/app/components",
-        "src/app/dashboard",
-        "src/app/dashboard/layouts",
-        "src/app/dashboard/states"
-      ]
-    },
-    {
-      "id": "publish-dashboard-publicly",
-      "title": "Publish a dashboard as a public link",
+      "id": "build-operate-dashboards",
+      "title": "Build and operate a live IoT dashboard",
       "actor": "Tenant administrator",
-      "description": "Make a dashboard accessible via a public, unauthenticated link so it can be shared outside the platform (e.g. on a public display or with an external stakeholder).",
+      "description": "Lay out, edit, and view a dashboard made of widgets arranged in a responsive, mobile-aware grid, with multiple states and the ability to copy/paste widgets.",
       "steps": [
-        "Administrator opens the dashboard's sharing options",
-        "Administrator confirms making the dashboard public via the public-dashboard dialog",
-        "Platform generates a public URL for the dashboard",
-        "Anyone with the link can view the dashboard without logging in"
+        "User opens a dashboard; its layout, states, and entity aliases are validated and loaded (validateAndUpdateDashboard, getStateLayoutsData)",
+        "Grid automatically adapts row/column sizing for mobile vs desktop viewports (checkIsMobileSize, detectRowSize, gridItemStyle)",
+        "User adds, edits, or removes widgets on the grid, or copies/pastes a widget between dashboards via the item buffer (copyWidget/pasteWidget)",
+        "Right-click context menus on the dashboard or a widget expose edit/export/remove actions (prepareDashboardContextMenu, prepareWidgetContextMenu)",
+        "Widgets subscribe to live telemetry and refresh in real time as the grid re-renders"
       ],
-      "evidence": "MakeDashboardPublicDialogController (src/app/dashboard/dashboards.controller.js)",
+      "evidence": "TbDashboardDirective (grid metrics/mobile sizing); TbDashboardLayoutDirective.addWidget/editWidget/removeWidget/exportWidget; DashboardUtilsService.validateAndUpdateDashboard; ItembufferService.copyWidget/pasteWidget",
       "files": [
-        "src/app/dashboard/dashboards.controller.js"
+        "src/app/feature/dashboard/dashboard/dashboard.component.ts",
+        "src/app/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.ts",
+        "src/app/feature/components/tb-dashboard/tb-dashboard.directive.ts",
+        "src/app/feature/common/services/dashboard-utils.service.ts",
+        "src/app/feature/services/itembuffer.service.ts",
+        "src/app/feature/api/services/dashboard.service.ts"
       ],
       "folders": [
-        "src/app/dashboard"
+        "src/app/feature/api/services",
+        "src/app/feature/common/services",
+        "src/app/feature/components/tb-dashboard",
+        "src/app/feature/dashboard/dashboard",
+        "src/app/feature/dashboard/tb-dashboard-layout",
+        "src/app/feature/services"
       ]
     },
     {
-      "id": "configure-widgets",
-      "title": "Add and configure dashboard widgets",
-      "actor": "Dashboard designer",
-      "description": "Select, add, and configure the visualization widgets that show on a dashboard, or design new custom widget types.",
+      "id": "share-publish-dashboards",
+      "title": "Share and publish dashboards to customers",
+      "actor": "Tenant administrator",
+      "description": "Control which customers can see a given dashboard, or publish it publicly for view without login.",
       "steps": [
-        "Designer picks a widget type from the widget library/bundle",
-        "Widget is added onto the dashboard canvas",
-        "Designer binds the widget to a data source entity and configures its data keys",
-        "Designer customizes settings/appearance via an auto-generated JSON schema form",
-        "Widget configuration is saved to the dashboard"
+        "Administrator creates a dashboard and opens its assigned-customers manager",
+        "Administrator searches for and selects customers to grant access (addDashboardCustomers/updateDashboardCustomers)",
+        "Dashboard is assigned to (assignDashboardToCustomer) or removed from (removeDashboardCustomers/unassignDashboardFromCustomer) the chosen customers",
+        "Administrator can alternatively make the dashboard public (makeDashboardPublic), copy the shareable public link (getPublicDashboardLink), or revert it to private (makeDashboardPrivate)"
       ],
-      "evidence": "AddWidgetController, WidgetEditorController, JsonForm (src/app/components/json-form.directive.js), widget-utils helpers (createLink, createButton, fillPattern)",
+      "evidence": "DashboardService.assignDashboardToCustomer/updateDashboardCustomers/makeDashboardPublic/makeDashboardPrivate/getPublicDashboardLink; ManageAssignedCustomersComponent; MakeDashboardPublicDialogComponent",
       "files": [
-        "src/app/dashboard/add-widget.controller.js",
-        "src/app/widget/widget-editor.controller.js",
-        "src/app/widget/select-widget-type.controller.js",
-        "src/app/components/json-form.directive.js",
-        "src/app/widget/lib/widget-utils.js"
+        "src/app/feature/dashboard/dashboards/dashboards.component.ts",
+        "src/app/feature/dashboard/manage-assigned-customers/manage-assigned-customers.component.ts",
+        "src/app/feature/dashboard/add-dashboards-to-customer/add-dashboards-to-customer.component.ts",
+        "src/app/feature/dashboard/make-dashboard-public-dialog/make-dashboard-public-dialog.component.ts",
+        "src/app/feature/api/services/dashboard.service.ts"
       ],
       "folders": [
-        "src/app/components",
-        "src/app/dashboard",
-        "src/app/widget",
-        "src/app/widget/lib"
+        "src/app/feature/api/services",
+        "src/app/feature/dashboard/add-dashboards-to-customer",
+        "src/app/feature/dashboard/dashboards",
+        "src/app/feature/dashboard/make-dashboard-public-dialog",
+        "src/app/feature/dashboard/manage-assigned-customers"
       ]
     },
     {
-      "id": "visualize-telemetry",
-      "title": "Visualize live and historical device telemetry",
+      "id": "configure-widget-datasource",
+      "title": "Configure a widget's data sources and appearance",
+      "actor": "Tenant administrator",
+      "description": "Bind a dashboard widget to specific devices/assets (resolved via entity aliases) and telemetry/attribute keys, and style how it displays that data.",
+      "steps": [
+        "User opens the widget configuration panel while editing a dashboard",
+        "User adds a data source (addDatasource), choosing an entity, entity alias, or custom function; the alias is resolved to real entities behind the scenes (EntityService.resolveAlias)",
+        "User selects telemetry/attribute keys (onDataKeySelected) and sets colors/filters per key (showColorPicker, editDataKey), with sensible defaults pre-filled (getDefaultDatasource, initDefaultAlarmDataKeys)",
+        "User sets the widget's legend (onLegendConfigChange), time window (onTimewindowChange), header actions (onActionsChange), and alarm source (onAlarmSourceChange)",
+        "Configuration is validated and applied to the widget on the dashboard (updateValidity, onConfigChange)"
+      ],
+      "evidence": "TbWidgetConfigDirective.addDatasource/onDatasourcesChange/onAlarmSourceChange; TbDatasourceEntityDirective.onDataKeySelected/editDataKey; EntityService.resolveAlias; UtilsService.getDefaultDatasource",
+      "files": [
+        "src/app/feature/components/tb-widget-config/tb-widget-config.directive.ts",
+        "src/app/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts",
+        "src/app/feature/components/tb-datasource-func/tb-datasource-func.directive.ts",
+        "src/app/feature/components/datakey-config-dialog/datakey-config-dialog.component.ts",
+        "src/app/feature/api/services/entity.service.ts",
+        "src/app/feature/common/services/utils.service.ts"
+      ],
+      "folders": [
+        "src/app/feature/api/services",
+        "src/app/feature/common/services",
+        "src/app/feature/components/datakey-config-dialog",
+        "src/app/feature/components/tb-datasource-entity",
+        "src/app/feature/components/tb-datasource-func",
+        "src/app/feature/components/tb-widget-config"
+      ]
+    },
+    {
+      "id": "monitor-telemetry-widgets",
+      "title": "Monitor live telemetry through visualization widgets",
       "actor": "Customer",
-      "description": "View real-time and historical device/asset data rendered as digital gauges, maps, entity hierarchy trees, tables, and trip animations, with live min/max/avg/sum aggregation computed as new data arrives.",
+      "description": "View real-time and historical sensor data through charts, gauges, maps, tables, and entity-hierarchy trees placed on a dashboard, with control over the time window being viewed.",
       "steps": [
-        "Customer opens a dashboard containing telemetry widgets",
-        "Widget subscribes to a real-time telemetry data source (DatasourceService/DatasourceSubscription)",
-        "Incoming values are aggregated (min, max, avg, sum, count) as they stream in",
-        "Data renders as a digital gauge, Google/image map, entity hierarchy tree, timeseries table, or trip animation replay",
-        "Customer selects a date/time range to review historical data",
-        "Widget continues updating live as new telemetry arrives"
+        "Widget subscribes to live data for its configured entities on load (WidgetComponent.createSubscription)",
+        "Incoming telemetry updates the chart/gauge/map/table/hierarchy tree in real time",
+        "User picks a historical or relative time range with the date-range navigator widget (onRangePicked, updateTimewindow)",
+        "User filters, sorts, paginates, or searches the displayed entities/records, or expands nodes in a hierarchy widget (updateSearchNodes)",
+        "User drills into an entity's details from the widget"
       ],
-      "evidence": "CanvasDigitalGauge, DataAggregator (src/app/api/data-aggregator.js), Subscription (src/app/api/subscription.js), DatasourceService, TbMapWidget/TbMapWidgetV2, TbImageMap, EntitiesHierarchyWidget, TimeseriesTableWidget, tripAnimationWidget, EntitiesTableWidget",
+      "evidence": "WidgetComponent.createSubscription; DateRangeNavigatorWidgetDirective.onRangePicked/updateTimewindow; TbEntitiesHierarchyWidgetDirective.updateSearchNodes/prepareNodes",
       "files": [
-        "src/app/widget/lib/CanvasDigitalGauge.js",
-        "src/app/api/data-aggregator.js",
-        "src/app/api/subscription.js",
-        "src/app/api/datasource.service.js",
-        "src/app/widget/lib/map-widget.js",
-        "src/app/widget/lib/map-widget2.js",
-        "src/app/widget/lib/image-map.js",
-        "src/app/widget/lib/entities-hierarchy-widget.js"
+        "src/app/feature/components/widget/widget.component.ts",
+        "src/app/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts",
+        "src/app/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts",
+        "src/app/feature/widget/date-range-navigator-widget/date-range-navigator-widget.directive.ts",
+        "src/app/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts",
+        "src/app/legacy-lib/widget/lib/CanvasDigitalGauge.js"
       ],
       "folders": [
-        "src/app/api",
-        "src/app/widget/lib"
+        "src/app/feature/components/widget",
+        "src/app/feature/widget/date-range-navigator-widget",
+        "src/app/feature/widget/tb-entities-hierarchy-widget",
+        "src/app/feature/widget/tb-entities-table-widget",
+        "src/app/feature/widget/tb-timeseries-table-widget",
+        "src/app/legacy-lib/widget/lib"
       ]
     },
     {
-      "id": "rpc-control",
-      "title": "Remotely control a device via dashboard widgets",
-      "actor": "Customer",
-      "description": "Interact with a physical device from a dashboard using knob, switch, and multi-input-form widgets that issue RPC commands, with status indicators reflecting the device's current state.",
-      "steps": [
-        "Customer opens a dashboard containing an RPC control widget",
-        "Customer adjusts a knob, toggles a switch/round-switch, or fills in a multiple-input form",
-        "Widget sends an RPC command to the device through the platform",
-        "An LED indicator on the dashboard reflects the device's current reported state"
-      ],
-      "evidence": "Knob/KnobController (src/app/widget/lib/rpc/knob.directive.js), Switch/SwitchController (src/app/widget/lib/rpc/switch.directive.js), MultipleInputWidget (src/app/widget/lib/multiple-input-widget.js), LedIndicator",
-      "files": [
-        "src/app/widget/lib/rpc/knob.directive.js",
-        "src/app/widget/lib/rpc/switch.directive.js",
-        "src/app/widget/lib/rpc/round-switch.directive.js",
-        "src/app/widget/lib/rpc/led-indicator.directive.js",
-        "src/app/widget/lib/multiple-input-widget.js"
-      ],
-      "folders": [
-        "src/app/widget/lib",
-        "src/app/widget/lib/rpc"
-      ]
-    },
-    {
-      "id": "manage-alarms",
-      "title": "Monitor and manage alarms",
+      "id": "control-devices-remotely",
+      "title": "Control a device remotely from a dashboard widget",
       "actor": "Operator",
-      "description": "Watch for alarms raised by devices/entities in a filterable, customizable table, inspect their details, and acknowledge or clear them.",
+      "description": "Send a command (RPC) to a connected device directly from a dashboard control widget, such as a switch or knob.",
       "steps": [
-        "Operator views a table of alarms raised by devices/entities (AlarmsTableWidget)",
-        "Operator filters alarms by status via the alarm status filter panel",
-        "Operator customizes which columns are displayed via the display-columns panel",
-        "Operator opens the alarm details dialog to inspect a specific alarm",
-        "Operator acknowledges or clears the alarm"
+        "Widget subscribes to the device's current value and displays it live",
+        "Operator interacts with the control (toggles switch, turns knob)",
+        "Widget sends a one-way or two-way RPC request to update the device's value (DeviceService.sendOneWayRpcCommand/sendTwoWayRpcCommand)",
+        "Device confirms the update and the widget reflects the new state, or the widget surfaces an RPC error (clearRpcError)"
       ],
-      "evidence": "AlarmsTableWidget, AlarmsTableWidgetController, AlarmStatusFilterPanelController, DisplayColumnsPanelController (src/app/widget/lib/alarms-table-widget.js); AlarmDetailsDialogController",
+      "evidence": "TbSwitchDirective.rpcRequestValue/rpcUpdateValue; TbKnobDirective.turn; DeviceService.sendOneWayRpcCommand/sendTwoWayRpcCommand; WidgetComponent.clearRpcError",
       "files": [
-        "src/app/widget/lib/alarms-table-widget.js",
-        "src/app/alarm/alarm-table.directive.js",
-        "src/app/alarm/alarm-details-dialog.controller.js",
-        "src/app/alarm/alarm-row.directive.js"
+        "src/app/feature/widget/tb-switch/tb-switch.directive.ts",
+        "src/app/feature/widget/tb-round-switch/tb-round-switch.directive.ts",
+        "src/app/feature/widget/tb-knob/tb-knob.directive.ts",
+        "src/app/feature/api/services/device.service.ts",
+        "src/app/feature/components/widget/widget.component.ts"
       ],
       "folders": [
-        "src/app/alarm",
-        "src/app/widget/lib"
+        "src/app/feature/api/services",
+        "src/app/feature/components/widget",
+        "src/app/feature/widget/tb-knob",
+        "src/app/feature/widget/tb-round-switch",
+        "src/app/feature/widget/tb-switch"
       ]
     },
     {
-      "id": "build-rulechains",
-      "title": "Build and test rule chains for device data processing",
-      "actor": "Tenant administrator",
-      "description": "Design the logic that filters, routes, and transforms incoming device data by linking rule nodes together, and validate custom scripts before deploying them.",
+      "id": "monitor-act-alarms",
+      "title": "Monitor and act on device/asset alarms",
+      "actor": "Operator",
+      "description": "See alarms raised across monitored devices/assets, filter and select them, and trigger configured actions (such as acknowledge or clear) once addressed.",
       "steps": [
-        "Administrator creates a new rule chain (RuleChainController)",
-        "Administrator adds rule nodes that define filtering, enrichment, or routing logic (AddRuleNodeController)",
-        "Administrator connects rule nodes with links to define the message flow (AddRuleNodeLinkController)",
-        "Administrator configures each node's behavior and message filters",
-        "Administrator tests a node's script against sample telemetry before saving",
-        "Rule chain is saved and applied to incoming device data"
+        "Alarms table widget subscribes to and lists active alarms for the dashboard's entities (listenForData)",
+        "Operator filters alarms by search text (onSearchChanged) or reorders/paginates the list (onReorder, onPaginate)",
+        "Operator selects one or more alarms (toggleSelection/toggleAll)",
+        "Operator triggers a configured row/button action on the selected alarm(s) (onActionButtonClick, when actionEnabled)",
+        "Operator opens an alarm's details dialog to inspect field-level data for troubleshooting"
       ],
-      "evidence": "RuleChainController, AddRuleNodeController, AddRuleNodeLinkController (src/app/rulechain/rulechain.controller.js); NodeScriptTestController",
+      "evidence": "TbAlarmsTableWidgetDirective.listenForData/toggleSelection/onActionButtonClick/actionEnabled; AlarmDetailsDialogComponent",
       "files": [
-        "src/app/rulechain/rulechain.controller.js",
-        "src/app/rulechain/add-rulechain.tpl.html",
-        "src/app/rulechain/add-rulenode.tpl.html",
-        "src/app/rulechain/link.directive.js",
-        "src/app/rulechain/script/node-script-test.controller.js"
+        "src/app/feature/widget/tb-alarms-table-widget/tb-alarms-table-widget.directive.ts",
+        "src/app/feature/alarm/tb-alarm-table/tb-alarm-table.directive.ts",
+        "src/app/feature/alarm/alarm-details-dialog/alarm-details-dialog.component.ts",
+        "src/app/feature/api/services/alarm.service.ts"
       ],
       "folders": [
-        "src/app/rulechain",
-        "src/app/rulechain/script"
+        "src/app/feature/alarm/alarm-details-dialog",
+        "src/app/feature/alarm/tb-alarm-table",
+        "src/app/feature/api/services",
+        "src/app/feature/widget/tb-alarms-table-widget"
+      ]
+    },
+    {
+      "id": "design-test-rule-chains",
+      "title": "Design and test a rule chain for IoT data processing",
+      "actor": "Tenant administrator",
+      "description": "Build a visual pipeline of processing nodes connected by edges that route and transform incoming device data, reusing nodes via copy/paste and testing scripts before deploying.",
+      "steps": [
+        "Administrator creates a new rule chain and opens the canvas",
+        "Administrator drags nodes onto the canvas and draws connectors between them to define the data path (connectorsOf, pathBetween, edgePath)",
+        "Administrator double-clicks a node to configure its settings, or right-clicks a node/edge for more actions (nodeDblClick, prepareRuleNodeContextMenu, prepareEdgeContextMenu)",
+        "Administrator copies rule nodes from one chain and pastes them into another (ItembufferService.copyRuleNodes/pasteRuleNodes)",
+        "Administrator tests a custom node script with sample input before saving, then saves the chain so it takes effect for incoming device messages"
+      ],
+      "evidence": "RuleChainCanvasComponent.connectorsOf/pathBetween/nodeDblClick; RuleChainComponent.prepareRuleNodeContextMenu/prepareEdgeContextMenu; ItembufferService.copyRuleNodes/pasteRuleNodes",
+      "files": [
+        "src/app/feature/rulechain/rule-chain-canvas/rule-chain-canvas.component.ts",
+        "src/app/feature/rulechain/rule-chain/rule-chain.component.ts",
+        "src/app/feature/rulechain/node-script-test/node-script-test.component.ts",
+        "src/app/feature/rulechain/rule-chains/rule-chains.component.ts",
+        "src/app/feature/services/itembuffer.service.ts"
+      ],
+      "folders": [
+        "src/app/feature/rulechain/node-script-test",
+        "src/app/feature/rulechain/rule-chain",
+        "src/app/feature/rulechain/rule-chain-canvas",
+        "src/app/feature/rulechain/rule-chains",
+        "src/app/feature/services"
+      ]
+    },
+    {
+      "id": "configure-gateway-connectors",
+      "title": "Configure a gateway's protocol connectors for device integration",
+      "actor": "Tenant administrator",
+      "description": "Set up an IoT gateway device and configure connectors (MQTT, Modbus, OPC-UA, HTTP) \u2014 including broker credentials, data-point-to-attribute mappings, and RPC hooks \u2014 so external devices/protocols can feed data into the platform.",
+      "steps": [
+        "Administrator creates a new gateway device (createDevice) and retrieves its access token/credentials (getAccessToken, getDeviceCredentials)",
+        "Administrator adds a connector/extension and chooses its protocol type (addExtension, openExtensionDialog)",
+        "For an MQTT connector, administrator configures broker connections and credentials (addBroker, pemCredentialsValid, changeCredentials) and maps incoming payload fields to attributes/telemetry (addMap, addAttribute, changeNameExpression)",
+        "Administrator configures request/RPC behavior (addConnectRequest, addAttributeRequest, addServerSideRpc) for two-way communication",
+        "Administrator saves the attribute configuration (saveAttributeConfig) and exports the generated gateway YAML/connector configuration files (generateYAMLConfigurationFile, generateConfigConnectorFiles) for deployment"
+      ],
+      "evidence": "TbGatewayFormDirective.createDevice/getAccessToken/generateYAMLConfigurationFile; TbExtensionTableDirective.addExtension/editExtension/deleteExtension; TbExtensionFormMqttDirective.addBroker/addMap/addServerSideRpc",
+      "files": [
+        "src/app/feature/components/tb-gateway-form/tb-gateway-form.directive.ts",
+        "src/app/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts",
+        "src/app/feature/extension/tb-extension-form-modbus/tb-extension-form-modbus.directive.ts",
+        "src/app/feature/extension/tb-extension-form-opc/tb-extension-form-opc.directive.ts",
+        "src/app/feature/extension/tb-extension-table/tb-extension-table.directive.ts"
+      ],
+      "folders": [
+        "src/app/feature/components/tb-gateway-form",
+        "src/app/feature/extension/tb-extension-form-modbus",
+        "src/app/feature/extension/tb-extension-form-mqtt",
+        "src/app/feature/extension/tb-extension-form-opc",
+        "src/app/feature/extension/tb-extension-table"
       ]
     },
     {
       "id": "manage-attributes-relations",
-      "title": "Manage entity attributes and relations",
+      "title": "View and edit entity attributes and relations",
       "actor": "Tenant administrator",
-      "description": "View and edit key-value attributes on devices/entities, and define relationships between entities in the IoT hierarchy.",
+      "description": "Inspect and update the scoped metadata (client/shared/server attributes) and directional links (relations) attached to a device, asset, or other entity.",
       "steps": [
-        "Administrator opens an entity's attribute table",
-        "Administrator adds or edits an attribute value, including raw JSON",
-        "Administrator creates or edits a relation between two entities",
-        "Administrator filters and browses relations by type or direction"
+        "User opens an entity's attribute table, choosing an attribute scope (attributeScope), with filtering, sorting, and pagination (search, sortBy, onPaginate)",
+        "User adds a new attribute or edits an existing value, including raw JSON, and the table subscribes for live updates (getEntityAttributes, checkSubscription)",
+        "User selects and deletes one or more attributes no longer needed (isSelected/toggleSelected)",
+        "User views relations linking this entity to other entities, sets the relation direction (setDirection), and adds/edits/deletes relations as needed"
       ],
-      "evidence": "AttributeTableDirective, RelationDialogController",
+      "evidence": "TbAttributeTableDirective.attributeScope/getEntityAttributes; TbRelationTableDirective.setDirection/addRelation/deleteRelation",
       "files": [
-        "src/app/entity/attribute/attribute-table.directive.js",
-        "src/app/entity/attribute/add-attribute-dialog.controller.js",
-        "src/app/entity/relation/relation-dialog.controller.js",
-        "src/app/entity/relation/relation-table.directive.js"
+        "src/app/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts",
+        "src/app/feature/entity/add-attribute-dialog/add-attribute-dialog.component.ts",
+        "src/app/feature/entity/tb-relation-table/tb-relation-table.directive.ts",
+        "src/app/feature/entity/attribute-dialog-edit-json/attribute-dialog-edit-json.component.ts"
       ],
       "folders": [
-        "src/app/entity/attribute",
-        "src/app/entity/relation"
+        "src/app/feature/entity/add-attribute-dialog",
+        "src/app/feature/entity/attribute-dialog-edit-json",
+        "src/app/feature/entity/tb-attribute-table",
+        "src/app/feature/entity/tb-relation-table"
       ]
     },
     {
-      "id": "configure-gateway-integrations",
-      "title": "Configure gateway connectors and protocol integrations",
+      "id": "review-audit-events",
+      "title": "Review audit logs and entity event history",
       "actor": "Tenant administrator",
-      "description": "Bridge external devices and protocols (HTTP, Modbus, MQTT, OPC-UA) into the platform by configuring gateway connector settings and managing protocol extensions.",
+      "description": "Trace who did what on the platform and inspect the lifecycle/debug events raised by an entity, for troubleshooting and compliance.",
       "steps": [
-        "Administrator opens gateway configuration for a device (GatewayConfigController)",
-        "Administrator selects a connector configuration template via the gateway form",
-        "Administrator fills in protocol-specific connection settings (HTTP/MQTT/Modbus/OPC-UA)",
-        "Administrator manages available protocol extensions in the extension table",
-        "Configuration is saved to bridge the external device into the platform"
+        "Administrator opens the audit log table for a tenant, customer, or entity",
+        "Administrator filters audit entries by search text or time window",
+        "Administrator scrolls to load more historical records",
+        "Administrator separately views an entity's event log, filtering by event type and time window"
       ],
-      "evidence": "GatewayConfig, GatewayConfigController, GatewayDialogController (src/app/components/gateway/gateway-config.directive.js); GatewayForm, GatewayFormController (src/app/components/gateway/gateway-form.directive.js); ExtensionTableDirective, ExtensionTableController",
+      "evidence": "TbAuditLogTableDirective.getAuditLogsPromise; TbEventTableDirective.eventTypeList; AuditLogService",
       "files": [
-        "src/app/components/gateway/gateway-config.directive.js",
-        "src/app/components/gateway/gateway-form.directive.js",
-        "src/app/extension/extension-table.directive.js",
-        "src/app/extension/extensions-forms/extension-form-mqtt.directive.js",
-        "src/app/extension/extensions-forms/extension-form-modbus.directive.js"
+        "src/app/feature/audit/tb-audit-log-table/tb-audit-log-table.directive.ts",
+        "src/app/feature/event/tb-event-table/tb-event-table.directive.ts",
+        "src/app/feature/api/services/audit-log.service.ts"
       ],
       "folders": [
-        "src/app/components/gateway",
-        "src/app/extension",
-        "src/app/extension/extensions-forms"
+        "src/app/feature/api/services",
+        "src/app/feature/audit/tb-audit-log-table",
+        "src/app/feature/event/tb-event-table"
       ]
     },
     {
-      "id": "manage-tenant-customer-accounts",
-      "title": "Administer tenant and customer accounts",
-      "actor": "System administrator",
-      "description": "Set up and maintain the organizational structure of the multi-tenant platform, from top-level tenants down to their customers.",
+      "id": "manage-customers-users",
+      "title": "Manage customer accounts and platform users",
+      "actor": "Tenant administrator",
+      "description": "Register customer organizations and manage the individual user accounts (tenant admins, customer users) that access the platform.",
       "steps": [
-        "Administrator adds a new tenant organization",
-        "Administrator browses and edits tenant details",
-        "Within a tenant, administrator adds a new customer",
-        "Administrator edits customer details and browses the customer list",
-        "Devices, assets, dashboards, and entity views are assigned to customers for scoped access"
+        "Administrator registers a new customer account",
+        "Administrator browses and reviews the list of existing customers",
+        "Administrator views/edits a user's profile and role",
+        "Administrator generates and shares an account activation link for a new user"
       ],
-      "evidence": "TenantController, CustomerController",
+      "evidence": "AddCustomerDialogComponent; CustomerComponent; UserComponent.initController; ActivationLinkDialogComponent",
       "files": [
-        "src/app/tenant/add-tenant.tpl.html",
-        "src/app/tenant/tenant.controller.js",
-        "src/app/customer/add-customer.tpl.html",
-        "src/app/customer/customer.controller.js"
+        "src/app/feature/customer/customer/add-customer-dialog.component.ts",
+        "src/app/feature/customer/customer/customer.component.ts",
+        "src/app/feature/user/user/user.component.ts",
+        "src/app/feature/user/activation-link-dialog/activation-link-dialog.component.ts"
       ],
       "folders": [
-        "src/app/customer",
-        "src/app/tenant"
+        "src/app/feature/customer/customer",
+        "src/app/feature/user/activation-link-dialog",
+        "src/app/feature/user/user"
       ]
     },
     {
-      "id": "manage-users",
-      "title": "Manage platform user accounts",
-      "actor": "System administrator",
-      "description": "Create new user accounts and let those users activate access to the platform.",
+      "id": "import-export-configs",
+      "title": "Import and export platform configurations",
+      "actor": "Tenant administrator",
+      "description": "Back up, migrate, or bulk-load dashboards, widgets, widget bundles, rule chains, and entity data between tenants or environments, with validation applied before anything is imported.",
       "steps": [
-        "Administrator adds a new user account",
-        "Platform sends an activation link to the new user",
-        "User activates the account and sets a password",
-        "Administrator browses and manages the list of platform users"
+        "Administrator exports a dashboard, widget, widget bundle, or rule chain to a file (exportWidget, exportWidgetsBundle, exportRuleChain)",
+        "Administrator imports a previously exported configuration file; it is validated first and rejected if invalid (validateImportedWidget/validateImportedWidgetsBundle/validateImportedRuleChain)",
+        "For a widget bundle, each contained widget type is imported one after another (importNextWidgetType) and entity aliases in imported dashboards are re-mapped (prepareAliasesInfo)",
+        "Administrator opens the CSV import dialog and maps spreadsheet columns to entity attributes",
+        "Selected entities (devices/assets) are bulk-created from the CSV file"
       ],
-      "evidence": "AddUserController, ActivationLinkDialogController",
+      "evidence": "ImportExportService.exportDashboard/importWidgetsBundle/validateImportedRuleChain/importNextWidgetType; ImportDialogCsvComponent.parseCSV",
       "files": [
-        "src/app/user/add-user.controller.js",
-        "src/app/user/activation-link.controller.js",
-        "src/app/user/user-fieldset.tpl.html"
+        "src/app/feature/import-export/services/import-export.service.ts",
+        "src/app/feature/import-export/import-dialog-csv/import-dialog-csv.component.ts"
       ],
       "folders": [
-        "src/app/user"
+        "src/app/feature/import-export/import-dialog-csv",
+        "src/app/feature/import-export/services"
       ]
     },
     {
-      "id": "audit-events",
-      "title": "Review audit logs and system events",
-      "actor": "System administrator",
-      "description": "Track a history of actions taken across the platform and inspect device/rule-processing events for troubleshooting.",
+      "id": "author-organize-widgets",
+      "title": "Author custom widgets and organize widget bundles",
+      "actor": "Tenant administrator",
+      "description": "Write and live-preview custom widget code, save it as a reusable widget type, and group widgets into system-wide or tenant-specific bundles for easier reuse across dashboards.",
       "steps": [
-        "Administrator opens the audit log screen",
-        "Administrator browses a table of recorded platform actions",
-        "Administrator opens a specific audit log entry to view details",
-        "Administrator reviews related device/rule-node events (errors, lifecycle, debug traces) to diagnose issues"
+        "Administrator opens the widget editor, which renders a live preview in an iframe and provides a code editor with hotkeys and JS error reporting (initWidgetEditor, listenToPreviewFrame, initHotKeys, cleanupJsErrors)",
+        "Administrator saves the widget as a new or existing widget type (setWidgetType, widgetTypeLoaded)",
+        "Administrator creates a widgets bundle to group related widgets",
+        "Administrator browses system-provided or tenant-specific widget bundles when adding widgets to a dashboard (getSystemWidgetsBundles, getTenantWidgetsBundles)"
       ],
-      "evidence": "AuditLogsController, EventTableDirective",
+      "evidence": "WidgetEditorComponent.initWidgetEditor/listenToPreviewFrame; WidgetService.getSystemWidgetsBundles/getTenantWidgetsBundles; SaveWidgetTypeAsComponent; AddWidgetsBundleDialogComponent",
       "files": [
-        "src/app/audit/audit-log-table.directive.js",
-        "src/app/audit/audit-log-details-dialog.controller.js",
-        "src/app/event/event-header.directive.js",
-        "src/app/event/event-content-dialog.controller.js"
+        "src/app/feature/widget/widget-editor/widget-editor.component.ts",
+        "src/app/feature/widget/save-widget-type-as/save-widget-type-as.component.ts",
+        "src/app/feature/widget/widgets-bundle/widgets-bundle.component.ts",
+        "src/app/feature/components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive.ts",
+        "src/app/feature/api/services/widget.service.ts"
       ],
       "folders": [
-        "src/app/audit",
-        "src/app/event"
+        "src/app/feature/api/services",
+        "src/app/feature/components/tb-widgets-bundle-select",
+        "src/app/feature/widget/save-widget-type-as",
+        "src/app/feature/widget/widget-editor",
+        "src/app/feature/widget/widgets-bundle"
+      ]
+    },
+    {
+      "id": "login-logout-navigate",
+      "title": "Log in, log out, and navigate the console",
+      "actor": "Account holder",
+      "description": "Authenticate into the platform with a JWT session that is validated and silently refreshed, move between sections via the home menu, and end the session securely.",
+      "steps": [
+        "User authenticates and the resulting JWT token is decoded and stored (setUserFromJwtToken, decodeToken)",
+        "On each request the token is checked for validity and transparently refreshed if near expiry (isJwtTokenValid, refreshJwtToken, resolveRefreshTokenQueue)",
+        "Home layout renders the navigation menu and workspace for the authenticated user",
+        "User navigates via breadcrumbs and the collapsible side menu, tracked by current state/URL",
+        "User opens their profile from the account menu",
+        "User logs out (UserService.logout), which clears the stored token (clearJwtToken/clearTokenData) and ends the session"
+      ],
+      "evidence": "UserService.setUserFromJwtToken/isJwtTokenValid/refreshJwtToken/logout; TbUserMenuDirective.logout; HomeComponent",
+      "files": [
+        "src/app/feature/api/services/user.service.ts",
+        "src/app/feature/layout/tb-user-menu/tb-user-menu.directive.ts",
+        "src/app/feature/layout/home/home.component.ts",
+        "src/app/feature/layout/tb-breadcrumb/tb-breadcrumb.component.ts",
+        "src/app/core/auth.guard.ts"
+      ],
+      "folders": [
+        "src/app/core",
+        "src/app/feature/api/services",
+        "src/app/feature/layout/home",
+        "src/app/feature/layout/tb-breadcrumb",
+        "src/app/feature/layout/tb-user-menu"
       ]
     }
   ]

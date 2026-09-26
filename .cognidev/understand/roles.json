@@ -1,1 +1,1 @@
-{"files":{"server.js":{"fileRoles":["http"],"symbols":[]},"src/app/api/login.service.js":{"fileRoles":["http"],"symbols":[]},"src/app/api/user.service.js":{"fileRoles":["http"],"symbols":[]},"src/app/app.js":{"fileRoles":["auth"],"symbols":[]}}}
+{"files":{"src/app/feature/api/services/user.service.ts":{"fileRoles":["http"],"symbols":[]},"tsconfig.spec.json":{"fileRoles":["test"],"symbols":[]}}}

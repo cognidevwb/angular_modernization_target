@@ -1,1 +1,0 @@
-{"answers":{"fits_create_component":{"noul":0.07,"type":"noul"},"fits_embedded_view":{"noul":0.1,"type":"noul"},"fits_plain_html":{"noul":0.14,"type":"noul"},"pick":{"choice":"none","confidence":0.31,"probabilities":{"create_component":0.02,"embedded_view":0.45,"none":0.48,"plain_html":0.05},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":869,"output_tokens":104}}

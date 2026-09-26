@@ -1,7 +1,7 @@
 {
  "version": 1,
  "prompt_version": 1,
- "generated_from_merkle": "8cafda1475082c504ed86726d312fcd82ba7f4bcde48374934cc26a38b09f3ee",
+ "generated_from_merkle": "c4a1716db390608fe064aea5fd4a6190cfb68c001e18047d9ded86b2cf1f7c70",
  "chapters": [
   {
    "id": "orientation",
@@ -15,57 +15,57 @@
    "id": "entry",
    "label": "Where execution starts",
    "steps": [
-    3,
-    4,
-    5
+    3
    ]
   },
   {
    "id": "logic",
    "label": "The core logic",
    "steps": [
+    4,
+    5,
     6,
     7,
     8,
     9,
-    10
+    10,
+    11,
+    12,
+    13,
+    14
    ]
   },
   {
    "id": "api",
    "label": "The API surface",
    "steps": [
-    11,
-    12,
-    13
+    15,
+    16,
+    17,
+    18
    ]
   },
   {
    "id": "ui",
    "label": "The user interface",
    "steps": [
-    14,
-    15,
-    16,
-    17,
-    18,
     19,
     20,
     21,
     22,
-    23,
-    24,
-    25,
-    26,
-    27,
-    28,
-    29
+    23
    ]
   },
   {
    "id": "supporting",
    "label": "Supporting cast",
    "steps": [
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
     30,
     31,
     32,
@@ -95,641 +95,672 @@
   },
   {
    "n": 2,
-   "path": "src/app/common/types.constant.js",
+   "path": "src/app/feature/common/constants/types.ts",
    "chapter": "orientation",
    "role": "config",
-   "one_liner": "Angular constant module defining shared enums/lookup tables (error codes, aggregation types, alarm fields, etc.) used across ThingsBoard UI.",
+   "one_liner": "Central constants object holding enums/lookup tables (error codes, aggregation types, alarm fields, endpoints) for the app.",
    "teaches": [
-    "app-wide constant/enum conventions",
+    "shared enum-like constant patterns",
     "server error code mapping",
-    "alarm/aggregation domain vocabulary",
-    "AngularJS constant module pattern"
+    "alarm/aggregation field metadata",
+    "API entry point paths"
    ],
    "why_now": "Read this first \u2014 it sets the project's ground rules before any code.",
    "depends_on": [],
-   "imported_by": 17,
-   "loc": 997
+   "imported_by": 109,
+   "loc": 983
   },
   {
    "n": 3,
-   "path": "src/app/services/toast.js",
+   "path": "src/app/root-state.ts",
    "chapter": "entry",
    "role": "wiring",
-   "one_liner": "Angular module definition that wires together the toast service and controller into a reusable notification module.",
+   "one_liner": "Angular service emulating AngularJS $rootScope: shared state plus $broadcast/$emit/$on event bus",
    "teaches": [
-    "Angular module bundling pattern",
-    "factory/controller registration",
-    "module composition with .name export"
+    "AngularJS-to-Angular migration shim pattern",
+    "signal-based reactive loading state",
+    "custom pub/sub event bus via RxJS Subject",
+    "no-op digest cycle methods ($apply/$evalAsync)"
    ],
-   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
-   "depends_on": [
-    "src/app/services/toast.service.js",
-    "src/app/services/toast.controller.js"
-   ],
-   "imported_by": 7,
-   "loc": 24
-  },
-  {
-   "n": 4,
-   "path": "src/app/admin/index.js",
-   "chapter": "entry",
-   "role": "wiring",
-   "one_liner": "Angular module definition wiring admin routes, controllers, and services into the 'thingsboard.admin' module.",
-   "teaches": [
-    "Angular module composition pattern",
-    "how routes/controllers/services are bundled per feature",
-    "AngularJS module dependency declaration"
-   ],
-   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
-   "depends_on": [
-    "src/app/admin/admin.routes.js",
-    "src/app/admin/admin.controller.js",
-    "src/app/api/admin.service.js"
-   ],
-   "imported_by": 1,
-   "loc": 38
-  },
-  {
-   "n": 5,
-   "path": "src/app/url.handler.js",
-   "chapter": "entry",
-   "role": "wiring",
-   "one_liner": "Redirects user to their default place once user data is loaded via AngularJS rootScope event.",
-   "teaches": [
-    "waiting for async user load via $rootScope events",
-    "userService default place routing",
-    "AngularJS $injector-based dependency access"
-   ],
-   "why_now": "Next in this chapter's dependency order.",
+   "why_now": "A load-bearing file \u2014 108 files import it.",
    "depends_on": [],
-   "imported_by": 4,
-   "loc": 30
-  },
-  {
-   "n": 6,
-   "path": "src/app/api/user.service.js",
-   "chapter": "logic",
-   "role": "service",
-   "one_liner": "Angular service managing user auth state, JWT tokens, session/user CRUD, and navigation for logged-in user.",
-   "teaches": [
-    "JWT token lifecycle: decode, store, validate, refresh",
-    "current-user/session state management pattern",
-    "auth header injection for HTTP requests",
-    "role-based navigation (default place, public dashboards)"
-   ],
-   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
-   "depends_on": [
-    "src/app/api/login.service.js"
-   ],
-   "imported_by": 13,
-   "loc": 688
-  },
-  {
-   "n": 7,
-   "path": "src/app/api/alias-controller.js",
-   "chapter": "logic",
-   "role": "domain",
-   "one_liner": "AngularJS controller managing entity alias resolution and state binding for dashboard widgets",
-   "teaches": [
-    "entity alias resolution/caching pattern",
-    "dashboard state-to-entity binding",
-    "promise-based lazy resolution with invalidation via broadcast events"
-   ],
-   "why_now": "A load-bearing file \u2014 3 files import it.",
-   "depends_on": [],
-   "imported_by": 3,
-   "loc": 322
-  },
-  {
-   "n": 8,
-   "path": "src/app/api/subscription.js",
-   "chapter": "logic",
-   "role": "domain",
-   "one_liner": "ThingsBoard widget Subscription class managing RPC, alarm, and data subscriptions for dashboard widgets",
-   "teaches": [
-    "subscription lifecycle for widget types (rpc/alarm/data)",
-    "callback-driven data flow with deferred promises",
-    "timewindow configuration handling",
-    "device alias/id targeting for RPC calls"
-   ],
-   "why_now": "A load-bearing file \u2014 5 files import it.",
-   "depends_on": [],
-   "imported_by": 5,
-   "loc": 1072
-  },
-  {
-   "n": 9,
-   "path": "src/app/api/widget.service.js",
-   "chapter": "logic",
-   "role": "service",
-   "one_liner": "Angular service that registers/loads widget type modules and manages caching, lazy-loading, and bundle retrieval for ThingsBoard widgets.",
-   "teaches": [
-    "widget module registration pattern",
-    "lazy-loading external libs onto window (jquery, moment, gauges, maps)",
-    "in-memory caching of widget info/type functions",
-    "widgets bundle fetch/invalidate lifecycle"
-   ],
-   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
-   "depends_on": [
-    "src/app/common/types.constant.js",
-    "src/app/common/utils.service.js"
-   ],
-   "imported_by": 4,
-   "loc": 832
-  },
-  {
-   "n": 10,
-   "path": "src/app/services/menu.service.js",
-   "chapter": "logic",
-   "role": "service",
-   "one_liner": "Angular factory that builds role-based navigation menu sections from the current user's authority.",
-   "teaches": [
-    "role-based menu construction",
-    "reacting to auth state via $rootScope events",
-    "AngularJS factory pattern with /*@ngInject*/"
-   ],
-   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
-   "depends_on": [
-    "src/app/api/user.service.js"
-   ],
-   "imported_by": 4,
-   "loc": 374
-  },
-  {
-   "n": 11,
-   "path": "src/app/api/device.service.js",
-   "chapter": "api",
-   "role": "api",
-   "one_liner": "Angular service wrapping REST API calls for device CRUD, credentials, attributes, RPC commands, and claiming.",
-   "teaches": [
-    "HTTP API abstraction via $http and $q",
-    "device attribute subscribe/unsubscribe pattern",
-    "paginated query URL building",
-    "RPC command invocation"
-   ],
-   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
-   "depends_on": [
-    "src/app/common/types.constant.js"
-   ],
-   "imported_by": 4,
-   "loc": 361
-  },
-  {
-   "n": 12,
-   "path": "src/app/api/login.service.js",
-   "chapter": "api",
-   "role": "api",
-   "one_liner": "AngularJS service wrapping HTTP calls for login, logout-related auth actions like password reset and account activation.",
-   "teaches": [
-    "Angular factory/service pattern with $q promises",
-    "REST endpoints for auth (login, activate, reset password)",
-    "public/anonymous login flow"
-   ],
-   "why_now": "A load-bearing file \u2014 5 files import it.",
-   "depends_on": [],
-   "imported_by": 5,
-   "loc": 125
-  },
-  {
-   "n": 13,
-   "path": "src/app/api/customer.service.js",
-   "chapter": "api",
-   "role": "api",
-   "one_liner": "AngularJS service wrapping HTTP calls to backend customer endpoints (list, get, save, delete customers).",
-   "teaches": [
-    "AngularJS factory pattern with $q deferred promises",
-    "REST endpoint conventions for customer resources",
-    "recursive async loading pattern for enriching items with assigned customer info"
-   ],
-   "why_now": "Next in this chapter's dependency order.",
-   "depends_on": [],
-   "imported_by": 5,
-   "loc": 170
-  },
-  {
-   "n": 14,
-   "path": "src/app/components/react/json-form-base-component.jsx",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "React HOC that adds value state, default-value resolution, and schema validation to react-schema-form form components",
-   "teaches": [
-    "higher-order component pattern in React",
-    "react-schema-form value/validation lifecycle",
-    "type-based value coercion (boolean/number/date/array/string)",
-    "default value resolution from form/schema config"
-   ],
-   "why_now": "A load-bearing file \u2014 10 files import it.",
-   "depends_on": [],
-   "imported_by": 10,
-   "loc": 117
-  },
-  {
-   "n": 15,
-   "path": "src/app/components/timewindow.directive.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "AngularJS directive providing a time window picker (realtime/history) UI with edit panel and aggregation options.",
-   "teaches": [
-    "ngModel-based directive design",
-    "time window data model (realtime/history/aggregation)",
-    "using $mdPanel for popup editing UI",
-    "composing sub-directives (timeinterval, datetime-period)"
-   ],
-   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
-   "depends_on": [
-    "src/app/components/timeinterval.directive.js",
-    "src/app/components/datetime-period.directive.js",
-    "src/app/components/timewindow-panel.controller.js"
-   ],
-   "imported_by": 2,
-   "loc": 307
-  },
-  {
-   "n": 16,
-   "path": "src/app/components/dashboard.directive.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "Angular directive rendering the gridster-based dashboard grid that lays out and controls widgets.",
-   "teaches": [
-    "dashboard widget grid layout via angular-gridster",
-    "dashboard controller bindings for edit/export/remove widget actions",
-    "widget context menu and mouse interaction handling",
-    "integration of timewindow, toast, and widget services into dashboard state"
-   ],
-   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
-   "depends_on": [
-    "src/app/components/widget/widget.directive.js",
-    "src/app/api/widget.service.js",
-    "src/app/common/types.constant.js"
-   ],
-   "imported_by": 2,
-   "loc": 1095
-  },
-  {
-   "n": 17,
-   "path": "src/app/widget/lib/map-widget.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "Widget class rendering location/markers on a map (Google or OpenStreetMap) with tooltip pattern binding.",
-   "teaches": [
-    "tooltip pattern variable substitution from datasource keys",
-    "abstraction over map providers via TbGoogleMap/TbOpenStreetMap",
-    "marker/polyline/route management for map widgets"
-   ],
-   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
-   "depends_on": [
-    "src/app/widget/lib/google-map.js",
-    "src/app/widget/lib/openstreet-map.js"
-   ],
-   "imported_by": 3,
-   "loc": 609
-  },
-  {
-   "n": 18,
-   "path": "src/app/alarm/alarm-details-dialog.controller.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "AngularJS controller for a modal dialog showing alarm details, JSON editor, and acknowledge/clear actions.",
-   "teaches": [
-    "Angular dialog controller pattern with $mdDialog and showingCallback",
-    "loading alarm data via alarmService and formatting timestamps",
-    "using ace editor (brace) with js-beautify for JSON display",
-    "acknowledge/clear alarm workflow"
-   ],
-   "why_now": "Next in this chapter's dependency order.",
-   "depends_on": [],
-   "imported_by": 1,
-   "loc": 141
-  },
-  {
-   "n": 19,
-   "path": "src/app/alarm/alarm-row.directive.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "AngularJS directive rendering a single alarm row with a click handler to open the alarm details dialog",
-   "teaches": [
-    "custom directive with link function and template caching",
-    "opening mdDialog with locals and callbacks",
-    "basic alarm row UI wiring in ThingsBoard"
-   ],
-   "why_now": "Next in this chapter's dependency order.",
-   "depends_on": [],
-   "imported_by": 1,
+   "imported_by": 108,
    "loc": 73
   },
   {
-   "n": 20,
-   "path": "src/app/components/confirm-on-exit.directive.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "AngularJS directive that warns users about unsaved form changes before navigating away or closing the tab.",
+   "n": 4,
+   "path": "src/app/feature/api/services/widget.service.ts",
+   "chapter": "logic",
+   "role": "service",
+   "one_liner": "Angular service (ported from AngularJS widgetService) managing widget type/bundle fetching, caching, and legacy widget library globals.",
    "teaches": [
-    "directive linking with form dirty state",
-    "window.onbeforeunload usage",
-    "$stateChangeStart interception",
-    "$mdDialog confirm pattern"
-   ],
-   "why_now": "Next in this chapter's dependency order.",
-   "depends_on": [],
-   "imported_by": 3,
-   "loc": 55
-  },
-  {
-   "n": 21,
-   "path": "src/app/components/datakey-config-dialog.controller.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "Angular controller for a modal dialog that configures a data key's settings, including fetching entity key suggestions.",
-   "teaches": [
-    "mdDialog controller pattern (hide/cancel/save)",
-    "async entity key fetching via aliasController and entityService",
-    "form validation before dialog close ($scope.theForm)"
+    "porting AngularJS factories to Angular DI services",
+    "caching widget metadata (types, bundles) in-memory",
+    "bridging legacy jQuery/plotting widget libraries via window globals",
+    "lazy-loading external scripts/css with a custom ocLazyLoad shim"
    ],
    "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
    "depends_on": [
-    "src/app/components/datakey-config.directive.js"
+    "src/app/bind-methods.ts",
+    "src/app/core/http-options.ts",
+    "src/app/feature/common/services/utils.service.ts"
    ],
-   "imported_by": 3,
-   "loc": 72
+   "imported_by": 9,
+   "loc": 807
   },
   {
-   "n": 22,
-   "path": "src/app/components/details-sidenav.directive.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "AngularJS directive implementing a slide-in details sidenav panel with backdrop and open/close animation.",
+   "n": 5,
+   "path": "src/app/feature/components/tb-json-form/json-form-schema.ts",
+   "chapter": "logic",
+   "role": "domain",
+   "one_liner": "Pure-function reimplementation of react-schema-form's merge/validate/key-path logic for the legacy JSON form renderer.",
    "teaches": [
-    "custom Angular directive with linker function",
-    "backdrop creation via $mdUtil and $animate",
-    "scope watch-driven open/close state handling",
-    "positioning logic for scrollable containers"
+    "JSON-schema + form definition merging into per-field form objects",
+    "ObjectPath key parsing (a.b[0]['c']) and model get/set by path",
+    "titleMap/enum normalization and default-value rules",
+    "tv4-style schema validation result shape"
    ],
-   "why_now": "Next in this chapter's dependency order.",
+   "why_now": "A load-bearing file \u2014 13 files import it.",
    "depends_on": [],
-   "imported_by": 2,
-   "loc": 151
-  },
-  {
-   "n": 23,
-   "path": "src/app/components/grid.directive.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "Angular directive implementing a reusable data grid with paging, item cards, add-item dialog, and card content templating.",
-   "teaches": [
-    "custom AngularJS directive composition",
-    "dynamic controller binding via $controller for templated item cards",
-    "grid/paging UI pattern with range filter",
-    "integration with sidenav and scope-element directives"
-   ],
-   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
-   "depends_on": [
-    "src/app/components/scope-element.directive.js",
-    "src/app/components/details-sidenav.directive.js"
-   ],
-   "imported_by": 7,
-   "loc": 718
-  },
-  {
-   "n": 24,
-   "path": "src/app/components/expand-fullscreen.directive.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "AngularJS directive that toggles fullscreen display of an element by detaching it into a body-level container.",
-   "teaches": [
-    "custom Angular directive with linker function",
-    "DOM detach/reattach for fullscreen toggling",
-    "scope watchers for expand/collapse state",
-    "jQuery + Angular element manipulation"
-   ],
-   "why_now": "Next in this chapter's dependency order.",
-   "depends_on": [],
-   "imported_by": 3,
-   "loc": 162
-  },
-  {
-   "n": 25,
-   "path": "src/app/components/material-icons-dialog.controller.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "AngularJS dialog controller for picking a Material Design icon from a searchable/full list.",
-   "teaches": [
-    "Angular dialog controller pattern ($mdDialog)",
-    "watching scope vars to lazy-load icon list",
-    "using $timeout to defer async icon loading",
-    "returning dialog result via $mdDialog.hide"
-   ],
-   "why_now": "Next in this chapter's dependency order.",
-   "depends_on": [],
-   "imported_by": 2,
-   "loc": 58
-  },
-  {
-   "n": 26,
-   "path": "src/app/components/json-form.directive.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "AngularJS directive 'tbJsonForm' that renders dynamic forms from JSON schema, bridging to a React schema-form component.",
-   "teaches": [
-    "AngularJS directive wrapping a React component",
-    "JSON-schema-driven dynamic form rendering",
-    "model watch/recompile lifecycle in Angular directives",
-    "color/icon picker dialog integration"
-   ],
-   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
-   "depends_on": [
-    "src/app/components/react/json-form-react.jsx",
-    "src/app/components/material-icons-dialog.controller.js"
-   ],
    "imported_by": 13,
-   "loc": 286
+   "loc": 602
   },
   {
-   "n": 27,
-   "path": "src/app/components/react/json-form-ace-editor.jsx",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "React AceEditor-based JSON schema form field for editing raw text/code (JSON, JS, etc.) with tidy/fullscreen support",
+   "n": 6,
+   "path": "src/app/feature/components/widget/widget-scope.ts",
+   "chapter": "logic",
+   "role": "domain",
+   "one_liner": "AngularJS-style $scope emulation (events, watchers, prototype inheritance) for widget controller scripts.",
    "teaches": [
-    "wrapping react-ace with ThingsboardBaseComponent HOC pattern",
-    "form field lifecycle: value change, blur/focus, validation callback",
-    "fullscreen toggle triggering editor resize on componentDidUpdate",
-    "applying an ace-editor-fix hook on editor load"
+    "scope prototype chain via $new",
+    "$on/$emit/$broadcast event model",
+    "$watch dirty-checking modes",
+    "digest cycle triggered by host component"
    ],
    "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
    "depends_on": [
-    "src/app/components/react/json-form-base-component.jsx",
-    "src/app/components/ace-editor-fix.js"
+    "src/app/feature/components/widget/legacy-helpers.ts"
    ],
-   "imported_by": 4,
-   "loc": 169
+   "imported_by": 12,
+   "loc": 342
   },
   {
-   "n": 28,
-   "path": "src/app/extension/extension-dialog.controller.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "AngularJS controller for a dialog that adds/edits a device extension (HTTP/MQTT/OPC UA/MODBUS) and saves it as an entity attribute.",
+   "n": 7,
+   "path": "src/app/feature/services/toast.service.ts",
+   "chapter": "logic",
+   "role": "service",
+   "one_liner": "Angular service wrapping MatSnackBar to show info/success/error toasts, ported from AngularJS $mdToast.",
    "teaches": [
-    "mdDialog controller pattern with $mdDialog inject",
-    "extension type-specific configuration shapes",
-    "form validation scroll-to-error UX",
-    "saving via attributeService.saveEntityAttributes"
+    "MatSnackBar API usage",
+    "porting AngularJS $mdToast semantics to Angular Material",
+    "positioning overlays relative to a parent element"
    ],
-   "why_now": "Next in this chapter's dependency order.",
-   "depends_on": [],
-   "imported_by": 2,
-   "loc": 297
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/feature/services/toast/toast.component.ts",
+    "src/app/bind-methods.ts"
+   ],
+   "imported_by": 34,
+   "loc": 108
   },
   {
-   "n": 29,
-   "path": "src/app/components/contact.directive.js",
-   "chapter": "ui",
-   "role": "ui",
-   "one_liner": "AngularJS directive rendering a contact form/list with country dropdown and template compilation.",
+   "n": 8,
+   "path": "src/app/legacy-lib/api/data-aggregator.js",
+   "chapter": "logic",
+   "role": "domain",
+   "one_liner": "Aggregates time-series telemetry data into time-windowed buckets using configurable aggregation functions (min/max/avg/sum/count).",
    "teaches": [
-    "AngularJS directive definition pattern",
-    "template caching and dynamic compilation via $compile",
-    "static country list data embedding in UI components"
+    "time-window based data aggregation pattern",
+    "interval-based scheduling with $timeout",
+    "aggregation function selection (min/max/avg/sum/count/none)",
+    "buffering and resetting streamed telemetry data"
    ],
-   "why_now": "Next in this chapter's dependency order.",
+   "why_now": "A load-bearing file \u2014 12 files import it.",
    "depends_on": [],
-   "imported_by": 2,
-   "loc": 323
-  },
-  {
-   "n": 30,
-   "path": "src/app/widget/lib/widget-utils.js",
-   "chapter": "supporting",
-   "role": "util",
-   "one_liner": "Helper functions for widget pattern text processing, action link/button HTML generation, and value formatting.",
-   "teaches": [
-    "variable pattern regex extraction (${...})",
-    "mapping datasource dataKeys to values",
-    "generating link/button action HTML tags",
-    "value/number formatting helpers"
-   ],
-   "why_now": "A load-bearing file \u2014 31 files import it.",
-   "depends_on": [],
-   "imported_by": 31,
-   "loc": 216
-  },
-  {
-   "n": 31,
-   "path": "src/app/api/data-aggregator.js",
-   "chapter": "supporting",
-   "role": "util",
-   "one_liner": "Aggregates time-series telemetry data into time windows using min/max/avg/sum/count functions for chart display.",
-   "teaches": [
-    "time-window data aggregation pattern",
-    "aggregation function strategies (min/max/avg/sum/count/none)",
-    "buffered data reset and interval scheduling with $timeout"
-   ],
-   "why_now": "Next in this chapter's dependency order.",
-   "depends_on": [],
-   "imported_by": 14,
+   "imported_by": 12,
    "loc": 316
   },
   {
-   "n": 32,
-   "path": "src/app/widget/lib/CanvasDigitalGauge.js",
+   "n": 9,
+   "path": "src/app/feature/api/services/attribute.service.ts",
+   "chapter": "logic",
+   "role": "service",
+   "one_liner": "Angular service (ported from AngularJS) providing HTTP calls to fetch entity attribute/timeseries keys and values via the telemetry API.",
+   "teaches": [
+    "porting AngularJS $q/$http patterns to Angular HttpClient/Promises",
+    "telemetry REST endpoint conventions for keys/timeseries/attributes",
+    "use of bindMethods and httpOptions helpers",
+    "lodash orderBy used to replace Angular's orderBy filter"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/core/http-options.ts",
+    "src/app/core/q.ts",
+    "src/app/feature/api/services/telemetry-websocket.service.ts"
+   ],
+   "imported_by": 10,
+   "loc": 367
+  },
+  {
+   "n": 10,
+   "path": "src/app/feature/api/services/time.service.ts",
+   "chapter": "logic",
+   "role": "service",
+   "one_liner": "Angular service providing time/interval math and datapoint-limit helpers for chart/timewindow calculations.",
+   "teaches": [
+    "bounding intervals between min/max limits",
+    "fetching max datapoints limit via HTTP",
+    "ported AngularJS-to-Angular service pattern with bindMethods"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/core/http-options.ts",
+    "src/app/bind-methods.ts"
+   ],
+   "imported_by": 9,
+   "loc": 407
+  },
+  {
+   "n": 11,
+   "path": "src/app/feature/api/services/user.service.ts",
+   "chapter": "logic",
+   "role": "service",
+   "one_liner": "Manages current user session state: auth token validation/refresh, user loading, and dashboard/permission context in Angular.",
+   "teaches": [
+    "JWT token decode/validate/refresh pattern",
+    "porting AngularJS $rootScope/$state/$q to Angular services",
+    "user session state management (currentUser, allowedDashboards)",
+    "cross-service orchestration (admin/dashboard/login/time/toast)"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/feature/api/services/login.service.ts",
+    "src/app/core/app-store.ts",
+    "src/app/root-state.ts"
+   ],
+   "imported_by": 34,
+   "loc": 691
+  },
+  {
+   "n": 12,
+   "path": "src/app/feature/api/services/device.service.ts",
+   "chapter": "logic",
+   "role": "service",
+   "one_liner": "Angular service porting device CRUD/query operations from legacy AngularJS deviceService factory.",
+   "teaches": [
+    "ported AngularJS-to-Angular service pattern",
+    "device REST endpoint construction with pageLink params",
+    "TODO(port) markers for $q/$window/$http migration",
+    "cross-service composition (customer/user/attribute)"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/feature/api/services/customer.service.ts",
+    "src/app/core/http-options.ts",
+    "src/app/bind-methods.ts"
+   ],
+   "imported_by": 14,
+   "loc": 340
+  },
+  {
+   "n": 13,
+   "path": "src/app/feature/api/services/entity.service.ts",
+   "chapter": "logic",
+   "role": "service",
+   "one_liner": "Angular service that resolves and aggregates entity data across many entity-type services (device, asset, tenant, etc.)",
+   "teaches": [
+    "dispatch-by-entityType pattern",
+    "ported AngularJS-to-Angular service composition",
+    "aggregating multiple domain services behind one facade",
+    "legacy $q/$http porting TODOs"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/feature/api/services/device.service.ts",
+    "src/app/feature/api/services/asset.service.ts",
+    "src/app/feature/api/services/entity-relation.service.ts"
+   ],
+   "imported_by": 23,
+   "loc": 1620
+  },
+  {
+   "n": 14,
+   "path": "src/app/feature/import-export/services/import-export.service.ts",
+   "chapter": "logic",
+   "role": "service",
+   "one_liner": "Handles export/import of ThingsBoard entities (widgets, dashboards, rule chains) to/from JSON/ZIP files.",
+   "teaches": [
+    "entity export/import serialization patterns",
+    "ported AngularJS-to-Angular service migration with TODO(port) markers",
+    "coordinating multiple API services (widget, dashboard, rule-chain, entity, attribute) for ",
+    "handling file downloads/uploads (JSZip, jquery) in Angular"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/feature/api/services/widget.service.ts",
+    "src/app/feature/api/services/dashboard.service.ts",
+    "src/app/feature/common/services/utils.service.ts"
+   ],
+   "imported_by": 10,
+   "loc": 1016
+  },
+  {
+   "n": 15,
+   "path": "src/app/feature/api/services/login.service.ts",
+   "chapter": "api",
+   "role": "api",
+   "one_liner": "Angular service porting legacy AngularJS loginService to HttpClient for auth-related HTTP calls (login, reset password, activate).",
+   "teaches": [
+    "legacy AngularJS-to-Angular migration pattern via $q/$http shims",
+    "auth API endpoints (login, publicLogin, resetPassword, activate)",
+    "bindMethods and RootState wiring for ported services"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/core/q.ts",
+    "src/app/root-state.ts",
+    "src/app/bind-methods.ts"
+   ],
+   "imported_by": 16,
+   "loc": 121
+  },
+  {
+   "n": 16,
+   "path": "src/app/feature/api/services/customer.service.ts",
+   "chapter": "api",
+   "role": "api",
+   "one_liner": "Angular service providing HTTP calls for customer CRUD and info lookups, ported from legacy AngularJS factory",
+   "teaches": [
+    "ported legacy $http/$q pattern to Angular HttpClient",
+    "building paginated query URLs",
+    "batching async lookups with a completion callback",
+    "TODO(port) markers for incomplete migration"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/core/http-options.ts",
+    "src/app/core/q.ts",
+    "src/app/feature/common/constants/types.ts"
+   ],
+   "imported_by": 16,
+   "loc": 158
+  },
+  {
+   "n": 17,
+   "path": "src/app/feature/api/services/asset.service.ts",
+   "chapter": "api",
+   "role": "api",
+   "one_liner": "Angular service wrapping asset-related REST endpoints (get/save/delete/assign asset), ported from AngularJS assetService.",
+   "teaches": [
+    "ported AngularJS-to-Angular service pattern using $q/deferred shim",
+    "REST endpoint conventions for asset CRUD and customer assignment",
+    "httpOptions/config pattern for HTTP requests with ignoreErrors",
+    "bindMethods usage for preserving 'this' binding"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/core/http-options.ts",
+    "src/app/core/q.ts",
+    "src/app/bind-methods.ts"
+   ],
+   "imported_by": 9,
+   "loc": 277
+  },
+  {
+   "n": 18,
+   "path": "src/app/feature/api/services/dashboard.service.ts",
+   "chapter": "api",
+   "role": "api",
+   "one_liner": "Angular service providing HTTP calls for dashboard CRUD, listing, and lookup operations against the backend API.",
+   "teaches": [
+    "ported AngularJS-to-Angular service pattern",
+    "building paginated query URLs for REST endpoints",
+    "wrapping HttpClient Observables in Promises",
+    "reacting to router navigation to reset cached state"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/core/http-options.ts",
+    "src/app/root-state.ts",
+    "src/app/bind-methods.ts"
+   ],
+   "imported_by": 15,
+   "loc": 310
+  },
+  {
+   "n": 19,
+   "path": "src/app/feature/rulechain/confirm-dialog/confirm-dialog.component.ts",
+   "chapter": "ui",
+   "role": "ui",
+   "one_liner": "A reusable Material Design confirm/cancel dialog replicating AngularJS's $mdDialog.confirm() behavior",
+   "teaches": [
+    "Standalone Angular Material dialog pattern",
+    "Injecting MAT_DIALOG_DATA and MatDialogRef",
+    "Promise-based dialog wrapper via firstValueFrom"
+   ],
+   "why_now": "A load-bearing file \u2014 26 files import it.",
+   "depends_on": [],
+   "imported_by": 26,
+   "loc": 49
+  },
+  {
+   "n": 20,
+   "path": "src/app/feature/components/add-item/add-item.component.ts",
+   "chapter": "ui",
+   "role": "ui",
+   "one_liner": "Abstract base directive for entity 'add' dialogs (add-device, add-asset, etc.), ported from AngularJS AddItemController.",
+   "teaches": [
+    "shared base class pattern for Material dialog components",
+    "bridging Angular reactive forms to legacy AngularJS-style form API",
+    "dialog data injection and closing with result",
+    "viewChild + computed signal usage"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/feature/components/tb-grid/legacy-form.ts",
+    "src/app/feature/help/constants/help-links.ts",
+    "src/app/root-state.ts"
+   ],
+   "imported_by": 10,
+   "loc": 51
+  },
+  {
+   "n": 21,
+   "path": "src/app/feature/components/tb-grid/tb-grid.directive.ts",
+   "chapter": "ui",
+   "role": "ui",
+   "one_liner": "Angular directive powering a virtual-scrolling entity card grid, ported from AngularJS's tbGrid, with selection, actions, and details sidenav.",
+   "teaches": [
+    "porting legacy AngularJS directives to standalone Angular components",
+    "config-driven UI via injected GridConfig with fetch/save/delete callbacks",
+    "breakpoint-based responsive column layout with CDK BreakpointObserver",
+    "composing item cards, add-item dialog, and details sidenav into one grid"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/feature/components/tb-grid/legacy-form.ts",
+    "src/app/feature/components/tb-grid-card-content/tb-grid-card-content.directive.ts",
+    "src/app/feature/components/tb-details-sidenav/tb-details-sidenav.directive.ts"
+   ],
+   "imported_by": 14,
+   "loc": 533
+  },
+  {
+   "n": 22,
+   "path": "src/app/feature/components/tb-grid/grid-help-button.component.ts",
+   "chapter": "ui",
+   "role": "ui",
+   "one_liner": "Reusable help-icon button component that opens contextual help links or URLs in a new tab",
+   "teaches": [
+    "standalone Angular component pattern with signal inputs",
+    "resolving a helpId key against a static links map vs raw URL",
+    "embedding shared UI (mat-icon-button) across grid headers and dialogs"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/feature/help/constants/help-links.ts"
+   ],
+   "imported_by": 18,
+   "loc": 38
+  },
+  {
+   "n": 23,
+   "path": "src/app/feature/components/ui-ace/ui-ace.directive.ts",
+   "chapter": "ui",
+   "role": "ui",
+   "one_liner": "Angular directive that turns an element into an Ace code editor bound via ngModel, replicating legacy angular-ui-ace.",
+   "teaches": [
+    "wrapping a third-party editor (Ace) as an Angular directive",
+    "two-way binding via custom NgModelController base class",
+    "using signals/effect for reactive readonly state",
+    "configuring editor mode/theme/gutter options"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/core/ng-model-controller.ts"
+   ],
+   "imported_by": 11,
+   "loc": 134
+  },
+  {
+   "n": 24,
+   "path": "src/app/core/http-options.ts",
    "chapter": "supporting",
    "role": "util",
-   "one_liner": "Custom canvas-based digital gauge widget class extending canvas-gauges for rendering value/progress displays.",
+   "one_liner": "Builds Angular HttpClient request options (headers, params, context flags) from legacy AngularJS $http-style config objects",
    "teaches": [
-    "extending canvas-gauges BaseGauge",
-    "canvas cloning for double-buffered rendering",
-    "gauge option configuration/defaults",
-    "color and font styling for gauge elements"
+    "mapping legacy $http config to HttpClient options",
+    "using HttpContext/HttpContextToken for cross-cutting request flags",
+    "handling loading/error/resend interceptor signaling"
+   ],
+   "why_now": "A load-bearing file \u2014 79 files import it.",
+   "depends_on": [],
+   "imported_by": 79,
+   "loc": 32
+  },
+  {
+   "n": 25,
+   "path": "src/app/core/q.ts",
+   "chapter": "supporting",
+   "role": "util",
+   "one_liner": "Polyfills AngularJS $q/$timeout APIs using native Promises and setTimeout for ported code.",
+   "teaches": [
+    "deferred promise pattern (defer/resolve/reject)",
+    "AngularJS-to-native Promise API shimming",
+    "$timeout with cancel via WeakMap timer tracking",
+    "$q.all handling both arrays and objects"
+   ],
+   "why_now": "A load-bearing file \u2014 44 files import it.",
+   "depends_on": [],
+   "imported_by": 44,
+   "loc": 71
+  },
+  {
+   "n": 26,
+   "path": "src/app/state-paths.ts",
+   "chapter": "supporting",
+   "role": "util",
+   "one_liner": "Maps ui-router state names to Angular route paths and provides navigation helpers (goState, stateUrlTree) emulating ui-router's $state API.",
+   "teaches": [
+    "ui-router state name to Angular path mapping table",
+    "building UrlTree from path params vs query params",
+    "reading current route state via deepest ActivatedRouteSnapshot",
+    "state inheritance pattern for path params (stateIncludes/currentStateParams)"
+   ],
+   "why_now": "A load-bearing file \u2014 51 files import it.",
+   "depends_on": [],
+   "imported_by": 51,
+   "loc": 105
+  },
+  {
+   "n": 27,
+   "path": "src/app/bind-methods.ts",
+   "chapter": "supporting",
+   "role": "util",
+   "one_liner": "Binds all inherited prototype methods of an instance to itself, replicating AngularJS factory closure behavior in plain classes.",
+   "teaches": [
+    "prototype method binding via getOwnPropertyNames",
+    "why ported AngularJS services need bound methods",
+    "walking a prototype chain manually"
+   ],
+   "why_now": "A load-bearing file \u2014 76 files import it.",
+   "depends_on": [],
+   "imported_by": 76,
+   "loc": 21
+  },
+  {
+   "n": 28,
+   "path": "src/app/feature/common/services/utils.service.ts",
+   "chapter": "supporting",
+   "role": "util",
+   "one_liner": "Angular service porting legacy AngularJS 'utils' factory: shared helpers for colors, icons, functions, data keys, and misc utilities.",
+   "teaches": [
+    "legacy AngularJS-to-Angular migration pattern",
+    "material color palette generation",
+    "predefined widget data functions",
+    "default alarm/datasource key configuration"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/feature/common/constants/types.ts",
+    "src/app/root-state.ts",
+    "src/app/feature/common/services/material-icon-codepoints.ts"
+   ],
+   "imported_by": 36,
+   "loc": 600
+  },
+  {
+   "n": 29,
+   "path": "src/app/core/ng-model-controller.ts",
+   "chapter": "supporting",
+   "role": "util",
+   "one_liner": "Abstract base class adapting AngularJS-style ngModelController API onto Angular's ControlValueAccessor/Validator interfaces.",
+   "teaches": [
+    "bridging AngularJS ngModel semantics to Angular forms",
+    "ControlValueAccessor/Validator implementation pattern",
+    "parser/formatter pipelines for view\u2194model values",
+    "dirty/touched/validity state management"
+   ],
+   "why_now": "A load-bearing file \u2014 78 files import it.",
+   "depends_on": [],
+   "imported_by": 78,
+   "loc": 122
+  },
+  {
+   "n": 30,
+   "path": "src/app/feature/components/tb-grid/legacy-form.ts",
+   "chapter": "supporting",
+   "role": "util",
+   "one_liner": "Wraps Angular NgForm/controls in a Proxy to mimic AngularJS FormController API for ported templates",
+   "teaches": [
+    "AngularJS-to-Angular form compatibility shim",
+    "Proxy-based dynamic property access",
+    "ControlContainer viewProviders for nested form joining",
+    "ngModel $setValidity semantics"
+   ],
+   "why_now": "A load-bearing file \u2014 48 files import it.",
+   "depends_on": [],
+   "imported_by": 48,
+   "loc": 122
+  },
+  {
+   "n": 31,
+   "path": "src/app/feature/components/widget/legacy-helpers.ts",
+   "chapter": "supporting",
+   "role": "util",
+   "one_liner": "Reimplements AngularJS globals (angular.copy/equals/isDefined etc.) as plain functions for legacy widget scripts.",
+   "teaches": [
+    "AngularJS deep copy/equals semantics reimplemented in TS",
+    "bridging legacy jQuery/global-script widgets into Angular app",
+    "compatibility shim pattern for stored server-side widget code"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/feature/extension/tb-extension-table/tb-extension-table.directive.ts"
+   ],
+   "imported_by": 60,
+   "loc": 374
+  },
+  {
+   "n": 32,
+   "path": "src/app/legacy-lib/widget/lib/widget-utils.js",
+   "chapter": "supporting",
+   "role": "util",
+   "one_liner": "Utility functions for widget pattern processing, variable substitution, and action link/button generation in Thingsboard widgets",
+   "teaches": [
+    "regex-based template variable extraction from patterns",
+    "matching datasource dataKeys to variables by label or index",
+    "generating clickable link/button action HTML with callbacks"
+   ],
+   "why_now": "A load-bearing file \u2014 32 files import it.",
+   "depends_on": [],
+   "imported_by": 32,
+   "loc": 216
+  },
+  {
+   "n": 33,
+   "path": "src/app/legacy-link.ts",
+   "chapter": "supporting",
+   "role": "util",
+   "one_liner": "Builds an AngularJS-style `attrs` object (with $observe/$set/class helpers) from a DOM element for ported directives.",
+   "teaches": [
+    "AngularJS attrs API shape ($attr, $observe, $set, $addClass)",
+    "camelCase/kebab-case attribute name conversion",
+    "using MutationObserver to emulate Angular's live attribute observation"
+   ],
+   "why_now": "A load-bearing file \u2014 21 files import it.",
+   "depends_on": [],
+   "imported_by": 21,
+   "loc": 43
+  },
+  {
+   "n": 34,
+   "path": "src/app/feature/common/services/dashboard-utils.service.ts",
+   "chapter": "supporting",
+   "role": "util",
+   "one_liner": "Ported AngularJS dashboard-utils service providing helper logic for validating and normalizing entity/device aliases in dashboard configs.",
+   "teaches": [
+    "entity alias vs device alias migration logic",
+    "alias ID validation and datasource remapping",
+    "pattern of AngularJS-to-Angular service porting via syntax tree"
+   ],
+   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
+   "depends_on": [
+    "src/app/feature/common/constants/types.ts",
+    "src/app/feature/common/services/utils.service.ts",
+    "src/app/feature/api/services/time.service.ts"
+   ],
+   "imported_by": 13,
+   "loc": 542
+  },
+  {
+   "n": 35,
+   "path": "src/app/feature/components/md-panel/md-panel.ts",
+   "chapter": "supporting",
+   "role": "util",
+   "one_liner": "CDK-based utility replicating AngularJS Material's $mdPanel: opens a positioned overlay panel with outside-click/Escape-to-close.",
+   "teaches": [
+    "CDK Overlay positioning strategies (flexibleConnectedTo vs global)",
+    "ComponentPortal + custom injector for passing locals via InjectionToken",
+    "legacy $mdPanel-style close/backdrop/keydown handling",
+    "fallback placement calculation based on viewport bounds"
+   ],
+   "why_now": "Next in this chapter's dependency order.",
+   "depends_on": [],
+   "imported_by": 12,
+   "loc": 89
+  },
+  {
+   "n": 36,
+   "path": "src/app/feature/components/tb-grid/paged-list.ts",
+   "chapter": "supporting",
+   "role": "util",
+   "one_liner": "Pagination helper for virtual-scroll lists in customer assign/add dialogs, loading pages on demand.",
+   "teaches": [
+    "on-demand paging state shape",
+    "scroll-triggered page fetching",
+    "pending/hasNext guard pattern"
+   ],
+   "why_now": "Next in this chapter's dependency order.",
+   "depends_on": [],
+   "imported_by": 28,
+   "loc": 55
+  },
+  {
+   "n": 37,
+   "path": "src/app/legacy-lib/widget/lib/CanvasDigitalGauge.js",
+   "chapter": "supporting",
+   "role": "util",
+   "one_liner": "Custom canvas-based digital gauge widget class extending canvas-gauges library for ThingsBoard dashboards.",
+   "teaches": [
+    "extending third-party canvas-gauges BaseGauge",
+    "gauge rendering configuration with defaults",
+    "canvas cloning for double-buffered drawing"
    ],
    "why_now": "Next in this chapter's dependency order.",
    "depends_on": [],
    "imported_by": 12,
    "loc": 860
-  },
-  {
-   "n": 33,
-   "path": "src/app/common/utf8-support.js",
-   "chapter": "supporting",
-   "role": "util",
-   "one_liner": "Utility functions for encoding/decoding strings to/from UTF-8 byte arrays.",
-   "teaches": [
-    "UTF-8 encoding/decoding algorithms",
-    "surrogate pair handling",
-    "byte-level string manipulation"
-   ],
-   "why_now": "Next in this chapter's dependency order.",
-   "depends_on": [],
-   "imported_by": 3,
-   "loc": 137
-  },
-  {
-   "n": 34,
-   "path": "src/app/common/utils.service.js",
-   "chapter": "supporting",
-   "role": "util",
-   "one_liner": "Angular utility service providing colors, icons, predefined widget functions, schema defaults, and misc helper logic used across ThingsBoard UI.",
-   "teaches": [
-    "material color palette generation",
-    "predefined data key functions (Sin/Cos/Random)",
-    "material icon codepoint handling",
-    "shared Angular utils factory pattern"
-   ],
-   "why_now": "Builds directly on what you just read \u2014 its dependencies are behind you now.",
-   "depends_on": [
-    "src/app/common/types.constant.js",
-    "src/app/common/utf8-support.js"
-   ],
-   "imported_by": 6,
-   "loc": 619
-  },
-  {
-   "n": 35,
-   "path": "src/app/components/ace-editor-fix.js",
-   "chapter": "supporting",
-   "role": "util",
-   "one_liner": "Patches Ace Editor to fix scrolling and detach gutter tooltips when their DOM element is removed.",
-   "teaches": [
-    "Ace editor internals patching",
-    "MutationObserver to detect element removal",
-    "workaround for tooltip DOM attachment"
-   ],
-   "why_now": "Next in this chapter's dependency order.",
-   "depends_on": [],
-   "imported_by": 10,
-   "loc": 44
-  },
-  {
-   "n": 36,
-   "path": "src/app/widget/lib/google-map.js",
-   "chapter": "supporting",
-   "role": "util",
-   "one_liner": "Wraps the Google Maps JS API to render a map widget with markers, clustering, and tooltips.",
-   "teaches": [
-    "Google Maps API integration",
-    "dynamic script loading for map libraries",
-    "marker clustering setup",
-    "map widget lifecycle management"
-   ],
-   "why_now": "Next in this chapter's dependency order.",
-   "depends_on": [],
-   "imported_by": 2,
-   "loc": 489
-  },
-  {
-   "n": 37,
-   "path": "src/app/widget/lib/openstreet-map.js",
-   "chapter": "supporting",
-   "role": "util",
-   "one_liner": "Wraps Leaflet to provide an OpenStreetMap map widget with markers, clustering, tooltips, and icon management.",
-   "teaches": [
-    "Leaflet map initialization and tile providers",
-    "custom marker icons and clustering with leaflet.markercluster",
-    "marker tooltip/label binding patterns"
-   ],
-   "why_now": "Next in this chapter's dependency order.",
-   "depends_on": [],
-   "imported_by": 3,
-   "loc": 339
   }
  ],
  "stats": {

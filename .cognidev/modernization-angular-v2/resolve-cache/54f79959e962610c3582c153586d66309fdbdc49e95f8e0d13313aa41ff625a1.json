@@ -1,1 +1,0 @@
-{"answers":{"fits_child_destroy":{"noul":0.24,"type":"noul"},"fits_destroy_ref":{"noul":0.19,"type":"noul"},"pick":{"choice":"child_destroy","confidence":0.96,"probabilities":{"child_destroy":0.97,"destroy_ref":0.01,"none":0.02},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":798,"output_tokens":77}}

@@ -1,0 +1,1 @@
+{"byCallee":{"Math.max":11,"Math.min":3,"angular.isNumber":10,"padValue":1},"byContext":{},"byKind":{},"byUnknownCallee":{},"distinctCallees":4,"distinctUnknownCallees":0,"externalCalls":1644,"filesParsed":18,"filesTruncated":0,"filesWithResidue":0,"receiverCheckSkipped":1669,"totalItems":0,"unknownReceiverCalls":0,"unresolvedCalls":25}

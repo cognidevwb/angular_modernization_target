@@ -1,0 +1,1629 @@
+{
+  "version": 2,
+  "generatedFrom": "datamodel.json",
+  "policy": {
+    "maxClassesPerField": 8,
+    "maxClassesPerRoutineField": 12,
+    "maxSampleRows": 24,
+    "maxSampleColumns": 8,
+    "maxRoutineColumns": 32,
+    "note": "A routine's cases carry EVERY input parameter — a vector missing an argument cannot be replayed against the signature; `complete` is false and `droppedInputs` non-zero on the rare signature wider than the cap. A table's matrix is narrowed for readability. A trap class is never dropped by a cap, nor by class dedup."
+  },
+  "evidence": {
+    "evaluated": false,
+    "sources": [],
+    "divisors": 0,
+    "stringCompared": 0
+  },
+  "callables": [
+    {
+      "routine": "app_dir_of",
+      "file": "modernization-angular-v2/scripts/scaffold-app.py",
+      "line": 83,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "ws",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "app_root",
+      "file": "modernization-angular-v2/scripts/detect-version.py",
+      "line": 95,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "ws",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "depth",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 4,
+      "trapCount": 0
+    },
+    {
+      "routine": "apply_blocks",
+      "file": "modernization-angular-v2/freehand/llm_fix.py",
+      "line": 170,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "web",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "reply",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "allowed",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 8,
+      "trapCount": 0
+    },
+    {
+      "routine": "ask",
+      "file": "modernization-angular-v2/freehand/llm_fix.py",
+      "line": 192,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "web",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "limit",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "jobs",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "only",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 16,
+      "trapCount": 0
+    },
+    {
+      "routine": "band_for",
+      "file": "modernization-angular-v2/scripts/detect-version.py",
+      "line": 42,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "major",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "call",
+      "file": "modernization-angular-v2/freehand/llm_fix.py",
+      "line": 146,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "prompt_text",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "chunks",
+      "file": "modernization-angular-v2/freehand/llm_fix.py",
+      "line": 159,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "p",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "cliffs_between",
+      "file": "modernization-angular-v2/scripts/detect-version.py",
+      "line": 54,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "major",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "target",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 4,
+      "trapCount": 0
+    },
+    {
+      "routine": "declares_angular",
+      "file": "modernization-angular-v2/scripts/detect-version.py",
+      "line": 81,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "d",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "dep",
+      "file": "modernization-angular-v2/scripts/detect-version.py",
+      "line": 34,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "pkg",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 4,
+      "trapCount": 0
+    },
+    {
+      "routine": "detect",
+      "file": "modernization-angular-v2/scripts/detect-version.py",
+      "line": 126,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "ws",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "exists",
+      "file": "modernization-angular-v2/scripts/repair-workspace.py",
+      "line": 36,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "rel",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "kebab",
+      "file": "modernization-angular-v2/scripts/scaffold-app.py",
+      "line": 51,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "s",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "keep",
+      "file": "modernization-angular-v2/freehand/llm_fix.py",
+      "line": 240,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "web",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "before_errors",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "before_globals",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 8,
+      "trapCount": 0
+    },
+    {
+      "routine": "legacy_context",
+      "file": "modernization-angular-v2/freehand/llm_fix.py",
+      "line": 74,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "web",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "unit",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "names",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 8,
+      "trapCount": 0
+    },
+    {
+      "routine": "load",
+      "file": "modernization-angular-v2/scripts/build-command.py",
+      "line": 24,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "path",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "load",
+      "file": "modernization-angular-v2/scripts/check-routes.py",
+      "line": 24,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "rel",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "load_intent",
+      "file": "modernization-angular-v2/scripts/scaffold-app.py",
+      "line": 30,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "ws",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "main",
+      "file": "modernization-angular-v2/scripts/build-command.py",
+      "line": 32,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 1,
+      "trapCount": 0
+    },
+    {
+      "routine": "main",
+      "file": "modernization-angular-v2/scripts/detect-version.py",
+      "line": 204,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 1,
+      "trapCount": 0
+    },
+    {
+      "routine": "main",
+      "file": "modernization-angular-v2/scripts/scaffold-app.py",
+      "line": 128,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 1,
+      "trapCount": 0
+    },
+    {
+      "routine": "merged_manifest",
+      "file": "modernization-angular-v2/scripts/scaffold-app.py",
+      "line": 95,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "angular",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "legacy",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 4,
+      "trapCount": 0
+    },
+    {
+      "routine": "one_of",
+      "file": "modernization-angular-v2/scripts/repair-workspace.py",
+      "line": 40,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "cands",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "pinned_node",
+      "file": "modernization-angular-v2/scripts/scaffold-app.py",
+      "line": 39,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "ws",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "default",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 4,
+      "trapCount": 0
+    },
+    {
+      "routine": "problems",
+      "file": "modernization-angular-v2/freehand/llm_fix.py",
+      "line": 89,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "web",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "prompt",
+      "file": "modernization-angular-v2/freehand/llm_fix.py",
+      "line": 116,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "web",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "unit",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "p",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 8,
+      "trapCount": 0
+    },
+    {
+      "routine": "read_json",
+      "file": "modernization-angular-v2/scripts/detect-version.py",
+      "line": 18,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "path",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "render",
+      "file": "modernization-angular-v2/scripts/scaffold-app.py",
+      "line": 61,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "vars",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 4,
+      "trapCount": 0
+    },
+    {
+      "routine": "rewrite_tsconfig",
+      "file": "modernization-angular-v2/scripts/scaffold-app.py",
+      "line": 114,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "semver_major",
+      "file": "modernization-angular-v2/scripts/detect-version.py",
+      "line": 26,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "spec",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "sha",
+      "file": "modernization-angular-v2/freehand/llm_fix.py",
+      "line": 51,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "*parts",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "empty list",
+              "value": "empty list",
+              "valid": true,
+              "kind": "empty",
+              "isNull": false
+            },
+            {
+              "label": "one item",
+              "value": "[…1]",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            },
+            {
+              "label": "many items",
+              "value": "[…N]",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 3,
+      "trapCount": 0
+    },
+    {
+      "routine": "shape",
+      "file": "modernization-angular-v2/freehand/group.py",
+      "line": 6,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "m",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "titleize",
+      "file": "modernization-angular-v2/scripts/scaffold-app.py",
+      "line": 56,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "s",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "verdicts",
+      "file": "modernization-angular-v2/freehand/render_compare.py",
+      "line": 6,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "path",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 2,
+      "trapCount": 0
+    },
+    {
+      "routine": "windows",
+      "file": "modernization-angular-v2/freehand/llm_fix.py",
+      "line": 59,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        },
+        {
+          "name": "lines",
+          "typeName": "",
+          "baseType": "unknown",
+          "nullable": false,
+          "classes": [
+            {
+              "label": "NULL (rejected)",
+              "value": "null",
+              "valid": false,
+              "kind": "invalid",
+              "isNull": true
+            },
+            {
+              "label": "any value",
+              "value": "…",
+              "valid": true,
+              "kind": "valid",
+              "isNull": false
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 4,
+      "trapCount": 0
+    },
+    {
+      "routine": "write_record",
+      "file": "modernization-angular-v2/scripts/repair-workspace.py",
+      "line": 45,
+      "dialect": null,
+      "complete": true,
+      "droppedInputs": 0,
+      "inputs": [],
+      "outputs": [],
+      "cases": [],
+      "totalCombinations": 1,
+      "trapCount": 0
+    }
+  ],
+  "entities": [],
+  "traps": []
+}
