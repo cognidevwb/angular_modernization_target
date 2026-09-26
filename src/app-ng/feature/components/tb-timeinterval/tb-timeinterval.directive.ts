@@ -51,73 +51,81 @@ export class TbTimeintervalDirective extends NgModelController implements DoChec
   private prevMax: any;
   private prevIntervalMsVal: any;
   private prevAdvancedVal: any;
+  private prevSecsVal: any;
+  private prevMinsVal: any;
+  private prevHoursVal: any;
+  private prevDaysVal: any;
   private doCheckInitialized = false;
 
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
     super();
-    this.$watch('secs', (newSecs?: any) => {
-            if ((newSecs === undefined)) {
-                return;
-            }
-            if (newSecs < 0) {
-                if ((this.days + this.hours + this.mins) > 0) {
-                    this.secs = newSecs + 60;
-                    this.mins--;
-                } else {
-                    this.secs = 0;
-                }
-            } else if (newSecs >= 60) {
-                this.secs = newSecs - 60;
-                this.mins++;
-            }
-            this.updateView();
-        });
-    this.$watch('mins', (newMins?: any) => {
-            if ((newMins === undefined)) {
-                return;
-            }
-            if (newMins < 0) {
-                if ((this.days + this.hours) > 0) {
-                    this.mins = newMins + 60;
-                    this.hours--;
-                } else {
-                    this.mins = 0;
-                }
-            } else if (newMins >= 60) {
-                this.mins = newMins - 60;
-                this.hours++;
-            }
-            this.updateView();
-        });
-    this.$watch('hours', (newHours?: any) => {
-            if ((newHours === undefined)) {
-                return;
-            }
-            if (newHours < 0) {
-                if (this.days > 0) {
-                    this.hours = newHours + 24;
-                    this.days--;
-                } else {
-                    this.hours = 0;
-                }
-            } else if (newHours >= 24) {
-                this.hours = newHours - 24;
-                this.days++;
-            }
-            this.updateView();
-        });
-    this.$watch('days', (newDays?: any) => {
-            if ((newDays === undefined)) {
-                return;
-            }
-            if (newDays < 0) {
-                this.days = 0;
-            }
-            this.updateView();
-        });
     this.boundInterval();
+  }
+
+  private watchSecs(newSecs?: any): void {
+    if ((newSecs === undefined)) {
+        return;
+    }
+    if (newSecs < 0) {
+        if ((this.days + this.hours + this.mins) > 0) {
+            this.secs = newSecs + 60;
+            this.mins--;
+        } else {
+            this.secs = 0;
+        }
+    } else if (newSecs >= 60) {
+        this.secs = newSecs - 60;
+        this.mins++;
+    }
+    this.updateView();
+  }
+
+  private watchMins(newMins?: any): void {
+    if ((newMins === undefined)) {
+        return;
+    }
+    if (newMins < 0) {
+        if ((this.days + this.hours) > 0) {
+            this.mins = newMins + 60;
+            this.hours--;
+        } else {
+            this.mins = 0;
+        }
+    } else if (newMins >= 60) {
+        this.mins = newMins - 60;
+        this.hours++;
+    }
+    this.updateView();
+  }
+
+  private watchHours(newHours?: any): void {
+    if ((newHours === undefined)) {
+        return;
+    }
+    if (newHours < 0) {
+        if (this.days > 0) {
+            this.hours = newHours + 24;
+            this.days--;
+        } else {
+            this.hours = 0;
+        }
+    } else if (newHours >= 24) {
+        this.hours = newHours - 24;
+        this.days++;
+    }
+    this.updateView();
+  }
+
+  private watchDays(newDays?: any): void {
+    if ((newDays === undefined)) {
+        return;
+    }
+    if (newDays < 0) {
+        this.days = 0;
+    }
+    this.updateView();
   }
 
   override $render(): void {
@@ -137,6 +145,10 @@ export class TbTimeintervalDirective extends NgModelController implements DoChec
     const maxVal = this.max();
     const intervalMsVal = this.intervalMs;
     const advancedVal = this.advanced;
+    const secsVal = this.secs;
+    const minsVal = this.mins;
+    const hoursVal = this.hours;
+    const daysVal = this.days;
     if (this.doCheckInitialized) {
       if (this.prevRequired !== undefined && requiredVal !== this.prevRequired) {
         this.updateView();
@@ -162,6 +174,18 @@ export class TbTimeintervalDirective extends NgModelController implements DoChec
         }
         this.updateView();
       }
+      if (secsVal !== this.prevSecsVal) {
+        this.watchSecs(secsVal);
+      }
+      if (minsVal !== this.prevMinsVal) {
+        this.watchMins(minsVal);
+      }
+      if (hoursVal !== this.prevHoursVal) {
+        this.watchHours(hoursVal);
+      }
+      if (daysVal !== this.prevDaysVal) {
+        this.watchDays(daysVal);
+      }
     }
     this.doCheckInitialized = true;
     this.prevRequired = requiredVal;
@@ -169,6 +193,10 @@ export class TbTimeintervalDirective extends NgModelController implements DoChec
     this.prevMax = maxVal;
     this.prevIntervalMsVal = intervalMsVal;
     this.prevAdvancedVal = advancedVal;
+    this.prevSecsVal = secsVal;
+    this.prevMinsVal = minsVal;
+    this.prevHoursVal = hoursVal;
+    this.prevDaysVal = daysVal;
   }
 
   boundInterval(...rest: any[]): any {

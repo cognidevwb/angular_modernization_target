@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, DoCheck, effect, inject, model } from '@angular/core';
 import { AssetService } from '../../api/services/asset.service';
 import { DeviceService } from '../../api/services/device.service';
 import { ElementRef } from '@angular/core';
@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import $ from 'jquery';
 import { $q } from '../../../core/q';
 import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
+import { isEqual } from 'lodash-es';
 
 /**
  * Ported from the AngularJS directive `tbEntitySubtypeList` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -25,7 +26,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
   templateUrl: './tb-entity-subtype-list.directive.html',
   providers: ngModelProviders(TbEntitySubtypeListDirective),
 })
-export class TbEntitySubtypeListDirective extends NgModelController {
+export class TbEntitySubtypeListDirective extends NgModelController implements DoCheck {
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
   readonly tbRequired = model<any>();
   readonly entityType = model<any>();
@@ -53,12 +54,12 @@ export class TbEntitySubtypeListDirective extends NgModelController {
   entitySubtypes: any = null;
   entitySubtypeSearchText: any = '';
   filteredSubtypes: any = [];
-  $watch: any;
   inputTouched: any;
   noSubtypesMathingText: any;
   placeholder: any;
   secondaryPlaceholder: any;
   subtypeListEmptyText: any;
+  private previousEntitySubtypesList: any = null;
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
@@ -84,13 +85,18 @@ export class TbEntitySubtypeListDirective extends NgModelController {
             this.noSubtypesMathingText = 'entity-view.no-entity-view-types-matching';
             this.subtypeListEmptyText = 'entity-view.entity-view-type-list-empty';
         }
-    this.$watch('tbRequired', () => {
-            this.updateValidity();
-        });
-    this.$watch('entitySubtypesList', () => {
-            this.$setViewValue(this.entitySubtypesList);
-            this.updateValidity();
-        }, true);
+    effect(() => {
+      this.tbRequired();
+      this.updateValidity();
+    });
+  }
+
+  ngDoCheck(): void {
+    if (!isEqual(this.entitySubtypesList, this.previousEntitySubtypesList)) {
+      this.previousEntitySubtypesList = structuredClone(this.entitySubtypesList);
+      this.$setViewValue(this.entitySubtypesList);
+      this.updateValidity();
+    }
   }
 
   override $render(): void {

@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, forwardRef, inject, input, model } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, forwardRef, inject, input, model } from '@angular/core';
 import { AuditLogService } from '../../api/services/audit-log.service';
 import { ElementRef } from '@angular/core';
 import { RootState } from '../../../root-state';
@@ -60,20 +60,43 @@ export class TbAuditLogTableDirective {
   protected pageSize: any = 20;
   protected startTime: any = 0;
   protected endTime: any = 0;
-  timewindow: any = {
+  private _timewindow: any = {
             history: {
                 timewindowMs: 24 * 60 * 60 * 1000 // 1 day
             }
         };
+  private watchTimewindow = true;
+
+  get timewindow(): any {
+    return this._timewindow;
+  }
+
+  set timewindow(newVal: any) {
+    const prevVal = this._timewindow;
+    this._timewindow = newVal;
+    if (this.watchTimewindow && newVal && !isEqual(newVal, prevVal)) {
+        this.reload();
+    }
+  }
   topIndex: any = 0;
-  searchText: any = '';
+  private _searchText: any = '';
+  private watchSearchText = true;
+
+  get searchText(): any {
+    return this._searchText;
+  }
+
+  set searchText(newVal: any) {
+    const prevVal = this._searchText;
+    this._searchText = newVal;
+    if (this.watchSearchText && !isEqual(newVal, prevVal)) {
+        this.searchTextUpdated();
+    }
+  }
   theAuditLogs: any;
-  $watch: any;
   auditLogs: any;
   auditLog: any;
   repeatContainer: any;
-  searchTextWatchHandle: any;
-  timewindowWatchHandle: any;
 
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
@@ -124,24 +147,33 @@ export class TbAuditLogTableDirective {
                 }
             }
         };
-    this.$watch("entityId", (newVal?: any, prevVal?: any) => {
-            if (newVal && !isEqual(newVal, prevVal)) {
-                this.resetFilter();
-                this.reload();
-            }
-        });
-    this.$watch("userId", (newVal?: any, prevVal?: any) => {
-            if (newVal && !isEqual(newVal, prevVal)) {
-                this.resetFilter();
-                this.reload();
-            }
-        });
-    this.$watch("customerId", (newVal?: any, prevVal?: any) => {
-            if (newVal && !isEqual(newVal, prevVal)) {
-                this.resetFilter();
-                this.reload();
-            }
-        });
+    let prevEntityId: any = this.entityId();
+    let prevUserId: any = this.userId();
+    let prevCustomerId: any = this.customerId();
+    effect(() => {
+        const newVal = this.entityId();
+        if (newVal && !isEqual(newVal, prevEntityId)) {
+            this.resetFilter();
+            this.reload();
+        }
+        prevEntityId = newVal;
+    });
+    effect(() => {
+        const newVal = this.userId();
+        if (newVal && !isEqual(newVal, prevUserId)) {
+            this.resetFilter();
+            this.reload();
+        }
+        prevUserId = newVal;
+    });
+    effect(() => {
+        const newVal = this.customerId();
+        if (newVal && !isEqual(newVal, prevCustomerId)) {
+            this.resetFilter();
+            this.reload();
+        }
+        prevCustomerId = newVal;
+    });
     this.reload();
     this.initWatchers();
   }
@@ -194,28 +226,13 @@ export class TbAuditLogTableDirective {
   }
 
   destroyWatchers(...rest: any[]): any {
-    if (this.timewindowWatchHandle) {
-        this.timewindowWatchHandle();
-        this.timewindowWatchHandle = null;
-    }
-    if (this.searchTextWatchHandle) {
-        this.searchTextWatchHandle();
-        this.searchTextWatchHandle = null;
-    }
+    this.watchTimewindow = false;
+    this.watchSearchText = false;
   }
 
   initWatchers(...rest: any[]): any {
-    this.timewindowWatchHandle = this.$watch("timewindow", (newVal?: any, prevVal?: any) => {
-        if (newVal && !isEqual(newVal, prevVal)) {
-            this.reload();
-        }
-    }, true);
-
-    this.searchTextWatchHandle = this.$watch("searchText", (newVal?: any, prevVal?: any) => {
-        if (!isEqual(newVal, prevVal)) {
-            this.searchTextUpdated();
-        }
-    }, true);
+    this.watchTimewindow = true;
+    this.watchSearchText = true;
   }
 
   resetFilter(...rest: any[]): any {

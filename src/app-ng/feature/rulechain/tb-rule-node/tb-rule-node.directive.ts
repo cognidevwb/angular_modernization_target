@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, model, output } from '@angular/core';
+import { Component, forwardRef, inject, model, output, effect } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { RuleChainService } from '../../api/services/rule-chain.service';
 import { types } from '../../common/constants/types';
@@ -49,42 +49,51 @@ export class TbRuleNodeDirective {
   params: any = {
             targetRuleChainId: null
         };
-  $watch: any;
-  targetRuleChainWatch: any;
+  private watchingTargetRuleChain = false;
+  private previousTargetRuleChainId: any;
 
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
     this.types = this.typesRef;
-    this.$watch('ruleNode', () => {
-            if (this.ruleNode() && this.ruleNode().component.type == this.typesRef.ruleNodeType.RULE_CHAIN.value) {
-                this.params.targetRuleChainId = this.ruleNode().targetRuleChainId;
-                this.watchTargetRuleChain();
-            } else {
-                if (this.targetRuleChainWatch) {
-                    this.targetRuleChainWatch();
-                    this.targetRuleChainWatch = null;
-                }
-            }
-        });
+    effect(() => {
+      const ruleNode = this.ruleNode();
+      if (ruleNode && ruleNode.component.type == this.typesRef.ruleNodeType.RULE_CHAIN.value) {
+        this.params.targetRuleChainId = ruleNode.targetRuleChainId;
+        this.watchTargetRuleChain();
+      } else {
+        if (this.watchingTargetRuleChain) {
+          this.watchingTargetRuleChain = false;
+        }
+      }
+    });
   }
 
-  watchTargetRuleChain(...rest: any[]): any {
-    this.targetRuleChainWatch = this.$watch('params.targetRuleChainId',
-        (targetRuleChainId?: any) => {
-            if (this.ruleNode().targetRuleChainId != targetRuleChainId) {
-                this.ruleNode().targetRuleChainId = targetRuleChainId;
-                if (targetRuleChainId) {
-                    this.ruleChainService.getRuleChain(targetRuleChainId).then(
-                        (ruleChain?: any) => {
-                            this.ruleNode().name = ruleChain.name;
-                        }
-                    );
-                } else {
-                    this.ruleNode().name = "";
+  watchTargetRuleChain(): void {
+    this.watchingTargetRuleChain = true;
+    this.previousTargetRuleChainId = this.params.targetRuleChainId;
+    this.applyTargetRuleChainId(this.params.targetRuleChainId);
+  }
+
+  ngDoCheck(): void {
+    if (this.watchingTargetRuleChain && this.params.targetRuleChainId !== this.previousTargetRuleChainId) {
+      this.previousTargetRuleChainId = this.params.targetRuleChainId;
+      this.applyTargetRuleChainId(this.params.targetRuleChainId);
+    }
+  }
+
+  private applyTargetRuleChainId(targetRuleChainId?: any): void {
+    if (this.ruleNode().targetRuleChainId != targetRuleChainId) {
+        this.ruleNode().targetRuleChainId = targetRuleChainId;
+        if (targetRuleChainId) {
+            this.ruleChainService.getRuleChain(targetRuleChainId).then(
+                (ruleChain?: any) => {
+                    this.ruleNode().name = ruleChain.name;
                 }
-            }
+            );
+        } else {
+            this.ruleNode().name = "";
         }
-    );
+    }
   }
 }

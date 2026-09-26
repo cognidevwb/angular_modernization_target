@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, model } from '@angular/core';
+import { Component, DoCheck, forwardRef, inject, model } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ElementRef } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
@@ -14,6 +14,7 @@ import { TbRelationTypeAutocompleteDirective } from '../tb-relation-type-autocom
 import { TbEntitySubtypeListDirective } from '../tb-entity-subtype-list/tb-entity-subtype-list.directive';
 
 import $ from 'jquery';
+import { isEqual } from 'lodash-es';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -35,7 +36,7 @@ declare let $templateCache: any;
   templateUrl: './tb-entity-filter.directive.html',
   providers: ngModelProviders(TbEntityFilterDirective),
 })
-export class TbEntityFilterDirective extends NgModelController {
+export class TbEntityFilterDirective extends NgModelController implements DoCheck {
   readonly theForm = model<any>();
   readonly allowedEntityTypes = model<any>();
 
@@ -51,8 +52,9 @@ export class TbEntityFilterDirective extends NgModelController {
 
   types: any;
   aliasFilterTypes: any;
-  $watch: any;
   filter: any;
+  private prevFilterType: any;
+  private prevFilterSnapshot: any;
 
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
@@ -60,14 +62,23 @@ export class TbEntityFilterDirective extends NgModelController {
     super();
     this.types = this.typesRef;
     this.aliasFilterTypes = this.entityService.getAliasFilterTypesByEntityTypes(this.allowedEntityTypes());
-    this.$watch('filter.type', (newType?: any, prevType?: any) => {
-            if (newType && newType != prevType) {
-                this.updateFilter();
-            }
-        });
-    this.$watch('filter', () => {
-            this.updateView();
-        });
+  }
+
+  ngDoCheck(): void {
+    if (this.filter) {
+      const newType = this.filter.type;
+      if (newType !== this.prevFilterType) {
+        const prevType = this.prevFilterType;
+        this.prevFilterType = newType;
+        if (newType && newType != prevType) {
+          this.updateFilter();
+        }
+      }
+      if (!isEqual(this.filter, this.prevFilterSnapshot)) {
+        this.prevFilterSnapshot = structuredClone(this.filter);
+        this.updateView();
+      }
+    }
   }
 
   override $render(): void {

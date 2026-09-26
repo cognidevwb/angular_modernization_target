@@ -1,3 +1,4 @@
+import { httpOptions } from '../../../core/http-options';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RootState } from '../../../root-state';
@@ -107,7 +108,7 @@ export class DashboardService {
         var url: any = '/api/dashboard/serverTime';
         var ct1: any = Date.now();
         return new Promise((resolve, reject) => {
-          this.http.get(url, {params: {ignoreLoading: true} as any}).subscribe((response: any) => {
+          this.http.get(url, httpOptions({ignoreLoading: true})).subscribe((response: any) => {
             var ct2: any = Date.now();
             var st: any = response;
             var stDiff: any = Math.ceil(st - (ct1 + ct2) / 2);

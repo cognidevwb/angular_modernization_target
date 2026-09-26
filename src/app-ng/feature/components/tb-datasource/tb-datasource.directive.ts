@@ -1,4 +1,5 @@
-import { Component, forwardRef, inject, input, model } from '@angular/core';
+import { Component, DoCheck, forwardRef, inject, input, model } from '@angular/core';
+import { isEqual } from 'lodash-es';
 import { CreateEntityAliasFn, FetchEntityKeysFn, GenerateDataKeyFn } from './datasource-callbacks';
 import { UtilsService } from '../../common/services/utils.service';
 import { types } from '../../common/constants/types';
@@ -23,7 +24,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
   templateUrl: './tb-datasource.directive.html',
   providers: ngModelProviders(TbDatasourceDirective),
 })
-export class TbDatasourceDirective extends NgModelController {
+export class TbDatasourceDirective extends NgModelController implements DoCheck {
   readonly aliasController = model<any>();
   readonly maxDataKeys = model<any>();
   readonly optDataKeys = model<any>();
@@ -39,9 +40,10 @@ export class TbDatasourceDirective extends NgModelController {
   // TODO(port): template: 1 × ng-switch-when left in place
 
   types: any;
-  $watch: any;
   datasourceTypes: any;
   model: any;
+  private prevModelType: any;
+  private prevModelSnapshot: any;
 
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
@@ -53,18 +55,25 @@ export class TbDatasourceDirective extends NgModelController {
         } else{
             this.datasourceTypes = [this.typesRef.datasourceType.entity, this.typesRef.datasourceType.function];
         }
-    this.$watch('model.type', (newType?: any, prevType?: any) => {
-            if (newType && prevType && newType != prevType) {
-                if (this.widgetType() == this.typesRef.widgetType.alarm.value) {
-                    this.model.dataKeys = this.utils.getDefaultAlarmDataKeys();
-                } else {
-                    this.model.dataKeys = [];
-                }
-            }
-        });
-    this.$watch('model', () => {
-            this.updateView();
-        }, true);
+  }
+
+  ngDoCheck(): void {
+    const currentType = this.model?.type;
+    if (currentType !== this.prevModelType) {
+      const prevType = this.prevModelType;
+      this.prevModelType = currentType;
+      if (currentType && prevType && currentType !== prevType) {
+        if (this.widgetType() == this.typesRef.widgetType.alarm.value) {
+          this.model.dataKeys = this.utils.getDefaultAlarmDataKeys();
+        } else {
+          this.model.dataKeys = [];
+        }
+      }
+    }
+    if (!isEqual(this.model, this.prevModelSnapshot)) {
+      this.prevModelSnapshot = structuredClone(this.model);
+      this.updateView();
+    }
   }
 
   override $render(): void {

@@ -1,3 +1,4 @@
+import { httpOptions } from '../../../core/http-options';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
@@ -52,7 +53,7 @@ export class TimeService {
   loadMaxDatapointsLimit(...rest: any[]): any {
     var url: any = '/api/dashboard/maxDatapointsLimit';
     return new Promise((resolve, reject) => {
-      firstValueFrom(this.http.get(url, {ignoreLoading: true} as any)).then((response: any) => {
+      firstValueFrom(this.http.get(url, httpOptions({ignoreLoading: true}))).then((response: any) => {
           this.maxDatapointsLimit = response;
           if (!this.maxDatapointsLimit || this.maxDatapointsLimit <= MIN_LIMIT) {
               this.maxDatapointsLimit = MIN_LIMIT + 1;

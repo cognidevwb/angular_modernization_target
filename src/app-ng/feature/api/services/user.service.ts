@@ -1,3 +1,4 @@
+import { httpOptions } from '../../../core/http-options';
 import { firstValueFrom } from 'rxjs';
 import { inject, Injectable } from '@angular/core';
 import { AdminService } from './admin.service';
@@ -141,7 +142,7 @@ export class UserService {
   }
 
   logout(...rest: any[]): any {
-    firstValueFrom(this.http.post('/api/auth/logout', null, {ignoreErrors: true} as any)).then(() => {
+    firstValueFrom(this.http.post('/api/auth/logout', null, httpOptions({ignoreErrors: true}))).then(() => {
         this.clearJwtToken(true);
     }, () => {
         this.clearJwtToken(true);
@@ -357,7 +358,7 @@ export class UserService {
     }
 
     if (!this.currentUser) {
-        var locationSearch: any = (this.router as any).search();
+        var locationSearch: any = this.router.parseUrl(this.router.url).queryParams;
         if (locationSearch.publicId) {
             this.loginService.publicLogin(locationSearch.publicId).then((response?: any) => {
                 var token: any = response.data.token;
@@ -366,15 +367,15 @@ export class UserService {
                 this.updateAndValidateToken(refreshToken, 'refresh_token', false);
                 procceedJwtTokenValidate();
             }, () => {
-                (this.router as any).search('publicId', null);
+                this.router.navigate([], { queryParams: { publicId: null }, queryParamsHandling: 'merge' });
                 deferred.reject();
             });
         } else if (locationSearch.accessToken) {
             var token: any = locationSearch.accessToken;
             var refreshToken: any = locationSearch.refreshToken;
-            (this.router as any).search('accessToken', null);
+            this.router.navigate([], { queryParams: { accessToken: null }, queryParamsHandling: 'merge' });
             if (refreshToken) {
-                (this.router as any).search('refreshToken', null);
+                this.router.navigate([], { queryParams: { refreshToken: null }, queryParamsHandling: 'merge' });
             }
             try {
                 this.updateAndValidateToken(token, 'jwt_token', false);
@@ -392,8 +393,8 @@ export class UserService {
             var user: any = {};
             user.name = locationSearch.username;
             user.password = locationSearch.password;
-            (this.router as any).search('username', null);
-            (this.router as any).search('password', null);
+            this.router.navigate([], { queryParams: { username: null }, queryParamsHandling: 'merge' });
+            this.router.navigate([], { queryParams: { password: null }, queryParamsHandling: 'merge' });
 
             this.loginService.login(user).then((response?: any) => {
                 var token: any = response.data.token;
@@ -410,7 +411,7 @@ export class UserService {
             });
         } else if (locationSearch.loginError) {
             this.showLoginErrorDialog(locationSearch.loginError);
-            (this.router as any).search('loginError', null);
+            this.router.navigate([], { queryParams: { loginError: null }, queryParamsHandling: 'merge' });
             deferred.reject();
         } else {
             procceedJwtTokenValidate();

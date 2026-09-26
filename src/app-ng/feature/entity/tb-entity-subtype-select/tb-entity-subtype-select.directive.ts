@@ -1,4 +1,4 @@
-import { Component, inject, input, model } from '@angular/core';
+import { Component, DestroyRef, effect, inject, input, model } from '@angular/core';
 import { AssetService } from '../../api/services/asset.service';
 import { DeviceService } from '../../api/services/device.service';
 import { ElementRef } from '@angular/core';
@@ -14,6 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
+import { RootState } from '../../../root-state';
 
 /**
  * Ported from the AngularJS directive `tbEntitySubtypeSelect` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -43,12 +44,13 @@ export class TbEntitySubtypeSelectDirective extends NgModelController {
   // TODO(port): template: 1 × ng-messages left in place
 
   entitySubtypes: any = [];
-  $on: any;
-  $watch: any;
   entitySubtype: any;
   entitySubtypeRequiredText: any;
   entitySubtypeTitle: any;
   showLabel: any;
+  private prevEntitySubtype: any;
+  protected readonly rootScope = inject(RootState);
+  private readonly destroyRef = inject(DestroyRef);
 
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
@@ -60,14 +62,17 @@ export class TbEntitySubtypeSelectDirective extends NgModelController {
         } else {
             this.showLabel = true;
         }
-    this.$watch('entityType', () => {
+    effect(() => {
+            this.entityType();
             this.load();
         });
-    this.$watch('entitySubtype', (newValue?: any, prevValue?: any) => {
-            if (!isEqual(newValue, prevValue)) {
-                this.updateView();
-            }
-        });
+  }
+
+  ngDoCheck(): void {
+    if (!isEqual(this.entitySubtype, this.prevEntitySubtype)) {
+        this.prevEntitySubtype = structuredClone(this.entitySubtype);
+        this.updateView();
+    }
   }
 
   override $render(): void {
@@ -137,17 +142,17 @@ export class TbEntitySubtypeSelectDirective extends NgModelController {
     } else {
         this.loadSubTypes();
         if (this.entityType() == types.entityType.asset) {
-            this.$on('assetSaved', () => {
+            this.destroyRef.onDestroy(this.rootScope.$on('assetSaved', () => {
                 this.loadSubTypes();
-            });
+            }));
         } else if (this.entityType() == types.entityType.device) {
-            this.$on('deviceSaved', () => {
+            this.destroyRef.onDestroy(this.rootScope.$on('deviceSaved', () => {
                 this.loadSubTypes();
-            });
+            }));
         } else if (this.entityType() == types.entityType.entityView) {
-            this.$on('entityViewSaved', () => {
+            this.destroyRef.onDestroy(this.rootScope.$on('entityViewSaved', () => {
                 this.loadSubTypes();
-            });
+            }));
         }
     }
   }

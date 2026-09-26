@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, effect, inject, model } from '@angular/core';
 import { AssetService } from '../../api/services/asset.service';
 import { DeviceService } from '../../api/services/device.service';
 import { ElementRef } from '@angular/core';
@@ -45,10 +45,23 @@ export class TbRelationTypeAutocompleteDirective extends NgModelController {
   // TODO(port): template: 1 × ng-messages left in place
 
   hideLabel: any;
-  relationType: any = null;
+  private _relationType: any = null;
+  private prevRelationType: any = null;
   relationTypeSearchText: any = '';
   relationTypes: any = [];
   $watch: any;
+
+  get relationType(): any {
+    return this._relationType;
+  }
+
+  set relationType(newValue: any) {
+    this._relationType = newValue;
+    if (!isEqual(newValue, this.prevRelationType)) {
+      this.prevRelationType = newValue;
+      this.updateView();
+    }
+  }
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
@@ -61,12 +74,8 @@ export class TbRelationTypeAutocompleteDirective extends NgModelController {
     for (var type in types.entityRelationType) {
             this.relationTypes.push(types.entityRelationType[type]);
         }
-    this.$watch('relationType', (newValue?: any, prevValue?: any) => {
-            if (!isEqual(newValue, prevValue)) {
-                this.updateView();
-            }
-        });
-    this.$watch('disabled', () => {
+    effect(() => {
+            this.disabled();
             this.updateView();
         });
   }

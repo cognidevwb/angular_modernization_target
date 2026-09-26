@@ -1,413 +1,77 @@
 {
 "summary": {
-"files": 23,
-"uses": 94,
-"names": 51,
+"files": 13,
+"uses": 37,
+"names": 4,
 "by_kind": {
-"angularjs": 34,
-"lost": 27,
-"legacy-import": 33
+"angularjs": 7,
+"lost": 0,
+"legacy-import": 0,
+"scope-call": 27,
+"http-config": 3,
+"template-translate": 0
 }
 },
 "rows": [
 {
-"name": "$compile",
+"name": "$http config flags passed to HttpClient",
+"kind": "http-config",
+"at": [
+"src/app-ng/feature/api/services/dashboard.service.ts:110",
+"src/app-ng/feature/api/services/user.service.ts:144",
+"src/app-ng/feature/api/services/time.service.ts:55"
+]
+},
+{
+"name": "$location API on the Router",
 "kind": "angularjs",
 "at": [
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:110",
-"src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts:933",
-"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:62"
+"src/app-ng/feature/api/services/user.service.ts:360",
+"src/app-ng/feature/api/services/user.service.ts:369",
+"src/app-ng/feature/api/services/user.service.ts:375",
+"src/app-ng/feature/api/services/user.service.ts:377",
+"src/app-ng/feature/api/services/user.service.ts:395",
+"src/app-ng/feature/api/services/user.service.ts:396",
+"src/app-ng/feature/api/services/user.service.ts:413"
 ]
 },
 {
-"name": "$filter",
-"kind": "angularjs",
+"name": "this.$on()",
+"kind": "scope-call",
 "at": [
-"src/app-ng/feature/components/widget/widget.component.ts:231"
+"src/app-ng/feature/entity/tb-aliases-entity-select/tb-aliases-entity-select.directive.ts:43",
+"src/app-ng/feature/entity/tb-aliases-entity-select/tb-aliases-entity-select.directive.ts:46",
+"src/app-ng/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.ts:140",
+"src/app-ng/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.ts:144",
+"src/app-ng/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.ts:148"
 ]
 },
 {
-"name": "$injector",
-"kind": "angularjs",
+"name": "this.$watch()",
+"kind": "scope-call",
 "at": [
-"src/app-ng/feature/components/widget/widget.component.ts:87"
-]
-},
-{
-"name": "$mdColorPicker",
-"kind": "angularjs",
-"at": [
-"src/app-ng/feature/components/tb-datasource-entity/tb-datasource-entity.directive.ts:199"
-]
-},
-{
-"name": "$mdEditDialog",
-"kind": "angularjs",
-"at": [
-"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:259"
-]
-},
-{
-"name": "$scope",
-"kind": "angularjs",
-"at": [
-"src/app-ng/feature/components/widget/widget.component.ts:229"
-]
-},
-{
-"name": "$templateCache",
-"kind": "angularjs",
-"at": [
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:47",
-"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:57"
-]
-},
-{
-"name": "activation-link.dialog.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/user/add-user/add-user.component.ts:12",
-"src/app-ng/feature/user/user/user.component.ts:22"
-]
-},
-{
-"name": "add-asset.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/asset/asset/asset.component.ts:25"
-]
-},
-{
-"name": "add-assets-to-customer.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/asset/asset/asset.component.ts:31"
-]
-},
-{
-"name": "add-dashboard.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/dashboard/dashboards/dashboards.component.ts:20"
-]
-},
-{
-"name": "add-dashboards-to-customer.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/dashboard/dashboards/dashboards.component.ts:24"
-]
-},
-{
-"name": "add-device.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/device/device/device.component.ts:26"
-]
-},
-{
-"name": "add-devices-to-customer.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/device/device/device.component.ts:32"
-]
-},
-{
-"name": "add-rulechain.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/rulechain/rule-chains/rule-chains.component.ts:21"
-]
-},
-{
-"name": "add-tenant.tpl.html?raw",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/tenant/tenant/tenant.component.ts:15"
-]
-},
-{
-"name": "add-user.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/user/user/user.component.ts:18"
-]
-},
-{
-"name": "add-widgets-bundle.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/widget/widgets-bundle/widgets-bundle.component.ts:12"
-]
-},
-{
-"name": "aliasController",
-"kind": "lost",
-"at": [
-"src/app-ng/feature/components/widget/widget.component.ts:75",
-"src/app-ng/feature/components/widget/widget.component.ts:208",
-"src/app-ng/feature/components/widget/widget.component.ts:243"
-]
-},
-{
-"name": "asset-card.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/asset/asset/asset.component.ts:27"
-]
-},
-{
-"name": "assign-to-customer.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/asset/asset/asset.component.ts:29",
-"src/app-ng/feature/device/device/device.component.ts:30"
-]
-},
-{
-"name": "custom-action-pretty-editor.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts:10"
-]
-},
-{
-"name": "dashboard",
-"kind": "lost",
-"at": [
-"src/app-ng/feature/components/widget/widget.component.ts:73",
-"src/app-ng/feature/components/widget/widget.component.ts:148"
-]
-},
-{
-"name": "dashboard-card.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/dashboard/dashboards/dashboards.component.ts:22"
-]
-},
-{
-"name": "dashboardTimewindow",
-"kind": "lost",
-"at": [
-"src/app-ng/feature/components/widget/widget.component.ts:81",
-"src/app-ng/feature/components/widget/widget.component.ts:155"
-]
-},
-{
-"name": "dashboardTimewindowApi",
-"kind": "lost",
-"at": [
-"src/app-ng/feature/components/widget/widget.component.ts:72",
-"src/app-ng/feature/components/widget/widget.component.ts:240"
-]
-},
-{
-"name": "device-card.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/device/device/device.component.ts:28"
-]
-},
-{
-"name": "device-credentials.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/device/device/device.component.ts:34"
-]
-},
-{
-"name": "element",
-"kind": "angularjs",
-"at": [
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:42",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:234",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:235",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:236",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:237",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:240",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:243",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:244",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:245",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:248",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:251",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:254",
-"src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:77",
-"src/app-ng/feature/dashboard/tb-states-component/tb-states-component.directive.ts:30",
-"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:48",
-"src/app-ng/feature/components/tb-json-content/tb-json-content.directive.ts:50",
-"src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts:51",
-"src/app-ng/feature/components/tb-dashboard-autocomplete/tb-dashboard-autocomplete.directive.ts:41",
-"src/app-ng/feature/rulechain/tb-rule-node/tb-rule-node.directive.ts:45",
-"src/app-ng/feature/device/tb-device/tb-device.directive.ts:56",
-"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:28"
-]
-},
-{
-"name": "entitiesHierarchyDataUpdatedService",
-"kind": "lost",
-"at": [
-"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:85"
-]
-},
-{
-"name": "event-header-debug-rulenode.tpl.html?raw",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:11"
-]
-},
-{
-"name": "event-header-error.tpl.html?raw",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:10"
-]
-},
-{
-"name": "event-header-lc-event.tpl.html?raw",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:8"
-]
-},
-{
-"name": "event-header-stats.tpl.html?raw",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:9"
-]
-},
-{
-"name": "extension-form-mqtt.tpl.html?raw",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:10"
-]
-},
-{
-"name": "isEdit",
-"kind": "lost",
-"at": [
-"src/app-ng/feature/components/widget/widget.component.ts:79",
-"src/app-ng/feature/components/widget/widget.component.ts:146",
-"src/app-ng/feature/components/widget/widget.component.ts:827",
-"src/app-ng/feature/components/widget/widget.component.ts:828",
-"src/app-ng/feature/components/widget/widget.component.ts:1000",
-"src/app-ng/feature/components/widget/widget.component.ts:1001",
-"src/app-ng/feature/components/widget/widget.component.ts:1002"
-]
-},
-{
-"name": "isMobile",
-"kind": "lost",
-"at": [
-"src/app-ng/feature/components/widget/widget.component.ts:80",
-"src/app-ng/feature/components/widget/widget.component.ts:147",
-"src/app-ng/feature/components/widget/widget.component.ts:1021",
-"src/app-ng/feature/components/widget/widget.component.ts:1022",
-"src/app-ng/feature/components/widget/widget.component.ts:1023"
-]
-},
-{
-"name": "json-content.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/components/tb-json-content/tb-json-content.directive.ts:14"
-]
-},
-{
-"name": "led-indicator.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/widget/tb-led-indicator/tb-led-indicator.directive.ts:4"
-]
-},
-{
-"name": "make-dashboard-public-dialog.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/dashboard/dashboards/dashboards.component.ts:26"
-]
-},
-{
-"name": "manage-assigned-customers.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/dashboard/dashboards/dashboards.component.ts:28"
-]
-},
-{
-"name": "rulechain-card.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/rulechain/rule-chains/rule-chains.component.ts:24"
-]
-},
-{
-"name": "scope",
-"kind": "angularjs",
-"at": [
-"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:545",
-"src/app-ng/feature/widget/tb-led-indicator/tb-led-indicator.directive.ts:282",
-"src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:459"
-]
-},
-{
-"name": "stateController",
-"kind": "lost",
-"at": [
-"src/app-ng/feature/components/widget/widget.component.ts:76",
-"src/app-ng/feature/components/widget/widget.component.ts:207"
-]
-},
-{
-"name": "tenant-card.tpl.html?raw",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/tenant/tenant/tenant.component.ts:16"
-]
-},
-{
-"name": "timeseries-table-widget.tpl.html?raw",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:4"
-]
-},
-{
-"name": "user-card.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/user/user/user.component.ts:20"
-]
-},
-{
-"name": "widget",
-"kind": "lost",
-"at": [
-"src/app-ng/feature/components/widget/widget.component.ts:74"
-]
-},
-{
-"name": "widgetInfo",
-"kind": "lost",
-"at": [
-"src/app-ng/feature/components/widget/widget.component.ts:77"
-]
-},
-{
-"name": "widgetType",
-"kind": "lost",
-"at": [
-"src/app-ng/feature/components/widget/widget.component.ts:78"
-]
-},
-{
-"name": "widgets-bundle-card.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/widget/widgets-bundle/widgets-bundle.component.ts:14"
+"src/app-ng/feature/entity/tb-entity-filter/tb-entity-filter.directive.ts:63",
+"src/app-ng/feature/entity/tb-entity-filter/tb-entity-filter.directive.ts:68",
+"src/app-ng/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.ts:63",
+"src/app-ng/feature/entity/tb-entity-subtype-select/tb-entity-subtype-select.directive.ts:66",
+"src/app-ng/feature/entity/tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive.ts:64",
+"src/app-ng/feature/entity/tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive.ts:69",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:87",
+"src/app-ng/feature/entity/tb-entity-subtype-list/tb-entity-subtype-list.directive.ts:90",
+"src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts:56",
+"src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts:65",
+"src/app-ng/feature/components/tb-timeinterval/tb-timeinterval.directive.ts:60",
+"src/app-ng/feature/components/tb-timeinterval/tb-timeinterval.directive.ts:77",
+"src/app-ng/feature/components/tb-timeinterval/tb-timeinterval.directive.ts:94",
+"src/app-ng/feature/components/tb-timeinterval/tb-timeinterval.directive.ts:111",
+"src/app-ng/feature/components/tb-circular-progress/tb-circular-progress.directive.ts:35",
+"src/app-ng/feature/rulechain/tb-rule-node/tb-rule-node.directive.ts:59",
+"src/app-ng/feature/rulechain/tb-rule-node/tb-rule-node.directive.ts:73",
+"src/app-ng/feature/audit/tb-audit-log-table/tb-audit-log-table.directive.ts:127",
+"src/app-ng/feature/audit/tb-audit-log-table/tb-audit-log-table.directive.ts:133",
+"src/app-ng/feature/audit/tb-audit-log-table/tb-audit-log-table.directive.ts:139",
+"src/app-ng/feature/audit/tb-audit-log-table/tb-audit-log-table.directive.ts:208",
+"src/app-ng/feature/audit/tb-audit-log-table/tb-audit-log-table.directive.ts:214"
 ]
 }
 ]

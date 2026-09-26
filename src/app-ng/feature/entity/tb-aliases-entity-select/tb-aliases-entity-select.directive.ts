@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
+import { RootState } from '../../../root-state';
 
 /**
  * Ported from the AngularJS directive `tbAliasesEntitySelect` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -30,9 +31,9 @@ export class TbAliasesEntitySelectDirective {
   protected readonly document = inject(DOCUMENT);
   protected readonly translate = inject(TranslateService);
   protected readonly element = inject(ElementRef);
+  protected readonly rootScope = inject(RootState);
 
   tooltipDirection: any;
-  $on: any;
   disabled: any;
   displayValue: any;
 
@@ -40,10 +41,10 @@ export class TbAliasesEntitySelectDirective {
 
   constructor() {
     this.tooltipDirection = (this.attrs.tooltipDirection !== undefined) ? this.attrs.tooltipDirection : 'top';
-    this.$on('entityAliasesChanged', () => {
+    this.rootScope.$on('entityAliasesChanged', () => {
             this.updateView();
         });
-    this.$on('entityAliasResolved', () => {
+    this.rootScope.$on('entityAliasResolved', () => {
             this.updateView();
         });
   }

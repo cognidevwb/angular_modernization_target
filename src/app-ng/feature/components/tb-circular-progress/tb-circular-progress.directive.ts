@@ -1,4 +1,4 @@
-import { Directive, inject, model } from '@angular/core';
+import { Directive, effect, inject, model } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import $ from 'jquery';
 
@@ -23,7 +23,6 @@ export class TbCircularProgressDirective {
   protected children: any = null;
   protected cssWidth: any;
   protected width: any = null;
-  $watch: any;
 
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
@@ -32,7 +31,9 @@ export class TbCircularProgressDirective {
     if (!this.cssWidth) {
             $($(this.element.nativeElement)).css('width', this.width + 'px');
         }
-    this.$watch('circularProgress', (newCircularProgress?: any, prevCircularProgress?: any) => {
+    let prevCircularProgress: any;
+    effect(() => {
+            const newCircularProgress = this.circularProgress();
             if (newCircularProgress != prevCircularProgress) {
                 if (newCircularProgress) {
                     if (!this.cssWidth) {
@@ -53,6 +54,7 @@ export class TbCircularProgressDirective {
                     }
                 }
             }
+            prevCircularProgress = newCircularProgress;
         });
   }
 }
