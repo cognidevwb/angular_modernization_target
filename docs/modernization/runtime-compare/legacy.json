@@ -1,0 +1,143 @@
+{
+ "base": "http://localhost:9090",
+ "label": "legacy",
+ "login": {
+  "url": "/home",
+  "token": true,
+  "console": [],
+  "pageerrors": [],
+  "failed": []
+ },
+ "screens": [
+  {
+   "name": "home",
+   "path": "/home",
+   "url": "/home",
+   "textLength": 574,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS home Home account_circle Tenant administrator more_vert Rules management settings_ethernet RULE CHAINS Customer management supervisor_account CUSTOMERS Asset management domain ASSETS Device management devices_other DEVICES Entity View management view_quilt ENTITY VIEWS Dashboard management now_widgets WIDGETS LIBRARY dashboard DASHBOARDS Audit track_changes AUDIT LOGS",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "devices",
+   "path": "/devices",
+   "url": "/devices",
+   "textLength": 929,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS devices_other Devices search account_circle Tenant administrator more_vert Test Device A1 DEFAULT Assigned to customer 'Customer A' Test Device A2 DEFAULT Assigned to customer 'Customer A' Test Device A3 DEFAULT Assigned to customer 'Customer A' Test Device B1 DEFAULT Assigned to customer 'Customer B' Test Device C1 DEFAULT Assigned to customer 'Customer C' DHT11 Demo Device DEFAULT Demo devic",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "assets",
+   "path": "/assets",
+   "url": "/assets",
+   "textLength": 343,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS domain Assets search account_circle Tenant administrator more_vert Thermostat Alarms ALARMPROPAGATIONASSET Main_5683d5288ef6 TBSERVICEQUEUE",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "entity-views",
+   "path": "/entityViews",
+   "url": "/entityViews",
+   "textLength": 302,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS view_quilt Entity Views search account_circle Tenant administrator more_vert NO ENTITY VIEWS FOUND",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "customers",
+   "path": "/customers",
+   "url": "/customers",
+   "textLength": 351,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS supervisor_account Customers search account_circle Tenant administrator more_vert Customer A NO ADDRESS Customer B NO ADDRESS Customer C NO ADDRESS",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "customer-users",
+   "path": "/customers/a8b46b30-b9c8-11f1-a5ef-479889dd16ff/users",
+   "url": "/customers/a8b46b30-b9c8-11f1-a5ef-479889dd16ff/users",
+   "textLength": 368,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS supervisor_account Customers > account_circle Customer Users search account_circle Tenant administrator more_vert customer@thingsboard.org customerA@thingsboard.org",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "dashboards",
+   "path": "/dashboards",
+   "url": "/dashboards",
+   "textLength": 392,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS dashboard Dashboards search account_circle Tenant administrator more_vert Temperature & Humidity Demo Dashboard Rule Engine Statistics Raspberry PI GPIO Demo Dashboard Gateways Thermostats",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "dashboard-view",
+   "path": "/dashboards/a96062a0-b9c8-11f1-a5ef-479889dd16ff",
+   "url": "/dashboards/a96062a0-b9c8-11f1-a5ef-479889dd16ff",
+   "textLength": 521,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS dashboard Dashboards > dashboard Temperature & Humidity Demo Dashboard account_circle Tenant administrator more_vert more_horiz arrow_forward file_download Realtime - last minute devices_other DHT11 Demo Device Temperature & Humidity Demo Dashboard Temperature & Humidity Demo Dashboard Powered by Thingsboard v.2.5.6",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "widgets-bundles",
+   "path": "/widgets-bundles",
+   "url": "/widgets-bundles",
+   "textLength": 541,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS now_widgets Widgets Bundles search account_circle Tenant administrator more_vert Alarm widgets SYSTEM Analogue gauges SYSTEM Cards SYSTEM Charts SYSTEM Control widgets SYSTEM Date SYSTEM Digital gauges SYSTEM Entity admin widgets SYSTEM Gateway widgets SYSTEM GPIO widgets SYSTEM Input widgets SYSTEM Maps SYSTEM Maps (Deprecated) SYSTEM",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "rule-chains",
+   "path": "/ruleChains",
+   "url": "/ruleChains",
+   "textLength": 325,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS settings_ethernet Rule chains search account_circle Tenant administrator more_vert Thermostat Alarms Root Rule Chain Root",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "rule-chain",
+   "path": "/ruleChains/a8901a50-b9c8-11f1-a5ef-479889dd16ff",
+   "url": "/ruleChains/a8901a50-b9c8-11f1-a5ef-479889dd16ff",
+   "textLength": 2344,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS settings_ethernet Rule chains > settings_ethernet Root Rule Chain (Root) search account_circle Tenant administrator more_vert search chevron_left filter_list Filter filter_list check alarm status filter_list check existence fields filter_list check relation filter_list gps geofencing filter filter_list message type filter_list message type switch filter_list originator type filter_list origina",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "audit-logs",
+   "path": "/auditLogs",
+   "url": "/auditLogs",
+   "textLength": 651,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS track_changes Audit Logs account_circle Tenant administrator more_vert LAST DAY search close refresh Timestamp Entity Type Entity Name User Type Status Details 2026-09-26 14:00:29 User tenant@thingsboard.org tenant@thingsboard.org Login Success more_horiz 2026-09-26 14:00:03 User tenant@thingsboard.org tenant@thingsboard.org Login Success more_horiz 2026-09-26 09:39:17 User tenant@thingsboard.",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "profile",
+   "path": "/profile",
+   "url": "/profile",
+   "textLength": 399,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS account_circle Profile account_circle Tenant administrator more_vert Profile tenant@thingsboard.org Last Login 2026-09-26 14:00:29 Email First Name Last Name Language English CHANGE PASSWORD SAVE",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  }
+ ]
+}

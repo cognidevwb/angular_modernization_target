@@ -1,0 +1,74 @@
+[
+ {
+  "name": "devices",
+  "error": null,
+  "textLength": 1298,
+  "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS devices_other Devices search fullscreen account_circle Tenant administrator more_vert Test Device A1 DEFAULT Assigned to customer 'Customer A' assignment_return security delete Test Device A2 DEFA",
+  "console": [],
+  "pageerrors": [],
+  "failed": []
+ },
+ {
+  "name": "device-details",
+  "error": null,
+  "textLength": 1564,
+  "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS devices_other Devices search fullscreen account_circle Tenant administrator more_vert Test Device A1 DEFAULT Assigned to customer 'Customer A' assignment_return security delete Test Device A2 DEFA",
+  "console": [],
+  "pageerrors": [],
+  "failed": []
+ },
+ {
+  "name": "device-details-attributes",
+  "error": null,
+  "textLength": 1545,
+  "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS devices_other Devices search fullscreen account_circle Tenant administrator more_vert Test Device A1 DEFAULT Assigned to customer 'Customer A' assignment_return security delete Test Device A2 DEFA",
+  "console": [],
+  "pageerrors": [],
+  "failed": []
+ },
+ {
+  "name": "device-details-closed",
+  "error": null,
+  "textLength": 1298,
+  "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS devices_other Devices search fullscreen account_circle Tenant administrator more_vert Test Device A1 DEFAULT Assigned to customer 'Customer A' assignment_return security delete Test Device A2 DEFA",
+  "console": [],
+  "pageerrors": [],
+  "failed": []
+ },
+ {
+  "name": "add-device-dialog",
+  "error": null,
+  "textLength": 1377,
+  "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS devices_other Devices search fullscreen account_circle Tenant administrator more_vert Test Device A1 DEFAULT Assigned to customer 'Customer A' assignment_return security delete Test Device A2 DEFA",
+  "console": [],
+  "pageerrors": [],
+  "failed": []
+ },
+ {
+  "name": "add-device-cancelled",
+  "error": null,
+  "textLength": 1298,
+  "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS devices_other Devices search fullscreen account_circle Tenant administrator more_vert Test Device A1 DEFAULT Assigned to customer 'Customer A' assignment_return security delete Test Device A2 DEFA",
+  "console": [],
+  "pageerrors": [],
+  "failed": []
+ },
+ {
+  "name": "widgets-bundles",
+  "error": null,
+  "textLength": 824,
+  "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS now_widgets Widgets Bundles search fullscreen account_circle Tenant administrator more_vert Alarm widgets SYSTEM file_download edit Analogue gauges SYSTEM file_download edit Cards SYSTEM file_down",
+  "console": [],
+  "pageerrors": [],
+  "failed": []
+ },
+ {
+  "name": "widgets-bundle-open",
+  "error": null,
+  "textLength": 1078,
+  "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS now_widgets Widgets Bundles > now_widgets Charts fullscreen account_circle Tenant administrator more_vert State Chart fullscreen edit file_download 15:08:00 15:08:10 15:08:20 15:08:30 15:08:40 15:",
+  "console": [],
+  "pageerrors": [],
+  "failed": []
+ }
+]

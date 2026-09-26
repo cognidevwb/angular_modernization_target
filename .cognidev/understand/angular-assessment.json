@@ -1,2818 +1,2818 @@
 {
-  "briefing": {
-    "bootstraps": [
-      "angularjs ng-app in src/index.html:19"
-    ],
-    "conformance": {
-      "conventions": [
-        {
-          "agree": [],
-          "disagree": [],
-          "id": "di-style",
-          "majority": "constructor DI"
-        },
-        {
-          "agree": [],
-          "disagree": [],
-          "id": "standalone",
-          "majority": "standalone components"
-        }
-      ],
-      "exemplar": null,
-      "fix_forward": [],
-      "legacy_root": "",
-      "modern_root": "src/app-ng",
-      "modules": [],
-      "verdict": "none-yet",
-      "verdict_reason": "nothing has been migrated yet; the target conventions come from this playbook's rules, not from the code"
+ "briefing": {
+  "bootstraps": [
+   "angularjs ng-app in src/index.html:19"
+  ],
+  "conformance": {
+   "conventions": [
+    {
+     "agree": [],
+     "disagree": [],
+     "id": "di-style",
+     "majority": "constructor DI"
     },
-    "findings": [
-      "warning · AngularJS DI or route tokens do not resolve to a captured registration",
-      "info · some AngularJS registration implementations could not be resolved to a local function declaration",
-      "warning · AngularJS registrations use parameter-name injection without an inline array or $inject annotation",
-      "error · static component or route template references point to files that do not exist",
-      "info · 2 vendored, minified, or generated source file(s) were excluded from the application graph",
-      "info · some static routes have no controller, component, or template registration seed; inspect their runtime composition before treating the closure as complete",
-      "warning · $compile/runtime compilation is present; static template analysis cannot fully resolve those views"
-    ],
-    "flavor": "angularjs",
-    "ledger": {
-      "bridge": {
-        "angularjs-provider-lookup (angularjs-to-angular)": 26
-      },
-      "duplicate_tokens": [],
-      "legacy_files": 123,
-      "legacy_units": 255,
-      "modern_components": 0,
-      "modern_services": 0,
-      "moved_routes": [],
-      "page_owner": "angularjs",
-      "routes_legacy": 36,
-      "routes_modern": 0,
-      "routes_with_static_closure": 35
-    },
-    "router": {
-      "bootstrap_files": [],
-      "bootstraps": [],
-      "legacy_router": "ui-router",
-      "legacy_router_file": "src/app/admin/admin.routes.js",
-      "location_sync": false,
-      "modern_routes_file": null,
-      "upgrade_module_files": [],
-      "wired": false
-    },
-    "routes": [
-      {
-        "closure_files": [
-          "src/app/dashboard/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/dashboard/dashboard.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 89,
-        "modern_units": 0,
-        "route": "dashboard",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/layout/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/layout/home.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 32,
-        "modern_units": 0,
-        "route": "home",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/asset/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/asset/asset.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 25,
-        "modern_units": 0,
-        "route": "home.assets",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/audit/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/audit/audit-log.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 25,
-        "modern_units": 0,
-        "route": "home.auditLogs",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/customer/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/customer/customer.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 26,
-        "modern_units": 0,
-        "route": "home.customers",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/asset/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/asset/asset.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 48,
-        "modern_units": 0,
-        "route": "home.customers.assets",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/dashboard/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/dashboard/dashboard.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 47,
-        "modern_units": 0,
-        "route": "home.customers.dashboards",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/dashboard/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/dashboard/dashboard.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 107,
-        "modern_units": 0,
-        "route": "home.customers.dashboards.dashboard",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/device/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/device/device.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 48,
-        "modern_units": 0,
-        "route": "home.customers.devices",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/entity-view/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/entity-view/entity-view.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 48,
-        "modern_units": 0,
-        "route": "home.customers.entityViews",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/user/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/user/user.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 47,
-        "modern_units": 0,
-        "route": "home.customers.users",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/dashboard/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/dashboard/dashboard.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 26,
-        "modern_units": 0,
-        "route": "home.dashboards",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/dashboard/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/dashboard/dashboard.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 68,
-        "modern_units": 0,
-        "route": "home.dashboards.dashboard",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/device/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/device/device.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 25,
-        "modern_units": 0,
-        "route": "home.devices",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/entity-view/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/entity-view/entity-view.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 25,
-        "modern_units": 0,
-        "route": "home.entityViews",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/jsonform/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/jsonform/jsonform.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 25,
-        "modern_units": 0,
-        "route": "home.jsonform",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/home/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/home/home-links.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 26,
-        "modern_units": 0,
-        "route": "home.links",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/profile/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/profile/profile.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 26,
-        "modern_units": 0,
-        "route": "home.profile",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/rulechain/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/rulechain/rulechain.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 30,
-        "modern_units": 0,
-        "route": "home.ruleChains",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/rulechain/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/rulechain/rulechain.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 86,
-        "modern_units": 0,
-        "route": "home.ruleChains.importRuleChain",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/rulechain/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/rulechain/rulechain.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 49,
-        "modern_units": 0,
-        "route": "home.ruleChains.ruleChain",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [],
-        "dynamic": false,
-        "file": "src/app/admin/admin.routes.js",
-        "files": 0,
-        "legacy_units": 0,
-        "line": 27,
-        "modern_units": 0,
-        "route": "home.settings",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/admin/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/admin/admin.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 36,
-        "modern_units": 0,
-        "route": "home.settings.general",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/admin/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/admin/admin.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 55,
-        "modern_units": 0,
-        "route": "home.settings.outgoing-mail",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/admin/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/admin/admin.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 74,
-        "modern_units": 0,
-        "route": "home.settings.security-settings",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/tenant/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/tenant/tenant.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 26,
-        "modern_units": 0,
-        "route": "home.tenants",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/user/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/user/user.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 26,
-        "modern_units": 0,
-        "route": "home.tenants.users",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/widget/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/widget/widget-library.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 28,
-        "modern_units": 0,
-        "route": "home.widgets-bundles",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/widget/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/widget/widget-library.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 48,
-        "modern_units": 0,
-        "route": "home.widgets-bundles.widget-types",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/widget/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/widget/widget-library.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 68,
-        "modern_units": 0,
-        "route": "home.widgets-bundles.widget-types.widget-type",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/login/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/login/login.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 27,
-        "modern_units": 0,
-        "route": "login",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/login/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/login/login.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 80,
-        "modern_units": 0,
-        "route": "login.createPassword",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/login/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/login/login.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 66,
-        "modern_units": 0,
-        "route": "login.resetExpiredPassword",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/login/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/login/login.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 53,
-        "modern_units": 0,
-        "route": "login.resetPassword",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/login/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/login/login.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 40,
-        "modern_units": 0,
-        "route": "login.resetPasswordRequest",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      },
-      {
-        "closure_files": [
-          "src/app/dashboard/index.js"
-        ],
-        "dynamic": false,
-        "file": "src/app/widget/widget-library.routes.js",
-        "files": 1,
-        "legacy_units": 1,
-        "line": 90,
-        "modern_units": 0,
-        "route": "widgetEditor",
-        "router": "ui-router",
-        "signal_kinds": {},
-        "signals": 0,
-        "truncated": false,
-        "unresolved": 0
-      }
-    ],
-    "unreached": [
-      {
-        "file": "src/app/api/admin.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/alarm.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/asset.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/attribute.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/audit-log.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/component-descriptor.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/customer.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/dashboard.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/datasource.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/device.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/entity-relation.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/entity-view.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/entity.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/event.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/login.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/queue.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/rule-chain.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/telemetry-websocket.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/tenant.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/time.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/user.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/widget.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/common/dashboard-utils.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/common/raf.provider.js",
-        "kinds": {
-          "provider": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/common/types.constant.js",
-        "kinds": {
-          "constant": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/common/utils.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/circular-progress.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/confirm-on-exit.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/contact-short.filter.js",
-        "kinds": {
-          "filter": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/contact.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/dashboard-autocomplete.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/dashboard.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/datakey-config-dialog.controller.js",
-        "kinds": {
-          "controller": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/datakey-config.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/datasource-entity.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/datasource-func.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/datasource.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/datetime-period.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/details-sidenav.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/entity-alias-select.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/expand-fullscreen.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/finish-render.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/gateway/gateway-config-select.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/gateway/gateway-config.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/gateway/gateway-form.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/js-func.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/json-content.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/json-object-edit.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/keyboard-shortcut.filter.js",
-        "kinds": {
-          "filter": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/kv-map.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/led-light.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/legend.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/md-chip-draggable.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/mousepoint-menu.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/nav-tree.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/no-animate.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/queue/index.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/related-entity-autocomplete.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/scope-element.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/side-menu.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/socialshare-panel.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/tb-event-directives.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/tb-json-to-string.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/timeinterval.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/truncate.filter.js",
-        "kinds": {
-          "filter": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/widget/action/custom-action-pretty-editor.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/widget/widget-config.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/widgets-bundle-select.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/help/help-links.constant.js",
-        "kinds": {
-          "constant": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/help/help.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/layout/user-menu.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/locale/translate-handler.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/services/clipboard.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/services/menu.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/alarms-table-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/date-range-navigator/date-range-navigator.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/entities-hierarchy-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/entities-table-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/extensions-table-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/multiple-input-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/rpc/knob.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/rpc/led-indicator.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/rpc/round-switch.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/rpc/switch.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/timeseries-table-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/web-camera-input-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/dashboard-select.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/components/legend-config.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/components/material-icon-select.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/components/menu-link.directive.js",
-        "kinds": {
-          "directive": 1,
-          "filter": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/components/widget/action/manage-widget-actions.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/components/widget/widget.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/services/item-buffer.service.js",
-        "kinds": {
-          "factory": 2
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/services/toast.js",
-        "kinds": {
-          "controller": 1,
-          "factory": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/widget/lib/tripAnimation/trip-animation-widget.js",
-        "kinds": {
-          "directive": 1,
-          "filter": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/app.js",
-        "kinds": {
-          "config": 1,
-          "factory": 1,
-          "run": 1
-        },
-        "units": 3
-      },
-      {
-        "file": "src/app/components/json-form.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1,
-          "value": 1
-        },
-        "units": 3
-      },
-      {
-        "file": "src/app/components/timewindow.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1,
-          "filter": 1
-        },
-        "units": 3
-      },
-      {
-        "file": "src/app/dashboard/layouts/index.js",
-        "kinds": {
-          "controller": 2,
-          "directive": 1
-        },
-        "units": 3
-      },
-      {
-        "file": "src/app/alarm/index.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 3
-        },
-        "units": 4
-      },
-      {
-        "file": "src/app/common/thirdparty-fix.js",
-        "kinds": {
-          "factory": 2,
-          "provider": 2
-        },
-        "units": 4
-      },
-      {
-        "file": "src/app/event/index.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 3
-        },
-        "units": 4
-      },
-      {
-        "file": "src/app/import-export/index.js",
-        "kinds": {
-          "controller": 2,
-          "directive": 1,
-          "factory": 1
-        },
-        "units": 4
-      },
-      {
-        "file": "src/app/components/grid.directive.js",
-        "kinds": {
-          "controller": 2,
-          "directive": 2,
-          "filter": 1
-        },
-        "units": 5
-      },
-      {
-        "file": "src/app/dashboard/states/index.js",
-        "kinds": {
-          "controller": 3,
-          "directive": 1,
-          "factory": 1
-        },
-        "units": 5
-      },
-      {
-        "file": "src/app/extension/index.js",
-        "kinds": {
-          "directive": 6
-        },
-        "units": 6
-      },
-      {
-        "file": "src/app/entity/index.js",
-        "kinds": {
-          "controller": 5,
-          "directive": 15
-        },
-        "units": 20
-      }
-    ],
-    "versions": [
-      "angularjs 1.5.8 (package-lock.json)",
-      "angularjs 1.5.8, declared only (package.json#dependencies)"
-    ]
+    {
+     "agree": [],
+     "disagree": [],
+     "id": "standalone",
+     "majority": "standalone components"
+    }
+   ],
+   "exemplar": null,
+   "fix_forward": [],
+   "legacy_root": "",
+   "modern_root": "src/app",
+   "modules": [],
+   "verdict": "none-yet",
+   "verdict_reason": "nothing has been migrated yet; the target conventions come from this playbook's rules, not from the code"
   },
-  "plan": {
-    "batch_size": 1,
-    "dynamic": [],
-    "exemplar": null,
-    "fix_forward_first": true,
+  "findings": [
+   "warning \u00b7 AngularJS DI or route tokens do not resolve to a captured registration",
+   "info \u00b7 some AngularJS registration implementations could not be resolved to a local function declaration",
+   "warning \u00b7 AngularJS registrations use parameter-name injection without an inline array or $inject annotation",
+   "error \u00b7 static component or route template references point to files that do not exist",
+   "info \u00b7 2 vendored, minified, or generated source file(s) were excluded from the application graph",
+   "info \u00b7 some static routes have no controller, component, or template registration seed; inspect their runtime composition before treating the closure as complete",
+   "warning \u00b7 $compile/runtime compilation is present; static template analysis cannot fully resolve those views"
+  ],
+  "flavor": "angularjs",
+  "ledger": {
+   "bridge": {
+    "angularjs-provider-lookup (angularjs-to-angular)": 26
+   },
+   "duplicate_tokens": [],
+   "legacy_files": 123,
+   "legacy_units": 255,
+   "modern_components": 0,
+   "modern_services": 0,
+   "moved_routes": [],
+   "page_owner": "angularjs",
+   "routes_legacy": 36,
+   "routes_modern": 0,
+   "routes_with_static_closure": 35
+  },
+  "router": {
+   "bootstrap_files": [],
+   "bootstraps": [],
+   "legacy_router": "ui-router",
+   "legacy_router_file": "src/app/admin/admin.routes.js",
+   "location_sync": false,
+   "modern_routes_file": null,
+   "upgrade_module_files": [],
+   "wired": false
+  },
+  "routes": [
+   {
+    "closure_files": [
+     "src/app/dashboard/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/dashboard/dashboard.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 89,
+    "modern_units": 0,
+    "route": "dashboard",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/layout/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/layout/home.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 32,
+    "modern_units": 0,
+    "route": "home",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/asset/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/asset/asset.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 25,
+    "modern_units": 0,
+    "route": "home.assets",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/audit/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/audit/audit-log.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 25,
+    "modern_units": 0,
+    "route": "home.auditLogs",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/customer/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/customer/customer.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 26,
+    "modern_units": 0,
+    "route": "home.customers",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/asset/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/asset/asset.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 48,
+    "modern_units": 0,
+    "route": "home.customers.assets",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/dashboard/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/dashboard/dashboard.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 47,
+    "modern_units": 0,
+    "route": "home.customers.dashboards",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/dashboard/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/dashboard/dashboard.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 107,
+    "modern_units": 0,
+    "route": "home.customers.dashboards.dashboard",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/device/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/device/device.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 48,
+    "modern_units": 0,
+    "route": "home.customers.devices",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/entity-view/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/entity-view/entity-view.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 48,
+    "modern_units": 0,
+    "route": "home.customers.entityViews",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/user/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/user/user.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 47,
+    "modern_units": 0,
+    "route": "home.customers.users",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/dashboard/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/dashboard/dashboard.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 26,
+    "modern_units": 0,
+    "route": "home.dashboards",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/dashboard/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/dashboard/dashboard.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 68,
+    "modern_units": 0,
+    "route": "home.dashboards.dashboard",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/device/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/device/device.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 25,
+    "modern_units": 0,
+    "route": "home.devices",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/entity-view/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/entity-view/entity-view.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 25,
+    "modern_units": 0,
+    "route": "home.entityViews",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/jsonform/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/jsonform/jsonform.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 25,
+    "modern_units": 0,
+    "route": "home.jsonform",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/home/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/home/home-links.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 26,
+    "modern_units": 0,
+    "route": "home.links",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/profile/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/profile/profile.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 26,
+    "modern_units": 0,
+    "route": "home.profile",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/rulechain/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/rulechain/rulechain.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 30,
+    "modern_units": 0,
+    "route": "home.ruleChains",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/rulechain/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/rulechain/rulechain.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 86,
+    "modern_units": 0,
+    "route": "home.ruleChains.importRuleChain",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/rulechain/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/rulechain/rulechain.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 49,
+    "modern_units": 0,
+    "route": "home.ruleChains.ruleChain",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [],
+    "dynamic": false,
+    "file": "src/app/admin/admin.routes.js",
+    "files": 0,
+    "legacy_units": 0,
+    "line": 27,
+    "modern_units": 0,
+    "route": "home.settings",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/admin/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/admin/admin.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 36,
+    "modern_units": 0,
+    "route": "home.settings.general",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/admin/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/admin/admin.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 55,
+    "modern_units": 0,
+    "route": "home.settings.outgoing-mail",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/admin/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/admin/admin.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 74,
+    "modern_units": 0,
+    "route": "home.settings.security-settings",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/tenant/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/tenant/tenant.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 26,
+    "modern_units": 0,
+    "route": "home.tenants",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/user/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/user/user.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 26,
+    "modern_units": 0,
+    "route": "home.tenants.users",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/widget/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/widget/widget-library.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 28,
+    "modern_units": 0,
+    "route": "home.widgets-bundles",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/widget/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/widget/widget-library.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 48,
+    "modern_units": 0,
+    "route": "home.widgets-bundles.widget-types",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/widget/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/widget/widget-library.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 68,
+    "modern_units": 0,
+    "route": "home.widgets-bundles.widget-types.widget-type",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/login/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/login/login.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 27,
+    "modern_units": 0,
+    "route": "login",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/login/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/login/login.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 80,
+    "modern_units": 0,
+    "route": "login.createPassword",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/login/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/login/login.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 66,
+    "modern_units": 0,
+    "route": "login.resetExpiredPassword",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/login/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/login/login.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 53,
+    "modern_units": 0,
+    "route": "login.resetPassword",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/login/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/login/login.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 40,
+    "modern_units": 0,
+    "route": "login.resetPasswordRequest",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   },
+   {
+    "closure_files": [
+     "src/app/dashboard/index.js"
+    ],
+    "dynamic": false,
+    "file": "src/app/widget/widget-library.routes.js",
+    "files": 1,
+    "legacy_units": 1,
+    "line": 90,
+    "modern_units": 0,
+    "route": "widgetEditor",
+    "router": "ui-router",
+    "signal_kinds": {},
+    "signals": 0,
+    "truncated": false,
+    "unresolved": 0
+   }
+  ],
+  "unreached": [
+   {
+    "file": "src/app/api/admin.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/alarm.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/asset.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/attribute.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/audit-log.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/component-descriptor.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/customer.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/dashboard.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/datasource.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/device.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/entity-relation.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/entity-view.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/entity.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/event.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/login.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/queue.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/rule-chain.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/telemetry-websocket.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/tenant.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/time.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/user.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/widget.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/common/dashboard-utils.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/common/raf.provider.js",
+    "kinds": {
+     "provider": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/common/types.constant.js",
+    "kinds": {
+     "constant": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/common/utils.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/circular-progress.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/confirm-on-exit.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/contact-short.filter.js",
+    "kinds": {
+     "filter": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/contact.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/dashboard-autocomplete.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/dashboard.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/datakey-config-dialog.controller.js",
+    "kinds": {
+     "controller": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/datakey-config.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/datasource-entity.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/datasource-func.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/datasource.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/datetime-period.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/details-sidenav.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/entity-alias-select.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/expand-fullscreen.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/finish-render.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/gateway/gateway-config-select.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/gateway/gateway-config.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/gateway/gateway-form.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/js-func.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/json-content.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/json-object-edit.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/keyboard-shortcut.filter.js",
+    "kinds": {
+     "filter": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/kv-map.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/led-light.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/legend.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/md-chip-draggable.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/mousepoint-menu.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/nav-tree.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/no-animate.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/queue/index.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/related-entity-autocomplete.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/scope-element.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/side-menu.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/socialshare-panel.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/tb-event-directives.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/tb-json-to-string.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/timeinterval.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/truncate.filter.js",
+    "kinds": {
+     "filter": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/widget/action/custom-action-pretty-editor.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/widget/widget-config.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/widgets-bundle-select.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/help/help-links.constant.js",
+    "kinds": {
+     "constant": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/help/help.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/layout/user-menu.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/locale/translate-handler.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/services/clipboard.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/services/menu.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/alarms-table-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/date-range-navigator/date-range-navigator.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/entities-hierarchy-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/entities-table-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/extensions-table-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/multiple-input-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/rpc/knob.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/rpc/led-indicator.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/rpc/round-switch.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/rpc/switch.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/timeseries-table-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/web-camera-input-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/dashboard-select.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/components/legend-config.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/components/material-icon-select.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/components/menu-link.directive.js",
+    "kinds": {
+     "directive": 1,
+     "filter": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/components/widget/action/manage-widget-actions.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/components/widget/widget.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/services/item-buffer.service.js",
+    "kinds": {
+     "factory": 2
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/services/toast.js",
+    "kinds": {
+     "controller": 1,
+     "factory": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/widget/lib/tripAnimation/trip-animation-widget.js",
+    "kinds": {
+     "directive": 1,
+     "filter": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/app.js",
+    "kinds": {
+     "config": 1,
+     "factory": 1,
+     "run": 1
+    },
+    "units": 3
+   },
+   {
+    "file": "src/app/components/json-form.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1,
+     "value": 1
+    },
+    "units": 3
+   },
+   {
+    "file": "src/app/components/timewindow.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1,
+     "filter": 1
+    },
+    "units": 3
+   },
+   {
+    "file": "src/app/dashboard/layouts/index.js",
+    "kinds": {
+     "controller": 2,
+     "directive": 1
+    },
+    "units": 3
+   },
+   {
+    "file": "src/app/alarm/index.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 3
+    },
+    "units": 4
+   },
+   {
+    "file": "src/app/common/thirdparty-fix.js",
+    "kinds": {
+     "factory": 2,
+     "provider": 2
+    },
+    "units": 4
+   },
+   {
+    "file": "src/app/event/index.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 3
+    },
+    "units": 4
+   },
+   {
+    "file": "src/app/import-export/index.js",
+    "kinds": {
+     "controller": 2,
+     "directive": 1,
+     "factory": 1
+    },
+    "units": 4
+   },
+   {
+    "file": "src/app/components/grid.directive.js",
+    "kinds": {
+     "controller": 2,
+     "directive": 2,
+     "filter": 1
+    },
+    "units": 5
+   },
+   {
+    "file": "src/app/dashboard/states/index.js",
+    "kinds": {
+     "controller": 3,
+     "directive": 1,
+     "factory": 1
+    },
+    "units": 5
+   },
+   {
+    "file": "src/app/extension/index.js",
+    "kinds": {
+     "directive": 6
+    },
+    "units": 6
+   },
+   {
+    "file": "src/app/entity/index.js",
+    "kinds": {
+     "controller": 5,
+     "directive": 15
+    },
+    "units": 20
+   }
+  ],
+  "versions": [
+   "angularjs 1.5.8 (package-lock.json)",
+   "angularjs 1.5.8, declared only (package.json#dependencies)"
+  ]
+ },
+ "plan": {
+  "batch_size": 1,
+  "dynamic": [],
+  "exemplar": null,
+  "fix_forward_first": true,
+  "gate": "build-and-suite",
+  "handover": {
+   "bootstrap_files": [],
+   "bootstraps": [],
+   "legacy_router": "ui-router",
+   "legacy_router_file": "src/app/admin/admin.routes.js",
+   "location_sync": false,
+   "modern_routes_file": null,
+   "root_module_files": [],
+   "upgrade_module_files": [],
+   "why": "the modern half is to own the URL, and no Angular Router is wired under the modern root; a route moved before this has nowhere to land"
+  },
+  "no_static_closure": [
+   "home.settings"
+  ],
+  "router_ownership": "modern-owns",
+  "tasks": [
+   {
+    "file": "src/app/dashboard/dashboard.routes.js",
+    "files": [
+     "src/app/dashboard/index.js"
+    ],
     "gate": "build-and-suite",
-    "handover": {
-      "bootstrap_files": [],
-      "bootstraps": [],
-      "legacy_router": "ui-router",
-      "legacy_router_file": "src/app/admin/admin.routes.js",
-      "location_sync": false,
-      "modern_routes_file": null,
-      "root_module_files": [],
-      "upgrade_module_files": [],
-      "why": "the modern half is to own the URL, and no Angular Router is wired under the modern root; a route moved before this has nowhere to land"
+    "legacy_units": 1,
+    "line": 89,
+    "modern_units": 0,
+    "note": "",
+    "order": 1,
+    "route": "dashboard",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/layout/home.routes.js",
+    "files": [
+     "src/app/layout/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 32,
+    "modern_units": 0,
+    "note": "",
+    "order": 2,
+    "route": "home",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/asset/asset.routes.js",
+    "files": [
+     "src/app/asset/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 25,
+    "modern_units": 0,
+    "note": "",
+    "order": 3,
+    "route": "home.assets",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/audit/audit-log.routes.js",
+    "files": [
+     "src/app/audit/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 25,
+    "modern_units": 0,
+    "note": "",
+    "order": 4,
+    "route": "home.auditLogs",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/customer/customer.routes.js",
+    "files": [
+     "src/app/customer/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 26,
+    "modern_units": 0,
+    "note": "",
+    "order": 5,
+    "route": "home.customers",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/asset/asset.routes.js",
+    "files": [
+     "src/app/asset/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 48,
+    "modern_units": 0,
+    "note": "",
+    "order": 6,
+    "route": "home.customers.assets",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/dashboard/dashboard.routes.js",
+    "files": [
+     "src/app/dashboard/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 47,
+    "modern_units": 0,
+    "note": "",
+    "order": 7,
+    "route": "home.customers.dashboards",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/dashboard/dashboard.routes.js",
+    "files": [
+     "src/app/dashboard/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 107,
+    "modern_units": 0,
+    "note": "",
+    "order": 8,
+    "route": "home.customers.dashboards.dashboard",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/device/device.routes.js",
+    "files": [
+     "src/app/device/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 48,
+    "modern_units": 0,
+    "note": "",
+    "order": 9,
+    "route": "home.customers.devices",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/entity-view/entity-view.routes.js",
+    "files": [
+     "src/app/entity-view/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 48,
+    "modern_units": 0,
+    "note": "",
+    "order": 10,
+    "route": "home.customers.entityViews",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/user/user.routes.js",
+    "files": [
+     "src/app/user/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 47,
+    "modern_units": 0,
+    "note": "",
+    "order": 11,
+    "route": "home.customers.users",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/dashboard/dashboard.routes.js",
+    "files": [
+     "src/app/dashboard/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 26,
+    "modern_units": 0,
+    "note": "",
+    "order": 12,
+    "route": "home.dashboards",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/dashboard/dashboard.routes.js",
+    "files": [
+     "src/app/dashboard/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 68,
+    "modern_units": 0,
+    "note": "",
+    "order": 13,
+    "route": "home.dashboards.dashboard",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/device/device.routes.js",
+    "files": [
+     "src/app/device/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 25,
+    "modern_units": 0,
+    "note": "",
+    "order": 14,
+    "route": "home.devices",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/entity-view/entity-view.routes.js",
+    "files": [
+     "src/app/entity-view/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 25,
+    "modern_units": 0,
+    "note": "",
+    "order": 15,
+    "route": "home.entityViews",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/jsonform/jsonform.routes.js",
+    "files": [
+     "src/app/jsonform/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 25,
+    "modern_units": 0,
+    "note": "",
+    "order": 16,
+    "route": "home.jsonform",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/home/home-links.routes.js",
+    "files": [
+     "src/app/home/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 26,
+    "modern_units": 0,
+    "note": "",
+    "order": 17,
+    "route": "home.links",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/profile/profile.routes.js",
+    "files": [
+     "src/app/profile/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 26,
+    "modern_units": 0,
+    "note": "",
+    "order": 18,
+    "route": "home.profile",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/rulechain/rulechain.routes.js",
+    "files": [
+     "src/app/rulechain/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 30,
+    "modern_units": 0,
+    "note": "",
+    "order": 19,
+    "route": "home.ruleChains",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/rulechain/rulechain.routes.js",
+    "files": [
+     "src/app/rulechain/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 86,
+    "modern_units": 0,
+    "note": "",
+    "order": 20,
+    "route": "home.ruleChains.importRuleChain",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/rulechain/rulechain.routes.js",
+    "files": [
+     "src/app/rulechain/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 49,
+    "modern_units": 0,
+    "note": "",
+    "order": 21,
+    "route": "home.ruleChains.ruleChain",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/admin/admin.routes.js",
+    "files": [
+     "src/app/admin/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 36,
+    "modern_units": 0,
+    "note": "",
+    "order": 22,
+    "route": "home.settings.general",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/admin/admin.routes.js",
+    "files": [
+     "src/app/admin/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 55,
+    "modern_units": 0,
+    "note": "",
+    "order": 23,
+    "route": "home.settings.outgoing-mail",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/admin/admin.routes.js",
+    "files": [
+     "src/app/admin/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 74,
+    "modern_units": 0,
+    "note": "",
+    "order": 24,
+    "route": "home.settings.security-settings",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/tenant/tenant.routes.js",
+    "files": [
+     "src/app/tenant/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 26,
+    "modern_units": 0,
+    "note": "",
+    "order": 25,
+    "route": "home.tenants",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/user/user.routes.js",
+    "files": [
+     "src/app/user/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 26,
+    "modern_units": 0,
+    "note": "",
+    "order": 26,
+    "route": "home.tenants.users",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/widget/widget-library.routes.js",
+    "files": [
+     "src/app/widget/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 28,
+    "modern_units": 0,
+    "note": "",
+    "order": 27,
+    "route": "home.widgets-bundles",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/widget/widget-library.routes.js",
+    "files": [
+     "src/app/widget/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 48,
+    "modern_units": 0,
+    "note": "",
+    "order": 28,
+    "route": "home.widgets-bundles.widget-types",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/widget/widget-library.routes.js",
+    "files": [
+     "src/app/widget/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 68,
+    "modern_units": 0,
+    "note": "",
+    "order": 29,
+    "route": "home.widgets-bundles.widget-types.widget-type",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/login/login.routes.js",
+    "files": [
+     "src/app/login/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 27,
+    "modern_units": 0,
+    "note": "",
+    "order": 30,
+    "route": "login",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/login/login.routes.js",
+    "files": [
+     "src/app/login/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 80,
+    "modern_units": 0,
+    "note": "",
+    "order": 31,
+    "route": "login.createPassword",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/login/login.routes.js",
+    "files": [
+     "src/app/login/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 66,
+    "modern_units": 0,
+    "note": "",
+    "order": 32,
+    "route": "login.resetExpiredPassword",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/login/login.routes.js",
+    "files": [
+     "src/app/login/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 53,
+    "modern_units": 0,
+    "note": "",
+    "order": 33,
+    "route": "login.resetPassword",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/login/login.routes.js",
+    "files": [
+     "src/app/login/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 40,
+    "modern_units": 0,
+    "note": "",
+    "order": 34,
+    "route": "login.resetPasswordRequest",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   },
+   {
+    "file": "src/app/widget/widget-library.routes.js",
+    "files": [
+     "src/app/dashboard/index.js"
+    ],
+    "gate": "build-and-suite",
+    "legacy_units": 1,
+    "line": 90,
+    "modern_units": 0,
+    "note": "",
+    "order": 35,
+    "route": "widgetEditor",
+    "router": "ui-router",
+    "signals": 0,
+    "unresolved": 0
+   }
+  ],
+  "unreached": [
+   {
+    "file": "src/app/api/admin.service.js",
+    "kinds": {
+     "factory": 1
     },
-    "no_static_closure": [
-      "home.settings"
-    ],
-    "router_ownership": "modern-owns",
-    "tasks": [
-      {
-        "file": "src/app/dashboard/dashboard.routes.js",
-        "files": [
-          "src/app/dashboard/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 89,
-        "modern_units": 0,
-        "note": "",
-        "order": 1,
-        "route": "dashboard",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/layout/home.routes.js",
-        "files": [
-          "src/app/layout/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 32,
-        "modern_units": 0,
-        "note": "",
-        "order": 2,
-        "route": "home",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/asset/asset.routes.js",
-        "files": [
-          "src/app/asset/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 25,
-        "modern_units": 0,
-        "note": "",
-        "order": 3,
-        "route": "home.assets",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/audit/audit-log.routes.js",
-        "files": [
-          "src/app/audit/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 25,
-        "modern_units": 0,
-        "note": "",
-        "order": 4,
-        "route": "home.auditLogs",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/customer/customer.routes.js",
-        "files": [
-          "src/app/customer/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 26,
-        "modern_units": 0,
-        "note": "",
-        "order": 5,
-        "route": "home.customers",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/asset/asset.routes.js",
-        "files": [
-          "src/app/asset/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 48,
-        "modern_units": 0,
-        "note": "",
-        "order": 6,
-        "route": "home.customers.assets",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/dashboard/dashboard.routes.js",
-        "files": [
-          "src/app/dashboard/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 47,
-        "modern_units": 0,
-        "note": "",
-        "order": 7,
-        "route": "home.customers.dashboards",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/dashboard/dashboard.routes.js",
-        "files": [
-          "src/app/dashboard/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 107,
-        "modern_units": 0,
-        "note": "",
-        "order": 8,
-        "route": "home.customers.dashboards.dashboard",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/device/device.routes.js",
-        "files": [
-          "src/app/device/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 48,
-        "modern_units": 0,
-        "note": "",
-        "order": 9,
-        "route": "home.customers.devices",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/entity-view/entity-view.routes.js",
-        "files": [
-          "src/app/entity-view/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 48,
-        "modern_units": 0,
-        "note": "",
-        "order": 10,
-        "route": "home.customers.entityViews",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/user/user.routes.js",
-        "files": [
-          "src/app/user/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 47,
-        "modern_units": 0,
-        "note": "",
-        "order": 11,
-        "route": "home.customers.users",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/dashboard/dashboard.routes.js",
-        "files": [
-          "src/app/dashboard/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 26,
-        "modern_units": 0,
-        "note": "",
-        "order": 12,
-        "route": "home.dashboards",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/dashboard/dashboard.routes.js",
-        "files": [
-          "src/app/dashboard/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 68,
-        "modern_units": 0,
-        "note": "",
-        "order": 13,
-        "route": "home.dashboards.dashboard",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/device/device.routes.js",
-        "files": [
-          "src/app/device/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 25,
-        "modern_units": 0,
-        "note": "",
-        "order": 14,
-        "route": "home.devices",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/entity-view/entity-view.routes.js",
-        "files": [
-          "src/app/entity-view/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 25,
-        "modern_units": 0,
-        "note": "",
-        "order": 15,
-        "route": "home.entityViews",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/jsonform/jsonform.routes.js",
-        "files": [
-          "src/app/jsonform/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 25,
-        "modern_units": 0,
-        "note": "",
-        "order": 16,
-        "route": "home.jsonform",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/home/home-links.routes.js",
-        "files": [
-          "src/app/home/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 26,
-        "modern_units": 0,
-        "note": "",
-        "order": 17,
-        "route": "home.links",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/profile/profile.routes.js",
-        "files": [
-          "src/app/profile/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 26,
-        "modern_units": 0,
-        "note": "",
-        "order": 18,
-        "route": "home.profile",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/rulechain/rulechain.routes.js",
-        "files": [
-          "src/app/rulechain/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 30,
-        "modern_units": 0,
-        "note": "",
-        "order": 19,
-        "route": "home.ruleChains",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/rulechain/rulechain.routes.js",
-        "files": [
-          "src/app/rulechain/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 86,
-        "modern_units": 0,
-        "note": "",
-        "order": 20,
-        "route": "home.ruleChains.importRuleChain",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/rulechain/rulechain.routes.js",
-        "files": [
-          "src/app/rulechain/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 49,
-        "modern_units": 0,
-        "note": "",
-        "order": 21,
-        "route": "home.ruleChains.ruleChain",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/admin/admin.routes.js",
-        "files": [
-          "src/app/admin/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 36,
-        "modern_units": 0,
-        "note": "",
-        "order": 22,
-        "route": "home.settings.general",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/admin/admin.routes.js",
-        "files": [
-          "src/app/admin/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 55,
-        "modern_units": 0,
-        "note": "",
-        "order": 23,
-        "route": "home.settings.outgoing-mail",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/admin/admin.routes.js",
-        "files": [
-          "src/app/admin/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 74,
-        "modern_units": 0,
-        "note": "",
-        "order": 24,
-        "route": "home.settings.security-settings",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/tenant/tenant.routes.js",
-        "files": [
-          "src/app/tenant/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 26,
-        "modern_units": 0,
-        "note": "",
-        "order": 25,
-        "route": "home.tenants",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/user/user.routes.js",
-        "files": [
-          "src/app/user/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 26,
-        "modern_units": 0,
-        "note": "",
-        "order": 26,
-        "route": "home.tenants.users",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/widget/widget-library.routes.js",
-        "files": [
-          "src/app/widget/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 28,
-        "modern_units": 0,
-        "note": "",
-        "order": 27,
-        "route": "home.widgets-bundles",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/widget/widget-library.routes.js",
-        "files": [
-          "src/app/widget/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 48,
-        "modern_units": 0,
-        "note": "",
-        "order": 28,
-        "route": "home.widgets-bundles.widget-types",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/widget/widget-library.routes.js",
-        "files": [
-          "src/app/widget/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 68,
-        "modern_units": 0,
-        "note": "",
-        "order": 29,
-        "route": "home.widgets-bundles.widget-types.widget-type",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/login/login.routes.js",
-        "files": [
-          "src/app/login/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 27,
-        "modern_units": 0,
-        "note": "",
-        "order": 30,
-        "route": "login",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/login/login.routes.js",
-        "files": [
-          "src/app/login/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 80,
-        "modern_units": 0,
-        "note": "",
-        "order": 31,
-        "route": "login.createPassword",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/login/login.routes.js",
-        "files": [
-          "src/app/login/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 66,
-        "modern_units": 0,
-        "note": "",
-        "order": 32,
-        "route": "login.resetExpiredPassword",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/login/login.routes.js",
-        "files": [
-          "src/app/login/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 53,
-        "modern_units": 0,
-        "note": "",
-        "order": 33,
-        "route": "login.resetPassword",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/login/login.routes.js",
-        "files": [
-          "src/app/login/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 40,
-        "modern_units": 0,
-        "note": "",
-        "order": 34,
-        "route": "login.resetPasswordRequest",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      },
-      {
-        "file": "src/app/widget/widget-library.routes.js",
-        "files": [
-          "src/app/dashboard/index.js"
-        ],
-        "gate": "build-and-suite",
-        "legacy_units": 1,
-        "line": 90,
-        "modern_units": 0,
-        "note": "",
-        "order": 35,
-        "route": "widgetEditor",
-        "router": "ui-router",
-        "signals": 0,
-        "unresolved": 0
-      }
-    ],
-    "unreached": [
-      {
-        "file": "src/app/api/admin.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/alarm.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/asset.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/attribute.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/audit-log.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/component-descriptor.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/customer.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/dashboard.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/datasource.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/device.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/entity-relation.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/entity-view.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/entity.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/event.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/login.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/queue.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/rule-chain.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/telemetry-websocket.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/tenant.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/time.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/user.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/api/widget.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/common/dashboard-utils.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/common/raf.provider.js",
-        "kinds": {
-          "provider": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/common/types.constant.js",
-        "kinds": {
-          "constant": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/common/utils.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/circular-progress.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/confirm-on-exit.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/contact-short.filter.js",
-        "kinds": {
-          "filter": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/contact.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/dashboard-autocomplete.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/dashboard.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/datakey-config-dialog.controller.js",
-        "kinds": {
-          "controller": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/datakey-config.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/datasource-entity.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/datasource-func.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/datasource.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/datetime-period.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/details-sidenav.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/entity-alias-select.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/expand-fullscreen.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/finish-render.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/gateway/gateway-config-select.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/gateway/gateway-config.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/gateway/gateway-form.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/js-func.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/json-content.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/json-object-edit.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/keyboard-shortcut.filter.js",
-        "kinds": {
-          "filter": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/kv-map.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/led-light.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/legend.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/md-chip-draggable.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/mousepoint-menu.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/nav-tree.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/no-animate.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/queue/index.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/related-entity-autocomplete.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/scope-element.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/side-menu.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/socialshare-panel.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/tb-event-directives.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/tb-json-to-string.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/timeinterval.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/truncate.filter.js",
-        "kinds": {
-          "filter": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/widget/action/custom-action-pretty-editor.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/widget/widget-config.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/widgets-bundle-select.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/help/help-links.constant.js",
-        "kinds": {
-          "constant": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/help/help.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/layout/user-menu.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/locale/translate-handler.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/services/clipboard.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/services/menu.service.js",
-        "kinds": {
-          "factory": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/alarms-table-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/date-range-navigator/date-range-navigator.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/entities-hierarchy-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/entities-table-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/extensions-table-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/multiple-input-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/rpc/knob.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/rpc/led-indicator.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/rpc/round-switch.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/rpc/switch.directive.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/timeseries-table-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/widget/lib/web-camera-input-widget.js",
-        "kinds": {
-          "directive": 1
-        },
-        "units": 1
-      },
-      {
-        "file": "src/app/components/dashboard-select.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/components/legend-config.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/components/material-icon-select.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/components/menu-link.directive.js",
-        "kinds": {
-          "directive": 1,
-          "filter": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/components/widget/action/manage-widget-actions.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/components/widget/widget.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/services/item-buffer.service.js",
-        "kinds": {
-          "factory": 2
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/services/toast.js",
-        "kinds": {
-          "controller": 1,
-          "factory": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/widget/lib/tripAnimation/trip-animation-widget.js",
-        "kinds": {
-          "directive": 1,
-          "filter": 1
-        },
-        "units": 2
-      },
-      {
-        "file": "src/app/app.js",
-        "kinds": {
-          "config": 1,
-          "factory": 1,
-          "run": 1
-        },
-        "units": 3
-      },
-      {
-        "file": "src/app/components/json-form.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1,
-          "value": 1
-        },
-        "units": 3
-      },
-      {
-        "file": "src/app/components/timewindow.directive.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 1,
-          "filter": 1
-        },
-        "units": 3
-      },
-      {
-        "file": "src/app/dashboard/layouts/index.js",
-        "kinds": {
-          "controller": 2,
-          "directive": 1
-        },
-        "units": 3
-      },
-      {
-        "file": "src/app/alarm/index.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 3
-        },
-        "units": 4
-      },
-      {
-        "file": "src/app/common/thirdparty-fix.js",
-        "kinds": {
-          "factory": 2,
-          "provider": 2
-        },
-        "units": 4
-      },
-      {
-        "file": "src/app/event/index.js",
-        "kinds": {
-          "controller": 1,
-          "directive": 3
-        },
-        "units": 4
-      },
-      {
-        "file": "src/app/import-export/index.js",
-        "kinds": {
-          "controller": 2,
-          "directive": 1,
-          "factory": 1
-        },
-        "units": 4
-      },
-      {
-        "file": "src/app/components/grid.directive.js",
-        "kinds": {
-          "controller": 2,
-          "directive": 2,
-          "filter": 1
-        },
-        "units": 5
-      },
-      {
-        "file": "src/app/dashboard/states/index.js",
-        "kinds": {
-          "controller": 3,
-          "directive": 1,
-          "factory": 1
-        },
-        "units": 5
-      },
-      {
-        "file": "src/app/extension/index.js",
-        "kinds": {
-          "directive": 6
-        },
-        "units": 6
-      },
-      {
-        "file": "src/app/entity/index.js",
-        "kinds": {
-          "controller": 5,
-          "directive": 15
-        },
-        "units": 20
-      }
-    ]
-  },
-  "specVersion": 1
+    "units": 1
+   },
+   {
+    "file": "src/app/api/alarm.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/asset.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/attribute.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/audit-log.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/component-descriptor.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/customer.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/dashboard.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/datasource.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/device.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/entity-relation.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/entity-view.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/entity.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/event.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/login.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/queue.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/rule-chain.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/telemetry-websocket.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/tenant.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/time.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/user.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/api/widget.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/common/dashboard-utils.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/common/raf.provider.js",
+    "kinds": {
+     "provider": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/common/types.constant.js",
+    "kinds": {
+     "constant": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/common/utils.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/circular-progress.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/confirm-on-exit.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/contact-short.filter.js",
+    "kinds": {
+     "filter": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/contact.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/dashboard-autocomplete.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/dashboard.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/datakey-config-dialog.controller.js",
+    "kinds": {
+     "controller": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/datakey-config.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/datasource-entity.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/datasource-func.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/datasource.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/datetime-period.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/details-sidenav.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/entity-alias-select.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/expand-fullscreen.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/finish-render.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/gateway/gateway-config-select.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/gateway/gateway-config.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/gateway/gateway-form.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/js-func.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/json-content.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/json-object-edit.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/keyboard-shortcut.filter.js",
+    "kinds": {
+     "filter": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/kv-map.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/led-light.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/legend.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/md-chip-draggable.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/mousepoint-menu.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/nav-tree.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/no-animate.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/queue/index.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/related-entity-autocomplete.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/scope-element.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/side-menu.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/socialshare-panel.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/tb-event-directives.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/tb-json-to-string.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/timeinterval.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/truncate.filter.js",
+    "kinds": {
+     "filter": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/widget/action/custom-action-pretty-editor.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/widget/widget-config.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/widgets-bundle-select.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/help/help-links.constant.js",
+    "kinds": {
+     "constant": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/help/help.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/layout/user-menu.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/locale/translate-handler.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/services/clipboard.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/services/menu.service.js",
+    "kinds": {
+     "factory": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/alarms-table-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/date-range-navigator/date-range-navigator.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/entities-hierarchy-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/entities-table-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/extensions-table-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/multiple-input-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/rpc/knob.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/rpc/led-indicator.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/rpc/round-switch.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/rpc/switch.directive.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/timeseries-table-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/widget/lib/web-camera-input-widget.js",
+    "kinds": {
+     "directive": 1
+    },
+    "units": 1
+   },
+   {
+    "file": "src/app/components/dashboard-select.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/components/legend-config.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/components/material-icon-select.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/components/menu-link.directive.js",
+    "kinds": {
+     "directive": 1,
+     "filter": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/components/widget/action/manage-widget-actions.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/components/widget/widget.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/services/item-buffer.service.js",
+    "kinds": {
+     "factory": 2
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/services/toast.js",
+    "kinds": {
+     "controller": 1,
+     "factory": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/widget/lib/tripAnimation/trip-animation-widget.js",
+    "kinds": {
+     "directive": 1,
+     "filter": 1
+    },
+    "units": 2
+   },
+   {
+    "file": "src/app/app.js",
+    "kinds": {
+     "config": 1,
+     "factory": 1,
+     "run": 1
+    },
+    "units": 3
+   },
+   {
+    "file": "src/app/components/json-form.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1,
+     "value": 1
+    },
+    "units": 3
+   },
+   {
+    "file": "src/app/components/timewindow.directive.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 1,
+     "filter": 1
+    },
+    "units": 3
+   },
+   {
+    "file": "src/app/dashboard/layouts/index.js",
+    "kinds": {
+     "controller": 2,
+     "directive": 1
+    },
+    "units": 3
+   },
+   {
+    "file": "src/app/alarm/index.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 3
+    },
+    "units": 4
+   },
+   {
+    "file": "src/app/common/thirdparty-fix.js",
+    "kinds": {
+     "factory": 2,
+     "provider": 2
+    },
+    "units": 4
+   },
+   {
+    "file": "src/app/event/index.js",
+    "kinds": {
+     "controller": 1,
+     "directive": 3
+    },
+    "units": 4
+   },
+   {
+    "file": "src/app/import-export/index.js",
+    "kinds": {
+     "controller": 2,
+     "directive": 1,
+     "factory": 1
+    },
+    "units": 4
+   },
+   {
+    "file": "src/app/components/grid.directive.js",
+    "kinds": {
+     "controller": 2,
+     "directive": 2,
+     "filter": 1
+    },
+    "units": 5
+   },
+   {
+    "file": "src/app/dashboard/states/index.js",
+    "kinds": {
+     "controller": 3,
+     "directive": 1,
+     "factory": 1
+    },
+    "units": 5
+   },
+   {
+    "file": "src/app/extension/index.js",
+    "kinds": {
+     "directive": 6
+    },
+    "units": 6
+   },
+   {
+    "file": "src/app/entity/index.js",
+    "kinds": {
+     "controller": 5,
+     "directive": 15
+    },
+    "units": 20
+   }
+  ]
+ },
+ "specVersion": 1
 }

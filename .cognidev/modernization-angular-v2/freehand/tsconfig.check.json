@@ -10,7 +10,7 @@
   "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/src/main.ts"
  ],
  "include": [
-  "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/src/app-ng/**/*.ts",
+  "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/src/app/**/*.ts",
   "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/src/**/*.d.ts"
  ]
 }

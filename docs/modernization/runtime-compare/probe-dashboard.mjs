@@ -1,0 +1,65 @@
+// Dashboard/widget-library interactions: log in, open the dashboard, wait for telemetry, screenshot;
+// switch dashboard state if the dashboard has several; open the first widgets bundle and screenshot its widget types.
+import { createRequire } from 'module';
+const require = createRequire(process.env.FREEHAND_NODE + '/node_modules/x.js');
+const { chromium } = require('playwright-core');
+const [base, out = "/tmp"] = process.argv.slice(2);
+const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH });
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+const seen = new Set();
+const log = (k, t) => { const s = t.split('\n').slice(0, +(process.env.DEPTH || 4)).join('\n'); if (!seen.has(s)) { seen.add(s); console.log(k, s); } };
+page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') log('CONSOLE-' + m.type(), m.text()); });
+page.on('pageerror', (e) => log('PAGEERR', e.stack || e.message));
+page.on('response', (r) => { if (r.status() >= 400) log('HTTP', r.status() + ' ' + r.url()); });
+page.on('websocket', (ws) => { console.log('WS open', ws.url().replace(/token=.*/, 'token=…')); ws.on('framereceived', (f) => log('WS frame', String(f.payload).slice(0, 160))); ws.on('close', () => console.log('WS closed')); });
+await page.goto(base + '/login', { waitUntil: 'networkidle' }).catch(() => {});
+await page.waitForTimeout(1500);
+await page.locator('input[type=email], input[name=username], input[type=text]').first().fill('tenant@thingsboard.org');
+await page.locator('input[type=password]').first().fill('tenant');
+await page.locator('input[type=password]').first().press('Enter');
+await page.waitForTimeout(4000);
+for (const id of (process.env.DASHBOARDS || 'a96062a0-b9c8-11f1-a5ef-479889dd16ff').split(',')) {
+  await page.goto(`${base}/dashboards/${id}`, { waitUntil: 'networkidle', timeout: 45000 }).catch(() => {});
+  await page.waitForTimeout(6000);
+  await page.screenshot({ path: `${out}/dash-${id.slice(0, 8)}.png` });
+  const states = await page.locator('tb-states-component, .tb-dashboard-state-select, mat-select[name=state]').count();
+  console.log('dashboard', id, 'state selectors:', states, 'text:', (await page.evaluate(() => document.querySelector('tb-dashboard')?.innerText || '')).replace(/\s+/g, ' ').slice(0, 200));
+}
+// Thermostats: its entities table's row action opens the 'chart' state (a dashboard state switch).
+await page.goto(`${base}/dashboards/a97682b0-b9c8-11f1-a5ef-479889dd16ff`, { waitUntil: 'networkidle', timeout: 45000 }).catch(() => {});
+await page.waitForTimeout(6000);
+await page.screenshot({ path: `${out}/dash-thermostats.png` });
+console.log('thermostat rows', await page.locator('.tb-entities-table tbody tr').count());
+const chart = page.locator('.tb-entities-table tbody tr').first().locator('.tb-action-cell button').first();
+await chart.click({ force: true }).catch((e) => console.log('chart click failed', e.message.split('\n')[0]));
+await page.waitForTimeout(5000);
+console.log('after row click url', page.url().replace(base, ''));
+await page.screenshot({ path: `${out}/dash-thermostats-state.png` });
+// Edit mode: the pencil fab, then the dashboard settings dialog (opened and cancelled), then decline the changes.
+await page.goto(`${base}/dashboards/a96062a0-b9c8-11f1-a5ef-479889dd16ff`, { waitUntil: 'networkidle', timeout: 45000 }).catch(() => {});
+await page.waitForTimeout(4000);
+await page.locator('.tb-footer-buttons button:has(mat-icon:text-is("edit")), .tb-footer-buttons button:has(ng-md-icon[icon=edit])').first().click().catch((e) => console.log('edit click failed', e.message.split('\n')[0]));
+await page.waitForTimeout(2000);
+await page.screenshot({ path: `${out}/dash-edit.png` });
+const settingsBtn = page.locator('button[aria-label="Settings"], button:has(mat-icon:text-is("settings")), button:has(md-icon:text-is("settings"))').first();
+console.log('settings buttons', await settingsBtn.count());
+await settingsBtn.click().catch((e) => console.log('settings click failed', e.message.split('\n')[0]));
+await page.waitForTimeout(2000);
+await page.screenshot({ path: `${out}/dash-settings.png` });
+console.log('dialog text', (await page.evaluate(() => (document.querySelector('.mat-mdc-dialog-container, md-dialog')?.innerText || 'no dialog'))).replace(/\s+/g, ' ').slice(0, 300));
+await page.keyboard.press('Escape');
+await page.waitForTimeout(1000);
+await page.goto(base + '/widgets-bundles', { waitUntil: 'networkidle' }).catch(() => {});
+await page.waitForTimeout(3000);
+await page.locator('mat-card.tb-card-item').first().click();
+await page.waitForTimeout(1500);
+await page.screenshot({ path: `${out}/wb-details.png` });
+await page.goto(base + '/widgets-bundles', { waitUntil: 'networkidle' }).catch(() => {});
+await page.waitForTimeout(3000);
+const bundleUrl = await page.evaluate(() => { const g = document.querySelector('tb-grid'); const c = ng.getComponent(g); const b = c.items.data.find((x) => x.alias === (window.BUNDLE || 'cards')) || c.items.data[0]; return '/widgets-bundles/' + b.id.id + '/widgetTypes'; });
+console.log('bundle', bundleUrl);
+await page.goto(base + bundleUrl, { waitUntil: 'networkidle' }).catch(() => {});
+await page.waitForTimeout(8000);
+console.log('bundle text', (await page.evaluate(() => document.body.innerText)).replace(/\s+/g, ' ').slice(0, 500));
+await page.screenshot({ path: `${out}/wb-bundle.png` });
+await browser.close();

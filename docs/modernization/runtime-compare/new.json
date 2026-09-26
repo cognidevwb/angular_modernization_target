@@ -1,0 +1,143 @@
+{
+ "base": "http://localhost:4200",
+ "label": "new",
+ "login": {
+  "url": "/home",
+  "token": true,
+  "console": [],
+  "pageerrors": [],
+  "failed": []
+ },
+ "screens": [
+  {
+   "name": "home",
+   "path": "/home",
+   "url": "/home",
+   "textLength": 585,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS home Home fullscreen account_circle Tenant administrator more_vert Rules management settings_ethernet RULE CHAINS Customer management supervisor_account CUSTOMERS Asset management domain ASSETS Device management devices_other DEVICES Entity View management view_quilt ENTITY VIEWS Dashboard management now_widgets WIDGETS LIBRARY dashboard DASHBOARDS Audit track_changes AUDIT LOGS",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "devices",
+   "path": "/devices",
+   "url": "/devices",
+   "textLength": 1298,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS devices_other Devices search fullscreen account_circle Tenant administrator more_vert Test Device A1 DEFAULT Assigned to customer 'Customer A' assignment_return security delete Test Device A2 DEFAULT Assigned to customer 'Customer A' assignment_return security delete Test Device A3 DEFAULT Assigned to customer 'Customer A' assignment_return security delete Test Device B1 DEFAULT Assigned to cu",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "assets",
+   "path": "/assets",
+   "url": "/assets",
+   "textLength": 450,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS domain Assets search fullscreen account_circle Tenant administrator more_vert Thermostat Alarms ALARMPROPAGATIONASSET share assignment_ind delete Main_5683d5288ef6 TBSERVICEQUEUE share assignment_ind delete assignment_ind delete arrow_drop_up add",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "entity-views",
+   "path": "/entityViews",
+   "url": "/entityViews",
+   "textLength": 353,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS view_quilt Entity Views search fullscreen account_circle Tenant administrator more_vert NO ENTITY VIEWS FOUND assignment_ind delete arrow_drop_up add",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "customers",
+   "path": "/customers",
+   "url": "/customers",
+   "textLength": 546,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS supervisor_account Customers search fullscreen account_circle Tenant administrator more_vert Customer A NO ADDRESS account_circle domain devices_other dashboard delete Customer B NO ADDRESS account_circle domain devices_other dashboard delete Customer C NO ADDRESS account_circle domain devices_other dashboard delete delete arrow_drop_up add",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "customer-users",
+   "path": "/customers/a8b46b30-b9c8-11f1-a5ef-479889dd16ff/users",
+   "url": "/customers/a8b46b30-b9c8-11f1-a5ef-479889dd16ff/users",
+   "textLength": 430,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS supervisor_account Customers > account_circle Customer Users search fullscreen account_circle Tenant administrator more_vert customer@thingsboard.org login delete customerA@thingsboard.org login delete delete arrow_drop_up add",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "dashboards",
+   "path": "/dashboards",
+   "url": "/dashboards",
+   "textLength": 696,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS dashboard Dashboards search fullscreen account_circle Tenant administrator more_vert Temperature & Humidity Demo Dashboard edit file_download share assignment_ind delete Rule Engine Statistics edit file_download share assignment_ind delete Raspberry PI GPIO Demo Dashboard edit file_download share assignment_ind delete Gateways edit file_download share assignment_ind delete Thermostats edit fil",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "dashboard-view",
+   "path": "/dashboards/a96062a0-b9c8-11f1-a5ef-479889dd16ff",
+   "url": "/dashboards/a96062a0-b9c8-11f1-a5ef-479889dd16ff",
+   "textLength": 589,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS dashboard Dashboards > dashboard Temperature & Humidity Demo Dashboard fullscreen account_circle Tenant administrator more_vert arrow_forward fullscreen file_download query_builder Realtime - last minute devices_other DHT11 Demo Device Temperature & Humidity Demo Dashboard more_horiz Temperature & Humidity Demo Dashboard fullscreen fullscreen done edit Powered by Thingsboard v.2.5.6",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "widgets-bundles",
+   "path": "/widgets-bundles",
+   "url": "/widgets-bundles",
+   "textLength": 824,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS now_widgets Widgets Bundles search fullscreen account_circle Tenant administrator more_vert Alarm widgets SYSTEM file_download edit Analogue gauges SYSTEM file_download edit Cards SYSTEM file_download edit Charts SYSTEM file_download edit Control widgets SYSTEM file_download edit Date SYSTEM file_download edit Digital gauges SYSTEM file_download edit Entity admin widgets SYSTEM file_download e",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "rule-chains",
+   "path": "/ruleChains",
+   "url": "/ruleChains",
+   "textLength": 411,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS settings_ethernet Rule chains search fullscreen account_circle Tenant administrator more_vert Thermostat Alarms edit file_download flag delete Root Rule Chain Root edit file_download delete arrow_drop_up add",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "rule-chain",
+   "path": "/ruleChains/a8901a50-b9c8-11f1-a5ef-479889dd16ff",
+   "url": "/ruleChains/a8901a50-b9c8-11f1-a5ef-479889dd16ff",
+   "textLength": 2416,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS settings_ethernet Rule chains > settings_ethernet Root Rule Chain (Root) search fullscreen account_circle Tenant administrator more_vert fullscreen search chevron_left filter_list Filter filter_list check alarm status filter_list check existence fields filter_list check relation filter_list gps geofencing filter filter_list message type filter_list message type switch filter_list originator ty",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "audit-logs",
+   "path": "/auditLogs",
+   "url": "/auditLogs",
+   "textLength": 13760,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS track_changes Audit Logs fullscreen account_circle Tenant administrator more_vert query_builder LAST DAY search close refresh Timestamp Entity Type Entity Name User Type Status Details 2026-09-26 15:12:59 User tenant@thingsboard.org tenant@thingsboard.org Login Success more_horiz 2026-09-26 15:11:01 User tenant@thingsboard.org tenant@thingsboard.org Login Success more_horiz 2026-09-26 15:09:32",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  },
+  {
+   "name": "profile",
+   "path": "/profile",
+   "url": "/profile",
+   "textLength": 410,
+   "text": "home HOME settings_ethernet RULE CHAINS supervisor_account CUSTOMERS domain ASSETS devices_other DEVICES view_quilt ENTITY VIEWS now_widgets WIDGETS LIBRARY dashboards DASHBOARDS track_changes AUDIT LOGS account_circle Profile fullscreen account_circle Tenant administrator more_vert Profile tenant@thingsboard.org Last Login 2026-09-26 15:12:59 Email First Name Last Name Language English CHANGE PASSWORD SAVE",
+   "console": [],
+   "pageerrors": [],
+   "failed": []
+  }
+ ]
+}

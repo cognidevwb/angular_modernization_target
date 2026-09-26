@@ -1,0 +1,47 @@
+// quick debug: login, then visit given paths; prints all errors with full stacks and non-2xx responses
+import { createRequire } from 'module';
+const require = createRequire(process.env.FREEHAND_NODE + '/node_modules/x.js');
+const { chromium } = require('playwright-core');
+const [base, ...paths] = process.argv.slice(2);
+const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH });
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+const seen = new Set();
+const short = (t) => t.split('\n').slice(0, +(process.env.DEPTH || 4)).map((l) => l.replace(/http:\/\/localhost:4200\/@fs\/[^ )]*\/deps\//, 'deps/').replace(/\?v=\w+/, '')).join('\n');
+const log = (k, t) => { const s = short(t); if (seen.has(s)) return; seen.add(s); console.log(k, s); };
+page.on('console', (m) => { if (m.type() === 'error') log('CONSOLE', m.text()); });
+page.on('pageerror', (e) => log('PAGEERR', e.stack || e.message));
+page.on('response', (r) => { if (r.status() >= 400) console.log('HTTP', r.status(), r.url()); });
+await page.goto(base + '/login', { waitUntil: 'networkidle' }).catch(() => {});
+await page.waitForTimeout(1500);
+await page.locator('input[type=email], input[name=username], input[type=text]').first().fill('tenant@thingsboard.org');
+await page.locator('input[type=password]').first().fill('tenant');
+await page.locator('input[type=password]').first().press('Enter');
+await page.waitForTimeout(4000);
+console.log('AFTER LOGIN', page.url());
+console.log('==== /auditLogs');
+await page.goto(base + '/auditLogs', { waitUntil: 'networkidle', timeout: 45000 }).catch(() => {});
+await page.waitForTimeout(3000);
+const rows = await page.locator('[tb-audit-log-row]').count();
+const header = (await page.locator('[tb-audit-log-header]').innerText()).replace(/\s+/g, ' ');
+const tw = (await page.locator('tb-timewindow button').first().innerText()).replace(/\s+/g, ' ');
+console.log('ROWS', rows, 'HEADER', header, 'TIMEWINDOW', tw);
+// scroll to the end: the next page loads
+const before = rows;
+await page.locator('.tb-audit-log-repeat-container').evaluate((el) => { el.scrollTop = el.scrollHeight; });
+await page.waitForTimeout(2500);
+console.log('ROWS AFTER SCROLL', await page.locator('[tb-audit-log-row]').count(), 'was', before);
+await page.locator('.tb-audit-log-repeat-container').evaluate((el) => { el.scrollTop = 0; });
+await page.locator('[tb-audit-log-row] button').first().click();
+await page.waitForTimeout(2000);
+const dlg = page.locator('mat-dialog-container');
+console.log('DIALOG', await dlg.count(), (await dlg.innerText().catch(() => '')).replace(/\s+/g, ' ').slice(0, 300));
+await page.screenshot({ path: '/tmp/q-audit-dialog.png' });
+console.log('ACE', await page.evaluate(() => { const e = document.querySelector('#tb-audit-log-action-data'); const c = getComputedStyle(e); return [e.className, c.fontSize, c.fontFamily, e.style.cssText, !!document.querySelector('style#ace_editor\\.css, style[id^=ace]'), [...document.querySelectorAll('style')].filter(s => s.textContent.includes('.ace_editor')).length]; }));
+await dlg.locator('mat-dialog-actions button').click();
+await page.waitForTimeout(1000);
+console.log('DIALOG AFTER CLOSE', await page.locator('mat-dialog-container').count());
+// search filters the loaded rows
+await page.locator('input[name=searchText]').last().fill('zzzz-no-match');
+await page.waitForTimeout(1500);
+console.log('ROWS WITH SEARCH', await page.locator('[tb-audit-log-row]').count());
+await browser.close();
