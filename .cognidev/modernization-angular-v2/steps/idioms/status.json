@@ -1,0 +1,32 @@
+{
+  "elapsedMs": 488,
+  "finishedAt": 1790440478,
+  "inputs": [],
+  "kind": "rust-binary",
+  "outputs": [
+    {
+      "exists": true,
+      "kind": null,
+      "name": "idiom-occurrences",
+      "optional": false,
+      "path": "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/.cognidev/modernization-angular-v2/idiom-occurrences.json"
+    },
+    {
+      "exists": true,
+      "kind": null,
+      "name": "idioms",
+      "optional": false,
+      "path": "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/.cognidev/modernization-angular-v2/idioms.json"
+    },
+    {
+      "exists": true,
+      "kind": "report",
+      "name": "IDIOM-COVERAGE",
+      "optional": false,
+      "path": "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/IDIOM-COVERAGE.md"
+    }
+  ],
+  "status": "Ok",
+  "step": "idioms",
+  "summary": "Tool `tools/scan-idioms/target/release/scan-idioms` completed."
+}
