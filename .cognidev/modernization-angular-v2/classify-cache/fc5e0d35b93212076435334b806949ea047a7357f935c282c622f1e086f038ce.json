@@ -1,0 +1,1 @@
+{"answers":{"service_kind":{"choice":"workflow_coordinator","confidence":0.29,"probabilities":{"business_logic":0.19,"ui_helper":0.34,"unknown":0.0,"workflow_coordinator":0.47},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":4804,"output_tokens":56}}

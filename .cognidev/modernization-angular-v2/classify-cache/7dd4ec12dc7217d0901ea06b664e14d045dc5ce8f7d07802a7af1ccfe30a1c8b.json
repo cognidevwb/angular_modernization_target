@@ -1,0 +1,1 @@
+{"answers":{"service_kind":{"choice":"business_logic","confidence":0.45,"probabilities":{"business_logic":0.59,"helper_utility":0.01,"ui_helper":0.4,"unknown":0.0},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":6154,"output_tokens":51}}

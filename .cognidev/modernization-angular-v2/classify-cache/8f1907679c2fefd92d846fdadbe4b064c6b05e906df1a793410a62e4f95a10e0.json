@@ -1,0 +1,1 @@
+{"answers":{"controller_kind":{"choice":"widget_controller","confidence":0.46,"probabilities":{"form_controller":0.01,"modal_controller":0.37,"unknown":0.02,"widget_controller":0.6},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":1436,"output_tokens":50}}

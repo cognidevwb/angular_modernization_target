@@ -1,0 +1,1 @@
+{"answers":{"controller_kind":{"choice":"unknown","confidence":0.45,"probabilities":{"list_grid_controller":0.22,"other":0.07,"unknown":0.59,"widget_controller":0.12},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":1881,"output_tokens":49}}

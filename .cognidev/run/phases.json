@@ -1,5 +1,10 @@
 {
   "phases": {
+    "disposition": {
+      "at": 1790440471,
+      "reused": false,
+      "status": "Ok"
+    },
     "si-ready": {
       "at": 1790440470,
       "reused": false,

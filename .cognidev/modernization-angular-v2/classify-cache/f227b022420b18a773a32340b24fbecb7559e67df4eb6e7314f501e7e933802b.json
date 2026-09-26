@@ -1,0 +1,1 @@
+{"answers":{"directive_kind":{"choice":"dom_manipulation","confidence":0.37,"probabilities":{"attribute_behaviour":0.0,"dom_manipulation":0.53,"element_with_template":0.47,"unknown":0.0},"type":"choice"}},"model":"jev-1.13.0","usage":{"input_tokens":2520,"output_tokens":59}}
