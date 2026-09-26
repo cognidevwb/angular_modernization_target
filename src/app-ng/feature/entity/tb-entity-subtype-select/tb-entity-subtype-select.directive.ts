@@ -7,18 +7,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 
-import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { isEqual } from 'lodash-es';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbEntitySubtypeSelect` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -29,8 +24,9 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [TranslatePipe, MatSelectModule, MatInputModule, MatFormFieldModule, FormsModule],
   templateUrl: './tb-entity-subtype-select.directive.html',
+  providers: ngModelProviders(TbEntitySubtypeSelectDirective),
 })
-export class TbEntitySubtypeSelectDirective {
+export class TbEntitySubtypeSelectDirective extends NgModelController {
   readonly theForm = model<any>();
   readonly entityType = model<any>();
   readonly entitySubtypesList = model<any>();
@@ -46,7 +42,6 @@ export class TbEntitySubtypeSelectDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  ngModelCtrl: any = ngModelCtrl;
   entitySubtypes: any = [];
   $on: any;
   $watch: any;
@@ -59,6 +54,7 @@ export class TbEntitySubtypeSelectDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     if ((this.attrs.hideLabel !== undefined)) {
             this.showLabel = false;
         } else {
@@ -68,14 +64,14 @@ export class TbEntitySubtypeSelectDirective {
             this.load();
         });
     this.$watch('entitySubtype', (newValue?: any, prevValue?: any) => {
-            if (!angular.equals(newValue, prevValue)) {
+            if (!isEqual(newValue, prevValue)) {
                 this.updateView();
             }
         });
-    ngModelCtrl.$render = function () {
-            this.entitySubtype = ngModelCtrl.$viewValue;
-        };
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  override $render(): void {
+    this.entitySubtype = this.$viewValue;
   }
 
   subTypeName(subType?: any, ...rest: any[]): any {
@@ -92,7 +88,7 @@ export class TbEntitySubtypeSelectDirective {
   }
 
   updateView(...rest: any[]): any {
-    ngModelCtrl.$setViewValue(this.entitySubtype);
+    this.$setViewValue(this.entitySubtype);
   }
 
   loadSubTypes(...rest: any[]): any {

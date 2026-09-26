@@ -9,15 +9,7 @@ import $ from 'jquery';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $filter: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let label: any;
-declare let scope: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbRuleNodeLink` (module `thingsboard.ruleChain`) in src/app/rulechain/index.js:28.
@@ -28,8 +20,9 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [TranslatePipe, CommonModule, FormsModule, MatChipsModule, MatAutocompleteModule],
   templateUrl: './tb-rule-node-link.directive.html',
+  providers: ngModelProviders(TbRuleNodeLinkDirective),
 })
-export class TbRuleNodeLinkDirective {
+export class TbRuleNodeLinkDirective extends NgModelController<any> {
   protected readonly rootScope = injectRoot(RootState);
   readonly allowedLabels = model<any>();
   readonly allowCustom = model<any>();
@@ -51,52 +44,40 @@ export class TbRuleNodeLinkDirective {
 
   selectedLabel: any = null;
   labelSearchText: any = null;
-  ngModelCtrl: any = ngModelCtrl;
   protected labelsList: any = [];
-  $watch: any;
   labels: any;
 
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  override $render(): void {
+    this.labelsList.length = 0;
+    const allowedLabels: any = this.allowedLabels() || {};
+    for (const key in allowedLabels) {
+      const linkLabel: any = {
+        name: allowedLabels[key].name,
+        value: allowedLabels[key].value
+      };
+      this.labelsList.push(linkLabel);
+    }
 
-  constructor() {
-    ngModelCtrl.$render = function () {
-            this.labelsList.length = 0;
-            for (var label in this.allowedLabels()) {
-                var linkLabel: any = {
-                    name: this.allowedLabels()[label].name,
-                    value: this.allowedLabels()[label].value
-                };
-                this.labelsList.push(linkLabel);
-            }
-
-            var link: any = ngModelCtrl.$viewValue;
-            var labels: any = [];
-            if (link && link.labels) {
-                for (var i: any = 0; i < link.labels.length; i++) {
-                    label = link.labels[i];
-                    if (this.allowedLabels()[label]) {
-                        labels.push(structuredClone(this.allowedLabels()[label]));
-                    } else {
-                        labels.push({
-                            name: label,
-                            value: label
-                        });
-                    }
-                }
-            }
-            this.labels = labels;
-            this.$watch('labels', (newVal?: any, prevVal?: any) => {
-                if (!angular.equals(newVal, prevVal)) {
-                    this.updateLabels();
-                }
-            }, true);
-        };
-    $compile($(this.element.nativeElement).contents())(this);
+    const link: any = this.$viewValue;
+    const labels: any = [];
+    if (link && link.labels) {
+      for (let i: any = 0; i < link.labels.length; i++) {
+        const label: any = link.labels[i];
+        if (allowedLabels[label]) {
+          labels.push(structuredClone(allowedLabels[label]));
+        } else {
+          labels.push({
+            name: label,
+            value: label
+          });
+        }
+      }
+    }
+    this.labels = labels;
   }
 
   transformLinkLabelChip(chip?: any, ...rest: any[]): any {
-    var res: any = $filter('filter')(this.labelsList, {name: chip}, true);
+    var res: any = this.labelsList.filter((item: any) => item.name === chip);
     var result: any;
     if (res && res.length) {
         result = structuredClone(res[0]);
@@ -110,7 +91,9 @@ export class TbRuleNodeLinkDirective {
   }
 
   labelsSearch(searchText?: any, ...rest: any[]): any {
-    var labels: any = searchText ? $filter('filter')(this.labelsList, {name: searchText}) : this.labelsList;
+    var labels: any = searchText
+      ? this.labelsList.filter((item: any) => item.name && String(item.name).toLowerCase().indexOf(String(searchText).toLowerCase()) !== -1)
+      : this.labelsList;
     return labels.map((label?: any) => label.name);
   }
 
@@ -152,20 +135,20 @@ export class TbRuleNodeLinkDirective {
   }
 
   updateLabels(...rest: any[]): any {
-    if (ngModelCtrl.$viewValue) {
+    if (this.$viewValue) {
         var labels: any = [];
         for (var i: any = 0; i < this.labels.length; i++) {
             labels.push(this.labels[i].value);
         }
-        ngModelCtrl.$viewValue.labels = labels;
-        ngModelCtrl.$viewValue.label = labels.join(' / ');
+        this.$viewValue.labels = labels;
+        this.$viewValue.label = labels.join(' / ');
         this.updateValidity();
     }
   }
 
   updateValidity(...rest: any[]): any {
-    var valid: any = ngModelCtrl.$viewValue.labels &&
-    ngModelCtrl.$viewValue.labels.length ? true : false;
-    ngModelCtrl.$setValidity('linkLabels', valid);
+    var valid: any = this.$viewValue.labels &&
+    this.$viewValue.labels.length ? true : false;
+    this.$setValidity('linkLabels', valid);
   }
 }

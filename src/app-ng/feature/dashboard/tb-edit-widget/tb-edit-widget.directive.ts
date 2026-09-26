@@ -66,30 +66,30 @@ export class TbEditWidgetDirective {
                     this.widget().typeAlias,
                     this.widget().isSystemType).then(
                     (widgetInfo?: any) => {
-                        queueMicrotask((scope?: any) => {
-                            scope.widgetConfig = {
-                                config: scope.widget().config,
-                                layout: scope.widgetLayout()
+                        queueMicrotask(() => {
+                            this.widgetConfig = {
+                                config: this.widget().config,
+                                layout: this.widgetLayout()
                             };
                             var settingsSchema: any = widgetInfo.typeSettingsSchema || widgetInfo.settingsSchema;
                             var dataKeySettingsSchema: any = widgetInfo.typeDataKeySettingsSchema || widgetInfo.dataKeySettingsSchema;
-                            scope.typeParameters = widgetInfo.typeParameters;
-                            scope.actionSources = widgetInfo.actionSources;
-                            scope.isDataEnabled = !widgetInfo.typeParameters.useCustomDatasources;
+                            this.typeParameters = widgetInfo.typeParameters;
+                            this.actionSources = widgetInfo.actionSources;
+                            this.isDataEnabled = !widgetInfo.typeParameters.useCustomDatasources;
                             if (!settingsSchema || settingsSchema === '') {
-                                scope.settingsSchema = {};
+                                this.settingsSchema = {};
                             } else {
-                                scope.settingsSchema = JSON.parse(settingsSchema);
+                                this.settingsSchema = JSON.parse(settingsSchema);
                             }
                             if (!dataKeySettingsSchema || dataKeySettingsSchema === '') {
-                                scope.dataKeySettingsSchema = {};
+                                this.dataKeySettingsSchema = {};
                             } else {
-                                scope.dataKeySettingsSchema = JSON.parse(dataKeySettingsSchema);
+                                this.dataKeySettingsSchema = JSON.parse(dataKeySettingsSchema);
                             }
 
-                            scope.functionsOnly = scope.dashboard() ? false : true;
+                            this.widgetEditMode.set(this.dashboard() ? false : true);
 
-                            scope.theForm().$setPristine();
+                            this.theForm().$setPristine();
                         });
                     }
                 );
@@ -100,7 +100,6 @@ export class TbEditWidgetDirective {
                 this.widgetConfig.layout = this.widgetLayout();
             }
         });
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   fetchEntityKeys(entityAliasId?: any, query?: any, type?: any, ...rest: any[]): any {
@@ -142,9 +141,9 @@ export class TbEditWidgetDirective {
   }
 
   createFilterForDashboardState(query?: any, ...rest: any[]): any {
-    var lowercaseQuery: any = angular.lowercase(query);
+    var lowercaseQuery: any = (query ?? '').toLowerCase();
     return function filterFn(stateId?: any) {
-        return (angular.lowercase(stateId).indexOf(lowercaseQuery) === 0);
+        return ((stateId ?? '').toLowerCase().indexOf(lowercaseQuery) === 0);
     };
   }
 

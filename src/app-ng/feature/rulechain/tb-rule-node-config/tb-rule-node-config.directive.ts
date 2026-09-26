@@ -1,19 +1,11 @@
-import { Component, forwardRef, inject, model } from '@angular/core';
-import { ElementRef } from '@angular/core';
+import { Component, Injector, effect, forwardRef, inject, model } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { TbRuleNodeDefinedConfigDirective } from '../tb-rule-node-defined-config/tb-rule-node-defined-config.directive';
 import { TbJsonObjectEditDirective } from '../../components/tb-json-object-edit/tb-json-object-edit.directive';
-
-import $ from 'jquery';
+import { isEqual } from 'lodash-es';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $injector: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
 
 /**
  * Ported from the AngularJS directive `tbRuleNodeConfig` (module `thingsboard.ruleChain`) in src/app/rulechain/index.js:28.
@@ -24,41 +16,40 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [TranslatePipe, FormsModule, forwardRef(() => TbRuleNodeDefinedConfigDirective), forwardRef(() => TbJsonObjectEditDirective)],
   templateUrl: './tb-rule-node-config.directive.html',
+  providers: ngModelProviders(TbRuleNodeConfigDirective),
 })
-export class TbRuleNodeConfigDirective {
+export class TbRuleNodeConfigDirective extends NgModelController {
   readonly ruleNodeId = model<any>();
   readonly nodeDefinition = model<any>();
   readonly required = model<any>(undefined, { alias: 'ngRequired' });
   readonly readonly = model<any>(undefined, { alias: 'ngReadonly' });
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
-  // TODO(port): '$injector' — inject() at the use site
   protected readonly translate = inject(TranslateService);
-  protected readonly element = inject(ElementRef);
+  private readonly injector = inject(Injector);
 
-  $watch: any;
   configuration: any;
   definedDirectiveError: any;
 
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  private prevConfiguration: any;
 
   constructor() {
-    this.$watch('configuration', (newVal?: any, prevVal?: any) => {
-            if (!angular.equals(newVal, prevVal)) {
-                ngModelCtrl.$setViewValue(this.configuration);
-            }
-        });
-    ngModelCtrl.$render = function () {
-            this.configuration = ngModelCtrl.$viewValue;
-        };
-    this.$watch('nodeDefinition', () => {
-            if (this.nodeDefinition()) {
-                this.validateDefinedDirective();
-            }
-        });
-    $compile($(this.element.nativeElement).contents())(this);
+    super();
+    effect(() => {
+      if (this.nodeDefinition()) {
+        this.validateDefinedDirective();
+      }
+    });
+  }
+
+  ngDoCheck(): void {
+    if (!isEqual(this.configuration, this.prevConfiguration)) {
+      this.prevConfiguration = structuredClone(this.configuration);
+      this.$setViewValue(this.configuration);
+    }
+  }
+
+  $render(): void {
+    this.configuration = this.$viewValue;
   }
 
   useDefinedDirective(...rest: any[]): any {
@@ -72,7 +63,7 @@ export class TbRuleNodeConfigDirective {
     } else {
         var definedDirective: any = this.nodeDefinition().configDirective;
         if (definedDirective && definedDirective.length) {
-            if (!$injector.has(definedDirective + 'Directive')) {
+            if (!this.injector.get(definedDirective + 'Directive' as any, null)) {
                 this.definedDirectiveError = this.translate.instant('rulenode.directive-is-not-loaded', {directiveName: definedDirective});
             }
         }

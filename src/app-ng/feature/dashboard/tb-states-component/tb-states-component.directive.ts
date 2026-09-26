@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, ComponentRef, inject, model, ViewContainerRef } from '@angular/core';
 import { DestroyRef } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { StatesControllerService } from '../services/states-controller.service';
@@ -26,15 +26,14 @@ export class TbStatesComponentDirective {
   readonly dashboardCtrl = model<any>();
   readonly states = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
-  // TODO(port): '$controller' — an AngularJS built-in with no Angular counterpart
   protected readonly statesControllerService = inject(StatesControllerService);
   protected readonly element = inject(ElementRef);
+  protected readonly viewContainerRef = inject(ViewContainerRef);
   protected readonly destroyRef = inject(DestroyRef);
 
   $watch: any;
   statesController: any;
+  private componentRef?: ComponentRef<any>;
 
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
@@ -58,21 +57,14 @@ export class TbStatesComponentDirective {
                     //fallback to default
                     statesControllerInfo = this.statesControllerService.getStateController('default');
                 }
-                var template: any = $templateCache.get(statesControllerInfo.templateUrl);
-                $(this.element.nativeElement).html(template);
 
                 var preservedState: any = this.statesControllerService.withdrawStateControllerState(this.statesControllerId());
 
-                var locals: any = {
-                    preservedState: preservedState
-                };
-                Object.assign(locals, {$scope: this, $element: $(this.element.nativeElement)});
-                var controller: any = $controller(statesControllerInfo.controller, locals, true, 'vm');
-                controller.instance = controller();
-                this.statesController = controller.instance;
+                this.componentRef = this.viewContainerRef.createComponent(statesControllerInfo.controller);
+                this.statesController = this.componentRef.instance;
+                this.statesController.preservedState = preservedState;
                 this.statesController.dashboardCtrl = this.dashboardCtrl();
                 this.statesController.states = this.states();
-                $compile($(this.element.nativeElement).contents())(this);
             }
         });
     this.$watch('states', () => {
@@ -85,6 +77,10 @@ export class TbStatesComponentDirective {
   destroyStateController(...rest: any[]): any {
     if (this.statesController && (typeof this.statesController.ngOnDestroy === 'function')) {
         this.statesController.ngOnDestroy();
+    }
+    if (this.componentRef) {
+        this.componentRef.destroy();
+        this.componentRef = undefined;
     }
   }
 

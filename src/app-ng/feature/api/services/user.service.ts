@@ -66,9 +66,22 @@ export class UserService {
     });
   }
 
+  private decodeToken(token: any): any {
+    if (!token) {
+        return null;
+    }
+    const parts = String(token).split('.');
+    if (parts.length !== 3) {
+        return null;
+    }
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    return JSON.parse(jsonPayload);
+  }
+
   updateAndValidateToken(token?: any, prefix?: any, notify?: any, ...rest: any[]): any {
     var valid: any = false;
-    var tokenData: any = jwtHelper.decodeToken(token);
+    var tokenData: any = this.decodeToken(token);
     var issuedAt: any = tokenData.iat;
     var expTime: any = tokenData.exp;
     if (issuedAt && expTime) {
@@ -245,7 +258,7 @@ export class UserService {
   parsePublicId(...rest: any[]): any {
     var token: any = this.getJwtToken();
     if (token) {
-        var tokenData: any = jwtHelper.decodeToken(token);
+        var tokenData: any = this.decodeToken(token);
         if (tokenData && tokenData.isPublic) {
             return tokenData.sub;
         }
@@ -292,7 +305,7 @@ export class UserService {
     const procceedJwtTokenValidate = (): any => {
         this.validateJwtToken(doTokenRefresh).then(() => {
             var jwtToken: any = store.get('jwt_token');
-            this.currentUser = jwtHelper.decodeToken(jwtToken);
+            this.currentUser = this.decodeToken(jwtToken);
             if (this.currentUser && this.currentUser.scopes && this.currentUser.scopes.length > 0) {
                 this.currentUser.authority = this.currentUser.scopes[0];
             } else if (this.currentUser) {

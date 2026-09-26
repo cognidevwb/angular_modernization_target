@@ -1,13 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, DoCheck } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
+import { isEqual, orderBy } from 'lodash-es';
 
-import $ from 'jquery';
-// @ts-ignore
-import dashboardStateDialogTemplate from '../../../../app/dashboard/states/dashboard-state-dialog.tpl.html';
+import { DashboardStateDialogComponent } from './dashboard-state-dialog/dashboard-state-dialog.component';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,10 +23,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let angular: any;
-declare let $filter: any;
-declare let $scope: any;
 
 /**
  * Ported from the AngularJS controller `ManageDashboardStatesController` (module `thingsboard.dashboard.states`) in src/app/dashboard/states/index.js:22.
@@ -38,7 +34,7 @@ declare let $scope: any;
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, MatTableModule, MatSortModule, MatPaginatorModule],
   templateUrl: './manage-dashboard-states.component.html',
 })
-export class ManageDashboardStatesComponent {
+export class ManageDashboardStatesComponent implements DoCheck {
   protected readonly rootScope = injectRoot(RootState);
   // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly dialog = inject(MatDialog);
@@ -62,9 +58,14 @@ export class ManageDashboardStatesComponent {
     };
   theForm: any;
   state: any;
+  private prevQuerySearch: any = undefined;
 
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
+  ngDoCheck(): void {
+    if (!isEqual(this.query.search, this.prevQuerySearch) && this.query.search != null) {
+      this.updateStates();
+    }
+    this.prevQuerySearch = this.query.search;
+  }
 
   constructor() {
     let vm = this;
@@ -82,22 +83,31 @@ export class ManageDashboardStatesComponent {
     this.deleteState = this.deleteState;
     this.cancel = this.cancel;
     this.save = this.save;
-    $scope.$watch("vm.query.search", (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal) && this.query.search != null) {
-            this.updateStates();
-        }
-    });
     this.updateStates ();
   }
 
   updateStates(...rest: any[]): any {
-    var result: any = $filter('orderBy')(this.allStates, this.query.order);
+    var result: any = this.orderByFilter(this.allStates, this.query.order);
     if (this.query.search != null) {
-        result = $filter('filter')(result, {$: this.query.search});
+        result = this.searchFilter(result, this.query.search);
     }
     this.statesCount = result.length;
     var startIndex: any = this.query.limit * (this.query.page - 1);
     this.states = result.slice(startIndex, startIndex + this.query.limit);
+  }
+
+  private orderByFilter(collection: any[], expression: any): any[] {
+    if (!expression) {
+      return collection.slice();
+    }
+    const desc = typeof expression === 'string' && expression.startsWith('-');
+    const field = desc ? expression.substring(1) : expression;
+    return orderBy(collection, [field], [desc ? 'desc' : 'asc']);
+  }
+
+  private searchFilter(collection: any[], search: any): any[] {
+    const text = String(search).toLowerCase();
+    return collection.filter((item: any) => Object.values(item).some((val: any) => val !== null && val !== undefined && String(val).toLowerCase().includes(text)));
   }
 
   enterFilterMode = (...rest: any[]): any => {
@@ -129,28 +139,23 @@ export class ManageDashboardStatesComponent {
   };
 
   openStateDialog($event?: any, state?: any, isAdd?: any, ...rest: any[]): any {
-    let vm = this;
     var prevStateId: any = null;
     if (!isAdd) {
         prevStateId = state.id;
     }
-    (this.dialog as any).show({
-        controller: 'DashboardStateDialogController',
-        controllerAs: 'vm',
-        templateUrl: dashboardStateDialogTemplate,
-        parent: $(this.document.body),
-        locals: {isAdd: isAdd, allStates: this.allStates, state: structuredClone(state)},
-        multiple: true,
-        fullscreen: true,
-        targetEvent: $event
-    }).then((state?: any) => {
-        this.saveState(state, prevStateId);
-        this.updateStates();
+    firstValueFrom(this.dialog.open(DashboardStateDialogComponent, {
+        data: {isAdd: isAdd, allStates: this.allStates, state: structuredClone(state)},
+        panelClass: 'tb-dialog'
+    }).afterClosed()).then((result?: any) => {
+        if (result !== undefined) {
+            this.saveState(result, prevStateId);
+            this.updateStates();
+        }
     });
   }
 
   getStateIndex(id?: any, ...rest: any[]): any {
-    var result: any = $filter('filter')(this.allStates, {id: id}, true);
+    var result: any = this.allStates.filter((item: any) => item.id === id);
     if (result && result.length) {
         return this.allStates.indexOf(result[0]);
     }

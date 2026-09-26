@@ -5,12 +5,8 @@ import { Router } from '@angular/router';
 import { UserService } from '../../api/services/user.service';
 import { linkAttrs } from '../../../legacy-link';
 import { goState } from '../../../state-paths';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $filter: any;
-declare let $parse: any;
-declare let $window: any;
-declare let $scope: any;
+import { RootState } from '../../../root-state';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Ported from the AngularJS directive `tbConfirmOnExit` (module `thingsboard.directives.confirmOnExit`) in src/app/components/confirm-on-exit.directive.js:16.
@@ -22,11 +18,10 @@ declare let $scope: any;
   template: '', // TODO(port): no template found
 })
 export class TbConfirmOnExitDirective {
-  // TODO(port): '$filter' — inject the pipe class and call transform()
   protected readonly dialog = inject(MatDialog);
-  // TODO(port): '$parse' — not in Angular: bind in the template
+  protected readonly translate = inject(TranslateService);
   protected readonly router = inject(Router);
-  // TODO(port): '$window' — use window directly, or inject(DOCUMENT).defaultView
+  protected readonly rootScope = inject(RootState);
   protected readonly userService = inject(UserService);
   protected readonly element = inject(ElementRef);
 
@@ -37,28 +32,49 @@ export class TbConfirmOnExitDirective {
   // TODO(port): link($scope, $element, $attributes) — `$element` is the element (ElementRef.nativeElement) and `$attributes` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    this.confirmForm = $scope.$eval(this.attrs.confirmForm);
-    $window.onbeforeunload = function () {
-                if (this.userService.isAuthenticated() && ((this.confirmForm && this.confirmForm.$dirty) || $scope.$eval(this.attrs.isDirty))) {
-                    return $filter('translate')('confirm-on-exit.message');
+    this.confirmForm = this.evalAttr(this.attrs.confirmForm);
+    window.onbeforeunload = () => {
+                if (this.userService.isAuthenticated() && ((this.confirmForm && this.confirmForm.$dirty) || this.evalAttr(this.attrs.isDirty))) {
+                    return this.translate.instant('confirm-on-exit.message');
                 }
                 return undefined;
-            }
-    $scope.$on('$stateChangeStart', (event?: any, next?: any, current?: any, params?: any) => {
-                if (this.userService.isAuthenticated() && ((this.confirmForm && this.confirmForm.$dirty) || $scope.$eval(this.attrs.isDirty))) {
+            };
+    this.rootScope.on('$stateChangeStart', (event?: any, next?: any, current?: any, params?: any) => {
+                if (this.userService.isAuthenticated() && ((this.confirmForm && this.confirmForm.$dirty) || this.evalAttr(this.attrs.isDirty))) {
                     event.preventDefault();
-                    if (window.confirm($filter('translate')('confirm-on-exit.html-message'))) {
+                    if (window.confirm(this.translate.instant('confirm-on-exit.html-message'))) {
                         if (this.confirmForm) {
                             this.confirmForm.$setPristine();
                         } else {
-                            var remoteSetter: any = $parse(this.attrs.isDirty).assign;
-                            remoteSetter(this, false);
+                            this.assignAttr(this.attrs.isDirty, false);
                             //$scope.isDirty = false;
                         }
                         goState(this.router, next.name, params);
                     }
                 }
             });
+  }
+
+  private evalAttr(expr: string | undefined): any {
+    if (!expr) {
+      return undefined;
+    }
+    try {
+      return new Function('with(this) { return (' + expr + '); }').call(this);
+    } catch {
+      return undefined;
+    }
+  }
+
+  private assignAttr(expr: string | undefined, value: any): void {
+    if (!expr) {
+      return;
+    }
+    try {
+      new Function('value', 'with(this) { ' + expr + ' = value; }').call(this, value);
+    } catch {
+      // ignore assignment errors
+    }
   }
 
   /** The link's `attrs`: the host element's attributes, read live. */

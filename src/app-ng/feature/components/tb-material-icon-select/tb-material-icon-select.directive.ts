@@ -1,20 +1,10 @@
 import { Component, inject, model } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { firstValueFrom } from 'rxjs';
 import { MaterialIconsDialogComponent } from '../material-icons-dialog/material-icons-dialog.component';
-
-import $ from 'jquery';
-// @ts-ignore
-import materialIconSelectTemplate from '../../../../app/components/material-icon-select.tpl.html';
-// @ts-ignore
-import materialIconsDialogTemplate from '../../../../app/components/material-icons-dialog.tpl.html';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbMaterialIconSelect` (module `thingsboard.directives.materialIconSelect`) in src/app/components/material-icon-select.directive.js:28.
@@ -23,46 +13,44 @@ declare let ngModelCtrl: any;
 @Component({
   selector: 'tb-material-icon-select',
   standalone: true,
-  template: '', // TODO(port): no template found
+  imports: [MatIconModule, MatButtonModule],
+  providers: ngModelProviders(TbMaterialIconSelectDirective),
+  template: `
+    <div class="tb-material-icon-select">
+      <mat-icon>{{ icon }}</mat-icon>
+      <button mat-icon-button type="button" (click)="openIconDialog($event)">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+  `,
 })
-export class TbMaterialIconSelectDirective {
+export class TbMaterialIconSelectDirective extends NgModelController {
   readonly tbRequired = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  protected readonly document = inject(DOCUMENT);
   protected readonly dialog = inject(MatDialog);
-  // TODO(port): '$templateCache' — templateUrl on the component
-  protected readonly element = inject(ElementRef);
 
-  protected template: any = materialIconSelectTemplate;
   icon: any = null;
-  $watch: any;
-
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
+    super();
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                this.icon = ngModelCtrl.$viewValue;
-            }
-            if (!this.icon || !this.icon.length) {
-                this.icon = 'more_horiz';
-            }
-        }
-    this.$watch('icon', () => {
-            this.updateView();
-        });
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  override $render(): void {
+    if (this.$viewValue) {
+      this.icon = this.$viewValue;
+    }
+    if (!this.icon || !this.icon.length) {
+      this.icon = 'more_horiz';
+    }
+    this.updateView();
   }
 
   updateView(...rest: any[]): any {
-    ngModelCtrl.$setViewValue(this.icon);
+    this.$setViewValue(this.icon);
   }
 
   openIconDialog($event?: any, ...rest: any[]): any {
-    let vm = this;
     if ($event) {
         $event.stopPropagation();
     }
@@ -72,6 +60,7 @@ export class TbMaterialIconSelectDirective {
     }).afterClosed()).then((icon?: any) => {
         if (icon !== undefined) {
             this.icon = icon;
+            this.updateView();
         }
     });
   }

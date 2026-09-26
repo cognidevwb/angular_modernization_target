@@ -191,7 +191,6 @@ export class TbNavTreeDirective {
   readonly searchCallback = output<any>();
 
   restrict: any = "E";
-  scope: any = true;
   bindToController: any = {
             loadNodes: '=',
             editCallbacks: '=',

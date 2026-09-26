@@ -3,20 +3,12 @@ import { DOCUMENT } from '@angular/common';
 import { ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import $ from 'jquery';
 import tinycolor from 'tinycolor2';
 import inspector from 'schema-inspector';
-// @ts-ignore
-import jsonFormTemplate from '../../../../app/components/json-form.tpl.html';
+import { isEqual } from 'lodash-es';
+import { firstValueFrom } from 'rxjs';
 import { utils } from 'react-schema-form';
-// @ts-ignore
-import materialIconsDialogTemplate from '../../../../app/components/material-icons-dialog.tpl.html';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $mdColorPicker: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
+import { MaterialIconsDialogComponent } from '../material-icons-dialog/material-icons-dialog.component';
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 function selectOrSet(this: any, projection?: any, obj?: any, valueToSet?: any) {
@@ -36,7 +28,7 @@ function selectOrSet(this: any, projection?: any, obj?: any, valueToSet?: any) {
         return setValue(obj, parts[0], valueToSet);
     }
 
-    if (angular.isUndefined(obj[parts[0]])) {
+    if (obj[parts[0]] === undefined) {
         obj[parts[0]] = parts.length > 2 && numRe.test(parts[1]) ? [] : {};
     }
 
@@ -49,7 +41,7 @@ function selectOrSet(this: any, projection?: any, obj?: any, valueToSet?: any) {
             return setValue(value, parts[i], valueToSet);
         } else {
             var tmp: any = value[parts[i]];
-            if (angular.isUndefined(tmp) || tmp === null) {
+            if (tmp === undefined || tmp === null) {
                 tmp = numRe.test(parts[i + 1]) ? [] : {};
                 value[parts[i]] = tmp;
             }
@@ -62,13 +54,13 @@ function selectOrSet(this: any, projection?: any, obj?: any, valueToSet?: any) {
 function setValue(obj?: any, key?: any, val?: any) {
     var changed: any = false;
     if (obj) {
-        if (angular.isUndefined(val)) {
-            if (angular.isDefined(obj[key])) {
+        if (val === undefined) {
+            if (obj[key] !== undefined) {
                 delete obj[key];
                 changed = true;
             }
         } else {
-            changed = !angular.equals(obj[key], val);
+            changed = !isEqual(obj[key], val);
             obj[key] = val;
         }
     }
@@ -99,7 +91,6 @@ export class TbJsonFormDirective {
   // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly element = inject(ElementRef);
 
-  protected template: any = $templateCache.get(jsonFormTemplate);
   protected childScope: any;
   isFullscreen: any = false;
   formProps: any;
@@ -113,7 +104,6 @@ export class TbJsonFormDirective {
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.formProps = {
             isFullscreen: false,
             option: {
@@ -174,7 +164,7 @@ export class TbJsonFormDirective {
 
   initModelChangeWatches(...rest: any[]): any {
     this.modelWatchHandle = this.$watch('model',(newValue?: any, prevValue?: any) => {
-        if (newValue && prevValue && !angular.equals(newValue,prevValue)) {
+        if (newValue && prevValue && !isEqual(newValue,prevValue)) {
             this.validate();
             if (this.formControl()) {
                 this.formControl().$setDirty();
@@ -193,11 +183,10 @@ export class TbJsonFormDirective {
         this.childScope.$destroy();
     }
     this.childScope = this.$new();
-    $compile($(this.element.nativeElement).contents())(this.childScope);
   }
 
   showColorPicker(event?: any, color?: any, ...rest: any[]): any {
-    $mdColorPicker.show({
+    (window as any).$mdColorPicker.show({
         value: tinycolor(color).toRgbString(),
         defaultValue: '#fff',
         random: tinycolor.random(),
@@ -224,17 +213,10 @@ export class TbJsonFormDirective {
   }
 
   openIconDialog(event?: any, ...rest: any[]): any {
-    let vm = this;
-    (this.dialog as any).show({
-        controller: 'MaterialIconsDialogController',
-        controllerAs: 'vm',
-        templateUrl: materialIconsDialogTemplate,
-        parent: $(this.document.body),
-        locals: {icon: this.icon},
-        multiple: true,
-        fullscreen: true,
-        targetEvent: event
-    }).then(function (icon?: any) {
+    firstValueFrom(this.dialog.open(MaterialIconsDialogComponent, {
+        data: {icon: this.icon},
+        panelClass: 'tb-dialog'
+    }).afterClosed()).then((icon?: any) => {
         if (event.data && event.data.onValueChanged) {
             event.data.onValueChanged(icon);
         }
@@ -254,9 +236,6 @@ export class TbJsonFormDirective {
 
   updateValues(skipRerender?: any, ...rest: any[]): any {
     this.destroyModelChangeWatches();
-    if (!skipRerender) {
-        $(this.element.nativeElement).html(this.template);
-    }
     var readonly: any = (this.readonly() && this.readonly() === true) ? true : false;
     var schema: any = this.schema() ? structuredClone(this.schema()) : {
             type: 'object'

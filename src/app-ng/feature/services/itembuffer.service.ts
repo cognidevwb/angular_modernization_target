@@ -7,8 +7,7 @@ import { types } from '../common/constants/types';
 import { bindMethods } from '../../bind-methods';
 
 import { $q } from '../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let angular: any;
+import { isEqual } from 'lodash-es';
 
 /**
  * Ported from the AngularJS factory `itembuffer` (module `thingsboard.itembuffer`) in src/app/services/item-buffer.service.js:18.
@@ -306,7 +305,7 @@ export class ItembufferService {
     var callAliasUpdateFunction: any = false;
     if (aliasesInfo) {
         var newEntityAliases: any = this.updateAliases(theDashboard, widget, aliasesInfo);
-        var aliasesUpdated: any = !angular.equals(newEntityAliases, theDashboard.configuration.entityAliases);
+        var aliasesUpdated: any = !isEqual(newEntityAliases, theDashboard.configuration.entityAliases);
         if (aliasesUpdated) {
             theDashboard.configuration.entityAliases = newEntityAliases;
             if (onAliasesUpdateFunction) {
@@ -340,7 +339,7 @@ export class ItembufferService {
   }
 
   isEntityAliasEqual(alias1?: any, alias2?: any, ...rest: any[]): any {
-    return angular.equals(alias1.filter, alias2.filter);
+    return isEqual(alias1.filter, alias2.filter);
   }
 
   getEntityAliasId(entityAliases?: any, aliasInfo?: any, ...rest: any[]): any {

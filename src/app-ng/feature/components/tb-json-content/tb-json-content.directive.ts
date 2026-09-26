@@ -68,7 +68,6 @@ export class TbJsonContentDirective implements ControlValueAccessor {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.label = this.attrs.label;
     this.validationTriggerArg = this.attrs.validationTriggerArg;
     this.json_editor;
@@ -128,7 +127,6 @@ export class TbJsonContentDirective implements ControlValueAccessor {
     this.$on('update-ace-editor-size', () => {
             this.updateEditorSize();
         });
-    $compile($(this.element.nativeElement).contents())(this);
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
     }

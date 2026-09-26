@@ -87,7 +87,7 @@ export class DatakeyConfigDialogComponent {
   }
 
   save(...rest: any[]): any {
-    $scope.$broadcast('form-submit');
+    this.rootScope.$broadcast('form-submit');
     if (this.theForm.$valid) {
         this.theForm.$setPristine();
         this.dialogRef.close(this.dataKey);

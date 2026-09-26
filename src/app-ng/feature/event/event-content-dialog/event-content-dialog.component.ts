@@ -12,11 +12,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
 
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let scope: any;
+import beautify from 'js-beautify';
 
 // Helpers at the legacy file's top level, beside the registration (as written).
-declare const beautify: any;
 const js_beautify: any = beautify.js;
 
 /**
@@ -41,9 +39,9 @@ export class EventContentDialogComponent {
   editor: any;
 
   constructor() {
-    this.dialogData.showingCallback.onShowing = function(scope?: any, element?: any) {
+    this.dialogData.showingCallback.onShowing = (scope?: any, element?: any) => {
         this.updateEditorSize(element);
-    }
+    };
     this.content = this.dialogData.content;
     this.title = this.dialogData.title;
     if (this.dialogData.contentType) {

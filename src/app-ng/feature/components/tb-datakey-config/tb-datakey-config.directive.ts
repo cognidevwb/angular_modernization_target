@@ -8,8 +8,6 @@ const datakeyConfigTemplate: string = '';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
 declare let ngModelCtrl: any;
 
 /**
@@ -156,9 +154,9 @@ export class TbDatakeyConfigDirective {
   }
 
   createFilterForDataKey(query?: any, ...rest: any[]): any {
-    var lowercaseQuery: any = angular.lowercase(query);
+    var lowercaseQuery: any = query.toLowerCase();
     return function filterFn(dataKey?: any) {
-        return (angular.lowercase(dataKey).indexOf(lowercaseQuery) === 0);
+        return (dataKey.toLowerCase().indexOf(lowercaseQuery) === 0);
     };
   }
 }

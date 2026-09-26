@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DoCheck, inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
@@ -9,9 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $scope: any;
+import { isEqual } from 'lodash-es';
 
 /**
  * Ported from the AngularJS controller `LegendConfigPanelController` (module `thingsboard.directives.legendConfig`) in src/app/components/legend-config.directive.js:30.
@@ -23,10 +21,9 @@ declare let $scope: any;
   imports: [TranslatePipe, MatSelectModule, MatInputModule, MatFormFieldModule, MatCheckboxModule, FormsModule],
   templateUrl: './legend-config-panel.component.html',
 })
-export class LegendConfigPanelComponent {
+export class LegendConfigPanelComponent implements DoCheck {
   protected readonly rootScope = injectRoot(RootState);
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
-  // TODO(port): '$scope' — component state: fields and signals on this class
 
   _mdPanelRef: any;
   legendConfig: any;
@@ -35,11 +32,19 @@ export class LegendConfigPanelComponent {
   directions: any = types.direction;
   isRowDirection: any;
   theForm: any;
-
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
+  private lastLegendConfig: any;
 
   protected update(): void {
     this._mdPanelRef?.close();
+  }
+
+  ngDoCheck(): void {
+    if (!isEqual(this.legendConfig, this.lastLegendConfig)) {
+      this.lastLegendConfig = structuredClone(this.legendConfig);
+      if (this.dialogData.onLegendConfigUpdate) {
+        this.dialogData.onLegendConfigUpdate(this.legendConfig);
+      }
+    }
   }
 
   constructor() {
@@ -51,10 +56,6 @@ export class LegendConfigPanelComponent {
     this._mdPanelRef.config.onOpenComplete = function () {
         this.theForm.$setPristine();
     };
-    $scope.$watch('vm.legendConfig', () => {
-        if (this.dialogData.onLegendConfigUpdate) {
-            this.dialogData.onLegendConfigUpdate(this.legendConfig);
-        }
-    }, true);
+    this.lastLegendConfig = structuredClone(this.legendConfig);
   }
 }

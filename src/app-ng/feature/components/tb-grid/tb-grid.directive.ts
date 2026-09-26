@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { TbScopeElementDirective } from '../tb-scope-element/tb-scope-element.directive';
 import { TbGridCardContentDirective } from '../tb-grid-card-content/tb-grid-card-content.directive';
 import { TbDetailsSidenavDirective } from '../tb-details-sidenav/tb-details-sidenav.directive';
-import gridTemplate from '../../../../app/components/grid.tpl.html?raw';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { RangePipe } from '../pipes/range.pipe';
@@ -640,7 +639,6 @@ export class TbGridDirective {
   // TODO(port): template: 1 × ng-transclude left in place
 
   restrict: any = "E";
-  scope: any = true;
   transclude: any = {
             detailsButtons: '?detailsButtons'
         };
@@ -649,7 +647,6 @@ export class TbGridDirective {
         };
   controller: any = GridController;
   controllerAs: any;
-  templateUrl: any = gridTemplate;
 
   constructor() {
     let vm = this;

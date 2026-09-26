@@ -1,21 +1,15 @@
 import { Component, forwardRef, inject, model, output } from '@angular/core';
-import { ElementRef } from '@angular/core';
 import { UtilsService } from '../../common/services/utils.service';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 import { TbDatasourceFuncDirective } from '../tb-datasource-func/tb-datasource-func.directive';
 import { TbDatasourceEntityDirective } from '../tb-datasource-entity/tb-datasource-entity.directive';
 
-import $ from 'jquery';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbDatasource` (module `thingsboard.directives.datasource`) in src/app/components/datasource.directive.js:28.
@@ -26,8 +20,9 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [TranslatePipe, MatSelectModule, MatInputModule, MatFormFieldModule, FormsModule, forwardRef(() => TbDatasourceFuncDirective), forwardRef(() => TbDatasourceEntityDirective)],
   templateUrl: './tb-datasource.directive.html',
+  providers: ngModelProviders(TbDatasourceDirective),
 })
-export class TbDatasourceDirective {
+export class TbDatasourceDirective extends NgModelController<any> {
   readonly aliasController = model<any>();
   readonly maxDataKeys = model<any>();
   readonly optDataKeys = model<any>();
@@ -38,11 +33,8 @@ export class TbDatasourceDirective {
   readonly fetchEntityKeys = output<any>();
   readonly onCreateEntityAlias = output<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly typesRef: any = types;
   protected readonly utils = inject(UtilsService);
-  protected readonly element = inject(ElementRef);
   // TODO(port): template: 1 × ng-switch-when left in place
 
   types: any;
@@ -53,6 +45,7 @@ export class TbDatasourceDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     this.types = this.typesRef;
     if (this.functionsOnly()) {
             this.datasourceTypes = [this.typesRef.datasourceType.function];
@@ -71,20 +64,20 @@ export class TbDatasourceDirective {
     this.$watch('model', () => {
             this.updateView();
         }, true);
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                this.model = ngModelCtrl.$viewValue;
-            } else {
-                this.model = {};
-            }
-        };
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  override $render(): void {
+    if (this.$viewValue) {
+        this.model = this.$viewValue;
+    } else {
+        this.model = {};
+    }
   }
 
   updateView(...rest: any[]): any {
     if (!this.model.dataKeys) {
         this.model.dataKeys = [];
     }
-    ngModelCtrl.$setViewValue(this.model);
+    this.$setViewValue(this.model);
   }
 }

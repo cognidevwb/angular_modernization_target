@@ -1,74 +1,97 @@
 import { Component, inject, model } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { ENTER } from '@angular/cdk/keycodes';
+import { isEqual } from 'lodash-es';
 
-import $ from 'jquery';
-// @ts-ignore
-import gatewaySelectTemplate from '../../../../app/components/gateway/gateway-config-select.tpl.html';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $mdConstant: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbGatewayConfigSelect` (module `thingsboard.directives.gatewayConfigSelect`) in src/app/components/gateway/gateway-config-select.directive.js:27.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
   selector: 'tb-gateway-config-select',
   standalone: true,
-  template: '', // TODO(port): no template found
+  imports: [FormsModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, TranslatePipe],
+  providers: ngModelProviders(TbGatewayConfigSelectDirective),
+  template: `
+    <div class="tb-gateway-config-select" style="display: flex; flex-direction: column;">
+      <mat-form-field class="mat-block">
+        <input matInput
+               [(ngModel)]="gatewaySearchText"
+               [matAutocomplete]="auto"
+               [required]="tbRequired()"
+               [disabled]="!gatewayList()?.length"
+               (keydown)="gatewayNameEnter($event)"
+               placeholder="{{ 'gateway.gateway' | translate }}">
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onGatewaySelected($event)">
+          @for (item of gatewayNameSearch(gatewaySearchText); track item) {
+            <mat-option [value]="item">{{ item.name }}</mat-option>
+          }
+          @if (!gatewayNameSearch(gatewaySearchText)?.length) {
+            <mat-option [disabled]="true">
+              {{ 'gateway.no-gateways-matching' | translate:{gateway: gatewaySearchText} }}
+              @if (!textIsEmpty(gatewaySearchText)) {
+                <a (click)="createNewGatewayDialog($event, gatewaySearchText)">
+                  {{ 'gateway.create-new-gateway' | translate }}
+                </a>
+              }
+            </mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+  `,
 })
-export class TbGatewayConfigSelectDirective {
-  readonly tbRequired = model<any>();
+export class TbGatewayConfigSelectDirective extends NgModelController {
+  readonly tbRequired = model<boolean>(false);
   readonly gatewayList = model<any>();
   readonly getAccessToken = model<any>();
   readonly createDevice = model<any>();
   readonly theForm = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$mdConstant' — key codes: @angular/cdk/keycodes
-  protected readonly dialog = inject(MatDialog);
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly translate = inject(TranslateService);
-  protected readonly element = inject(ElementRef);
 
-  protected template: any = gatewaySelectTemplate;
-  gateway: any = null;
   gatewaySearchText: any = '';
-  $watch: any;
 
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  private watchingGateway = false;
+  private _gateway: any = null;
 
-  constructor() {
-    $(this.element.nativeElement).html(this.template);
-    this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                this.gateway = ngModelCtrl.$viewValue;
-                this.startWatchers();
-            }
-        };
-    $compile($(this.element.nativeElement).contents())(this);
+  get gateway(): any {
+    return this._gateway;
+  }
+
+  set gateway(value: any) {
+    const prevVal = this._gateway;
+    this._gateway = value;
+    if (this.watchingGateway && !isEqual(value, prevVal) && value !== null) {
+      this.updateView();
+    }
+  }
+
+  override $render(): void {
+    if (this.$viewValue) {
+      this.gateway = this.$viewValue;
+      this.startWatchers();
+    }
+  }
+
+  onGatewaySelected(event: MatAutocompleteSelectedEvent): void {
+    this.gateway = event.option.value;
+    this.updateView();
   }
 
   updateValidity(...rest: any[]): any {
-    var value: any = ngModelCtrl.$viewValue;
+    var value: any = this.$viewValue;
     var valid: any = (value !== undefined) && value != null || !this.tbRequired();
-    ngModelCtrl.$setValidity('gateway', valid);
+    this.$setValidity('gateway', valid);
   }
 
   startWatchers(...rest: any[]): any {
-    this.$watch('gateway', (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal) && newVal !== null) {
-            this.updateView();
-        }
-    });
+    this.watchingGateway = true;
   }
 
   gatewayNameSearch(gatewaySearchText?: any, ...rest: any[]): any {
@@ -84,7 +107,7 @@ export class TbGatewayConfigSelectDirective {
   }
 
   updateView(...rest: any[]): any {
-    ngModelCtrl.$setViewValue(this.gateway);
+    this.$setViewValue(this.gateway);
     this.updateValidity();
     this.getAccessToken()(this.gateway.id);
   }
@@ -94,7 +117,7 @@ export class TbGatewayConfigSelectDirective {
   }
 
   gatewayNameEnter($event?: any, ...rest: any[]): any {
-    if ($event.keyCode === $mdConstant.KEY_CODE.ENTER) {
+    if ($event.keyCode === ENTER) {
         $event.preventDefault();
         let indexRes: any = this.gatewayList().findIndex((element?: any) => element.key === this.gatewaySearchText);
         if (indexRes === -1) {
@@ -109,27 +132,17 @@ export class TbGatewayConfigSelectDirective {
     }
     var title: any = this.translate.instant('gateway.create-new-gateway');
     var content: any = this.translate.instant('gateway.create-new-gateway-text', {gatewayName: deviceName});
-    var confirm: any = (this.dialog as any).confirm()
-        .targetEvent($event)
-        .title(title)
-        .htmlContent(content)
-        .ariaLabel(title)
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(
-        () => {
-            let deviceObj: any = {
-                name: deviceName,
-                type: "Gateway",
-                additionalInfo: {
-                    gateway: true
-                }
-            };
-            this.createDevice()(deviceObj);
-        },
-        () => {
-            this.gatewaySearchText = "";
-        }
-    );
+    if (window.confirm(title + '\n' + content)) {
+        let deviceObj: any = {
+            name: deviceName,
+            type: "Gateway",
+            additionalInfo: {
+                gateway: true
+            }
+        };
+        this.createDevice()(deviceObj);
+    } else {
+        this.gatewaySearchText = "";
+    }
   }
 }

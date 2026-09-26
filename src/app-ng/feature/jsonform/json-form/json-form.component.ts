@@ -25,7 +25,7 @@ export class JsonFormComponent {
 
   itParses: any = true;
   itParsesForm: any = true;
-  formJson: any = "[   \n" +
+  private _formJson: any = "[   \n" +
         "    {\n" +
         "        \"key\": \"name\",\n" +
         "\t\"type\": \"text\"        \n" +
@@ -40,7 +40,7 @@ export class JsonFormComponent {
         "    },    \n" +
             "\t\"name4\"\n" +
         "]";
-  schemaJson: any = "{\n" +
+  private _schemaJson: any = "{\n" +
         "    \"type\": \"object\",\n" +
         "    \"title\": \"Comment\",\n" +
         "    \"properties\": {\n" +
@@ -71,7 +71,39 @@ export class JsonFormComponent {
   ngform: any;
   isFormReadonly: any = 'false';
 
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
+  get formJson(): any {
+    return this._formJson;
+  }
+
+  set formJson(val: any) {
+    const old = this._formJson;
+    this._formJson = val;
+    if (val && val !== old) {
+        try {
+            this.form = JSON.parse(this._formJson);
+            this.itParsesForm = true;
+        } catch (e: any){
+            this.itParsesForm = false;
+        }
+    }
+  }
+
+  get schemaJson(): any {
+    return this._schemaJson;
+  }
+
+  set schemaJson(val: any) {
+    const old = this._schemaJson;
+    this._schemaJson = val;
+    if (val && val !== old) {
+        try {
+            this.schema = JSON.parse(this._schemaJson);
+            this.itParses = true;
+        } catch (e: any){
+            this.itParses = false;
+        }
+    }
+  }
 
   constructor() {
     let vm = this;
@@ -79,26 +111,6 @@ export class JsonFormComponent {
     this.resetModel = this.resetModel;
     this.schema = JSON.parse(this.schemaJson);
     this.form = JSON.parse(this.formJson);
-    $scope.$watch('vm.schemaJson',(val?: any,old?: any) =>{
-        if (val && val !== old) {
-            try {
-                this.schema = JSON.parse(this.schemaJson);
-                this.itParses = true;
-            } catch (e: any){
-                this.itParses = false;
-            }
-        }
-    });
-    $scope.$watch('vm.formJson',(val?: any,old?: any) =>{
-        if (val && val !== old) {
-            try {
-                this.form = JSON.parse(this.formJson);
-                this.itParsesForm = true;
-            } catch (e: any){
-                this.itParsesForm = false;
-            }
-        }
-    });
   }
 
   pretty = (...rest: any[]): any => {

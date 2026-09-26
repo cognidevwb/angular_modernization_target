@@ -16,15 +16,26 @@ import { TbDashboardDirective } from '../../components/tb-dashboard/tb-dashboard
 
 import $ from 'jquery';
 import AliasController from '../../../../app/api/alias-controller';
-declare const require: any;
-const selectWidgetTypeTemplate = require('../../../../app/widget/select-widget-type.tpl.html');
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $filter: any;
+import { firstValueFrom } from 'rxjs';
+import { orderBy } from 'lodash-es';
+import { SelectWidgetTypeComponent } from '../select-widget-type/select-widget-type.component';
+
+const $filter = (name: string): any => {
+  if (name === 'orderBy') {
+    return (array: any[], predicate: any) => {
+      const predicates = Array.isArray(predicate) ? predicate : [predicate];
+      const props = predicates.map((p: string) => p.replace(/^[-+]/, ''));
+      const orders = predicates.map((p: string) => (p.startsWith('-') ? 'desc' : 'asc'));
+      return orderBy(array, props, orders as any);
+    };
+  }
+  return (x: any) => x;
+};
 
 /**
  * Ported from the AngularJS controller `WidgetLibraryController` (module `thingsboard.widget-library`) in src/app/widget/index.js:40.
@@ -211,17 +222,14 @@ export class WidgetLibraryComponent {
         goState(this.router, 'home.widgets-bundles.widget-types.widget-type',
             {widgetTypeId: widget.typeId.id});
     } else {
-        (this.dialog as any).show({
-            controller: 'SelectWidgetTypeController',
-            controllerAs: 'vm',
-            templateUrl: selectWidgetTypeTemplate,
-            parent: $(this.document.body),
-            fullscreen: true,
-            targetEvent: event
-        }).then((widgetType?: any) => {
-            (this.router as any).go('home.widgets-bundles.widget-types.widget-type',
-                {widgetType: widgetType});
-        }, function () {
+        firstValueFrom(this.dialog.open(SelectWidgetTypeComponent, {
+            panelClass: 'tb-dialog'
+        }).afterClosed()).then((widgetType?: any) => {
+            if (widgetType !== undefined) {
+                (this.router as any).go('home.widgets-bundles.widget-types.widget-type',
+                    {widgetType: widgetType});
+            }
+        }, () => {
         });
     }
   };

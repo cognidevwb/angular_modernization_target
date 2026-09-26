@@ -4,11 +4,10 @@ import { DestroyRef } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { linkAttrs } from '../../../legacy-link';
 import $ from 'jquery';
+import { TranslateService } from '@ngx-translate/core';
 
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let uniqueId: any;
-declare let element: any;
+// `uniqueId` mirrors the legacy factory's closure-scoped counter, shared by every directive instance.
+let uniqueId = 1;
 
 /**
  * Ported from the AngularJS directive `tbExpandFullscreen` (module `thingsboard.directives.expandFullscreen`) in src/app/components/expand-fullscreen.directive.js:20.
@@ -29,6 +28,7 @@ export class TbExpandFullscreenDirective {
   protected readonly document = inject(DOCUMENT);
   protected readonly element = inject(ElementRef);
   protected readonly destroyRef = inject(DestroyRef);
+  protected readonly translate = inject(TranslateService);
 
   body: any;
   fullscreenParentId: any = 'fullscreen-parent' + uniqueId;
@@ -77,8 +77,7 @@ export class TbExpandFullscreenDirective {
           this.elementParent = $(this.element.nativeElement).parent();
           $(this.element.nativeElement).detach();
           if (this.backgroundStyle()) {
-            this.fullscreenParent.attr("ng-style","backgroundStyle");
-            $compile(this.fullscreenParent)(this);
+            this.fullscreenParent.css(this.backgroundStyle());
           }
           this.fullscreenParent.append($(this.element.nativeElement));
           this.fullscreenParent.css('display', '');
@@ -107,10 +106,10 @@ export class TbExpandFullscreenDirective {
             this.buttonSize = this.attrs.expandButtonSize;
         }
     this.tooltipDirection = (this.attrs.expandTooltipDirection !== undefined) ? this.attrs.expandTooltipDirection : 'top';
-    this.html = '<md-tooltip md-direction="{{expanded ? \'bottom\' : \'' + this.tooltipDirection + '\'}}">' +
-            '{{(expanded ? \'fullscreen.exit\' : \'fullscreen.expand\') | translate}}' +
+    this.html = '<md-tooltip md-direction="' + (this.expanded ? 'bottom' : this.tooltipDirection) + '">' +
+            this.translate.instant(this.expanded ? 'fullscreen.exit' : 'fullscreen.expand') +
             '</md-tooltip>' +
-            '<ng-md-icon ' + (this.buttonSize ? 'size="'+ this.buttonSize +'" ' : '') + 'icon="{{expanded ? \'fullscreen_exit\' : \'fullscreen\'}}" ' +
+            '<ng-md-icon ' + (this.buttonSize ? 'size="'+ this.buttonSize +'" ' : '') + 'icon="' + (this.expanded ? 'fullscreen_exit' : 'fullscreen') + '" ' +
             'options=\'{"easing": "circ-in-out", "duration": 375, "rotation": "none"}\'>' +
             '</ng-md-icon>';
     if (this.attrs.expandButtonId) {
@@ -139,17 +138,15 @@ export class TbExpandFullscreenDirective {
             expandButton.attr('md-ink-ripple', 'false');
             expandButton.append(this.html);
 
-            $compile(expandButton.contents())(this);
-
             expandButton.on("click", this.toggleExpand);
         }
     } else if (!(this.hideExpandButton as any)()) {
         var button: any = $('<md-button class="tb-fullscreen-button-style tb-fullscreen-button-pos md-icon-button" ' +
-            'md-ink-ripple="false" ng-click="toggleExpand($event)">' +
+            'md-ink-ripple="false">' +
             this.html +
             '</md-button>');
 
-        $compile(button)(this);
+        button.on('click', this.toggleExpand);
 
         $(this.element.nativeElement).prepend(button);
     }

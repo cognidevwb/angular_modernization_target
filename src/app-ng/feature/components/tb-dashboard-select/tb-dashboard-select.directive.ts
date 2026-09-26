@@ -8,11 +8,7 @@ import { UserService } from '../../api/services/user.service';
 import { types } from '../../common/constants/types';
 
 import $ from 'jquery';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbDashboardSelect` (module `thingsboard.directives.dashboardSelect`) in src/app/components/dashboard-select.directive.js:31.
@@ -22,8 +18,9 @@ declare let ngModelCtrl: any;
   selector: 'tb-dashboard-select',
   standalone: true,
   template: '', // TODO(port): no template found
+  providers: ngModelProviders(TbDashboardSelectDirective),
 })
-export class TbDashboardSelectDirective {
+export class TbDashboardSelectDirective extends NgModelController {
   readonly dashboardsScope = input<any>();
   readonly customerId = model<any>();
   readonly tbRequired = model<any>();
@@ -48,6 +45,7 @@ export class TbDashboardSelectDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
     if (this.dashboardsScope() === 'customer' || this.userService.getAuthority() === 'CUSTOMER_USER') {
             if (this.customerId() && this.customerId() != types.id.nullUid) {
@@ -63,21 +61,21 @@ export class TbDashboardSelectDirective {
         }, () => {
             this.dashboards = [];
         });
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                this.dashboardId = ngModelCtrl.$viewValue;
-            } else {
-                this.dashboardId = null;
-            }
-        }
     this.$watch('dashboardId', () => {
             this.updateView();
         });
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  override $render(): void {
+    if (this.$viewValue) {
+        this.dashboardId = this.$viewValue;
+    } else {
+        this.dashboardId = null;
+    }
   }
 
   updateView(...rest: any[]): any {
-    ngModelCtrl.$setViewValue(this.dashboardId);
+    this.$setViewValue(this.dashboardId);
   }
 
   openDashboardSelectPanel(event?: any, ...rest: any[]): any {

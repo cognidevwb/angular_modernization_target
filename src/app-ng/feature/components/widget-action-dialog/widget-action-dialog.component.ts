@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, DoCheck, forwardRef, inject } from '@angular/core';
 import { DashboardService } from '../../api/services/dashboard.service';
 import { DashboardUtilsService } from '../../common/services/dashboard-utils.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -25,10 +25,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let angular: any;
-declare let $filter: any;
-declare let $scope: any;
+import { isEqual } from 'lodash-es';
 
 /**
  * Ported from the AngularJS controller `WidgetActionDialogController` (module `thingsboard.directives.widgetActions`) in src/app/components/widget/action/manage-widget-actions.directive.js:49.
@@ -40,7 +37,7 @@ declare let $scope: any;
   imports: [TranslatePipe, MatToolbarModule, MatSelectModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, forwardRef(() => TbMaterialIconSelectDirective), forwardRef(() => TbDashboardAutocompleteDirective), forwardRef(() => TbJsFuncDirective), forwardRef(() => TbCustomActionPrettyEditorDirective)],
   templateUrl: './widget-action-dialog.component.html',
 })
-export class WidgetActionDialogComponent {
+export class WidgetActionDialogComponent implements DoCheck {
   protected readonly rootScope = injectRoot(RootState);
   // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly dialog = inject(MatDialog);
@@ -69,9 +66,10 @@ export class WidgetActionDialogComponent {
   theForm: any;
   item: any;
 
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
+  private prevActionName: any;
+  private prevActionSourceId: any;
+  private prevActionTargetDashboardId: any;
+  private prevActionType: any;
 
   constructor() {
     let vm = this;
@@ -91,17 +89,30 @@ export class WidgetActionDialogComponent {
     this.dashboardStateSearch = this.dashboardStateSearch;
     this.cancel = this.cancel;
     this.save = this.save;
-    $scope.$watch("vm.action.name", (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal) && this.action.name != null) {
+    this.prevActionName = this.action ? this.action.name : undefined;
+    this.prevActionSourceId = this.action ? this.action.actionSourceId : undefined;
+    this.prevActionTargetDashboardId = this.action ? this.action.targetDashboardId : undefined;
+    this.prevActionType = this.action ? this.action.type : undefined;
+  }
+
+  ngDoCheck(): void {
+    const newName = this.action ? this.action.name : undefined;
+    if (!isEqual(newName, this.prevActionName)) {
+        this.prevActionName = newName;
+        if (this.action.name != null) {
             this.checkActionName();
         }
-    });
-    $scope.$watch("vm.action.actionSourceId", (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal) && this.action.actionSourceId != null) {
+    }
+    const newSourceId = this.action ? this.action.actionSourceId : undefined;
+    if (!isEqual(newSourceId, this.prevActionSourceId)) {
+        this.prevActionSourceId = newSourceId;
+        if (this.action.actionSourceId != null) {
             this.checkActionName();
         }
-    });
-    $scope.$watch("vm.action.targetDashboardId", () => {
+    }
+    const newTargetDashboardId = this.action ? this.action.targetDashboardId : undefined;
+    if (!isEqual(newTargetDashboardId, this.prevActionTargetDashboardId)) {
+        this.prevActionTargetDashboardId = newTargetDashboardId;
         this.selectedDashboardStateIds = [];
         if (this.action.targetDashboardId) {
             this.dashboardService.getDashboard(this.action.targetDashboardId).then(
@@ -112,8 +123,10 @@ export class WidgetActionDialogComponent {
                 }
             );
         }
-    });
-    $scope.$watch('vm.action.type', (newType?: any) => {
+    }
+    const newType = this.action ? this.action.type : undefined;
+    if (!isEqual(newType, this.prevActionType)) {
+        this.prevActionType = newType;
         if (newType) {
             switch (newType) {
                 case this.types.widgetActionTypes.openDashboardState.value:
@@ -125,7 +138,7 @@ export class WidgetActionDialogComponent {
                     break;
             }
         }
-    });
+    }
   }
 
   targetDashboardStateSearchTextChanged(...rest: any[]): any {
@@ -136,7 +149,7 @@ export class WidgetActionDialogComponent {
     if (this.action.actionSourceId && this.action.name) {
         var sourceActions: any = this.widgetActions[this.action.actionSourceId];
         if (sourceActions) {
-            var result: any = $filter('filter')(sourceActions, {name: this.action.name}, true);
+            var result: any = sourceActions.filter((item: any) => item.name === this.action.name);
             if (result && result.length && result[0].id !== this.action.id) {
                 actionNameIsUnique = false;
             }
@@ -172,9 +185,9 @@ export class WidgetActionDialogComponent {
   };
 
   createFilterForDashboardState(query?: any, ...rest: any[]): any {
-    var lowercaseQuery: any = angular.lowercase(query);
+    var lowercaseQuery: any = query != null ? query.toLowerCase() : query;
     return function filterFn(stateId?: any) {
-        return (angular.lowercase(stateId).indexOf(lowercaseQuery) === 0);
+        return (stateId.toLowerCase().indexOf(lowercaseQuery) === 0);
     };
   }
 

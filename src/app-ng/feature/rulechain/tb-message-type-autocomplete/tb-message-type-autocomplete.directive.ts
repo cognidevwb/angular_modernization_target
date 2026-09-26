@@ -1,20 +1,14 @@
-import { Component, inject, model } from '@angular/core';
-import { ElementRef } from '@angular/core';
+import { Component, model } from '@angular/core';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import $ from 'jquery';
 import { TranslatePipe } from '@ngx-translate/core';
 import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $filter: any;
-declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { isEqual } from 'lodash-es';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbMessageTypeAutocomplete` (module `thingsboard.ruleChain`) in src/app/rulechain/index.js:28.
@@ -25,17 +19,15 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [TranslatePipe, FormsModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule],
   templateUrl: './tb-message-type-autocomplete.directive.html',
+  providers: ngModelProviders(TbMessageTypeAutocompleteDirective),
 })
-export class TbMessageTypeAutocompleteDirective {
+export class TbMessageTypeAutocompleteDirective extends NgModelController {
   readonly theForm = model<any>();
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
   readonly required = model<any>(undefined, { alias: 'ngRequired' });
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
   // TODO(port): '$templateCache' — templateUrl on the component
   // TODO(port): '$q' — use Promise, or an Observable
-  // TODO(port): '$filter' — inject the pipe class and call transform()
-  protected readonly element = inject(ElementRef);
   // TODO(port): elements not resolved to a component: md-autocomplete, md-item-template
   // TODO(port): template: 1 × md-autocomplete left in place
   // TODO(port): template: 1 × md-item-template left in place
@@ -45,46 +37,51 @@ export class TbMessageTypeAutocompleteDirective {
   protected messageTypeList: any = [];
   protected messageTypeOptions: any[] = this.messageTypeList;
   protected readonly messageTypeDisplayFn = (item: any): string => item?.name ?? '';
-  messageType: any = null;
+  private _messageType: any = null;
   messageTypeSearchText: any = '';
-  $watch: any;
+
+  get messageType(): any {
+    return this._messageType;
+  }
+
+  set messageType(value: any) {
+    const prevValue = this._messageType;
+    this._messageType = value;
+    if (!isEqual(value, prevValue)) {
+      this.updateView();
+    }
+  }
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     for (var t in types.messageType) {
             var type: any = types.messageType[t];
             this.messageTypeList.push(type);
         }
-    ngModelCtrl.$render = function () {
-            var value: any = ngModelCtrl.$viewValue;
-            if (value) {
-                var result: any = $filter('filter')(this.messageTypeList, {'value': value}, true);
-                if (result && result.length) {
-                    this.messageType = result[0];
-                } else {
-                    this.messageType = {
-                        name: value,
-                        value: value
-                    };
-                }
-            } else {
-                this.messageType = null;
-            }
-        };
-    this.$watch('messageType', (newValue?: any, prevValue?: any) => {
-            if (!angular.equals(newValue, prevValue)) {
-                this.updateView();
-            }
-        });
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  override $render(): void {
+    const value: any = this.$viewValue;
+    if (value) {
+        const result: any = this.filterByProperty(this.messageTypeList, {'value': value}, true);
+        if (result && result.length) {
+            this.messageType = result[0];
+        } else {
+            this.messageType = {
+                name: value,
+                value: value
+            };
+        }
+    } else {
+        this.messageType = null;
+    }
   }
 
   fetchMessageTypes(searchText?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
-    var result: any = $filter('filter')(this.messageTypeList, {'name': searchText});
+    var result: any = this.filterByProperty(this.messageTypeList, {'name': searchText});
     if (result && result.length) {
         deferred.resolve(result);
     } else {
@@ -107,7 +104,16 @@ export class TbMessageTypeAutocompleteDirective {
         if (this.messageType) {
             value = this.messageType.value;
         }
-        ngModelCtrl.$setViewValue(value);
+        this.$setViewValue(value);
     }
+  }
+
+  private filterByProperty(arr: any[], predicate: Record<string, any>, exactMatch = false): any[] {
+    return (arr || []).filter((item: any) => Object.entries(predicate).every(([key, val]) => {
+        if (exactMatch) {
+            return item[key] === val;
+        }
+        return String(item[key] ?? '').toLowerCase().includes(String(val ?? '').toLowerCase());
+    }));
   }
 }

@@ -12,12 +12,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
+import { isEqual } from 'lodash-es';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
 
 /**
  * Ported from the AngularJS directive `tbEntityTypeSelect` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -28,8 +27,9 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [TranslatePipe, MatSelectModule, MatInputModule, MatFormFieldModule, FormsModule],
   templateUrl: './tb-entity-type-select.directive.html',
+  providers: ngModelProviders(TbEntityTypeSelectDirective),
 })
-export class TbEntityTypeSelectDirective {
+export class TbEntityTypeSelectDirective extends NgModelController<any> {
   readonly theForm = model<any>();
   readonly tbRequired = model<any>();
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
@@ -45,16 +45,26 @@ export class TbEntityTypeSelectDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  ngModelCtrl: any = ngModelCtrl;
   entityTypes: any;
-  $watch: any;
-  entityType: any;
   showLabel: any;
+  private _entityType: any;
+
+  get entityType(): any {
+    return this._entityType;
+  }
+
+  set entityType(value: any) {
+    if (!isEqual(value, this._entityType)) {
+      this._entityType = value;
+      this.updateView();
+    }
+  }
 
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
     if ((this.attrs.hideLabel !== undefined)) {
             this.showLabel = false;
@@ -62,16 +72,12 @@ export class TbEntityTypeSelectDirective {
             this.showLabel = true;
         }
     this.entityTypes = this.entityService.prepareAllowedEntityTypesList(this.allowedEntityTypes(), this.useAliasEntityTypes());
-    this.$watch('entityType', (newValue?: any, prevValue?: any) => {
-            if (!angular.equals(newValue, prevValue)) {
-                this.updateView();
-            }
-        });
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                this.entityType = ngModelCtrl.$viewValue;
-            }
-        };
+  }
+
+  override $render(): void {
+    if (this.$viewValue) {
+      this.entityType = this.$viewValue;
+    }
   }
 
   typeName(type?: any, ...rest: any[]): any {
@@ -79,13 +85,13 @@ export class TbEntityTypeSelectDirective {
   }
 
   updateValidity(...rest: any[]): any {
-    var value: any = ngModelCtrl.$viewValue;
+    var value: any = this.$viewValue;
     var valid: any = (value !== undefined) && value != null;
-    ngModelCtrl.$setValidity('entityType', valid);
+    this.$setValidity('entityType', valid);
   }
 
   updateView(...rest: any[]): any {
-    ngModelCtrl.$setViewValue(this.entityType);
+    this.$setViewValue(this.entityType);
     this.updateValidity();
   }
 

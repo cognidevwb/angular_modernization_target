@@ -1,23 +1,14 @@
 import { Component, inject, model, output } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, DatePipe } from '@angular/common';
 import { ElementRef } from '@angular/core';
 import { Overlay } from '@angular/cdk/overlay';
 import { TimeService } from '../../api/services/time.service';
 import { TranslateService } from '@ngx-translate/core';
 import { linkAttrs } from '../../../legacy-link';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
+import { isEqual } from 'lodash-es';
 import $ from 'jquery';
-declare const timewindowButtonTemplate: any;
-declare const timewindowTemplate: any;
-declare const timewindowPanelTemplate: any;
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $filter: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
 
 /**
  * Ported from the AngularJS directive `tbTimewindow` (module `thingsboard.directives.timewindow`) in src/app/components/timewindow.directive.js:32.
@@ -27,8 +18,9 @@ declare let ngModelCtrl: any;
   selector: 'tb-timewindow',
   standalone: true,
   template: '', // TODO(port): no template found
+  providers: [DatePipe, ...ngModelProviders(TbTimewindowDirective)],
 })
-export class TbTimewindowDirective {
+export class TbTimewindowDirective extends NgModelController {
   readonly asButton = model<any>(undefined, { alias: 'asButton' });
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
   readonly isEdit = output<any>();
@@ -42,6 +34,7 @@ export class TbTimewindowDirective {
   protected readonly translate = inject(TranslateService);
   protected readonly timeService = inject(TimeService);
   protected readonly element = inject(ElementRef);
+  protected readonly datePipe = inject(DatePipe);
 
   historyOnly: any;
   aggregation: any;
@@ -60,6 +53,7 @@ export class TbTimewindowDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     this.historyOnly = (this.attrs.historyOnly !== undefined);
     // TODO(port): `isEdit` is an input; a value assigned here belongs in the template or a computed()
   this.isEdit = (this.attrs.isEdit === 'true') as any;
@@ -71,54 +65,50 @@ export class TbTimewindowDirective {
                 this.translationPending = false;
             }
         });
-    if (this.asButton()) {
-            this.template = $templateCache.get(timewindowButtonTemplate);
-        } else {
+    if (!this.asButton()) {
             this.direction = (this.attrs.direction !== undefined) ? this.attrs.direction : 'left';
             this.tooltipDirection = (this.attrs.tooltipDirection !== undefined) ? this.attrs.tooltipDirection : 'top';
-            this.template = $templateCache.get(timewindowTemplate);
         }
-    $(this.element.nativeElement).html(this.template);
-    ngModelCtrl.$render = function () {
-            this.model = this.timeService.defaultTimewindow();
-            if (ngModelCtrl.$viewValue) {
-                var value: any = ngModelCtrl.$viewValue;
-                var model: any = this.model;
-                if ((value.realtime !== undefined)) {
-                    model.selectedTab = 0;
-                    model.realtime.interval = value.realtime.interval;
-                    model.realtime.timewindowMs = value.realtime.timewindowMs;
-                } else {
-                    model.selectedTab = 1;
-                    model.history.interval = value.history.interval;
-                    if ((value.history.timewindowMs !== undefined)) {
-                        model.history.historyType = 0;
-                        model.history.timewindowMs = value.history.timewindowMs;
-                    } else {
-                        model.history.historyType = 1;
-                        model.history.fixedTimewindow.startTimeMs = value.history.fixedTimewindow.startTimeMs;
-                        model.history.fixedTimewindow.endTimeMs = value.history.fixedTimewindow.endTimeMs;
-                    }
-                }
-                if ((value.aggregation !== undefined)) {
-                    if ((value.aggregation.type !== undefined) && value.aggregation.type.length > 0) {
-                        model.aggregation.type = value.aggregation.type;
-                    }
-                    model.aggregation.limit = value.aggregation.limit || Math.floor(this.timeService.getMaxDatapointsLimit() / 2);
-                }
-                model.hideInterval = value.hideInterval;
-                model.hideAggregation = value.hideAggregation;
-                model.hideAggInterval = value.hideAggInterval;
-            }
-            this.timewindowDisabled = this.isTimewindowDisabled();
-            this.updateDisplayValue();
-        };
     this.$watchGroup(['disabled', 'isEdit'], (newValue?: any, oldValue?: any) => {
-            if (!angular.equals(newValue, oldValue)) {
+            if (!isEqual(newValue, oldValue)) {
                 this.timewindowDisabled = this.isTimewindowDisabled();
             }
         });
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  $render(): void {
+    this.model = this.timeService.defaultTimewindow();
+    if (this.$viewValue) {
+        var value: any = this.$viewValue;
+        var model: any = this.model;
+        if ((value.realtime !== undefined)) {
+            model.selectedTab = 0;
+            model.realtime.interval = value.realtime.interval;
+            model.realtime.timewindowMs = value.realtime.timewindowMs;
+        } else {
+            model.selectedTab = 1;
+            model.history.interval = value.history.interval;
+            if ((value.history.timewindowMs !== undefined)) {
+                model.history.historyType = 0;
+                model.history.timewindowMs = value.history.timewindowMs;
+            } else {
+                model.history.historyType = 1;
+                model.history.fixedTimewindow.startTimeMs = value.history.fixedTimewindow.startTimeMs;
+                model.history.fixedTimewindow.endTimeMs = value.history.fixedTimewindow.endTimeMs;
+            }
+        }
+        if ((value.aggregation !== undefined)) {
+            if ((value.aggregation.type !== undefined) && value.aggregation.type.length > 0) {
+                model.aggregation.type = value.aggregation.type;
+            }
+            model.aggregation.limit = value.aggregation.limit || Math.floor(this.timeService.getMaxDatapointsLimit() / 2);
+        }
+        model.hideInterval = value.hideInterval;
+        model.hideAggregation = value.hideAggregation;
+        model.hideAggInterval = value.hideAggInterval;
+    }
+    this.timewindowDisabled = this.isTimewindowDisabled();
+    this.updateDisplayValue();
   }
 
   hideLabel(...rest: any[]): any {
@@ -163,7 +153,6 @@ export class TbTimewindowDirective {
         attachTo: $(this.document.body),
         controller: 'TimewindowPanelController',
         controllerAs: 'vm',
-        templateUrl: timewindowPanelTemplate,
         panelClass: 'tb-timewindow-panel',
         position: position,
         fullscreen: !isGtSm,
@@ -216,7 +205,7 @@ export class TbTimewindowDirective {
     value.hideInterval = model.hideInterval;
     value.hideAggregation = model.hideAggregation;
     value.hideAggInterval = model.hideAggInterval;
-    ngModelCtrl.$setViewValue(value);
+    this.$setViewValue(value);
     this.updateDisplayValue();
   }
 
@@ -225,21 +214,48 @@ export class TbTimewindowDirective {
         if (this.model.selectedTab === 0 && !this.historyOnly) {
             this.model.displayValue = this.translate.instant('timewindow.realtime') + ' - ' +
                 this.translate.instant('timewindow.last-prefix') + ' ' +
-                $filter('milliSecondsToTimeString')(this.model.realtime.timewindowMs);
+                this.milliSecondsToTimeString(this.model.realtime.timewindowMs);
         } else {
             this.model.displayValue = !this.historyOnly ? (this.translate.instant('timewindow.history') + ' - ') : '';
             if (this.model.history.historyType === 0) {
                 this.model.displayValue += this.translate.instant('timewindow.last-prefix') + ' ' +
-                    $filter('milliSecondsToTimeString')(this.model.history.timewindowMs);
+                    this.milliSecondsToTimeString(this.model.history.timewindowMs);
             } else {
-                var startString: any = $filter('date')(this.model.history.fixedTimewindow.startTimeMs, 'yyyy-MM-dd HH:mm:ss');
-                var endString: any = $filter('date')(this.model.history.fixedTimewindow.endTimeMs, 'yyyy-MM-dd HH:mm:ss');
+                var startString: any = this.datePipe.transform(this.model.history.fixedTimewindow.startTimeMs, 'yyyy-MM-dd HH:mm:ss');
+                var endString: any = this.datePipe.transform(this.model.history.fixedTimewindow.endTimeMs, 'yyyy-MM-dd HH:mm:ss');
                 this.model.displayValue += this.translate.instant('timewindow.period', {startTime: startString, endTime: endString});
             }
         }
     } else {
         this.translationPending = true;
     }
+  }
+
+  protected milliSecondsToTimeString(milliSeconds: number): string {
+    const seconds = Math.floor((milliSeconds / 1000) % 60);
+    const minutes = Math.floor((milliSeconds / 60000) % 60);
+    const hours = Math.floor((milliSeconds / 3600000) % 24);
+    const days = Math.floor(milliSeconds / 86400000);
+    let timeStr: string;
+    if (days > 0) {
+        timeStr = days + ' ' + this.translate.instant(days > 1 ? 'timewindow.days' : 'timewindow.day');
+        if (hours > 0) {
+            timeStr += ' ' + hours + ' ' + this.translate.instant(hours > 1 ? 'timewindow.hours' : 'timewindow.hour');
+        }
+    } else if (hours > 0) {
+        timeStr = hours + ' ' + this.translate.instant(hours > 1 ? 'timewindow.hours' : 'timewindow.hour');
+        if (minutes > 0) {
+            timeStr += ' ' + minutes + ' ' + this.translate.instant(minutes > 1 ? 'timewindow.minutes' : 'timewindow.minute');
+        }
+    } else if (minutes > 0) {
+        timeStr = minutes + ' ' + this.translate.instant(minutes > 1 ? 'timewindow.minutes' : 'timewindow.minute');
+        if (seconds > 0) {
+            timeStr += ' ' + seconds + ' ' + this.translate.instant(seconds > 1 ? 'timewindow.seconds' : 'timewindow.second');
+        }
+    } else {
+        timeStr = seconds + ' ' + this.translate.instant(seconds > 1 ? 'timewindow.seconds' : 'timewindow.second');
+    }
+    return timeStr;
   }
 
   isTimewindowDisabled(...rest: any[]): any {

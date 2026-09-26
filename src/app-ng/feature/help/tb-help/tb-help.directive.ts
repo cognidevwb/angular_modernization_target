@@ -7,7 +7,6 @@ import $ from 'jquery';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $window: any;
-declare let element: any;
 
 /**
  * Ported from the AngularJS directive `tbHelp` (module `thingsboard.directives.help`) in src/app/help/help.directive.js:22.

@@ -28,7 +28,7 @@ export class FullscreenService {
     $(this.documentRef).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', () =>{
         this.emitter.$emit('FBFullscreen.change', this.isEnabled());
     });
-    this.$on = angular.bind(this.emitter, this.emitter.$on);
+    this.$on = this.emitter.$on.bind(this.emitter);
   }
 
   all(...rest: any[]): any {

@@ -1,5 +1,4 @@
-import { Component, inject, model } from '@angular/core';
-import { ElementRef } from '@angular/core';
+import { Component, inject, model, effect, DoCheck } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
@@ -9,15 +8,9 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
-import $ from 'jquery';
+import { isEqual } from 'lodash-es';
 import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $filter: any;
-declare let $mdUtil: any;
-declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbEntityTypeList` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -28,21 +21,17 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [FormsModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatAutocompleteModule, TranslatePipe],
   templateUrl: './tb-entity-type-list.directive.html',
+  providers: ngModelProviders(TbEntityTypeListDirective),
 })
-export class TbEntityTypeListDirective {
+export class TbEntityTypeListDirective extends NgModelController implements DoCheck {
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
   readonly tbRequired = model<any>();
   readonly allowedEntityTypes = model<any>();
   readonly ignoreAuthorityFilter = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   // TODO(port): '$q' — use Promise, or an Observable
-  // TODO(port): '$mdUtil' — AngularJS Material's internals: debounce/throttle → rxjs; nextTick → queueMicrotask
   protected readonly translate = inject(TranslateService);
-  // TODO(port): '$filter' — inject the pipe class and call transform()
   protected readonly entityService = inject(EntityService);
-  protected readonly element = inject(ElementRef);
   // TODO(port): elements not resolved to a component: md-chips, md-autocomplete, md-item-template, md-not-found, md-chip-template
   // TODO(port): template: 1 × md-autocomplete left in place
   // TODO(port): template: 1 × md-chip-template left in place
@@ -52,22 +41,19 @@ export class TbEntityTypeListDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  ngModelCtrl: any = ngModelCtrl;
   placeholder: any;
   secondaryPlaceholder: any;
   protected entityTypes: any;
   entityTypesList: any = [];
-  $watch: any;
   entityTypeList: any;
-  entityTypeListWatch: any;
   inputTouched: any;
   entityTypeSearchText = '';
+  private prevEntityTypeList: any;
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     this.placeholder = this.tbRequired() ? this.translate.instant('entity.enter-entity-type')
                                 : this.translate.instant('entity.any-entity');
     this.secondaryPlaceholder = '+' + this.translate.instant('entity.entity-type');
@@ -89,38 +75,30 @@ export class TbEntityTypeListDirective {
             entityTypeInfo.name = this.translate.instant(types.entityTypeTranslations[entityTypeInfo.value].type) + '';
             this.entityTypesList.push(entityTypeInfo);
         }
-    this.$watch('tbRequired', () => {
+    effect(() => {
             this.updateValidity();
         });
-    ngModelCtrl.$render = function () {
-            if (this.entityTypeListWatch) {
-                this.entityTypeListWatch();
-                this.entityTypeListWatch = null;
-            }
-            var entityTypeList: any = [];
-            var value: any = ngModelCtrl.$viewValue;
-            if (value && value.length) {
-                value.forEach((type?: any) => {
-                    var entityTypeInfo: any = {};
-                    entityTypeInfo.value = type;
-                    entityTypeInfo.name = this.translate.instant(types.entityTypeTranslations[entityTypeInfo.value].type) + '';
-                    entityTypeList.push(entityTypeInfo);
-                });
-            }
-            this.entityTypeList = entityTypeList;
-            this.entityTypeListWatch = this.$watch('entityTypeList', (newVal?: any, prevVal?: any) => {
-                if (!angular.equals(newVal, prevVal)) {
-                    this.updateEntityTypeList();
-                }
-            }, true);
-        }
-    $compile($(this.element.nativeElement).contents())(this);
-    $mdUtil.nextTick(() =>{
-            var inputElement: any = $('input', $(this.element.nativeElement));
-            inputElement.on('blur', () => {
-                this.inputTouched = true;
-            } );
+  }
+
+  override $render(): void {
+    const entityTypeList: any[] = [];
+    const value: any = this.$viewValue;
+    if (value && value.length) {
+        value.forEach((type?: any) => {
+            const entityTypeInfo: any = {};
+            entityTypeInfo.value = type;
+            entityTypeInfo.name = this.translate.instant(types.entityTypeTranslations[entityTypeInfo.value].type) + '';
+            entityTypeList.push(entityTypeInfo);
         });
+    }
+    this.entityTypeList = entityTypeList;
+  }
+
+  ngDoCheck(): void {
+    if (!isEqual(this.entityTypeList, this.prevEntityTypeList)) {
+        this.prevEntityTypeList = this.entityTypeList ? JSON.parse(JSON.stringify(this.entityTypeList)) : this.entityTypeList;
+        this.updateEntityTypeList();
+    }
   }
 
   remove(entityType?: any): void {
@@ -155,22 +133,24 @@ export class TbEntityTypeListDirective {
 
   fetchEntityTypes(searchText?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
-    var entityTypes: any = $filter('filter')(this.entityTypesList, {name: searchText});
+    var entityTypes: any = (this.entityTypesList || []).filter((item: any) => {
+        return !searchText || (item.name && String(item.name).toLowerCase().indexOf(String(searchText).toLowerCase()) !== -1);
+    });
     deferred.resolve(entityTypes);
     return deferred.promise;
   }
 
   updateValidity(...rest: any[]): any {
-    var value: any = ngModelCtrl.$viewValue;
+    var value: any = this.$viewValue;
     var valid: any = !this.tbRequired() || value && value.length > 0;
-    ngModelCtrl.$setValidity('entityTypeList', valid);
+    this.$setValidity('entityTypeList', valid);
   }
 
   updateEntityTypeList(...rest: any[]): any {
-    var values: any = ngModelCtrl.$viewValue;
+    var values: any = this.$viewValue;
     if (!values) {
         values = [];
-        ngModelCtrl.$setViewValue(values);
+        this.$setViewValue(values);
     } else {
         values.length = 0;
     }

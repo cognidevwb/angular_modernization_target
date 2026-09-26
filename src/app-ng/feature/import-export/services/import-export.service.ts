@@ -832,9 +832,9 @@ export class ImportExportService {
 
   sumObject(obj1?: any, obj2?: any, ...rest: any[]): any {
     Object.keys(obj2).map((key?: any) => {
-        if (angular.isObject(obj2[key])) {
+        if (typeof obj2[key] === 'object' && obj2[key] !== null) {
             obj1[key] = obj1[key] || {};
-            angular.merge(obj1[key], this.sumObject(obj1[key], obj2[key]));
+            Object.assign(obj1[key], this.sumObject(obj1[key], obj2[key]));
         } else {
             obj1[key] = (obj1[key] || 0) + obj2[key];
         }
@@ -906,7 +906,7 @@ export class ImportExportService {
         filename = 'download.json';
     }
 
-    if (angular.isObject(data)) {
+    if (typeof data === 'object' && data !== null) {
         data = JSON.stringify(data, null, 2);
     }
 
@@ -977,7 +977,7 @@ export class ImportExportService {
     return deferred.promise;
   }
 
-  fixedDialogSize = (scope?: any, element?: any, ...rest: any[]): any => {
+  fixedDialogSize = (_scope?: any, element?: any, ...rest: any[]): any => {
     let dialogElement: any = element[0].getElementsByTagName('md-dialog');
     dialogElement[0].style.width = dialogElement[0].offsetWidth + 2 + "px";
   };

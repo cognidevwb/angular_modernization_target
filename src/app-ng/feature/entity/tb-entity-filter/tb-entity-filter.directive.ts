@@ -19,11 +19,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TranslatePipe } from '@ngx-translate/core';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;
-declare let element: any;
-declare let ngModelCtrl: any;
 
 /**
  * Ported from the AngularJS directive `tbEntityFilter` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -34,8 +33,9 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [TranslatePipe, MatSlideToggleModule, MatSelectModule, MatInputModule, MatFormFieldModule, FormsModule, forwardRef(() => TbEntitySelectDirective), forwardRef(() => TbEntityTypeSelectDirective), forwardRef(() => TbEntityListDirective), forwardRef(() => TbEntitySubtypeAutocompleteDirective), forwardRef(() => TbRelationFiltersDirective), forwardRef(() => TbRelationTypeAutocompleteDirective), forwardRef(() => TbEntitySubtypeListDirective)],
   templateUrl: './tb-entity-filter.directive.html',
+  providers: ngModelProviders(TbEntityFilterDirective),
 })
-export class TbEntityFilterDirective {
+export class TbEntityFilterDirective extends NgModelController {
   readonly theForm = model<any>();
   readonly allowedEntityTypes = model<any>();
 
@@ -49,7 +49,6 @@ export class TbEntityFilterDirective {
   // TODO(port): template: 2 × ng-message left in place
   // TODO(port): template: 2 × ng-messages left in place
 
-  ngModelCtrl: any = ngModelCtrl;
   types: any;
   aliasFilterTypes: any;
   $watch: any;
@@ -58,6 +57,7 @@ export class TbEntityFilterDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     this.types = this.typesRef;
     this.aliasFilterTypes = this.entityService.getAliasFilterTypesByEntityTypes(this.allowedEntityTypes());
     this.$watch('filter.type', (newType?: any, prevType?: any) => {
@@ -68,16 +68,17 @@ export class TbEntityFilterDirective {
     this.$watch('filter', () => {
             this.updateView();
         });
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                this.filter = ngModelCtrl.$viewValue;
-            } else {
-                this.filter = {
-                    type: null,
-                    resolveMultiple: false
-                }
-            }
+  }
+
+  override $render(): void {
+    if (this.$viewValue) {
+        this.filter = this.$viewValue;
+    } else {
+        this.filter = {
+            type: null,
+            resolveMultiple: false
         }
+    }
   }
 
   updateFilter(...rest: any[]): any {
@@ -143,6 +144,6 @@ export class TbEntityFilterDirective {
   }
 
   updateView(...rest: any[]): any {
-    ngModelCtrl.$setViewValue(this.filter);
+    this.$setViewValue(this.filter);
   }
 }

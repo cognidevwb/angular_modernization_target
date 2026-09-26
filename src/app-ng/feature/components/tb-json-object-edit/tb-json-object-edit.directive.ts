@@ -7,18 +7,17 @@ import { UtilsService } from '../../common/services/utils.service';
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
 import fixAceEditor from '../../../../app/components/ace-editor-fix';
-// @ts-ignore
-import jsonObjectEditTemplate from '../../../../app/components/json-object-edit.tpl.html';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { RootState } from '../../../root-state';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
 declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
 
 /**
  * Ported from the AngularJS directive `tbJsonObjectEdit` (module `thingsboard.directives.jsonObjectEdit`) in src/app/components/json-object-edit.directive.js:31.
@@ -27,9 +26,29 @@ declare let ngModelCtrl: any;
 @Component({
   selector: 'tb-json-object-edit',
   standalone: true,
-  template: '', // TODO(port): no template found
+  imports: [FormsModule, MatButtonModule, MatIconModule, TranslatePipe],
+  template: `
+    <div id="tb-json-panel" class="tb-json-object-edit">
+      @if (label) {
+        <label class="tb-title" [class.tb-error]="!objectValid">{{ label }}</label>
+      }
+      <div class="tb-json-toolbar">
+        <button type="button" mat-icon-button [attr.aria-label]="'action.beautify' | translate" (click)="beautifyJSON()">
+          <mat-icon>code</mat-icon>
+        </button>
+        <button type="button" mat-icon-button [attr.aria-label]="'action.minify' | translate" (click)="minifyJSON()">
+          <mat-icon>format_align_left</mat-icon>
+        </button>
+      </div>
+      <textarea class="tb-json-editor" [(ngModel)]="contentBody" [readonly]="readonly()"></textarea>
+      @if (!objectValid) {
+        <div class="tb-json-error">{{ validationError }}</div>
+      }
+    </div>
+  `,
+  providers: ngModelProviders(TbJsonObjectEditDirective),
 })
-export class TbJsonObjectEditDirective {
+export class TbJsonObjectEditDirective extends NgModelController {
   readonly required = model<any>(undefined, { alias: 'ngRequired' });
   readonly readonly = model<any>(undefined, { alias: 'ngReadonly' });
   readonly fillHeight = model<any>();
@@ -43,7 +62,6 @@ export class TbJsonObjectEditDirective {
   protected readonly rootScope = inject(RootState);
   protected readonly destroy$ = new Subject<void>();
 
-  protected template: any = $templateCache.get(jsonObjectEditTemplate);
   label: any;
   objectValid: any = true;
   validationError: any = '';
@@ -61,8 +79,8 @@ export class TbJsonObjectEditDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     inject(DestroyRef).onDestroy(() => this.destroy$.next());
-    $(this.element.nativeElement).html(this.template);
     this.label = this.attrs.label;
     this.json_editor;
     this.jsonEditorOptions = {
@@ -105,18 +123,6 @@ export class TbJsonObjectEditDirective {
       }
       this._prevContentBody = newVal;
     });
-    ngModelCtrl.$render = function () {
-            this.object = ngModelCtrl.$viewValue;
-            var content: any = '';
-            try {
-                if (this.object) {
-                    content = JSON.stringify(this.object, null, 2);
-                }
-            } catch (e: any) {
-                //
-            }
-            this.contentBody = content;
-        };
     this.rootScope.formSubmit$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             if (!this.readonly()) {
                 this.cleanupJsonErrors();
@@ -128,7 +134,19 @@ export class TbJsonObjectEditDirective {
     this.rootScope.updateAceEditorSize$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.updateEditorSize();
         });
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  override $render(): void {
+    this.object = this.$viewValue;
+    var content: any = '';
+    try {
+        if (this.object) {
+            content = JSON.stringify(this.object, null, 2);
+        }
+    } catch (e: any) {
+        //
+    }
+    this.contentBody = content;
   }
 
   onFullscreenChanged(...rest: any[]): any {

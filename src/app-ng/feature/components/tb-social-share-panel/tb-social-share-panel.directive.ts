@@ -1,7 +1,4 @@
 import { Component, input } from '@angular/core';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import socialsharePanelTemplate from '../../../../app/components/socialshare-panel.tpl.html';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -43,7 +40,6 @@ export class TbSocialSharePanelDirective {
   readonly shareHashTags = input<any>();
 
   restrict: any = "E";
-  scope: any = true;
   bindToController: any = {
             shareTitle: '@',
             shareText: '@',
@@ -52,7 +48,6 @@ export class TbSocialSharePanelDirective {
         };
   controller: any = SocialsharePanelController;
   controllerAs: any;
-  templateUrl: any = socialsharePanelTemplate;
 
   constructor() {
     let vm = this;

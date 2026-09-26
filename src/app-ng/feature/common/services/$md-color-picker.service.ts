@@ -1,11 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { bindMethods } from '../../../bind-methods';
+import { store } from '../../../core/app-store';
 import tinycolor from 'tinycolor2';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let mdColorPickerHistory: any;
-declare let $scope: any;
 
 /**
  * Ported from the AngularJS factory `$mdColorPicker` (module `thingsboard.thirdpartyFix`) in src/app/common/thirdparty-fix.js:19.
@@ -15,7 +12,16 @@ declare let $scope: any;
 export class $mdColorPickerService {
   private readonly __bound = bindMethods(this);
   private readonly dialogRef = inject(MatDialog);
-  // TODO(port): 'mdColorPickerHistory' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
+  private readonly mdColorPickerHistory = {
+    colors: (store.get('mdColorPickerHistory') as string[]) || [],
+    add(color: any): void {
+      const hex = color && typeof color.toHexString === 'function' ? color.toHexString() : String(color);
+      if (!this.colors.includes(hex)) {
+        this.colors.unshift(hex);
+      }
+      store.set('mdColorPickerHistory', this.colors);
+    }
+  };
 
   private dialog: any;
 
@@ -52,31 +58,31 @@ export class $mdColorPickerService {
         hasBackdrop: options.hasBackdrop,
         clickOutsideToClose: options.clickOutsideToClose,
 
-        controller: ['$scope', 'options', ( $scope?: any, options?: any ) => {
+        controller: ['scope', 'options', ( scope?: any, options?: any ) => {
             //console.log( "DIALOG CONTROLLER OPEN", Date.now() - dateClick );
-            $scope.close = () =>
+            scope.close = () =>
             {
                 (this.dialogRef as any).cancel();
             };
-            $scope.ok = () =>
+            scope.ok = () =>
             {
-                (this.dialogRef as any).hide( $scope.value );
+                (this.dialogRef as any).hide( scope.value );
             };
-            $scope.hide = $scope.ok;
+            scope.hide = scope.ok;
 
 
 
-            $scope.value = options.value;
-            $scope.default = options.defaultValue;
-            $scope.random = options.random;
+            scope.value = options.value;
+            scope.default = options.defaultValue;
+            scope.random = options.random;
 
-            $scope.mdColorAlphaChannel = options.mdColorAlphaChannel;
-            $scope.mdColorSpectrum = options.mdColorSpectrum;
-            $scope.mdColorSliders = options.mdColorSliders;
-            $scope.mdColorGenericPalette = options.mdColorGenericPalette;
-            $scope.mdColorMaterialPalette = options.mdColorMaterialPalette;
-            $scope.mdColorHistory = options.mdColorHistory;
-            $scope.mdColorDefaultTab = options.mdColorDefaultTab;
+            scope.mdColorAlphaChannel = options.mdColorAlphaChannel;
+            scope.mdColorSpectrum = options.mdColorSpectrum;
+            scope.mdColorSliders = options.mdColorSliders;
+            scope.mdColorGenericPalette = options.mdColorGenericPalette;
+            scope.mdColorMaterialPalette = options.mdColorMaterialPalette;
+            scope.mdColorHistory = options.mdColorHistory;
+            scope.mdColorDefaultTab = options.mdColorDefaultTab;
 
         }],
 
@@ -97,8 +103,8 @@ export class $mdColorPickerService {
         }
     });
 
-    this.dialog.then(function (value?: any) {
-        mdColorPickerHistory.add(new tinycolor(value));
+    this.dialog.then((value?: any) => {
+        this.mdColorPickerHistory.add(new tinycolor(value));
     }, function () { });
 
     return this.dialog;

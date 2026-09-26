@@ -1,17 +1,12 @@
-import { Component, inject, input, model } from '@angular/core';
+import { Component, effect, inject, input, model } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { WidgetService } from '../../api/services/widget.service';
 import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 
-import $ from 'jquery';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbWidgetsBundleSelect` (module `thingsboard.directives.widgetsBundleSelect`) in src/app/components/widgets-bundle-select.directive.js:27.
@@ -22,8 +17,9 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [TranslatePipe, MatSelectModule, FormsModule],
   templateUrl: './tb-widgets-bundle-select.directive.html',
+  providers: ngModelProviders(TbWidgetsBundleSelectDirective),
 })
-export class TbWidgetsBundleSelectDirective {
+export class TbWidgetsBundleSelectDirective extends NgModelController {
   readonly bundlesScope = input<any>();
   readonly theForm = model<any>();
   readonly tbRequired = model<any>();
@@ -35,14 +31,22 @@ export class TbWidgetsBundleSelectDirective {
   protected readonly widgetService = inject(WidgetService);
   protected readonly element = inject(ElementRef);
 
-  widgetsBundle: any = null;
+  private _widgetsBundle: any = null;
   widgetsBundles: any = [];
   protected widgetsBundleFetchFunction: any;
-  $watch: any;
+
+  get widgetsBundle(): any {
+    return this._widgetsBundle;
+  }
+  set widgetsBundle(value: any) {
+    this._widgetsBundle = value;
+    this.updateView();
+  }
 
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
     this.widgetsBundleFetchFunction = this.widgetService.getAllWidgetsBundles;
     if ((this.bundlesScope !== undefined)) {
@@ -66,20 +70,15 @@ export class TbWidgetsBundleSelectDirective {
             function fail() {
             }
         );
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                this.widgetsBundle = ngModelCtrl.$viewValue;
-            }
-        }
-    this.$watch('widgetsBundle', () => {
-            this.updateView();
+    effect(() => {
+            this.selectWidgetsBundleByAlias(this.selectBundleAlias());
         });
-    this.$watch('selectBundleAlias', (newVal?: any, prevVal?: any) => {
-            if (newVal !== prevVal) {
-                this.selectWidgetsBundleByAlias(this.selectBundleAlias());
-            }
-        });
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  $render(): void {
+    if (this.$viewValue) {
+        this.widgetsBundle = this.$viewValue;
+    }
   }
 
   selectWidgetsBundleByAlias(alias?: any, ...rest: any[]): any {
@@ -99,6 +98,6 @@ export class TbWidgetsBundleSelectDirective {
   }
 
   updateView(...rest: any[]): any {
-    ngModelCtrl.$setViewValue(this.widgetsBundle);
+    this.$setViewValue(this.widgetsBundle);
   }
 }

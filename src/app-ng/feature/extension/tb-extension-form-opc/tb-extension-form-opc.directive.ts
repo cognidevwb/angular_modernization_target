@@ -18,7 +18,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;
-declare let element: any;
 
 /**
  * Ported from the AngularJS directive `tbExtensionFormOpc` (module `thingsboard.extension`) in src/app/extension/index.js:24.
@@ -109,7 +108,6 @@ export class TbExtensionFormOpcDirective {
     if (!this.configuration().servers.length) {
             this.configuration().servers.push(new this.Server());
         }
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   addServer(serversList?: any, ...rest: any[]): any {

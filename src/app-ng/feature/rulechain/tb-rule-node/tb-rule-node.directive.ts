@@ -68,7 +68,6 @@ export class TbRuleNodeDirective {
                 }
             }
         });
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   watchTargetRuleChain(...rest: any[]): any {

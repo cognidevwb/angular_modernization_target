@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, DoCheck, forwardRef, inject } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,9 +19,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $filter: any;
-declare let $scope: any;
 
 /**
  * Ported from the AngularJS controller `EntityAliasDialogController` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -33,7 +30,7 @@ declare let $scope: any;
   imports: [TranslatePipe, MatToolbarModule, MatSlideToggleModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatButtonModule, FormsModule, forwardRef(() => TbEntityFilterDirective)],
   templateUrl: './entity-alias-dialog.component.html',
 })
-export class EntityAliasDialogComponent {
+export class EntityAliasDialogComponent implements DoCheck {
   protected readonly rootScope = injectRoot(RootState);
   // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly dialog = inject(MatDialog);
@@ -81,23 +78,41 @@ export class EntityAliasDialogComponent {
     }
     this.cancel = this.cancel;
     this.save = this.save;
-    $scope.$watch('vm.alias.alias', (newAlias?: any) => {
-        if (newAlias) {
-            var valid: any = true;
-            var result: any = $filter('filter')(this.entityAliases, {alias: newAlias}, true);
-            if (result && result.length) {
-                if (this.isAdd || this.alias.id != result[0].id) {
-                    valid = false;
-                }
+  }
+
+  private prevAliasName: any;
+  private prevFormPristine: any;
+
+  ngDoCheck(): void {
+    const currentAliasName = this.alias ? this.alias.alias : undefined;
+    if (currentAliasName !== this.prevAliasName) {
+        this.prevAliasName = currentAliasName;
+        this.onAliasNameChange(currentAliasName);
+    }
+    const currentFormPristine = this.theForm ? this.theForm.$pristine : undefined;
+    if (currentFormPristine !== this.prevFormPristine) {
+        this.prevFormPristine = currentFormPristine;
+        this.onFormPristineChange();
+    }
+  }
+
+  private onAliasNameChange(newAlias?: any): void {
+    if (newAlias) {
+        var valid: any = true;
+        var result: any = this.entityAliases.filter((item: any) => item.alias === newAlias);
+        if (result && result.length) {
+            if (this.isAdd || this.alias.id != result[0].id) {
+                valid = false;
             }
-            this.theForm.aliasName.$setValidity('duplicateAliasName', valid);
         }
-    });
-    $scope.$watch('theForm.$pristine', () => {
-        if (this.theForm && !this.theForm.$pristine) {
-            this.theForm.$setValidity('entityFilter', true);
-        }
-    });
+        this.theForm.aliasName.$setValidity('duplicateAliasName', valid);
+    }
+  }
+
+  private onFormPristineChange(): void {
+    if (this.theForm && !this.theForm.$pristine) {
+        this.theForm.$setValidity('entityFilter', true);
+    }
   }
 
   validate(...rest: any[]): any {

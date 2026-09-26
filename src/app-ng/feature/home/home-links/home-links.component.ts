@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MenuService } from '../../services/menu.service';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,9 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { Router, RouterLink } from '@angular/router';
 import { stateHref } from '../../../state-paths';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $scope: any;
 
 /**
  * Ported from the AngularJS controller `HomeLinksController` (module `thingsboard.homeLinks`) in src/app/home/index.js:21.
@@ -39,11 +36,13 @@ export class HomeLinksComponent {
 
   constructor() {
     this.sectionColspan = this.sectionColspan;
-    $scope.$watch(() => { return this.breakpoints.isMatched('lg'); }, () => {
-        this.updateColumnCount();
+    effect(() => {
+      this.breakpoints.isMatched('lg');
+      this.updateColumnCount();
     });
-    $scope.$watch(() => { return this.breakpoints.isMatched('gt-lg'); }, () => {
-        this.updateColumnCount();
+    effect(() => {
+      this.breakpoints.isMatched('gt-lg');
+      this.updateColumnCount();
     });
     this.updateColumnCount();
     this.model = this.menu.getHomeSections();

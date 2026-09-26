@@ -12,12 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import $ from 'jquery';
 import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $filter: any;
-declare let $mdUtil: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbEntitySubtypeList` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -28,8 +23,9 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [FormsModule, MatChipsModule, MatAutocompleteModule, MatIconModule, TranslatePipe],
   templateUrl: './tb-entity-subtype-list.directive.html',
+  providers: ngModelProviders(TbEntitySubtypeListDirective),
 })
-export class TbEntitySubtypeListDirective {
+export class TbEntitySubtypeListDirective extends NgModelController {
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
   readonly tbRequired = model<any>();
   readonly entityType = model<any>();
@@ -53,7 +49,6 @@ export class TbEntitySubtypeListDirective {
   // TODO(port): template: 1 × ng-message left in place
   // TODO(port): template: 1 × ng-messages left in place
 
-  ngModelCtrl: any = ngModelCtrl;
   entitySubtypesList: any = [];
   entitySubtypes: any = null;
   entitySubtypeSearchText: any = '';
@@ -69,6 +64,7 @@ export class TbEntitySubtypeListDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     if (this.entityType() == types.entityType.asset) {
             this.placeholder = this.tbRequired() ? this.translate.instant('asset.enter-asset-type')
                 : this.translate.instant('asset.any-asset');
@@ -91,30 +87,25 @@ export class TbEntitySubtypeListDirective {
     this.$watch('tbRequired', () => {
             this.updateValidity();
         });
-    ngModelCtrl.$render = function () {
-            this.entitySubtypesList = ngModelCtrl.$viewValue;
-            if (!this.entitySubtypesList) {
-                this.entitySubtypesList = [];
-            }
-        }
     this.$watch('entitySubtypesList', () => {
-            ngModelCtrl.$setViewValue(this.entitySubtypesList);
+            this.$setViewValue(this.entitySubtypesList);
             this.updateValidity();
         }, true);
-    $compile($(this.element.nativeElement).contents())(this);
-    $mdUtil.nextTick(() =>{
-            var inputElement: any = $('input', $(this.element.nativeElement));
-            inputElement.on('blur', () => {
-                this.inputTouched = true;
-            } );
-        });
+  }
+
+  override $render(): void {
+    this.entitySubtypesList = this.$viewValue;
+    if (!this.entitySubtypesList) {
+      this.entitySubtypesList = [];
+    }
   }
 
   fetchEntitySubtypes(searchText?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     this.loadSubTypes().then(
         function success(subTypes?: any) {
-            var result: any = $filter('filter')(subTypes, {'$': searchText});
+            var result: any = (subTypes || []).filter((item: any) =>
+                searchText ? String(item).toLowerCase().indexOf(String(searchText).toLowerCase()) !== -1 : true);
             if (result && result.length) {
                 deferred.resolve(result);
             } else {
@@ -138,7 +129,7 @@ export class TbEntitySubtypeListDirective {
     const value = event.option.value;
     if (value) {
       this.entitySubtypesList.push(value);
-      ngModelCtrl.$setViewValue(this.entitySubtypesList);
+      this.$setViewValue(this.entitySubtypesList);
       this.updateValidity();
     }
     this.entitySubtypeSearchText = '';
@@ -148,15 +139,15 @@ export class TbEntitySubtypeListDirective {
     const index = this.entitySubtypesList.indexOf(subtype);
     if (index >= 0) {
       this.entitySubtypesList.splice(index, 1);
-      ngModelCtrl.$setViewValue(this.entitySubtypesList);
+      this.$setViewValue(this.entitySubtypesList);
       this.updateValidity();
     }
   }
 
   updateValidity(...rest: any[]): any {
-    var value: any = ngModelCtrl.$viewValue;
+    var value: any = this.$viewValue;
     var valid: any = !this.tbRequired() || value && value.length > 0;
-    ngModelCtrl.$setValidity('entitySubtypesList', valid);
+    this.$setValidity('entitySubtypesList', valid);
   }
 
   loadSubTypes(...rest: any[]): any {

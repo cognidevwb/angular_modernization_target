@@ -1,8 +1,6 @@
 import { Component, forwardRef, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TbExtensionTableDirective } from '../../extension/tb-extension-table/tb-extension-table.directive';
-// @ts-ignore
-import extensionsTableWidgetTemplate from '../../../../app/widget/lib/extensions-table-widget.tpl.html';
 import { MatTabsModule } from '@angular/material/tabs';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
@@ -128,17 +126,4 @@ export class TbExtensionsTableWidgetDirective {
 
   datasources: any = null;
   tabsHidden: any = false;
-  restrict: any = "E";
-  scope: any = true;
-  bindToController: any = {
-            ctx: '='
-        };
-  controller: any = ExtensionsTableWidgetController;
-  controllerAs: any;
-  templateUrl: any = extensionsTableWidgetTemplate;
-
-  constructor() {
-    let vm = this;
-    this.controllerAs = 'vm';
-  }
 }

@@ -35,18 +35,12 @@ import { TbWidgetsBundleSelectDirective } from '../../components/tb-widgets-bund
 import { TbDashboardDirective } from '../../components/tb-dashboard/tb-dashboard.directive';
 
 import $ from 'jquery';
-// @ts-ignore
-import entityAliasesTemplate from '../../../../app/entity/alias/entity-aliases.tpl.html';
-// @ts-ignore
-import dashboardSettingsTemplate from '../../../../app/dashboard/dashboard-settings.tpl.html';
-// @ts-ignore
-import manageDashboardLayoutsTemplate from '../../../../app/dashboard/layouts/manage-dashboard-layouts.tpl.html';
-// @ts-ignore
-import manageDashboardStatesTemplate from '../../../../app/dashboard/states/manage-dashboard-states.tpl.html';
-// @ts-ignore
-import addWidgetTemplate from '../../../../app/dashboard/add-widget.tpl.html';
-// @ts-ignore
-import selectTargetLayoutTemplate from '../../../../app/dashboard/layouts/select-target-layout.tpl.html';
+import { EntityAliasesComponent as entityAliasesTemplate } from '../../entity/alias/entity-aliases.component';
+import { DashboardSettingsComponent as dashboardSettingsTemplate } from '../dashboard-settings/dashboard-settings.component';
+import { ManageDashboardLayoutsComponent as manageDashboardLayoutsTemplate } from '../layouts/manage-dashboard-layouts/manage-dashboard-layouts.component';
+import { ManageDashboardStatesComponent as manageDashboardStatesTemplate } from '../states/manage-dashboard-states/manage-dashboard-states.component';
+import { AddWidgetComponent as addWidgetTemplate } from '../add-widget/add-widget.component';
+import { SelectTargetLayoutComponent as selectTargetLayoutTemplate } from '../layouts/select-target-layout/select-target-layout.component';
 import AliasController from '../../../../app/api/alias-controller';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -57,8 +51,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let THINGSBOARD_VERSION: any;
-declare let $filter: any;
+import { version as THINGSBOARD_VERSION } from '../../../../../package.json';
 declare let $scope: any;
 declare let $window: any;
 declare let scope: any;
@@ -190,7 +183,7 @@ export class DashboardComponent {
     });
     this.toolbarAlwaysOpen = this.toolbarAlwaysOpen;
     this.isMobile = !(this.breakpoints as any)('gt-sm');
-    $scope.$watch(() => { return (this.breakpoints as any)('gt-sm'); }, (isGtSm?: any) => {
+    this.watch(() => { return (this.breakpoints as any)('gt-sm'); }, (isGtSm?: any) => {
         this.isMobile = !isGtSm;
     });
     this.addWidget = this.addWidget;
@@ -265,12 +258,12 @@ export class DashboardComponent {
             this.pasteWidgetReference($event, layoutCtx, pos);
         }
     };
-    $scope.$watch('vm.widgetsBundle', (newVal?: any, prevVal?: any) => {
+    this.watch('vm.widgetsBundle', (newVal?: any, prevVal?: any) => {
         if (newVal !== prevVal && !this.widgetEditMode) {
             this.loadWidgetLibrary();
         }
     });
-    $scope.$watch('vm.currentDashboardId', (newVal?: any, prevVal?: any) => {
+    this.watch('vm.currentDashboardId', (newVal?: any, prevVal?: any) => {
         if (newVal !== prevVal && !this.widgetEditMode) {
             if (this.currentDashboardScope === 'customer' && this.user.authority === 'TENANT_ADMIN') {
                 (this.router as any).go('home.customers.dashboards.dashboard', {
@@ -400,7 +393,7 @@ export class DashboardComponent {
 
                 }
 
-                widgetTypes = $filter('orderBy')(widgetTypes, ['-createdTime']);
+                widgetTypes = [...widgetTypes].sort((a: any, b: any) => (b.createdTime ?? 0) - (a.createdTime ?? 0));
 
                 var top: any = 0;
 
@@ -441,9 +434,9 @@ export class DashboardComponent {
         this.dashboardConfiguration = this.dashboard.configuration;
         this.dashboardCtx.dashboard = this.dashboard;
         this.dashboardCtx.dashboardTimewindow = this.dashboardConfiguration.timewindow;
-        this.dashboardCtx.aliasController = new AliasController(this, $q, $filter, this.utils,
+        this.dashboardCtx.aliasController = new AliasController(this, $q, (name: string) => (name === 'translate' ? (key: any, params?: any) => this.translate.instant(key, params) : (...args: any[]) => args[0]), this.utils,
             types, this.entityService, this.dashboardCtx.stateController, this.dashboardConfiguration.entityAliases);
-        var parentScope: any = $window.parent.angular.element($window.frameElement).scope();
+        var parentScope: any = (window.parent as any).angular.element((window as any).frameElement).scope();
         parentScope.$root.$broadcast('widgetEditModeInited');
         parentScope.$root.$apply();
     } else {
@@ -453,7 +446,7 @@ export class DashboardComponent {
                 this.dashboardConfiguration = this.dashboard.configuration;
                 this.dashboardCtx.dashboard = this.dashboard;
                 this.dashboardCtx.dashboardTimewindow = this.dashboardConfiguration.timewindow;
-                this.dashboardCtx.aliasController = new AliasController(this, $q, $filter, this.utils,
+                this.dashboardCtx.aliasController = new AliasController(this, $q, (name: string) => (name === 'translate' ? (key: any, params?: any) => this.translate.instant(key, params) : (...args: any[]) => args[0]), this.utils,
                     types, this.entityService, this.dashboardCtx.stateController, this.dashboardConfiguration.entityAliases);
             }, () => {
                 this.configurationError = true;
@@ -1047,7 +1040,7 @@ export class DashboardComponent {
                     multiple: true,
                     targetEvent: event,
                     onComplete: function (...rest: any[]) {
-                        var w: any = $($window);
+                        var w: any = $(window);
                         w.triggerHandler('resize');
                     }
                 }).then((result?: any) => {
@@ -1151,7 +1144,7 @@ export class DashboardComponent {
 
   notifyDashboardUpdated(...rest: any[]): any {
     if (this.widgetEditMode) {
-        var parentScope: any = $window.parent.angular.element($window.frameElement).scope();
+        var parentScope: any = (window.parent as any).angular.element((window as any).frameElement).scope();
         var widget: any = this.layouts.main.layoutCtx.widgets[0];
         var layout: any = this.layouts.main.layoutCtx.widgetLayouts[widget.id];
         widget.sizeX = layout.sizeX;
@@ -1160,6 +1153,24 @@ export class DashboardComponent {
         parentScope.$root.$apply();
     } else {
         this.dashboardService.saveDashboard(this.dashboard);
+    }
+  }
+
+  private _watchers: Array<{ expr: () => any; prev: any; cb: (n: any, p: any) => void }> = [];
+
+  private watch(expr: string | (() => any), cb: (n: any, p: any) => void): void {
+    const exprFn = typeof expr === 'function' ? expr : () => (this as any)[expr.replace(/^vm\./, '')];
+    this._watchers.push({ expr: exprFn, prev: exprFn(), cb });
+  }
+
+  ngDoCheck(): void {
+    for (const w of this._watchers) {
+      const newVal = w.expr();
+      if (newVal !== w.prev) {
+        const prevVal = w.prev;
+        w.prev = newVal;
+        w.cb(newVal, prevVal);
+      }
     }
   }
 }

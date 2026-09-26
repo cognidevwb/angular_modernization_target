@@ -1,30 +1,39 @@
 import { Component, model, output, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// @ts-ignore
-import dashboardToolbarTemplate from '../../../../app/dashboard/dashboard-toolbar.tpl.html';
+import $ from 'jquery';
+import { isEqual } from 'lodash-es';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let scope: any;
-declare const angular: any;
-declare const addResizeListener: any;
-declare const removeResizeListener: any;
+// Resize listeners ported to the native ResizeObserver API (the legacy globals are not available).
+const resizeObservers = new WeakMap<Element, ResizeObserver>();
+function addResizeListener(el: Element, fn: () => void): void {
+    const observer = new ResizeObserver(() => fn());
+    observer.observe(el);
+    resizeObservers.set(el, observer);
+}
+function removeResizeListener(el: Element, _fn: () => void): void {
+    const observer = resizeObservers.get(el);
+    if (observer) {
+        observer.disconnect();
+        resizeObservers.delete(el);
+    }
+}
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 function DashboardToolbarController(this: any, $scope?: any, $element?: any, $timeout?: any, mdFabToolbarAnimation?: any) {
 
     let vm: any = this;
 
-    vm.mdFabToolbarElement = angular.element($element[0].querySelector('md-fab-toolbar'));
+    vm.mdFabToolbarElement = $($element[0].querySelector('md-fab-toolbar'));
 
     function initElements() {
         $timeout(function() {
-            vm.mdFabBackgroundElement = angular.element(vm.mdFabToolbarElement[0].querySelector('.md-fab-toolbar-background'));
-            vm.mdFabTriggerElement = angular.element(vm.mdFabToolbarElement[0].querySelector('md-fab-trigger button'));
+            vm.mdFabBackgroundElement = $(vm.mdFabToolbarElement[0].querySelector('.md-fab-toolbar-background'));
+            vm.mdFabTriggerElement = $(vm.mdFabToolbarElement[0].querySelector('md-fab-trigger button'));
             if (!vm.mdFabBackgroundElement || !vm.mdFabBackgroundElement[0]) {
                 initElements();
             } else {
@@ -60,7 +69,7 @@ function DashboardToolbarController(this: any, $scope?: any, $element?: any, $ti
 
                 var transform: any = vm.mdFabBackgroundElement[0].style.transform;
                 var targetTransform: any = 'scale(' + scale + ')';
-                if (!transform || !angular.equals(transform, targetTransform)) {
+                if (!transform || !isEqual(transform, targetTransform)) {
                     vm.mdFabBackgroundElement[0].style.transform = targetTransform;
                 }
             }
@@ -89,7 +98,6 @@ export class TbDashboardToolbarDirective {
   // TODO(port): template: 1 × md-fab-trigger left in place
 
   restrict: any = "E";
-  scope: any = true;
   transclude: any = true;
   bindToController: any = {
             toolbarOpened: '=',
@@ -98,7 +106,6 @@ export class TbDashboardToolbarDirective {
         };
   controller: any = DashboardToolbarController;
   controllerAs: any;
-  templateUrl: any = dashboardToolbarTemplate;
 
   constructor() {
     let vm = this;

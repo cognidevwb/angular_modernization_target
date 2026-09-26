@@ -11,8 +11,8 @@ import { FormsModule } from '@angular/forms';
 import { TbEntityFilterViewDirective } from '../tb-entity-filter-view/tb-entity-filter-view.directive';
 
 import $ from 'jquery';
-// @ts-ignore
-import entityAliasDialogTemplate from '../../../../app/entity/alias/entity-alias-dialog.tpl.html';
+import { firstValueFrom } from 'rxjs';
+import { EntityAliasDialogComponent } from '../entity-alias-dialog/entity-alias-dialog.component';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -145,30 +145,25 @@ export class EntityAliasesComponent {
     if (!isAdd) {
         aliasIndex = this.entityAliases.indexOf(entityAlias);
     }
-    (this.dialog as any).show({
-        controller: 'EntityAliasDialogController',
-        controllerAs: 'vm',
-        templateUrl: entityAliasDialogTemplate,
-        locals: {
+    firstValueFrom(this.dialog.open(EntityAliasDialogComponent, {
+        data: {
             isAdd: isAdd,
             allowedEntityTypes: this.allowedEntityTypes,
             entityAliases: this.entityAliases,
             alias: isAdd ? null : structuredClone(entityAlias)
         },
-        parent: $(this.document.body),
-        fullscreen: true,
-        multiple: true,
-        targetEvent: $event
-    }).then((alias?: any) => {
-        if (isAdd) {
-            this.entityAliases.push(alias);
-        } else {
-            this.entityAliases[aliasIndex] = alias;
+        panelClass: 'tb-dialog'
+    }).afterClosed()).then((alias?: any) => {
+        if (alias !== undefined) {
+            if (isAdd) {
+                this.entityAliases.push(alias);
+            } else {
+                this.entityAliases[aliasIndex] = alias;
+            }
+            if (this.theForm) {
+                this.theForm.$setDirty();
+            }
         }
-        if (this.theForm) {
-            this.theForm.$setDirty();
-        }
-    }, function () {
     });
   }
 

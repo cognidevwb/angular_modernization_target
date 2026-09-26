@@ -4,19 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { TbRelationTypeAutocompleteDirective } from '../tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive';
 import { TbEntityTypeListDirective } from '../tb-entity-type-list/tb-entity-type-list.directive';
 
-import $ from 'jquery';
+import { isEqual } from 'lodash-es';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbRelationFilters` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -27,47 +22,33 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatIconModule, MatButtonModule, FormsModule, forwardRef(() => TbRelationTypeAutocompleteDirective), forwardRef(() => TbEntityTypeListDirective)],
   templateUrl: './tb-relation-filters.directive.html',
+  providers: ngModelProviders(TbRelationFiltersDirective),
 })
-export class TbRelationFiltersDirective {
+export class TbRelationFiltersDirective extends NgModelController {
   protected readonly rootScope = injectRoot(RootState);
   readonly allowedEntityTypes = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly element = inject(ElementRef);
-  // TODO(port): template: 1 × ng-form left in place
 
   relationFilters: any = [];
-  $watch: any;
-  relationFiltersWatch: any;
-  filter: any;
-  relationFilterForm: any;
+  private prevRelationFilters: any = [];
 
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  ngDoCheck(): void {
+    if (!isEqual(this.relationFilters, this.prevRelationFilters)) {
+      this.prevRelationFilters = structuredClone(this.relationFilters);
+      this.updateValue();
+    }
+  }
 
-  constructor() {
-    this.addFilter = this.addFilter;
-    this.removeFilter = this.removeFilter;
-    ngModelCtrl.$render = function () {
-            if (this.relationFiltersWatch) {
-                this.relationFiltersWatch();
-                this.relationFiltersWatch = null;
-            }
-            if (ngModelCtrl.$viewValue) {
-                var value: any = ngModelCtrl.$viewValue;
-                this.relationFilters.length = 0;
-                value.forEach((filter?: any) => {
-                    this.relationFilters.push(filter);
-                });
-            }
-            this.relationFiltersWatch = this.$watch('relationFilters', (newVal?: any, prevVal?: any) => {
-                if (!angular.equals(newVal, prevVal)) {
-                    this.updateValue();
-                }
-            }, true);
-        }
-    $compile($(this.element.nativeElement).contents())(this);
+  $render(): void {
+    if (this.$viewValue) {
+        var value: any = this.$viewValue;
+        this.relationFilters.length = 0;
+        value.forEach((filter?: any) => {
+            this.relationFilters.push(filter);
+        });
+    }
+    this.prevRelationFilters = structuredClone(this.relationFilters);
   }
 
   addFilter = (...rest: any[]): any => {
@@ -86,10 +67,10 @@ export class TbRelationFiltersDirective {
   };
 
   updateValue(...rest: any[]): any {
-    var value: any = ngModelCtrl.$viewValue;
+    var value: any = this.$viewValue;
     if (!value) {
         value = [];
-        ngModelCtrl.$setViewValue(value);
+        this.$setViewValue(value);
     } else {
         value.length = 0;
     }

@@ -963,7 +963,6 @@ export class TripAnimationDirective {
   // TODO(port): AngularJS built-in filters in the template: date — use Angular pipes
 
   restrict: any = "E";
-  scope: any = true;
   bindToController: any;
   controller: any = tripAnimationController;
   controllerAs: any;

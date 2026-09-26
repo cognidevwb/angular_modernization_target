@@ -8,20 +8,17 @@ import { FormsModule } from '@angular/forms';
 import { TbExpandFullscreenDirective } from '../tb-expand-fullscreen/tb-expand-fullscreen.directive';
 import { linkAttrs } from '../../../legacy-link';
 import { RootState } from '../../../root-state';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 import ace from 'brace';
 import $ from 'jquery';
+import { isEqual } from 'lodash-es';
 import fixAceEditor from '../../../../app/components/ace-editor-fix';
-import jsFuncTemplate from '../../../../app/components/js-func.tpl.html?raw';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;
-declare let angular: any;
-declare let vm: any;
-declare let element: any;
-declare let ngModelCtrl: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 import beautify from 'js-beautify';
@@ -35,8 +32,9 @@ import beautify from 'js-beautify';
   standalone: true,
   imports: [TranslatePipe, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbExpandFullscreenDirective)],
   templateUrl: './tb-js-func.directive.html',
+  providers: ngModelProviders(TbJsFuncDirective),
 })
-export class TbJsFuncDirective {
+export class TbJsFuncDirective extends NgModelController {
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
   readonly noValidate = model<any>();
   readonly fillHeight = model<any>();
@@ -72,6 +70,7 @@ export class TbJsFuncDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     this.functionName = this.attrs.functionName;
 this.functionArgs = this.attrs.functionArgs;
 this.validationArgs = this.attrs.validationArgs;
@@ -104,15 +103,12 @@ this.validationArgs = this.attrs.validationArgs;
             }
         };
     this.$watch('functionBody', (newFunctionBody?: any, oldFunctionBody?: any) => {
-            ngModelCtrl.$setViewValue(this.functionBody);
-            if (!angular.equals(newFunctionBody, oldFunctionBody)) {
+            this.$setViewValue(this.functionBody);
+            if (!isEqual(newFunctionBody, oldFunctionBody)) {
                 this.functionValid = true;
             }
             this.updateValidity();
         });
-    ngModelCtrl.$render = function () {
-            this.functionBody = ngModelCtrl.$viewValue;
-        };
 this.formSubmitSub = this.rootScope.$on('form-submit', (args?: any) => {
       if (!args || this.validationTriggerArg && this.validationTriggerArg == args) {
             this.validationArgs = this.attrs.validationArgs;
@@ -126,6 +122,10 @@ this.formSubmitSub = this.rootScope.$on('form-submit', (args?: any) => {
 this.updateAceEditorSizeSub = this.rootScope.$on('update-ace-editor-size', () => {
       this.updateEditorSize();
     });
+  }
+
+  override $render(): void {
+    this.functionBody = this.$viewValue;
   }
 
   onFullscreenChanged(...rest: any[]): any {
@@ -159,7 +159,7 @@ this.updateAceEditorSizeSub = this.rootScope.$on('update-ace-editor-size', () =>
   }
 
   updateValidity(...rest: any[]): any {
-ngModelCtrl.setErrors(this.functionValid ? null : { functionBody: true });
+this.setErrors(this.functionValid ? null : { functionBody: true });
   }
 
   showError(error?: any, ...rest: any[]): any {

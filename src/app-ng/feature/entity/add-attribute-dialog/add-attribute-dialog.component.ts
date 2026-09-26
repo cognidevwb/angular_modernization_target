@@ -35,7 +35,6 @@ declare let $scope: any;
 })
 export class AddAttributeDialogComponent {
   protected readonly rootScope = injectRoot(RootState);
-  // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly dialog = inject(MatDialog);
   protected readonly attributeService = inject(AttributeService);
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
@@ -44,24 +43,29 @@ export class AddAttributeDialogComponent {
 
   attribute: any = {};
   valueTypes: any = types.valueType;
-  valueType: any = types.valueType.string;
+  private _valueType: any = types.valueType.string;
   theForm: any;
 
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
+  get valueType(): any {
+    return this._valueType;
+  }
+
+  set valueType(value: any) {
+    this._valueType = value;
+    if (this._valueType === types.valueType.boolean) {
+      this.attribute.value = false;
+    } else if (this._valueType === types.valueType.json) {
+      this.attribute.value = {};
+    } else {
+      this.attribute.value = null;
+    }
+  }
 
   constructor() {
     let vm = this;
     this.add = this.add;
     this.cancel = this.cancel;
-    $scope.$watch('vm.valueType', () => {
-        if (this.valueType === types.valueType.boolean) {
-            this.attribute.value = false;
-        } else if (this.valueType === types.valueType.json) {
-            this.attribute.value = {};
-        } else {
-            this.attribute.value = null;
-        }
-    });
+    this.valueType = this.valueType;
   }
 
   cancel = (...rest: any[]): any => {

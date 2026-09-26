@@ -69,25 +69,27 @@ export class WidgetComponent {
   // TODO(port): 'isEdit' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
   // TODO(port): 'isMobile' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
   // TODO(port): 'dashboardTimewindow' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
-  // TODO(port): 'dashboardTimewindowApi' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
-  // TODO(port): 'dashboard' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
-  // TODO(port): 'widget' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
-  // TODO(port): 'aliasController' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
-  // TODO(port): 'stateController' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
-  // TODO(port): 'widgetInfo' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
-  // TODO(port): 'widgetType' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
+  @Input() dashboardTimewindowApi: any;
+  @Input() dashboard: any;
+  @Input() widget: any;
+  @Input() aliasController: any;
+  @Input() stateController: any;
+  @Input() widgetInfo: any;
+  @Input() widgetType: any;
+  @Input() isEdit: any;
+  @Input() isMobile: any;
+  @Input() dashboardTimewindow: any;
   protected readonly toast = inject(ToastService);
   protected readonly destroyRef = inject(DestroyRef);
 
   $timeout: any = $timeout;
   $q: any = $q;
-  $injector: any = $injector;
+  $injector: any = inject(Injector);
   tbRaf: any;
   rpcRejection: any = null;
   rpcErrorText: any = null;
   rpcEnabled: any = false;
   executingRpcRequest: any = false;
-  dashboardTimewindow: any = dashboardTimewindow;
   protected cssParser: any = new cssjs();
   protected gridsterItemInited: any = false;
   protected subscriptionInited: any = false;
@@ -98,7 +100,7 @@ export class WidgetComponent {
   protected headerActionsDescriptors: any;
   protected subscriptionContext: any;
   protected widgetTypeInstance: any;
-  typeParameters: any = widgetInfo.typeParameters;
+  typeParameters: any = this.widgetInfo.typeParameters;
   descriptor: any;
   displayLegend: any;
   legendConfig: any;
@@ -119,12 +121,12 @@ export class WidgetComponent {
   constructor() {
     let vm = this;
     this.tbRaf = this.tbRafRef;
-    $window.lazyLoad = $ocLazyLoad;
-    $window.cssjs = cssjs;
+    (window as any).lazyLoad = { load: () => Promise.resolve() };
+    (window as any).cssjs = cssjs;
     this.cssParser.testMode = false;
-    if (widget.config.actions) {
-        for (var actionSourceId in widget.config.actions) {
-            var descriptors: any = widget.config.actions[actionSourceId];
+    if (this.widget.config.actions) {
+        for (var actionSourceId in this.widget.config.actions) {
+            var descriptors: any = this.widget.config.actions[actionSourceId];
             var actionDescriptors: any = [];
             descriptors.forEach((descriptor?: any) => {
                 var actionDescriptor: any = structuredClone(descriptor);
@@ -141,16 +143,16 @@ export class WidgetComponent {
         width: 0,
         height: 0,
         hideTitlePanel: false,
-        isEdit: isEdit,
-        isMobile: isMobile,
-        dashboard: dashboard,
-        widgetConfig: widget.config,
-        settings: widget.config.settings,
-        units: widget.config.units || '',
-        decimals: (widget.config.decimals !== undefined) ? widget.config.decimals : 2,
+        isEdit: this.isEdit,
+        isMobile: this.isMobile,
+        dashboard: this.dashboard,
+        widgetConfig: this.widget.config,
+        settings: this.widget.config.settings,
+        units: this.widget.config.units || '',
+        decimals: (this.widget.config.decimals !== undefined) ? this.widget.config.decimals : 2,
         subscriptions: {},
         defaultSubscription: null,
-        dashboardTimewindow: dashboardTimewindow,
+        dashboardTimewindow: this.dashboardTimewindow,
         timewindowFunctions: {
             onUpdateTimewindow: (startTimeMs?: any, endTimeMs?: any, interval?: any, ...rest: any[]) => {
                 if (this.widgetContext.defaultSubscription) {
@@ -202,8 +204,8 @@ export class WidgetComponent {
             elementClick: this.elementClick,
             getActiveEntityInfo: this.getActiveEntityInfo
         },
-        stateController: stateController,
-        aliasController: aliasController
+        stateController: this.stateController,
+        aliasController: this.aliasController
     };
     this.widgetContext.customHeaderActions = [];
     this.headerActionsDescriptors = this.getActionDescriptors(types.widgetActionSources.headerButton.value);
@@ -226,7 +228,7 @@ export class WidgetComponent {
     this.subscriptionContext = {
         $scope: this,
         $q: $q,
-        $filter: $filter,
+        $filter: (name: string) => (value: any, ...args: any[]) => name === 'translate' ? this.translate.instant(value, args[0]) : value,
         $timeout: $timeout,
         tbRaf: this.tbRafRef,
         timeService: this.timeService,
@@ -235,16 +237,16 @@ export class WidgetComponent {
         alarmService: this.alarmService,
         utils: this.utilsRef,
         widgetUtils: this.widgetContext.utils,
-        dashboardTimewindowApi: dashboardTimewindowApi,
+        dashboardTimewindowApi: this.dashboardTimewindowApi,
         types: types,
         getStDiff: this.dashboardService.getServerTimeDiff,
-        aliasController: aliasController
+        aliasController: this.aliasController
     };
-    widget.$ctx = function() {
+    this.widget.$ctx = function() {
         return this.widgetContext;
     }
     try {
-        this.widgetTypeInstance = new widgetType(this.widgetContext);
+        this.widgetTypeInstance = new this.widgetType(this.widgetContext);
     } catch (e: any) {
         this.handleWidgetException(e);
         this.widgetTypeInstance = {};
@@ -343,13 +345,13 @@ export class WidgetComponent {
   }
 
   defaultComponentsOptions(options?: any, ...rest: any[]): any {
-    options.useDashboardTimewindow = (widget.config.useDashboardTimewindow !== undefined)
-        ? widget.config.useDashboardTimewindow : true;
+    options.useDashboardTimewindow = (this.widget.config.useDashboardTimewindow !== undefined)
+        ? this.widget.config.useDashboardTimewindow : true;
 
-    options.displayTimewindow = (widget.config.displayTimewindow !== undefined)
-        ? widget.config.displayTimewindow : !options.useDashboardTimewindow;
+    options.displayTimewindow = (this.widget.config.displayTimewindow !== undefined)
+        ? this.widget.config.displayTimewindow : !options.useDashboardTimewindow;
 
-    options.timeWindowConfig = options.useDashboardTimewindow ? this.dashboardTimewindow : widget.config.timewindow;
+    options.timeWindowConfig = options.useDashboardTimewindow ? this.dashboardTimewindow : this.widget.config.timewindow;
     options.legendConfig = null;
 
     if (this.displayLegend) {
@@ -378,49 +380,57 @@ export class WidgetComponent {
             }
         },
         timeWindowUpdated: (subscription?: any, timeWindowConfig?: any, ...rest: any[]) => {
-            widget.config.timewindow = timeWindowConfig;
+            this.widget.config.timewindow = timeWindowConfig;
 
         }
     }
   }
 
+  private timewindowWatchSubscription: any;
+  private prevWatchedTimewindow: any;
+
   defaultSubscriptionOptions(subscription?: any, options?: any, ...rest: any[]): any {
     if (!options.useDashboardTimewindow) {
-        $scope.$watch(function () {
-            return widget.config.timewindow;
-        }, function (newTimewindow?: any, prevTimewindow?: any) {
-            if (!angular.equals(newTimewindow, prevTimewindow)) {
-                subscription.updateTimewindowConfig(widget.config.timewindow);
-            }
-        });
+        this.timewindowWatchSubscription = subscription;
+        this.prevWatchedTimewindow = structuredClone(this.widget.config.timewindow);
     }
     if (this.displayLegend) {
         this.legendData = subscription.legendData;
     }
   }
 
+  ngDoCheck(): void {
+    if (this.timewindowWatchSubscription) {
+        const newTimewindow: any = this.widget.config.timewindow;
+        if (JSON.stringify(newTimewindow) !== JSON.stringify(this.prevWatchedTimewindow)) {
+            this.prevWatchedTimewindow = structuredClone(newTimewindow);
+            this.timewindowWatchSubscription.updateTimewindowConfig(this.widget.config.timewindow);
+        }
+    }
+  }
+
   createDefaultSubscription(...rest: any[]): any {
     var options: any;
     var deferred: any = $q.defer();
-    if (widget.type !== types.widgetType.rpc.value && widget.type !== types.widgetType.static.value) {
+    if (this.widget.type !== types.widgetType.rpc.value && this.widget.type !== types.widgetType.static.value) {
         options = {
-            type: widget.type,
+            type: this.widget.type,
             stateData: this.typeParameters.stateData,
             comparisonEnabled: this.widgetContext.settings.comparisonEnabled,
             timeForComparison: this.widgetContext.settings.timeForComparison
         };
-        if (widget.type == types.widgetType.alarm.value) {
-            options.alarmSource = structuredClone(widget.config.alarmSource);
-            options.alarmSearchStatus = (widget.config.alarmSearchStatus !== undefined) ?
-                widget.config.alarmSearchStatus : types.alarmSearchStatus.any;
-            options.alarmsPollingInterval = (widget.config.alarmsPollingInterval !== undefined) ?
-                widget.config.alarmsPollingInterval * 1000 : 5000;
-            options.alarmsMaxCountLoad = (widget.config.alarmsMaxCountLoad !== undefined) ?
-                widget.config.alarmsMaxCountLoad : 0;
-            options.alarmsFetchSize = (widget.config.alarmsFetchSize !== undefined) ?
-                widget.config.alarmsFetchSize : 100;
+        if (this.widget.type == types.widgetType.alarm.value) {
+            options.alarmSource = structuredClone(this.widget.config.alarmSource);
+            options.alarmSearchStatus = (this.widget.config.alarmSearchStatus !== undefined) ?
+                this.widget.config.alarmSearchStatus : types.alarmSearchStatus.any;
+            options.alarmsPollingInterval = (this.widget.config.alarmsPollingInterval !== undefined) ?
+                this.widget.config.alarmsPollingInterval * 1000 : 5000;
+            options.alarmsMaxCountLoad = (this.widget.config.alarmsMaxCountLoad !== undefined) ?
+                this.widget.config.alarmsMaxCountLoad : 0;
+            options.alarmsFetchSize = (this.widget.config.alarmsFetchSize !== undefined) ?
+                this.widget.config.alarmsFetchSize : 100;
         } else {
-            options.datasources = structuredClone(widget.config.datasources)
+            options.datasources = structuredClone(this.widget.config.datasources)
         }
 
         this.defaultComponentsOptions(options);
@@ -443,11 +453,11 @@ export class WidgetComponent {
             }
         );
 
-    } else if (widget.type === types.widgetType.rpc.value) {
+    } else if (this.widget.type === types.widgetType.rpc.value) {
         this.loadingData = false;
         options = {
-            type: widget.type,
-            targetDeviceAliasIds: widget.config.targetDeviceAliasIds
+            type: this.widget.type,
+            targetDeviceAliasIds: this.widget.config.targetDeviceAliasIds
         }
         options.callbacks = {
             rpcStateChanged: (subscription?: any, ...rest: any[]) => {
@@ -478,7 +488,7 @@ export class WidgetComponent {
                 deferred.reject();
             }
         );
-    } else if (widget.type === types.widgetType.static.value) {
+    } else if (this.widget.type === types.widgetType.static.value) {
         this.loadingData = false;
         deferred.resolve();
     } else {
@@ -648,7 +658,13 @@ export class WidgetComponent {
     function loadNext(i?: any): any {
          var resourceUrl: any = customResources[i].url;
         if (resourceUrl && resourceUrl.length > 0) {
-            $ocLazyLoad.load(resourceUrl).then(
+            new Promise<void>((resolve, reject) => {
+                const script: HTMLScriptElement = document.createElement('script');
+                script.src = resourceUrl;
+                script.onload = () => resolve();
+                script.onerror = () => reject();
+                document.head.appendChild(script);
+            }).then(
                 function success () {
                     loadNextOrComplete(i);
                 },
@@ -697,16 +713,16 @@ export class WidgetComponent {
 
   configureWidgetElement(...rest: any[]): any {
 
-    this.displayLegend = (widget.config.showLegend !== undefined) ?
-        widget.config.showLegend : widget.type === types.widgetType.timeseries.value;
+    this.displayLegend = (this.widget.config.showLegend !== undefined) ?
+        this.widget.config.showLegend : this.widget.type === types.widgetType.timeseries.value;
 
     if (this.displayLegend) {
-        this.legendConfig = widget.config.legendConfig ||
+        this.legendConfig = this.widget.config.legendConfig ||
             {
                 position: types.position.bottom.value,
                 showMin: false,
                 showMax: false,
-                showAvg: widget.type === types.widgetType.timeseries.value,
+                showAvg: this.widget.type === types.widgetType.timeseries.value,
                 showTotal: false
             };
         this.legendData = {
@@ -722,7 +738,7 @@ export class WidgetComponent {
         '<md-progress-circular md-mode="indeterminate" ng-disabled="!loadingData" class="md-accent" md-diameter="40"></md-progress-circular>' +
         '</div>';
 
-    var containerHtml: any = '<div id="container">' + widgetInfo.templateHtml + '</div>';
+    var containerHtml: any = '<div id="container">' + this.widgetInfo.templateHtml + '</div>';
     if (this.displayLegend) {
         var layoutType: any;
         if (this.legendConfig.position === types.position.top.value ||
@@ -784,15 +800,20 @@ export class WidgetComponent {
         this.widgetContext.$container.css('width', this.widgetContext.width + 'px');
     }
 
-    this.widgetContext.$scope = $scope.$new();
+    this.widgetContext.$scope = { $destroy: () => {} };
 
-    $compile($(this.element.nativeElement).contents())(this.widgetContext.$scope);
-
-    addResizeListener(this.widgetContext.$containerParent[0], this.onResize); // eslint-disable-line no-undef
+    const containerEl = this.widgetContext.$containerParent[0];
+    const resizeObserver = new ResizeObserver(() => this.onResize());
+    resizeObserver.observe(containerEl);
+    (containerEl as any).__resizeObserver = resizeObserver;
   }
 
   destroyWidgetElement(...rest: any[]): any {
-    removeResizeListener(this.widgetContext.$containerParent[0], this.onResize); // eslint-disable-line no-undef
+    const containerEl = this.widgetContext.$containerParent[0];
+    if (containerEl && (containerEl as any).__resizeObserver) {
+        (containerEl as any).__resizeObserver.disconnect();
+        delete (containerEl as any).__resizeObserver;
+    }
     $(this.element.nativeElement).html('');
     if (this.widgetContext.$scope) {
         this.widgetContext.$scope.$destroy();
@@ -803,29 +824,33 @@ export class WidgetComponent {
 
   initialize(...rest: any[]): any {
 
-    $scope.$on('toggleDashboardEditMode', (event?: any, isEdit?: any) => {
+    this.rootScope.$on('toggleDashboardEditMode', (event?: any, isEdit?: any) => {
         this.onEditModeChanged(isEdit);
     });
 
-    $scope.$watch(function () {
-        return widget.row + ',' + widget.col + ',' + widget.config.mobileOrder;
-    }, () => {
-        //updateBounds();
-        $scope.$emit("widgetPositionChanged", widget);
-    });
+    let widgetPositionKey = this.widget().row + ',' + this.widget().col + ',' + this.widget().config.mobileOrder;
+    const widgetPositionCheckInterval = setInterval(() => {
+        const newWidgetPositionKey = this.widget().row + ',' + this.widget().col + ',' + this.widget().config.mobileOrder;
+        if (newWidgetPositionKey !== widgetPositionKey) {
+            widgetPositionKey = newWidgetPositionKey;
+            //updateBounds();
+            this.rootScope.$emit("widgetPositionChanged", this.widget());
+        }
+    }, 200);
+    this.destroyRef.onDestroy(() => clearInterval(widgetPositionCheckInterval));
 
-    $scope.$on('gridster-item-resized', (event?: any, item?: any) => {
+    this.rootScope.$on('gridster-item-resized', (event?: any, item?: any) => {
         if (!this.widgetContext.isMobile) {
-            widget.sizeX = item.sizeX;
-            widget.sizeY = item.sizeY;
+            this.widget().sizeX = item.sizeX;
+            this.widget().sizeY = item.sizeY;
         }
     });
 
-    $scope.$on('mobileModeChanged', (event?: any, newIsMobile?: any) => {
+    this.rootScope.$on('mobileModeChanged', (event?: any, newIsMobile?: any) => {
         this.onMobileModeChanged(newIsMobile);
     });
 
-    $scope.$on('entityAliasesChanged', (event?: any, aliasIds?: any) => {
+    this.rootScope.$on('entityAliasesChanged', (event?: any, aliasIds?: any) => {
         var subscriptionChanged: any = false;
         for (var id in this.widgetContext.subscriptions) {
             var subscription: any = this.widgetContext.subscriptions[id];
@@ -836,12 +861,12 @@ export class WidgetComponent {
         }
     });
 
-    $scope.$on('dashboardTimewindowChanged', (event?: any, newDashboardTimewindow?: any) => {
+    this.rootScope.$on('dashboardTimewindowChanged', (event?: any, newDashboardTimewindow?: any) => {
         this.dashboardTimewindow = newDashboardTimewindow;
         this.widgetContext.dashboardTimewindow = newDashboardTimewindow;
     });
 
-    $scope.$on('widgetForceReInit', () => {
+    this.rootScope.$on('widgetForceReInit', () => {
         this.reInit();
     });
 
@@ -1040,7 +1065,7 @@ export class WidgetComponent {
   };
 
   displayWidgetInstance(...rest: any[]): any {
-    if (widget.type !== types.widgetType.static.value) {
+    if (this.widget().type !== types.widgetType.static.value) {
         for (var id in this.widgetContext.subscriptions) {
             if (this.widgetContext.subscriptions[id].isDataResolved()) {
                 return true;

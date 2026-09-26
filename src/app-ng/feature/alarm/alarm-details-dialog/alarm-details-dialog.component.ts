@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import $ from 'jquery';
@@ -17,13 +17,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $filter: any;
-declare let scope: any;
+import beautify from 'js-beautify';
 
 // Helpers at the legacy file's top level, beside the registration (as written).
-declare let beautify: any;
-const js_beautify: any = beautify.js;
+const js_beautify: any = (beautify as any).js;
 
 /**
  * Ported from the AngularJS controller `AlarmDetailsDialogController` (module `thingsboard.alarm`) in src/app/alarm/index.js:21.
@@ -34,6 +31,7 @@ const js_beautify: any = beautify.js;
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatButtonModule, CommonModule, FormsModule],
   templateUrl: './alarm-details-dialog.component.html',
+  providers: [DatePipe],
 })
 export class AlarmDetailsDialogComponent {
   protected readonly rootScope = injectRoot(RootState);
@@ -42,6 +40,7 @@ export class AlarmDetailsDialogComponent {
   protected readonly translate = inject(TranslateService);
   protected readonly typesRef: any = types;
   protected readonly alarmService = inject(AlarmService);
+  protected readonly datePipe = inject(DatePipe);
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
 
   alarmId: any;
@@ -68,7 +67,7 @@ export class AlarmDetailsDialogComponent {
     this.allowClear = this.dialogData.allowClear;
     this.displayDetails = this.dialogData.displayDetails;
     this.types = this.typesRef;
-    this.dialogData.showingCallback.onShowing = function(scope?: any, element?: any) {
+    this.dialogData.showingCallback.onShowing = (_scope?: any, element?: any) => {
         if (this.displayDetails) {
             this.updateEditorSize(element);
         }
@@ -115,22 +114,22 @@ export class AlarmDetailsDialogComponent {
   }
 
   loadAlarmFields(...rest: any[]): any {
-    this.createdTime = $filter('date')(this.alarm.createdTime, 'yyyy-MM-dd HH:mm:ss');
+    this.createdTime = this.datePipe.transform(this.alarm.createdTime, 'yyyy-MM-dd HH:mm:ss');
     this.startTime = null;
     if (this.alarm.startTs) {
-        this.startTime = $filter('date')(this.alarm.startTs, 'yyyy-MM-dd HH:mm:ss');
+        this.startTime = this.datePipe.transform(this.alarm.startTs, 'yyyy-MM-dd HH:mm:ss');
     }
     this.endTime = null;
     if (this.alarm.endTs) {
-        this.endTime = $filter('date')(this.alarm.endTs, 'yyyy-MM-dd HH:mm:ss');
+        this.endTime = this.datePipe.transform(this.alarm.endTs, 'yyyy-MM-dd HH:mm:ss');
     }
     this.ackTime = null;
     if (this.alarm.ackTs) {
-        this.ackTime = $filter('date')(this.alarm.ackTs, 'yyyy-MM-dd HH:mm:ss')
+        this.ackTime = this.datePipe.transform(this.alarm.ackTs, 'yyyy-MM-dd HH:mm:ss')
     }
     this.clearTime = null;
     if (this.alarm.clearTs) {
-        this.clearTime = $filter('date')(this.alarm.clearTs, 'yyyy-MM-dd HH:mm:ss');
+        this.clearTime = this.datePipe.transform(this.alarm.clearTs, 'yyyy-MM-dd HH:mm:ss');
     }
 
     this.alarmSeverity = this.translate.instant(this.typesRef.alarmSeverity[this.alarm.severity].name);

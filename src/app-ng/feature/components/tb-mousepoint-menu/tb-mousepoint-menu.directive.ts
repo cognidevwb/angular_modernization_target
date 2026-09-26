@@ -2,9 +2,8 @@ import { Directive, inject } from '@angular/core';
 import { ElementRef } from '@angular/core';
 
 import $ from 'jquery';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { linkAttrs } from '../../../legacy-link';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let RightClickContextMenu: any;
 
 /**
  * Ported from the AngularJS directive `tbMousepointMenu` (module `thingsboard.directives.mousepointMenu`) in src/app/components/mousepoint-menu.directive.js:16.
@@ -16,12 +15,13 @@ declare let RightClickContextMenu: any;
 })
 export class TbMousepointMenuDirective {
   protected readonly element = inject(ElementRef);
+  protected readonly RightClickContextMenu = inject(MatMenuTrigger, { optional: true }) as any;
 
   // TODO(port): $attrs — $attrs: an input() on the component
   // TODO(port): link($scope, $element, $attrs, RightClickContextMenu) — `$element` is the element (ElementRef.nativeElement) and `$attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   $mdOpenMousepointMenu($event?: any, ...rest: any[]): any {
-    RightClickContextMenu.offsets = () =>{
+    this.RightClickContextMenu.offsets = () => {
         var offset: any = $(this.element.nativeElement).offset();
         var x: any = $event.pageX - offset.left;
         var y: any = $event.pageY - offset.top;
@@ -37,11 +37,11 @@ export class TbMousepointMenuDirective {
         }
         return offsets;
     }
-    RightClickContextMenu.open($event);
+    this.RightClickContextMenu.open($event);
   }
 
   $mdCloseMousepointMenu(...rest: any[]): any {
-    RightClickContextMenu.close();
+    this.RightClickContextMenu.close();
   }
 
   /** The link's `attrs`: the host element's attributes, read live. */

@@ -6,7 +6,6 @@ import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $controller: any;
-declare let $scope: any;
 
 /**
  * Ported from the AngularJS directive `tbWidget` (module `thingsboard.directives.widget`) in src/app/components/widget/widget.directive.js:24.

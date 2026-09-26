@@ -23,14 +23,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
 import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $mdUtil: any;
-declare let $scope: any;
-declare let $window: any;
-
 // Helpers at the legacy file's top level, beside the registration (as written).
-declare let beautify: any;
-const js_beautify: any = beautify.js;
+import * as beautify from 'js-beautify';
+const js_beautify: any = (beautify as any).js;
 
 /**
  * Ported from the AngularJS controller `NodeScriptTestController` (module `thingsboard.ruleChain`) in src/app/rulechain/index.js:28.
@@ -65,6 +60,7 @@ export class NodeScriptTestComponent {
   nodeScriptTestDialogElement: any;
   theForm: any;
   payloadForm: any;
+  private prevMetadataFormDirty: any;
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
   // TODO(port): $scope.$broadcast — a scope event: call the service that listens
@@ -80,33 +76,36 @@ export class NodeScriptTestComponent {
     this.test = this.test;
     this.save = this.save;
     this.cancel = this.cancel;
-    $scope.$watch('theForm.metadataForm.$dirty', (newVal?: any) => {
-        if (newVal) {
-            this.toast.hide();
-        }
-    });
     this.dialogData.onShowingCallback.onShowed = () => {
         this.nodeScriptTestDialogElement = $('.tb-node-script-test-dialog');
         var w: any = this.nodeScriptTestDialogElement.width();
         if (w > 0) {
             this.initSplitLayout();
         } else {
-            $scope.$watch(
-                () => {
-                    return this.nodeScriptTestDialogElement[0].offsetWidth || parseInt(this.nodeScriptTestDialogElement.css('width'), 10);
-                },
-                (newSize?: any) => {
-                    if (newSize > 0) {
-                        this.initSplitLayout();
-                    }
+            const checkWidth = () => {
+                const newSize: any = this.nodeScriptTestDialogElement[0].offsetWidth || parseInt(this.nodeScriptTestDialogElement.css('width'), 10);
+                if (newSize > 0) {
+                    this.initSplitLayout();
+                    clearInterval(widthWatchInterval);
                 }
-            );
+            };
+            const widthWatchInterval = setInterval(checkWidth, 100);
         }
     };
   }
 
+  ngDoCheck(): void {
+    const dirty: any = this.theForm?.metadataForm?.$dirty;
+    if (dirty !== this.prevMetadataFormDirty) {
+        this.prevMetadataFormDirty = dirty;
+        if (dirty) {
+            this.toast.hide();
+        }
+    }
+  }
+
   onDividerDrag(...rest: any[]): any {
-    $scope.$broadcast('update-ace-editor-size');
+    this.rootScope.broadcast('update-ace-editor-size');
   }
 
   initSplitLayout(...rest: any[]): any {
@@ -143,7 +142,7 @@ export class NodeScriptTestComponent {
 
         queueMicrotask(() => {
             this.layoutInited = true;
-            var w: any = $($window);
+            var w: any = $(window);
             setTimeout(function () {
                 w.triggerHandler('resize')
             });
@@ -162,7 +161,7 @@ export class NodeScriptTestComponent {
 
   checkInputParamErrors(...rest: any[]): any {
     this.theForm.metadataForm.$setPristine();
-    $scope.$broadcast('form-submit', 'validatePayload');
+    this.rootScope.broadcast('form-submit', 'validatePayload');
     if (!this.theForm.payloadForm.$valid) {
         return false;
     } else if (!this.theForm.metadataForm.$valid) {
@@ -180,7 +179,7 @@ export class NodeScriptTestComponent {
   testNodeScript(...rest: any[]): any {
     var deferred: any = $q.defer();
     if (this.checkInputParamErrors()) {
-        $mdUtil.nextTick(() => {
+        queueMicrotask(() => {
             this.ruleChainService.testScript(this.inputParams).then(
                 (result?: any) => {
                     if (result.error) {

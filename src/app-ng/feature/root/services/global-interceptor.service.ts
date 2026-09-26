@@ -1,9 +1,12 @@
 import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { TranslateService } from '@ngx-translate/core';
 import { RootState } from '../../../root-state';
 import { bindMethods } from '../../../bind-methods';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $injector: any;
+import { ToastService } from '../../../core/toast.service';
+import { UserService } from '../../../core/user.service';
+import { types as appTypes } from '../../../core/types';
+import { $timeout } from '../../../core/q';
 
 /**
  * Ported from the AngularJS factory `globalInterceptor` (module `thingsboard`) in src/app/app.js:107.
@@ -13,14 +16,13 @@ declare let $injector: any;
 export class GlobalInterceptorService {
   private readonly __bound = bindMethods(this);
   private readonly rootScope = inject(RootState);
-  // TODO(port): '$injector' — inject() at the use site
 
-  private toast: any;
-  private translate: any;
-  private userService: any;
-  private types: any;
-  private http: any;
-  private timeout: any;
+  private toast: any = inject(ToastService);
+  private translate: any = inject(TranslateService);
+  private userService: any = inject(UserService);
+  private types: any = appTypes;
+  private http: any = inject(HttpClient);
+  private timeout: any = $timeout;
   private internalUrlPrefixes: any = [
         '/api/auth/token',
         '/api/plugins/rpc'
@@ -29,44 +31,26 @@ export class GlobalInterceptorService {
   // TODO(port): $rootScope.$broadcast — a root scope event: call the service that listens
 
   getToast(...rest: any[]): any {
-    if (!this.toast) {
-        this.toast = $injector.get("toast");
-    }
     return this.toast;
   }
 
   getTranslate(...rest: any[]): any {
-    if (!this.translate) {
-        this.translate = $injector.get("$translate");
-    }
     return this.translate;
   }
 
   getUserService(...rest: any[]): any {
-    if (!this.userService) {
-        this.userService = $injector.get("userService");
-    }
     return this.userService;
   }
 
   getTypes(...rest: any[]): any {
-    if (!this.types) {
-        this.types = $injector.get("types");
-    }
     return this.types;
   }
 
   getHttp(...rest: any[]): any {
-    if (!this.http) {
-        this.http = $injector.get("$http");
-    }
     return this.http;
   }
 
   getTimeout(...rest: any[]): any {
-    if (!this.timeout) {
-        this.timeout = $injector.get("$timeout");
-    }
     return this.timeout;
   }
 

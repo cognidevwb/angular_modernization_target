@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { ImportExportService } from '../services/import-export.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
@@ -17,7 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
-import { MatStepperModule } from '@angular/material/stepper';
+import { MatStepperModule, MatStepper } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -38,12 +38,11 @@ declare let $scope: any;
 })
 export class ImportDialogCsvComponent {
   protected readonly rootScope = injectRoot(RootState);
-  // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly dialog = inject(MatDialog);
   protected readonly toast = inject(ToastService);
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
   protected readonly importExport = inject(ImportExportService);
-  // TODO(port): '$mdStepper' — an AngularJS built-in with no Angular counterpart
+  @ViewChild(MatStepper) private stepper!: MatStepper;
   // TODO(port): elements not resolved to a component: md-stepper, md-step, md-step-body, md-step-actions
   // TODO(port): template: 5 × md-step left in place
   // TODO(port): template: 4 × md-step-actions left in place
@@ -217,14 +216,14 @@ export class ImportDialogCsvComponent {
         }
         entitiesData.push(entityData);
     }
-    $scope.$on('createImportEntityCompleted', () => {
+    this.rootScope.$on('createImportEntityCompleted', () => {
         sentDataLength++;
         this.progressCreate = Math.round((sentDataLength / importData.rows.length) * 100);
     });
     this.importExport.createMultiEntity(entitiesData, this.entityType, this.importParameters.isUpdate, config).then((response?: any) => {
         this.statistical = response;
         this.isImportData = false;
-        $mdStepper('import-stepper').next();
+        this.stepper.next();
     });
   }
 
@@ -235,22 +234,22 @@ export class ImportDialogCsvComponent {
   };
 
   previousStep = (step?: any, ...rest: any[]): any => {
-    let steppers: any = $mdStepper('import-stepper');
+    let steppers: any = this.stepper;
     switch (step) {
         case 1:
-            steppers.back();
+            steppers.previous();
             setTimeout(() => {
                 this.theFormStep1.$setDirty();
             });
             break;
         default:
-            steppers.back();
+            steppers.previous();
             break;
     }
   };
 
   nextStep = (step?: any, ...rest: any[]): any => {
-    let steppers: any = $mdStepper('import-stepper');
+    let steppers: any = this.stepper;
     switch (step) {
         case 2:
             steppers.next();
@@ -258,7 +257,7 @@ export class ImportDialogCsvComponent {
         case 3:
             this.parseData_local = this.parseCSV(this.importData);
             if (this.parseData_local === -1) {
-                steppers.back();
+                steppers.previous();
                 setTimeout(() => {
                     this.clearFile();
                 });
@@ -280,7 +279,7 @@ export class ImportDialogCsvComponent {
   };
 
   cancel = (...rest: any[]): any => {
-    if($mdStepper('import-stepper').currentStep > 2){
+    if((this.stepper.selectedIndex + 1) > 2){
 (this.dialog as any).hide();
     } else {
 (this.dialog as any).cancel();

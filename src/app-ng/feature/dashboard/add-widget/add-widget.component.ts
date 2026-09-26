@@ -10,8 +10,8 @@ import { TbHelpDirective } from '../../help/tb-help/tb-help.directive';
 import { TbWidgetConfigDirective } from '../../components/tb-widget-config/tb-widget-config.directive';
 
 import $ from 'jquery';
-// @ts-ignore
-import entityAliasDialogTemplate from '../../../../app/entity/alias/entity-alias-dialog.tpl.html';
+import { firstValueFrom } from 'rxjs';
+import { EntityAliasDialogComponent } from '../../entity/alias/entity-alias-dialog.component';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,8 +21,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
 import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let angular: any;
 
 /**
  * Ported from the AngularJS controller `AddWidgetController` (module `thingsboard.dashboard`) in src/app/dashboard/index.js:50.
@@ -173,40 +171,30 @@ export class AddWidgetComponent {
   };
 
   createFilterForDashboardState(query?: any, ...rest: any[]): any {
-    var lowercaseQuery: any = angular.lowercase(query);
+    var lowercaseQuery: any = query.toLowerCase();
     return function filterFn(stateId?: any) {
-        return (angular.lowercase(stateId).indexOf(lowercaseQuery) === 0);
+        return (stateId.toLowerCase().indexOf(lowercaseQuery) === 0);
     };
   }
 
   createEntityAlias = (event?: any, alias?: any, allowedEntityTypes?: any, ...rest: any[]): any => {
-    let vm = this;
-
-    var deferred: any = $q.defer();
     var singleEntityAlias: any = {id: null, alias: alias, filter: {}};
 
-    (this.dialog as any).show({
-        controller: 'EntityAliasDialogController',
-        controllerAs: 'vm',
-        templateUrl: entityAliasDialogTemplate,
-        locals: {
+    return firstValueFrom(this.dialog.open(EntityAliasDialogComponent, {
+        data: {
             isAdd: true,
             allowedEntityTypes: allowedEntityTypes,
             entityAliases: this.dashboard.configuration.entityAliases,
             alias: singleEntityAlias
         },
-        parent: $(this.document.body),
-        fullscreen: true,
-        multiple: true,
-        targetEvent: event
-    }).then((singleEntityAlias?: any) => {
-        this.dashboard.configuration.entityAliases[singleEntityAlias.id] = singleEntityAlias;
-        this.aliasController.updateEntityAliases(this.dashboard.configuration.entityAliases);
-        deferred.resolve(singleEntityAlias);
-    }, function () {
-        deferred.reject();
+        panelClass: 'tb-dialog'
+    }).afterClosed()).then((result?: any) => {
+        if (result !== undefined) {
+            this.dashboard.configuration.entityAliases[result.id] = result;
+            this.aliasController.updateEntityAliases(this.dashboard.configuration.entityAliases);
+            return result;
+        }
+        return Promise.reject();
     });
-
-    return deferred.promise;
   };
 }

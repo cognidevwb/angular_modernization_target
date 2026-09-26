@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, DoCheck, forwardRef, inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TimeService } from '../../api/services/time.service';
 import { types } from '../../common/constants/types';
@@ -31,7 +31,7 @@ declare let $scope: any;
   imports: [TranslatePipe, MatTabsModule, MatSliderModule, MatSelectModule, MatRadioModule, MatInputModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbTimeintervalDirective), forwardRef(() => TbDatetimePeriodDirective)],
   templateUrl: './timewindow-panel.component.html',
 })
-export class TimewindowPanelComponent {
+export class TimewindowPanelComponent implements DoCheck {
   protected readonly rootScope = injectRoot(RootState);
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
   // TODO(port): '$scope' — component state: fields and signals on this class
@@ -46,8 +46,7 @@ export class TimewindowPanelComponent {
   aggregationTypes: any = types.aggregation;
   isEdit: any;
   theForm: any;
-
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
+  private _prevSelectedTab: any;
 
   constructor() {
     let vm = this;
@@ -72,11 +71,15 @@ export class TimewindowPanelComponent {
     this._mdPanelRef.config.onOpenComplete = function () {
         this.theForm.$setPristine();
     }
-    $scope.$watch('vm.timewindow.selectedTab', (newSelection?: any, prevSelection?: any) => {
-        if (newSelection !== prevSelection) {
-            this.theForm.$setDirty();
-        }
-    });
+    this._prevSelectedTab = this.timewindow?.selectedTab;
+  }
+
+  ngDoCheck(): void {
+    const newSelection = this.timewindow?.selectedTab;
+    if (newSelection !== this._prevSelectedTab) {
+        this.theForm?.$setDirty();
+        this._prevSelectedTab = newSelection;
+    }
   }
 
   cancel(...rest: any[]): any {

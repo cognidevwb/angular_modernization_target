@@ -5,9 +5,17 @@ import { types } from '../../common/constants/types';
 import { bindMethods } from '../../../bind-methods';
 
 import { $timeout } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $filter: any;
-declare let $log: any;
+
+// Ported replacements for the AngularJS `$filter('orderBy')` filter and the `$log` service
+// (both used to be loaded as globals by the legacy page).
+function $filter(name: string): any {
+    if (name === 'orderBy') {
+        return (arr: any[], expr: string) =>
+            [...(arr || [])].sort((a: any, b: any) => (+a[0]) - (+b[0]));
+    }
+    return (x: any) => x;
+}
+const $log: any = console;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 function DatasourceSubscription(this: any, datasourceSubscription?: any, telemetryWebsocketService?: any, $timeout?: any, $filter?: any, $log?: any, types?: any, utils?: any) {

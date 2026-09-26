@@ -81,7 +81,7 @@ export class TbAttributeTableDirective {
   // TODO(port): template: 1 × md-table-container left in place
   // TODO(port): template: 1 × md-table-pagination left in place
 
-  protected template: any = $templateCache.get(attributeTableTemplate);
+  protected template: any;
   types: any;
   entityType: any;
   attributeScope: any;
@@ -142,7 +142,7 @@ export class TbAttributeTableDirective {
             }
         });
     this.$watch("attributeScope", (newVal?: any, prevVal?: any) => {
-            if (newVal && !angular.equals(newVal, prevVal)) {
+            if (newVal && JSON.stringify(newVal) !== JSON.stringify(prevVal)) {
                 this.mode = 'default';
                 this.query.search = null;
                 this.selectedAttributes = [];
@@ -150,7 +150,7 @@ export class TbAttributeTableDirective {
             }
         });
     this.$watch("query.search", (newVal?: any, prevVal?: any) => {
-            if (!angular.equals(newVal, prevVal) && this.query.search != null) {
+            if (JSON.stringify(newVal) !== JSON.stringify(prevVal) && this.query.search != null) {
                 this.getEntityAttributes();
             }
         });
@@ -159,7 +159,6 @@ export class TbAttributeTableDirective {
                 this.attributeService.unsubscribeForEntityAttributes(this.subscriptionId);
             }
         });
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   getAttributeScopeByValue(attributeScopeValue?: any, ...rest: any[]): any {
@@ -321,7 +320,7 @@ export class TbAttributeTableDirective {
   }
 
   nextWidget(...rest: any[]): any {
-    $mdUtil.nextTick(() => {
+    queueMicrotask(() => {
         if (this.widgetsCarousel.index < this.widgetsList.length - 1) {
             this.widgetsCarousel.index++;
         }
@@ -329,7 +328,7 @@ export class TbAttributeTableDirective {
   }
 
   prevWidget(...rest: any[]): any {
-    $mdUtil.nextTick(() => {
+    queueMicrotask(() => {
         if (this.widgetsCarousel.index > 0) {
             this.widgetsCarousel.index--;
         }
@@ -373,7 +372,8 @@ export class TbAttributeTableDirective {
             return {};
         }
     };
-    this.aliasController = new AliasController(this, $q, $filter, this.utils,
+    this.aliasController = new AliasController(this, $q, (name: string) => (value: any, params?: any) =>
+        name === 'translate' ? this.translate.instant(value, params) : value, this.utils,
         this.typesRef, this.entityService, stateController, entitiAliases);
 
     var dataKeyType: any = this.attributeScope === this.typesRef.latestTelemetry ?
@@ -424,7 +424,16 @@ export class TbAttributeTableDirective {
                 this.widgetService.getBundleWidgetTypes(this.widgetsBundle.alias, isSystem).then(
                     (widgetTypes?: any) => {
 
-                        widgetTypes = $filter('orderBy')(widgetTypes, ['-descriptor.type', '-createdTime']);
+                        widgetTypes = [...widgetTypes].sort((a: any, b: any) => {
+                            const aType = a?.descriptor?.type ?? '';
+                            const bType = b?.descriptor?.type ?? '';
+                            if (aType !== bType) {
+                                return aType < bType ? 1 : -1;
+                            }
+                            const aCreated = a?.createdTime ?? 0;
+                            const bCreated = b?.createdTime ?? 0;
+                            return aCreated < bCreated ? 1 : aCreated > bCreated ? -1 : 0;
+                        });
 
                         for (var i: any = 0; i < widgetTypes.length; i++) {
                             var widgetType: any = widgetTypes[i];

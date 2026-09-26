@@ -1,17 +1,10 @@
 import { Component, inject, model, output } from '@angular/core';
 import { ElementRef } from '@angular/core';
+import { ENTER } from '@angular/cdk/keycodes';
 import { EntityService } from '../../api/services/entity.service';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 import $ from 'jquery';
 const entityAliasSelectTemplate: string = '';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $mdConstant: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let scope: any;
-declare let element: any;
-declare let ngModelCtrl: any;
 
 /**
  * Ported from the AngularJS directive `tbEntityAliasSelect` (module `thingsboard.directives.entityAliasSelect`) in src/app/components/entity-alias-select.directive.js:29.
@@ -21,21 +14,19 @@ declare let ngModelCtrl: any;
   selector: 'tb-entity-alias-select',
   standalone: true,
   template: '', // TODO(port): no template found
+  providers: ngModelProviders(TbEntityAliasSelectDirective),
 })
-export class TbEntityAliasSelectDirective {
+export class TbEntityAliasSelectDirective extends NgModelController {
   readonly tbRequired = model<any>();
   readonly aliasController = model<any>();
   readonly allowedEntityTypes = model<any>();
   readonly onCreateEntityAlias = output<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$mdConstant' — key codes: @angular/cdk/keycodes
   // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly entityService = inject(EntityService);
   protected readonly element = inject(ElementRef);
 
 protected template: any = entityAliasSelectTemplate;
-  ngModelCtrl: any = ngModelCtrl;
   entityAliasList: any = [];
   entityAlias: any = null;
   $watch: any;
@@ -47,6 +38,7 @@ protected template: any = entityAliasSelectTemplate;
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
     this.$watch('aliasController', () => {
             this.entityAliasList = [];
@@ -63,16 +55,16 @@ protected template: any = entityAliasSelectTemplate;
     this.$watch('entityAlias', () => {
             this.updateView();
         });
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                this.entityAlias = ngModelCtrl.$viewValue;
-            }
-        }
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  override $render(): void {
+    if (this.$viewValue) {
+      this.entityAlias = this.$viewValue;
+    }
   }
 
   updateValidity(...rest: any[]): any {
-    var value: any = ngModelCtrl.$viewValue;
+    var value: any = this.$viewValue;
     var valid: any = (value !== undefined) && value != null || !this.tbRequired();
     this.ngControl?.control?.setErrors(valid ? null : { entityAlias: true });
   }
@@ -99,7 +91,7 @@ protected template: any = entityAliasSelectTemplate;
   }
 
   entityAliasEnter($event?: any, ...rest: any[]): any {
-    if ($event.keyCode === $mdConstant.KEY_CODE.ENTER) {
+    if ($event.keyCode === ENTER) {
         $event.preventDefault();
         if (!this.entityAlias) {
             var found: any = this.entityAliasSearch(this.entityAliasSearchText);

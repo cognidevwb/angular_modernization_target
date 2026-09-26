@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, DoCheck } from '@angular/core';
 import { DashboardUtilsService } from '../../common/services/dashboard-utils.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,11 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let angular: any;
-declare let $filter: any;
-declare let $scope: any;
+import { isEqual } from 'lodash-es';
 
 /**
  * Ported from the AngularJS controller `DashboardStateDialogController` (module `thingsboard.dashboard.states`) in src/app/dashboard/states/index.js:22.
@@ -30,7 +26,7 @@ declare let $scope: any;
   imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule],
   templateUrl: './dashboard-state-dialog.component.html',
 })
-export class DashboardStateDialogComponent {
+export class DashboardStateDialogComponent implements DoCheck {
   protected readonly rootScope = injectRoot(RootState);
   // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly dialog = inject(MatDialog);
@@ -50,6 +46,9 @@ export class DashboardStateDialogComponent {
   // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
 
+  private prevWatchedStateName: any;
+  private prevWatchedStateId: any;
+
   constructor() {
     let vm = this;
     this.isAdd = this.dialogData.isAdd;
@@ -65,16 +64,23 @@ export class DashboardStateDialogComponent {
     }
     this.cancel = this.cancel;
     this.save = this.save;
-    $scope.$watch("vm.state.name", (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal) && this.state.name != null) {
+    this.prevWatchedStateName = this.state.name;
+    this.prevWatchedStateId = this.state.id;
+  }
+
+  ngDoCheck(): void {
+    if (!isEqual(this.state?.name, this.prevWatchedStateName)) {
+        this.prevWatchedStateName = this.state?.name;
+        if (this.state.name != null) {
             this.checkStateName();
         }
-    });
-    $scope.$watch("vm.state.id", (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal) && this.state.id != null) {
+    }
+    if (!isEqual(this.state?.id, this.prevWatchedStateId)) {
+        this.prevWatchedStateId = this.state?.id;
+        if (this.state.id != null) {
             this.checkStateId();
         }
-    });
+    }
   }
 
   checkStateName(...rest: any[]): any {
@@ -84,7 +90,7 @@ export class DashboardStateDialogComponent {
   }
 
   checkStateId(...rest: any[]): any {
-    var result: any = $filter('filter')(this.allStates, {id: this.state.id}, true);
+    var result: any = (this.allStates || []).filter((s: any) => s.id === this.state.id);
     if (result && result.length && result[0].id !== this.prevStateId) {
         this.theForm.stateId.$setValidity('stateExists', false);
     } else {

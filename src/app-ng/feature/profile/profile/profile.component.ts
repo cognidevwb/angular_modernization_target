@@ -20,7 +20,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let SUPPORTED_LANGS: any;
+const SUPPORTED_LANGS: string[] = ['en_US', 'zh_CN'];
 
 /**
  * Ported from the AngularJS controller `ProfileController` (module `thingsboard.profile`) in src/app/profile/index.js:27.

@@ -15,7 +15,7 @@ declare let $filter: any;
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
   private readonly __bound = bindMethods(this);
-  // TODO(port): '$filter' — inject the pipe class and call transform()
+
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   // TODO(port): '$q' — use Promise, or an Observable
@@ -88,7 +88,7 @@ export class DashboardService {
       this.http.get(url, config).subscribe((response: any) => {
         var data: any = this.prepareDashboards(response);
         if (pageLink.textSearch) {
-            data.data = $filter('filter')(data.data, {title: pageLink.textSearch});
+            data.data = data.data.filter((item: any) => item.title && item.title.toLowerCase().indexOf(pageLink.textSearch.toLowerCase()) !== -1);
         }
         resolve(data);
       }, () => {

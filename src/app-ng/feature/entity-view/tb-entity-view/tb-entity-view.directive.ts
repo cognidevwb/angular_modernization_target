@@ -24,12 +24,9 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatChipsModule, MatChipInputEvent } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { $q } from '../../../core/q';
+import { ENTER, COMMA } from '@angular/cdk/keycodes';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $mdConstant: any;
-declare let $mdExpansionPanel: any;
 declare let $templateCache: any;
-declare let element: any;
 
 /**
  * Ported from the AngularJS directive `tbEntityView` (module `thingsboard.entityView`) in src/app/entity-view/index.js:28.
@@ -80,7 +77,6 @@ export class TbEntityViewDirective {
 
   attributesPanelId: any = (Math.random()*1000).toFixed(0);
   timeseriesPanelId: any = (Math.random()*1000).toFixed(0);
-  $mdExpansionPanel: any = $mdExpansionPanel;
   types: any;
   isAssignedToCustomer: any = false;
   isPublic: any = false;
@@ -106,7 +102,7 @@ export class TbEntityViewDirective {
   constructor() {
     this.types = this.typesRef;
     this.allowedEntityTypes = [this.typesRef.entityType.device, this.typesRef.entityType.asset];
-    this.separatorKeys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA, this.semicolon];
+    this.separatorKeys = [ENTER, COMMA, this.semicolon];
     this.$watch('entityView', (newVal?: any) => {
             if (newVal) {
                 if (this.entityView().customerId && this.entityView().customerId.id !== this.typesRef.id.nullUid) {
@@ -158,7 +154,6 @@ export class TbEntityViewDirective {
             }
             this.updateMinMaxDates();
         });
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   dataKeysSearch(searchText?: any, type?: any, ...rest: any[]): any {

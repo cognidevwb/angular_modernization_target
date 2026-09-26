@@ -1,8 +1,6 @@
 import { Component, model, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-// @ts-expect-error - no type declarations for html template import
-import entitiesTableWidgetTemplate from '../../../../app/widget/lib/entities-table-widget.tpl.html';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -635,14 +633,12 @@ export class TbEntitiesTableWidgetDirective {
   // TODO(port): template: 1 × md-table-pagination left in place
 
   restrict: any = "E";
-  scope: any = true;
   bindToController: any = {
             tableId: '=',
             ctx: '='
         };
   controller: any = EntitiesTableWidgetController;
   controllerAs: any;
-  templateUrl: any = entitiesTableWidgetTemplate;
 
   constructor() {
     let vm = this;

@@ -3,12 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { TelemetryWebsocketService } from './telemetry-websocket.service';
 import { types } from '../../common/constants/types';
 import { bindMethods } from '../../../bind-methods';
+import { orderBy as lodashOrderBy } from 'lodash-es';
 
 import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let angular: any;
-declare let $filter: any;
-declare let scope: any;
 
 /**
  * Ported from the AngularJS factory `attributeService` (module `thingsboard.api.attribute`) in src/app/api/attribute.service.js:16.
@@ -89,10 +88,31 @@ export class AttributeService {
     return deferred.promise;
   }
 
+  private orderByExpression(collection: any[], expression: any): any[] {
+    if (!expression) {
+        return collection;
+    }
+    const expressions: string[] = Array.isArray(expression) ? expression : [expression];
+    const iteratees = expressions.map((expr: string) => expr.replace(/^[-+]/, ''));
+    const orders = expressions.map((expr: string) => (expr.startsWith('-') ? 'desc' : 'asc'));
+    return lodashOrderBy(collection, iteratees, orders as any);
+  }
+
+  private filterByKey(collection: any[], criteria: {key: any}): any[] {
+    const search = (criteria.key !== undefined && criteria.key !== null ? criteria.key : '').toString().toLowerCase();
+    if (!search) {
+        return collection;
+    }
+    return collection.filter((item: any) => {
+        const value = item && item.key !== undefined ? item.key : '';
+        return value.toString().toLowerCase().indexOf(search) !== -1;
+    });
+  }
+
   processAttributes(attributes?: any, query?: any, deferred?: any, successCallback?: any, update?: any, apply?: any, ...rest: any[]): any {
-    attributes = $filter('orderBy')(attributes, query.order);
+    attributes = this.orderByExpression(attributes, query.order);
     if (query.search != null) {
-        attributes = $filter('filter')(attributes, {key: query.search});
+        attributes = this.filterByKey(attributes, {key: query.search});
     }
     var responseData: any = {
         count: attributes.length

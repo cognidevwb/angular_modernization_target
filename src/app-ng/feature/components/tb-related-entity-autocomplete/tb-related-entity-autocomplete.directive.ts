@@ -6,9 +6,7 @@ import $ from 'jquery';
 import { $q } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
-declare let $filter: any;
 declare let $templateCache: any;
-declare let element: any;
 declare let ngModelCtrl: any;
 
 /**
@@ -101,7 +99,8 @@ export class TbRelatedEntityAutocompleteDirective {
   }
 
   filterEntities(searchText?: any, deferred?: any, ...rest: any[]): any {
-    var result: any = $filter('filter')(this.allEntities, {name: searchText});
+    var result: any = (this.allEntities || []).filter((entity: any) =>
+        !searchText || (entity.name && entity.name.toLowerCase().indexOf(String(searchText).toLowerCase()) !== -1));
     deferred.resolve(result);
   }
 

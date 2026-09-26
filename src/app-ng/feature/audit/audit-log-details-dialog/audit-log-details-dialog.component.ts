@@ -43,7 +43,7 @@ export class AuditLogDetailsDialogComponent {
   failureDetailsEditor: any;
 
   constructor() {
-    this.dialogData.showingCallback.onShowing = function(scope?: any, element?: any) {
+    this.dialogData.showingCallback.onShowing = function(_scope?: any, element?: any) {
         this.updateEditorSize(element, this.actionData, 'tb-audit-log-action-data');
         this.actionDataEditor.resize();
         if (this.displayFailureDetails) {

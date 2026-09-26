@@ -6,9 +6,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $filter: any;
-
 /**
  * Ported from the AngularJS controller `AliasesEntitySelectPanelController` (module `thingsboard.entity`) in src/app/entity/index.js:37.
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
@@ -21,7 +18,6 @@ declare let $filter: any;
 })
 export class AliasesEntitySelectPanelComponent {
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
-  // TODO(port): '$filter' — inject the pipe class and call transform()
 
   _mdPanelRef: any;
   aliasController: any;
@@ -49,7 +45,7 @@ export class AliasesEntitySelectPanelComponent {
 
   currentAliasEntityChanged = (aliasId?: any, selectedId?: any, ...rest: any[]): any => {
     var resolvedEntities: any = this.entityAliasesInfo[aliasId].resolvedEntities;
-    var selected: any = $filter('filter')(resolvedEntities, {id: selectedId});
+    var selected: any = (resolvedEntities || []).filter((entity: any) => entity && entity.id === selectedId);
     if (selected && selected.length) {
         this.aliasController.updateCurrentAliasEntity(aliasId, selected[0]);
         if (this.dialogData.onEntityAliasesUpdate) {

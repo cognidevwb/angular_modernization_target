@@ -10,11 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbTimeinterval` (module `thingsboard.directives.timeinterval`) in src/app/components/timeinterval.directive.js:24.
@@ -25,8 +21,9 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [TranslatePipe, MatSlideToggleModule, MatSelectModule, MatInputModule, MatFormFieldModule, MatCheckboxModule, FormsModule],
   templateUrl: './tb-timeinterval.directive.html',
+  providers: ngModelProviders(TbTimeintervalDirective),
 })
-export class TbTimeintervalDirective implements DoCheck {
+export class TbTimeintervalDirective extends NgModelController implements DoCheck {
   readonly required = model<any>(undefined, { alias: 'ngRequired' });
   readonly min = model<any>();
   readonly max = model<any>();
@@ -59,16 +56,7 @@ export class TbTimeintervalDirective implements DoCheck {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                var intervalMs: any = ngModelCtrl.$viewValue;
-                if (!this.rendered) {
-                    this.advanced = !this.timeService.matchesExistingInterval(this.min(), this.max(), intervalMs);
-                }
-                this.setIntervalMs(intervalMs);
-            }
-            this.rendered = true;
-        }
+    super();
     this.$watch('secs', (newSecs?: any) => {
             if ((newSecs === undefined)) {
                 return;
@@ -130,7 +118,17 @@ export class TbTimeintervalDirective implements DoCheck {
             this.updateView();
         });
     this.boundInterval();
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  override $render(): void {
+    if (this.$viewValue) {
+        const intervalMs: any = this.$viewValue;
+        if (!this.rendered) {
+            this.advanced = !this.timeService.matchesExistingInterval(this.min(), this.max(), intervalMs);
+        }
+        this.setIntervalMs(intervalMs);
+    }
+    this.rendered = true;
   }
 
   ngDoCheck(): void {
@@ -178,7 +176,7 @@ export class TbTimeintervalDirective implements DoCheck {
     var max: any = this.timeService.boundMaxInterval(this.max());
     this.intervals = this.timeService.getIntervals(this.min(), this.max());
     if (this.rendered) {
-        var newIntervalMs: any = ngModelCtrl.$viewValue;
+        var newIntervalMs: any = this.$viewValue;
         if (newIntervalMs < min) {
             newIntervalMs = min;
         } else if (newIntervalMs > max) {
@@ -187,7 +185,7 @@ export class TbTimeintervalDirective implements DoCheck {
         if (!this.advanced) {
             newIntervalMs = this.timeService.boundToPredefinedInterval(min, max, newIntervalMs);
         }
-        if (newIntervalMs !== ngModelCtrl.$viewValue) {
+        if (newIntervalMs !== this.$viewValue) {
             this.setIntervalMs(newIntervalMs);
             this.updateView();
         }

@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { bindMethods } from '../../../bind-methods';
 
 import moment from 'moment';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let angular: any;
-declare let $scope: any;
+import { isObject } from 'lodash-es';
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 function TimePickerCtrl(this: any, $scope?: any, $mdDialog?: any, time?: any, autoSwitch?: any, $mdMedia?: any) {
@@ -65,7 +63,7 @@ export class $mdpTimePickerService {
   $get($mdDialog?: any, ...rest: any[]): any {
     var timePicker: any = (time?: any, options?: any) => {
         if(!(time instanceof Date)) time = Date.now();
-        if (!angular.isObject(options)) options = {};
+        if (!isObject(options)) options = {};
 
         return $mdDialog.show({
             controller:  ['$scope', '$mdDialog', 'time', 'autoSwitch', '$mdMedia', TimePickerCtrl],

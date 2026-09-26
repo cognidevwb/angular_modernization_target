@@ -8,6 +8,7 @@ import $ from 'jquery';
 import { isEqual } from 'lodash-es';
 import { DatakeyConfigDialogComponent } from '../datakey-config-dialog/datakey-config-dialog.component';
 import { $q } from '../../../core/q';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 const datasourceEntityTemplate = '../../../../app/components/datasource-entity.tpl.html';
 const datakeyConfigDialogTemplate = '../../../../app/components/datakey-config-dialog.tpl.html';
 
@@ -16,10 +17,7 @@ declare let $compile: any;
 declare let $mdColorPicker: any;
 declare let $templateCache: any;
 declare let $window: any;
-declare let angular: any;
 declare let scope: any;
-declare let element: any;
-declare let ngModelCtrl: any;
 
 /**
  * Ported from the AngularJS directive `tbDatasourceEntity` (module `thingsboard.directives.datasourceEntity`) in src/app/components/datasource-entity.directive.js:34.
@@ -29,8 +27,9 @@ declare let ngModelCtrl: any;
   selector: 'tb-datasource-entity',
   standalone: true,
   template: '', // TODO(port): no template found
+  providers: ngModelProviders(TbDatasourceEntityDirective),
 })
-export class TbDatasourceEntityDirective {
+export class TbDatasourceEntityDirective extends NgModelController {
   readonly widgetType = model<any>();
   readonly maxDataKeys = model<any>();
   readonly optDataKeys = model<any>();
@@ -51,7 +50,6 @@ export class TbDatasourceEntityDirective {
   protected readonly element = inject(ElementRef);
 
   protected template: any = datasourceEntityTemplate;
-  ngModelCtrl: any = ngModelCtrl;
   types: any;
   alarmFields: any = [];
   selectedDataKey: any = null;
@@ -70,6 +68,7 @@ export class TbDatasourceEntityDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     for (var alarmField in this.typesRef.alarmFields) {
@@ -77,11 +76,11 @@ export class TbDatasourceEntityDirective {
         }
     effect(() => {
       const entityAliasVal = this.entityAlias;
-            if (ngModelCtrl.$viewValue) {
+            if (this.$viewValue) {
                 if (entityAliasVal) {
-                    ngModelCtrl.$viewValue.entityAliasId = entityAliasVal.id;
+                    this.$viewValue.entityAliasId = entityAliasVal.id;
                 } else {
-                    ngModelCtrl.$viewValue.entityAliasId = null;
+                    this.$viewValue.entityAliasId = null;
                 }
                 this.updateValidity();
                 this.selectedEntityAliasChange();
@@ -95,45 +94,46 @@ export class TbDatasourceEntityDirective {
       this.alarmDataKeys;
             this.updateDataKeys();
         });
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                var entityAliasId: any = ngModelCtrl.$viewValue.entityAliasId;
-                var entityAliases: any = this.aliasController().getEntityAliases();
-                if (entityAliases[entityAliasId]) {
-                    this.entityAlias = entityAliases[entityAliasId];
-                } else {
-                    this.entityAlias = null;
-                }
-                var dataKeys: any = [];
-                var alarmDataKeys: any = [];
-                for (var d in ngModelCtrl.$viewValue.dataKeys) {
-                    var dataKey: any = ngModelCtrl.$viewValue.dataKeys[d];
-                    if ((dataKey.type === this.typesRef.dataKeyType.timeseries) || (dataKey.type === this.typesRef.dataKeyType.attribute) || (dataKey.type === this.typesRef.dataKeyType.entityField)) {
-                        dataKeys.push(dataKey);
-                    } else if (dataKey.type === this.typesRef.dataKeyType.alarm) {
-                        alarmDataKeys.push(dataKey);
-                    }
-                }
-                this.dataKeys = dataKeys;
-                this.alarmDataKeys = alarmDataKeys;
-            }
-        };
     $(this.element.nativeElement).contents();
   }
 
+  override $render(): void {
+    if (this.$viewValue) {
+      var entityAliasId: any = this.$viewValue.entityAliasId;
+      var entityAliases: any = this.aliasController().getEntityAliases();
+      if (entityAliases[entityAliasId]) {
+        this.entityAlias = entityAliases[entityAliasId];
+      } else {
+        this.entityAlias = null;
+      }
+      var dataKeys: any = [];
+      var alarmDataKeys: any = [];
+      for (var d in this.$viewValue.dataKeys) {
+        var dataKey: any = this.$viewValue.dataKeys[d];
+        if ((dataKey.type === this.typesRef.dataKeyType.timeseries) || (dataKey.type === this.typesRef.dataKeyType.attribute) || (dataKey.type === this.typesRef.dataKeyType.entityField)) {
+          dataKeys.push(dataKey);
+        } else if (dataKey.type === this.typesRef.dataKeyType.alarm) {
+          alarmDataKeys.push(dataKey);
+        }
+      }
+      this.dataKeys = dataKeys;
+      this.alarmDataKeys = alarmDataKeys;
+    }
+  }
+
   updateValidity(...rest: any[]): any {
-    if (ngModelCtrl.$viewValue) {
-        var value: any = ngModelCtrl.$viewValue;
+    if (this.$viewValue) {
+        var value: any = this.$viewValue;
         var dataValid: any = (value !== undefined) && value != null;
-        ngModelCtrl.$setValidity('entityData', dataValid);
+        this.$setValidity('entityData', dataValid);
         if (dataValid) {
-            ngModelCtrl.$setValidity('entityAlias',
+            this.$setValidity('entityAlias',
                 (value.entityAliasId !== undefined) &&
                 value.entityAliasId != null);
             if (this.optDataKeys()) {
-                ngModelCtrl.$setValidity('entityKeys', true);
+                this.$setValidity('entityKeys', true);
             } else {
-                ngModelCtrl.$setValidity('entityKeys',
+                this.$setValidity('entityKeys',
                     (value.dataKeys !== undefined) &&
                     value.dataKeys != null &&
                     value.dataKeys.length > 0);
@@ -143,14 +143,14 @@ export class TbDatasourceEntityDirective {
   }
 
   updateDataKeys(...rest: any[]): any {
-    if (ngModelCtrl.$viewValue) {
+    if (this.$viewValue) {
         var dataKeys: any = [];
         dataKeys = dataKeys.concat(this.dataKeys);
         dataKeys = dataKeys.concat(this.alarmDataKeys);
-        if (!isEqual(ngModelCtrl.$viewValue.dataKeys, dataKeys))
+        if (!isEqual(this.$viewValue.dataKeys, dataKeys))
         {
-           ngModelCtrl.$setDirty();
-           ngModelCtrl.$viewValue.dataKeys = dataKeys;
+           this.$setDirty();
+           this.$viewValue.dataKeys = dataKeys;
         }
         this.updateValidity();
     }
@@ -170,7 +170,7 @@ export class TbDatasourceEntityDirective {
   }
 
   transformDataKeyChip(chip?: any, ...rest: any[]): any {
-    if (this.maxDataKeys() > 0 && ngModelCtrl.$viewValue.dataKeys.length >= this.maxDataKeys() ) {
+    if (this.maxDataKeys() > 0 && this.$viewValue.dataKeys.length >= this.maxDataKeys() ) {
         return null;
     } else {
         if (chip.type) {
@@ -215,9 +215,9 @@ export class TbDatasourceEntityDirective {
 
         $event: event
 
-    }).then(function (color?: any) {
+    }).then((color?: any) => {
         dataKey.color = color;
-        ngModelCtrl.$setDirty();
+        this.$setDirty();
     });
   }
 
@@ -243,7 +243,7 @@ export class TbDatasourceEntityDirective {
             let index: any = this.alarmDataKeys.indexOf(dataKey);
             this.alarmDataKeys[index] = newDataKey;
         }
-        ngModelCtrl.$setDirty();
+        this.$setDirty();
         var w: any = $(window);
         w.triggerHandler('resize');
     });
@@ -268,9 +268,9 @@ export class TbDatasourceEntityDirective {
   }
 
   createFilterForDataKey(query?: any, ...rest: any[]): any {
-    var lowercaseQuery: any = angular.lowercase(query);
+    var lowercaseQuery: any = query.toLowerCase();
     return function filterFn(dataKey?: any) {
-        return (angular.lowercase(dataKey).indexOf(lowercaseQuery) === 0);
+        return (dataKey.toLowerCase().indexOf(lowercaseQuery) === 0);
     };
   }
 

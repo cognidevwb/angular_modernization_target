@@ -87,7 +87,7 @@ export class EntityViewComponent {
         getItemTitleFunc: this.getEntityViewTitle,
 
         itemCardController: 'EntityViewCardController',
-        itemCardTemplateUrl: entityViewCard,
+        itemCardTemplateUrl: '',
         parentCtl: this,
 
         actionsList: this.entityViewActionsList,
@@ -95,7 +95,7 @@ export class EntityViewComponent {
 
         onGridInited: this.gridInited,
 
-        addItemTemplateUrl: addEntityViewTemplate,
+        addItemTemplateUrl: '',
 
         addItemText: (...rest: any[]) => { return this.translate.instant('entity-view.add-entity-view-text') },
         noItemsText: (...rest: any[]) => { return this.translate.instant('entity-view.no-entity-views-text') },
@@ -380,7 +380,7 @@ export class EntityViewComponent {
             (this.dialog as any).show({
                 controller: 'AssignEntityViewToCustomerController',
                 controllerAs: 'vm',
-                templateUrl: assignToCustomerTemplate,
+                templateUrl: '',
                 locals: {entityViewIds: entityViewIds, customers: customers},
                 parent: $(this.document.body),
                 fullscreen: true,
@@ -417,7 +417,7 @@ export class EntityViewComponent {
             (this.dialog as any).show({
                 controller: 'AddEntityViewsToCustomerController',
                 controllerAs: 'vm',
-                templateUrl: addEntityViewsToCustomerTemplate,
+                templateUrl: '',
                 locals: {customerId: this.customerId, entityViews: entityViews},
                 parent: $(this.document.body),
                 fullscreen: true,

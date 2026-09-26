@@ -280,7 +280,6 @@ export class TbRoundSwitchDirective {
   protected error = '';
 
   restrict: any = "E";
-  scope: any = true;
   bindToController: any = {
             ctx: '='
         };

@@ -10,13 +10,10 @@ import { linkAttrs } from '../../../legacy-link';
 import { TranslatePipe } from '@ngx-translate/core';
 import { NgFor } from '@angular/common';
 import { $q } from '../../../core/q';
+import { isEqual } from 'lodash-es';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $filter: any;
 declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
 
 /**
  * Ported from the AngularJS directive `tbRelationTypeAutocomplete` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -27,8 +24,9 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [TranslatePipe, FormsModule, NgFor],
   templateUrl: './tb-relation-type-autocomplete.directive.html',
+  providers: ngModelProviders(TbRelationTypeAutocompleteDirective),
 })
-export class TbRelationTypeAutocompleteDirective {
+export class TbRelationTypeAutocompleteDirective extends NgModelController {
   readonly theForm = model<any>();
   readonly tbRequired = model<any>();
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
@@ -57,28 +55,30 @@ export class TbRelationTypeAutocompleteDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
     this.hideLabel = (this.attrs.hideLabel !== undefined) ? true : false;
     for (var type in types.entityRelationType) {
             this.relationTypes.push(types.entityRelationType[type]);
         }
-    ngModelCtrl.$render = function () {
-            this.relationType = ngModelCtrl.$viewValue;
-        }
     this.$watch('relationType', (newValue?: any, prevValue?: any) => {
-            if (!angular.equals(newValue, prevValue)) {
+            if (!isEqual(newValue, prevValue)) {
                 this.updateView();
             }
         });
     this.$watch('disabled', () => {
             this.updateView();
         });
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  override $render(): void {
+    this.relationType = this.$viewValue;
   }
 
   fetchRelationTypes(searchText?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
-    var result: any = $filter('filter')(this.relationTypes, {'$': searchText});
+    var result: any = this.relationTypes.filter((item: any) =>
+        !searchText || String(item).toLowerCase().indexOf(String(searchText).toLowerCase()) !== -1);
     if (result && result.length) {
         deferred.resolve(result);
     } else {
@@ -92,7 +92,7 @@ export class TbRelationTypeAutocompleteDirective {
 
   updateView(...rest: any[]): any {
     if (!this.disabled()) {
-        ngModelCtrl.$setViewValue(this.relationType);
+        this.$setViewValue(this.relationType);
     }
   }
 

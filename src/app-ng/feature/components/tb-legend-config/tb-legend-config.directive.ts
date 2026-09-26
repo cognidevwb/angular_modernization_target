@@ -4,16 +4,7 @@ import { ElementRef } from '@angular/core';
 import { Overlay } from '@angular/cdk/overlay';
 import { types } from '../../common/constants/types';
 import $ from 'jquery';
-// @ts-ignore
-import legendConfigButtonTemplate from '../../../../app/components/legend-config-button.tpl.html';
-// @ts-ignore
-import legendConfigPanelTemplate from '../../../../app/components/legend-config-panel.tpl.html';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbLegendConfig` (module `thingsboard.directives.legendConfig`) in src/app/components/legend-config.directive.js:30.
@@ -23,48 +14,40 @@ declare let ngModelCtrl: any;
   selector: 'tb-legend-config',
   standalone: true,
   template: '', // TODO(port): no template found
+  providers: ngModelProviders(TbLegendConfigDirective),
 })
-export class TbLegendConfigDirective {
+export class TbLegendConfigDirective extends NgModelController {
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
   protected readonly document = inject(DOCUMENT);
   protected readonly overlay: any = inject(Overlay);
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly element = inject(ElementRef);
 
-  protected template: any = legendConfigButtonTemplate;
   model: any;
 
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
-  constructor() {
-    $(this.element.nativeElement).html(this.template);
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                var value: any = ngModelCtrl.$viewValue;
-                if (!this.model) {
-                    this.model = {};
-                }
-                var model: any = this.model;
-                model.direction = value.direction || types.direction.column.value;
-                model.position = value.position || types.position.bottom.value;
-                model.showMin = (value.showMin !== undefined) ? value.showMin : false;
-                model.showMax = (value.showMax !== undefined) ? value.showMax : false;
-                model.showAvg = (value.showAvg !== undefined) ? value.showAvg : true;
-                model.showTotal = (value.showTotal !== undefined) ? value.showTotal : false;
-            } else {
-                this.model = {
-                    direction: types.direction.column.value,
-                    position: types.position.bottom.value,
-                    showMin: false,
-                    showMax: false,
-                    showAvg: true,
-                    showTotal: false
-                }
-            }
+  override $render(): void {
+    if (this.$viewValue) {
+        const value: any = this.$viewValue;
+        if (!this.model) {
+            this.model = {};
         }
-    $compile($(this.element.nativeElement).contents())(this);
+        const model: any = this.model;
+        model.direction = value.direction || types.direction.column.value;
+        model.position = value.position || types.position.bottom.value;
+        model.showMin = (value.showMin !== undefined) ? value.showMin : false;
+        model.showMax = (value.showMax !== undefined) ? value.showMax : false;
+        model.showAvg = (value.showAvg !== undefined) ? value.showAvg : true;
+        model.showTotal = (value.showTotal !== undefined) ? value.showTotal : false;
+    } else {
+        this.model = {
+            direction: types.direction.column.value,
+            position: types.position.bottom.value,
+            showMin: false,
+            showMax: false,
+            showAvg: true,
+            showTotal: false
+        };
+    }
   }
 
   openEditMode(event?: any, ...rest: any[]): any {
@@ -97,7 +80,7 @@ export class TbLegendConfigDirective {
         attachTo: $(this.document.body),
         controller: 'LegendConfigPanelController',
         controllerAs: 'vm',
-        templateUrl: legendConfigPanelTemplate,
+        templateUrl: './legend-config-panel.component.html',
         panelClass: 'tb-legend-config-panel',
         position: position,
         fullscreen: false,
@@ -125,6 +108,6 @@ export class TbLegendConfigDirective {
     value.showMax = model.showMax;
     value.showAvg = model.showAvg;
     value.showTotal = model.showTotal;
-    ngModelCtrl.$setViewValue(value);
+    this.$setViewValue(value);
   }
 }

@@ -29,19 +29,6 @@ declare let $mdExpansionPanel: any;
 export class SecuritySettingsComponent {
   protected readonly rootScope = injectRoot(RootState);
   protected readonly adminService = inject(AdminService);
-  // TODO(port): '$mdExpansionPanel' — a mat-expansion-panel, reached with viewChild
-  // TODO(port): elements not resolved to a component: md-expansion-panel-group, md-expansion-panel, md-expansion-panel-collapsed, md-expansion-panel-icon, md-expansion-panel-expanded, md-expansion-panel-header, md-expansion-panel-content
-  // TODO(port): template: 2 × md-expansion-panel left in place
-  // TODO(port): template: 2 × md-expansion-panel-collapsed left in place
-  // TODO(port): template: 2 × md-expansion-panel-content left in place
-  // TODO(port): template: 2 × md-expansion-panel-expanded left in place
-  // TODO(port): template: 1 × md-expansion-panel-group left in place
-  // TODO(port): template: 2 × md-expansion-panel-header left in place
-  // TODO(port): template: 4 × md-expansion-panel-icon left in place
-  // TODO(port): template: 10 × ng-message left in place
-  // TODO(port): template: 8 × ng-messages left in place
-
-  $mdExpansionPanel: any = $mdExpansionPanel;
   securitySettings: any;
   settingsForm: any;
 

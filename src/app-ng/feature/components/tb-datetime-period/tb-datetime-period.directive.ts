@@ -1,16 +1,7 @@
 import { Component, inject, model } from '@angular/core';
-import { ElementRef } from '@angular/core';
 import { FormsModule, NgControl } from '@angular/forms';
 
-import $ from 'jquery';
-// @ts-ignore - html template imported as raw string via bundler loader
-import datetimePeriodTemplate from '../../../../app/components/datetime-period.tpl.html';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let element: any;
-declare let ngModelCtrl: any;
 
 /**
  * Ported from the AngularJS directive `tbDatetimePeriod` (module `thingsboard.directives.datetimePeriod`) in src/app/components/datetime-period.directive.js:24.
@@ -27,11 +18,9 @@ export class TbDatetimePeriodDirective {
 
   // TODO(port): '$compile' — not in Angular: compose with components instead
   // TODO(port): '$templateCache' — templateUrl on the component
-  protected readonly element = inject(ElementRef);
   protected readonly ngControl = inject(NgControl, { optional: true, self: true });
   // TODO(port): elements not resolved to a component: mdp-date-picker, mdp-time-picker
 
-  protected template: any = datetimePeriodTemplate;
   $watch: any;
   endDate: any;
   maxEndDate: any;
@@ -45,7 +34,6 @@ export class TbDatetimePeriodDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.writeValue = (value: any) => {
             var date: any = new Date();
             this.startDate = new Date(
@@ -79,7 +67,6 @@ export class TbDatetimePeriodDirective {
             this.updateView();
         }
     };
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   updateMinMaxDates(...rest: any[]): any {

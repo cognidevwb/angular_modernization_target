@@ -11,15 +11,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import $ from 'jquery';
+import { isEqual } from 'lodash-es';
 import { TranslatePipe } from '@ngx-translate/core';
 import { $q } from '../../../core/q';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
-declare let $filter: any;
 declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
 
 /**
  * Ported from the AngularJS directive `tbEntitySubtypeAutocomplete` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -30,8 +28,9 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [TranslatePipe, FormsModule, CommonModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule],
   templateUrl: './tb-entity-subtype-autocomplete.directive.html',
+  providers: ngModelProviders(TbEntitySubtypeAutocompleteDirective),
 })
-export class TbEntitySubtypeAutocompleteDirective {
+export class TbEntitySubtypeAutocompleteDirective extends NgModelController {
   readonly theForm = model<any>();
   readonly tbRequired = model<any>();
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
@@ -66,21 +65,23 @@ export class TbEntitySubtypeAutocompleteDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
-    ngModelCtrl.$render = function () {
-            this.subType = ngModelCtrl.$viewValue;
-        }
     this.$watch('entityType', () => {
             this.load();
         });
     this.$watch('subType', (newValue?: any, prevValue?: any) => {
-            if (!angular.equals(newValue, prevValue)) {
+            if (!isEqual(newValue, prevValue)) {
                 this.updateView();
             }
         });
     this.$watch('disabled', () => {
             this.updateView();
         });
+  }
+
+  override $render(): void {
+    this.subType = this.$viewValue;
   }
 
   comparator = (actual?: any, expected?: any, ...rest: any[]): any => {
@@ -97,7 +98,7 @@ export class TbEntitySubtypeAutocompleteDirective {
     var deferred: any = $q.defer();
     this.loadSubTypes().then(
         (subTypes?: any) => {
-            var result: any = $filter('filter')(subTypes, {'$': searchText}, this.comparator);
+            var result: any = subTypes.filter((item: any) => this.comparator(item, searchText));
             if (result && result.length) {
                 if (searchText && searchText.length && result.indexOf(searchText) === -1) {
                     result.push(searchText);
@@ -124,7 +125,7 @@ export class TbEntitySubtypeAutocompleteDirective {
 
   updateView(...rest: any[]): any {
     if (!this.disabled()) {
-        ngModelCtrl.$setViewValue(this.subType);
+        this.$setViewValue(this.subType);
     }
   }
 

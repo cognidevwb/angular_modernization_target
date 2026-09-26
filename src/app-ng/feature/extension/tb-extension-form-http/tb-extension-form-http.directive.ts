@@ -14,10 +14,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let element: any;
 
 /**
  * Ported from the AngularJS directive `tbExtensionFormHttp` (module `thingsboard.extension`) in src/app/extension/index.js:24.
@@ -75,7 +71,6 @@ export class TbExtensionFormHttpDirective {
         } else {
             this.converterConfigs = this.config().converterConfigurations;
         }
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   addConverterConfig(...rest: any[]): any {

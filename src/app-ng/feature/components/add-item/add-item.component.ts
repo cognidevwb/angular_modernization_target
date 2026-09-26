@@ -1,9 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { helpLinks } from '../../help/constants/help-links';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let saveItemFunction: any;
 
 /**
  * Ported from the AngularJS controller `AddItemController` (module `thingsboard.directives.grid`) in src/app/components/grid.directive.js:27.
@@ -17,7 +14,7 @@ declare let saveItemFunction: any;
 export class AddItemComponent {
   protected readonly dialog = inject(MatDialog);
   protected readonly helpLinksRef: any = helpLinks;
-  // TODO(port): 'saveItemFunction' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
+  private readonly data: { saveItemFunction: (item: any) => Promise<any> } = inject(MAT_DIALOG_DATA);
 
   helpLinks: any;
   item: any = {};
@@ -34,7 +31,7 @@ export class AddItemComponent {
   };
 
   add = (...rest: any[]): any => {
-    saveItemFunction(this.item).then((item?: any) => {
+    this.data.saveItemFunction(this.item).then((item?: any) => {
         this.item = item;
         this.theForm.$setPristine();
     (this.dialog as any).hide();

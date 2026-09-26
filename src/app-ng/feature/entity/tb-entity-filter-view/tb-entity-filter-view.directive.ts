@@ -1,16 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
-
-import $ from 'jquery';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbEntityFilterView` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -20,37 +13,30 @@ declare let ngModelCtrl: any;
   selector: 'tb-entity-filter-view',
   standalone: true,
   templateUrl: './tb-entity-filter-view.directive.html',
+  providers: ngModelProviders(TbEntityFilterViewDirective),
 })
-export class TbEntityFilterViewDirective {
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
+export class TbEntityFilterViewDirective extends NgModelController<any> {
   protected readonly document = inject(DOCUMENT);
   protected readonly dialog = inject(MatDialog);
   protected readonly translate = inject(TranslateService);
   protected readonly typesRef: any = types;
-  protected readonly element = inject(ElementRef);
 
-  ngModelCtrl: any = ngModelCtrl;
   types: any;
   filterDisplayValue: any = '';
-  $watch: any;
   filter: any;
 
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
   constructor() {
+    super();
     this.types = this.typesRef;
-    this.$watch('filter', () => {
-            this.updateDisplayValue();
-        });
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                this.filter = ngModelCtrl.$viewValue;
-            } else {
-                this.filter = null;
-            }
-        }
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  override $render(): void {
+    if (this.$viewValue) {
+      this.filter = this.$viewValue;
+    } else {
+      this.filter = null;
+    }
+    this.updateDisplayValue();
   }
 
   updateDisplayValue(...rest: any[]): any {

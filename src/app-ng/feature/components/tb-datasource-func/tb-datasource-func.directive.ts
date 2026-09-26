@@ -8,16 +8,12 @@ import tinycolor from 'tinycolor2';
 import $ from 'jquery';
 import { firstValueFrom } from 'rxjs';
 import { DatakeyConfigDialogComponent } from '../datakey-config-dialog/datakey-config-dialog.component';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $mdColorPicker: any;
 declare let $templateCache: any;
 declare let $window: any;
-declare let angular: any;
 declare let scope: any;
-declare let element: any;
-declare let ngModelCtrl: any;
 
 /**
  * Ported from the AngularJS directive `tbDatasourceFunc` (module `thingsboard.directives.datasourceFunc`) in src/app/components/datasource-func.directive.js:34.
@@ -27,8 +23,9 @@ declare let ngModelCtrl: any;
   selector: 'tb-datasource-func',
   standalone: true,
   template: '', // TODO(port): no template found
+  providers: ngModelProviders(TbDatasourceFuncDirective),
 })
-export class TbDatasourceFuncDirective {
+export class TbDatasourceFuncDirective extends NgModelController {
   readonly widgetType = model<any>();
   readonly maxDataKeys = model<any>();
   readonly optDataKeys = model<any>();
@@ -45,7 +42,6 @@ export class TbDatasourceFuncDirective {
   protected readonly utils = inject(UtilsService);
   protected readonly element = inject(ElementRef);
 
-  ngModelCtrl: any = ngModelCtrl;
   types: any;
   functionTypes: any;
   alarmFields: any = [];
@@ -62,6 +58,7 @@ export class TbDatasourceFuncDirective {
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
+    super();
     this.types = this.typesRef;
     this.functionTypes = this.utils.getPredefinedFunctionsList();
     for (var alarmField in this.typesRef.alarmFields) {
@@ -74,43 +71,43 @@ export class TbDatasourceFuncDirective {
             this.updateDataKeys();
         }, true);
     this.$watch('datasourceName', () => {
-            if (ngModelCtrl.$viewValue) {
-                ngModelCtrl.$viewValue.name = this.datasourceName;
+            if (this.$viewValue) {
+                this.$viewValue.name = this.datasourceName;
                 this.updateValidity();
             }
         });
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                var funcDataKeys: any = [];
-                var alarmDataKeys: any = [];
-                if (ngModelCtrl.$viewValue.dataKeys) {
-                    for (var d: any=0;d<ngModelCtrl.$viewValue.dataKeys.length;d++) {
-                        var dataKey: any = ngModelCtrl.$viewValue.dataKeys[d];
-                        if (dataKey.type === this.typesRef.dataKeyType.function) {
-                            funcDataKeys.push(dataKey);
-                        } else if (dataKey.type === this.typesRef.dataKeyType.alarm) {
-                            alarmDataKeys.push(dataKey);
-                        }
-                    }
+  }
+
+  override $render(): void {
+    if (this.$viewValue) {
+        var funcDataKeys: any = [];
+        var alarmDataKeys: any = [];
+        if (this.$viewValue.dataKeys) {
+            for (var d: any=0;d<this.$viewValue.dataKeys.length;d++) {
+                var dataKey: any = this.$viewValue.dataKeys[d];
+                if (dataKey.type === this.typesRef.dataKeyType.function) {
+                    funcDataKeys.push(dataKey);
+                } else if (dataKey.type === this.typesRef.dataKeyType.alarm) {
+                    alarmDataKeys.push(dataKey);
                 }
-                this.funcDataKeys = funcDataKeys;
-                this.alarmDataKeys = alarmDataKeys;
-                this.datasourceName = ngModelCtrl.$viewValue.name;
             }
-        };
-    $compile($(this.element.nativeElement).contents())(this);
+        }
+        this.funcDataKeys = funcDataKeys;
+        this.alarmDataKeys = alarmDataKeys;
+        this.datasourceName = this.$viewValue.name;
+    }
   }
 
   updateValidity(...rest: any[]): any {
-    if (ngModelCtrl.$viewValue) {
-        var value: any = ngModelCtrl.$viewValue;
+    if (this.$viewValue) {
+        var value: any = this.$viewValue;
         var dataValid: any = (value !== undefined) && value != null;
-        ngModelCtrl.$setValidity('deviceData', dataValid);
+        this.$setValidity('deviceData', dataValid);
         if (dataValid) {
             if (this.optDataKeys()) {
-                ngModelCtrl.$setValidity('datasourceKeys', true);
+                this.$setValidity('datasourceKeys', true);
             } else {
-                ngModelCtrl.$setValidity('datasourceKeys',
+                this.$setValidity('datasourceKeys',
                     (value.dataKeys !== undefined) &&
                     value.dataKeys != null &&
                     value.dataKeys.length > 0);
@@ -120,21 +117,21 @@ export class TbDatasourceFuncDirective {
   }
 
   updateDataKeys(...rest: any[]): any {
-    if (ngModelCtrl.$viewValue) {
+    if (this.$viewValue) {
         var dataKeys: any = [];
         dataKeys = dataKeys.concat(this.funcDataKeys);
         dataKeys = dataKeys.concat(this.alarmDataKeys);
-        if (ngModelCtrl.$viewValue.dataKeys != dataKeys)
+        if (this.$viewValue.dataKeys != dataKeys)
         {
-           ngModelCtrl.$setDirty();
-           ngModelCtrl.$viewValue.dataKeys = dataKeys;
+           this.$setDirty();
+           this.$viewValue.dataKeys = dataKeys;
         }
         this.updateValidity();
     }
   }
 
   transformFuncDataKeyChip(chip?: any, ...rest: any[]): any {
-    if (this.maxDataKeys() > 0 && ngModelCtrl.$viewValue.dataKeys.length >= this.maxDataKeys() ) {
+    if (this.maxDataKeys() > 0 && this.$viewValue.dataKeys.length >= this.maxDataKeys() ) {
         return null;
     } else {
         return this.generateDataKey.emit({chip: chip, type: this.typesRef.dataKeyType.function});
@@ -146,30 +143,19 @@ export class TbDatasourceFuncDirective {
     return this.generateDataKey.emit({chip: chip, type: this.typesRef.dataKeyType.alarm});
   }
 
+  // TODO(port): '$mdColorPicker' — an AngularJS Material color-picker add-on with no Angular counterpart; use the browser's native color input instead
   showColorPicker(event?: any, dataKey?: any, ...rest: any[]): any {
-    $mdColorPicker.show({
-        value: dataKey.color,
-        defaultValue: '#fff',
-        random: tinycolor.random(),
-        clickOutsideToClose: false,
-        hasBackdrop: false,
-        multiple: true,
-        preserveScope: false,
-
-        mdColorAlphaChannel: true,
-        mdColorSpectrum: true,
-        mdColorSliders: true,
-        mdColorGenericPalette: false,
-        mdColorMaterialPalette: true,
-        mdColorHistory: false,
-        mdColorDefaultTab: 2,
-
-        $event: event
-
-    }).then(function (color?: any) {
-        dataKey.color = color;
-        ngModelCtrl.$setDirty();
+    const input = this.document.createElement('input');
+    input.type = 'color';
+    input.value = tinycolor(dataKey.color || '#fff').toHexString();
+    input.style.display = 'none';
+    this.document.body.appendChild(input);
+    input.addEventListener('change', () => {
+        dataKey.color = input.value;
+        this.$setDirty();
+        input.remove();
     });
+    input.click();
   }
 
   editDataKey(event?: any, dataKey?: any, ...rest: any[]): any {
@@ -196,7 +182,7 @@ export class TbDatasourceFuncDirective {
             let index: any = this.alarmDataKeys.indexOf(dataKey);
             this.alarmDataKeys[index] = newDataKey;
         }
-        ngModelCtrl.$setDirty();
+        this.$setDirty();
     }, function () {
     });
   }
@@ -213,9 +199,9 @@ export class TbDatasourceFuncDirective {
   }
 
   createFilterForDataKey(query?: any, ...rest: any[]): any {
-    var lowercaseQuery: any = angular.lowercase(query);
+    var lowercaseQuery: any = query.toLowerCase();
     return function filterFn(dataKey?: any) {
-        return (angular.lowercase(dataKey).indexOf(lowercaseQuery) === 0);
+        return (dataKey.toLowerCase().indexOf(lowercaseQuery) === 0);
     };
   }
 

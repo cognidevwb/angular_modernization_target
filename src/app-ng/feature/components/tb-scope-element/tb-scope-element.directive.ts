@@ -14,7 +14,7 @@ declare let scope: any;
 })
 export class TbScopeElementDirective {
 
-  pre(scope?: any, iElement?: any, iAttrs?: any, ...rest: any[]): any {
-    scope[iAttrs.tbScopeElement] = iElement;
+  pre(iElement?: any, iAttrs?: any, ...rest: any[]): any {
+    (this as any)[iAttrs.tbScopeElement] = iElement;
   }
 }

@@ -6,7 +6,6 @@ import $ from 'jquery';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
-declare let element: any;
 
 /**
  * Ported from the AngularJS directive `tbLedLight` (module `thingsboard.directives.ledLight`) in src/app/components/led-light.directive.js:22.

@@ -6,6 +6,7 @@ import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
+import $ from 'jquery';
 
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let scope: any;
@@ -142,8 +143,8 @@ function DashboardLayoutController(this: any, $scope?: any, $rootScope?: any, $t
 
     function isHotKeyAllowed(event?: any) {
         var target: any = event.target || event.srcElement;
-        var scope: any = (window as any).angular.element(target).scope();
-        return scope && scope.$parent !== $rootScope;
+        var elementScope: any = ($(target) as any).scope();
+        return elementScope && elementScope.$parent !== $rootScope;
     }
 
     function initHotKeys() {
@@ -336,7 +337,7 @@ export class TbDashboardLayoutDirective {
   }
 
   restrict: any = "E";
-  scope: any = true;
+  directiveScope: any = true;
   bindToController: any = {
             layoutCtx: '=',
             dashboardCtx: '=',

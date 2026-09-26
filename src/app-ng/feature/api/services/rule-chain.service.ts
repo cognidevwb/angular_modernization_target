@@ -212,7 +212,7 @@ this.http.post(url, ruleChainMetaData).toPromise().then(function success(respons
   }
 
   getRuleNodeComponentByClazz(clazz?: any, ...rest: any[]): any {
-    var res: any = $filter('filter')(this.ruleNodeComponents, {clazz: clazz}, true);
+    var res: any = (this.ruleNodeComponents || []).filter((c: any) => c.clazz === clazz);
     if (res && res.length) {
         return res[0];
     }

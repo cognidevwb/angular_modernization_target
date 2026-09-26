@@ -6,14 +6,14 @@ declare let angular: any;
 declare let $scope: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
-function DatePickerCtrl(this: any, $scope?: any, $mdDialog?: any, $mdMedia?: any, $timeout?: any, currentDate?: any, options?: any) {
+function DatePickerCtrl(this: any, scope?: any, $mdDialog?: any, $mdMedia?: any, $timeout?: any, currentDate?: any, options?: any) {
     var self: any = this;
 
     this.date = (window as any).moment(currentDate);
     this.minDate = options.minDate && (window as any).moment(options.minDate).isValid() ? (window as any).moment(options.minDate) : null;
     this.maxDate = options.maxDate && (window as any).moment(options.maxDate).isValid() ? (window as any).moment(options.maxDate) : null;
     this.displayFormat = options.displayFormat || "ddd, MMM DD";
-    this.dateFilter = angular.isFunction(options.dateFilter) ? options.dateFilter : null;
+    this.dateFilter = typeof options.dateFilter === 'function' ? options.dateFilter : null;
     this.selectingYear = false;
 
     // validate min and max date
@@ -54,12 +54,12 @@ function DatePickerCtrl(this: any, $scope?: any, $mdDialog?: any, $mdMedia?: any
         }
     };
 
-    $scope.$mdMedia = $mdMedia;
-    $scope.year = this.date.year();
+    scope.$mdMedia = $mdMedia;
+    scope.year = this.date.year();
 
     this.selectYear = function(year?: any) {
         self.date.year(year);
-        $scope.year = year;
+        scope.year = year;
         self.selectingYear = false;
         self.animate();
     };
@@ -94,7 +94,7 @@ function DatePickerCtrl(this: any, $scope?: any, $mdDialog?: any, $mdMedia?: any
 
     this.animate = function() {
         self.animating = true;
-        $timeout(angular.noop).then(function() {
+        $timeout(() => {}).then(function() {
             self.animating = false;
         })
     };
@@ -127,7 +127,7 @@ export class $mdpDatePickerService {
   $get($mdDialog?: any, ...rest: any[]): any {
     var datePicker: any = (currentDate?: any, options?: any) => {
         if (!(currentDate instanceof Date)) currentDate = Date.now();
-        if (!angular.isObject(options)) options = {};
+        if (!(typeof options === 'object' && options !== null)) options = {};
 
         options.displayFormat = this.DISPLAY_FORMAT;
 

@@ -38,9 +38,20 @@ export class MaterialIconsDialogComponent {
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
 
   selectedIcon: any;
-  showAll: any = false;
+  private _showAll: any = false;
   loadingIcons: any = false;
   icons: any;
+
+  get showAll(): any {
+    return this._showAll;
+  }
+
+  set showAll(value: any) {
+    if (this._showAll !== value) {
+      this._showAll = value;
+      this.onShowAllChanged(value);
+    }
+  }
 
   // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
   // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
@@ -48,25 +59,27 @@ export class MaterialIconsDialogComponent {
   constructor() {
     let vm = this;
     this.selectedIcon = this.dialogData.icon;
-    $scope.$watch('vm.showAll', (showAll?: any) => {
-        if (showAll) {
-            this.loadingIcons = true;
-            setTimeout(() => {
-                this.utils.getMaterialIcons().then(
-                    (icons?: any) => {
-                        this.icons = icons;
-                    }
-                );
-            });
-        } else {
-            this.icons = this.utils.getCommonMaterialIcons();
-        }
-    });
-    $scope.$on('iconsLoadFinished', () => {
+    this.onShowAllChanged(this._showAll);
+    this.rootScope.$on('iconsLoadFinished', () => {
         this.loadingIcons = false;
     });
     this.cancel = this.cancel;
     this.selectIcon = this.selectIcon;
+  }
+
+  private onShowAllChanged(showAll?: any): void {
+    if (showAll) {
+        this.loadingIcons = true;
+        setTimeout(() => {
+            this.utils.getMaterialIcons().then(
+                (icons?: any) => {
+                    this.icons = icons;
+                }
+            );
+        });
+    } else {
+        this.icons = this.utils.getCommonMaterialIcons();
+    }
   }
 
   cancel = (...rest: any[]): any => {

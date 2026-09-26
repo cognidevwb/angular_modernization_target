@@ -5,14 +5,8 @@ import { types } from '../../common/constants/types';
 import { FormsModule } from '@angular/forms';
 import { TbEntityTypeSelectDirective } from '../tb-entity-type-select/tb-entity-type-select.directive';
 import { TbEntityAutocompleteDirective } from '../tb-entity-autocomplete/tb-entity-autocomplete.directive';
-
-import $ from 'jquery';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { isEqual } from 'lodash-es';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbEntitySelect` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -23,16 +17,15 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [FormsModule, forwardRef(() => TbEntityTypeSelectDirective), forwardRef(() => TbEntityAutocompleteDirective)],
   templateUrl: './tb-entity-select.directive.html',
+  providers: ngModelProviders(TbEntitySelectDirective),
 })
-export class TbEntitySelectDirective {
+export class TbEntitySelectDirective extends NgModelController {
   readonly theForm = model<any>();
   readonly tbRequired = model<any>();
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
   readonly allowedEntityTypes = model<any>();
   readonly useAliasEntityTypes = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly entityService = inject(EntityService);
   protected readonly element = inject(ElementRef);
 
@@ -47,10 +40,8 @@ export class TbEntitySelectDirective {
   entityIdDeregistration: any;
   entityTypeDeregistration: any;
 
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
   constructor() {
+    super();
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
     this.entityTypes = this.entityService.prepareAllowedEntityTypesList(this.allowedEntityTypes(), this.useAliasEntityTypes());
     this.entityTypeKeys = Object.keys(this.entityTypes);
@@ -63,24 +54,24 @@ export class TbEntitySelectDirective {
     this.model = {
             entityType: this.defaultEntityType
         };
-    ngModelCtrl.$render = function () {
-            this.destroyWatchers();
-            if (ngModelCtrl.$viewValue) {
-                var value: any = ngModelCtrl.$viewValue;
-                this.model.entityType = value.entityType;
-                this.model.entityId = value.id;
-            } else {
-                this.model.entityType = this.defaultEntityType;
-                this.model.entityId = null;
-            }
-            this.initWatchers();
-        }
-    $compile($(this.element.nativeElement).contents())(this);
+  }
+
+  $render(): void {
+    this.destroyWatchers();
+    if (this.$viewValue) {
+        const value: any = this.$viewValue;
+        this.model.entityType = value.entityType;
+        this.model.entityId = value.id;
+    } else {
+        this.model.entityType = this.defaultEntityType;
+        this.model.entityId = null;
+    }
+    this.initWatchers();
   }
 
   updateView(...rest: any[]): any {
     if (!this.disabled()) {
-        var value: any = ngModelCtrl.$viewValue;
+        var value: any = this.$viewValue;
         if (this.model && this.model.entityType &&
             (this.model.entityId || this.model.entityType === this.entityTypeCurrentTenant)) {
             if (!value) {
@@ -88,28 +79,28 @@ export class TbEntitySelectDirective {
             }
             value.entityType = this.model.entityType;
             value.id = this.model.entityId;
-            ngModelCtrl.$setViewValue(value);
+            this.$setViewValue(value);
         } else {
-            ngModelCtrl.$setViewValue(null);
+            this.$setViewValue(null);
         }
     }
   }
 
   initWatchers(...rest: any[]): any {
     this.entityTypeDeregistration = this.$watch('model.entityType', (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal)) {
+        if (!isEqual(newVal, prevVal)) {
             this.updateView();
         }
     });
 
     this.entityIdDeregistration = this.$watch('model.entityId', (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal)) {
+        if (!isEqual(newVal, prevVal)) {
             this.updateView();
         }
     });
 
     this.disabledDeregistration = this.$watch('disabled', (newVal?: any, prevVal?: any) => {
-        if (!angular.equals(newVal, prevVal)) {
+        if (!isEqual(newVal, prevVal)) {
             this.updateView();
         }
     });

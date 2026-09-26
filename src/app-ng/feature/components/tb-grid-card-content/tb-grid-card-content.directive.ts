@@ -2,11 +2,6 @@ import { Component, inject, model } from '@angular/core';
 import { ElementRef } from '@angular/core';
 
 import $ from 'jquery';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $controller: any;
-declare let $scope: any;
-declare let element: any;
 
 /**
  * Ported from the AngularJS directive `tbGridCardContent` (module `thingsboard.directives.grid`) in src/app/components/grid.directive.js:27.
@@ -62,12 +57,12 @@ export class TbGridCardContentDirective {
         $(this.element.nativeElement).html(this.itemTemplate());
         var locals: any = {};
         Object.assign(locals, {$scope: this, $element: $(this.element.nativeElement)});
-        var controller: any = $controller(this.itemController(), locals, true, 'vm');
+        var controller: any = (window as any).$controller(this.itemController(), locals, true, 'vm');
         controller.instance = controller();
         this.controllerInstance = controller.instance;
         this.controllerInstance.item = this.item();
         this.controllerInstance.parentCtl = this.parentCtl();
-        $compile($(this.element.nativeElement).contents())(this);
+        (window as any).$compile($(this.element.nativeElement).contents())(this);
     }
   }
 }

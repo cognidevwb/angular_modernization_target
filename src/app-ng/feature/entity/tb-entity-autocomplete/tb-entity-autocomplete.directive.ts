@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, effect, inject, model } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import { types } from '../../common/constants/types';
@@ -8,17 +8,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
-import $ from 'jquery';
-// @ts-ignore
-import entityAutocompleteTemplate from '../../../../app/entity/entity-autocomplete.tpl.html';
 import { TranslatePipe } from '@ngx-translate/core';
 import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
-declare let angular: any;
-declare let element: any;
-declare let ngModelCtrl: any;
+import { isEqual } from 'lodash-es';
+import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
 /**
  * Ported from the AngularJS directive `tbEntityAutocomplete` (module `thingsboard.entity`) in src/app/entity/index.js:37.
@@ -29,8 +22,9 @@ declare let ngModelCtrl: any;
   standalone: true,
   imports: [TranslatePipe, FormsModule, CommonModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule],
   templateUrl: './tb-entity-autocomplete.directive.html',
+  providers: ngModelProviders(TbEntityAutocompleteDirective),
 })
-export class TbEntityAutocompleteDirective {
+export class TbEntityAutocompleteDirective extends NgModelController {
   readonly theForm = model<any>();
   readonly tbRequired = model<any>();
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
@@ -38,22 +32,11 @@ export class TbEntityAutocompleteDirective {
   readonly entitySubtype = model<any>();
   readonly excludeEntityIds = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
-  // TODO(port): '$q' — use Promise, or an Observable
   protected readonly entityService = inject(EntityService);
   protected readonly element = inject(ElementRef);
-  // TODO(port): elements not resolved to a component: md-autocomplete, md-item-template, md-not-found
-  // TODO(port): template: 1 × md-autocomplete left in place
-  // TODO(port): template: 1 × md-item-template left in place
-  // TODO(port): template: 1 × md-not-found left in place
-  // TODO(port): template: 1 × ng-message left in place
-  // TODO(port): template: 1 × ng-messages left in place
 
-  protected template: any = $templateCache.get(entityAutocompleteTemplate);
   entity: any = null;
   entitySearchText: any = '';
-  $watch: any;
   entityRequiredText: any;
   entityText: any;
   noEntitiesMatchingText: any;
@@ -61,51 +44,50 @@ export class TbEntityAutocompleteDirective {
   filteredEntities: any[] = [];
   displayEntityFn = (entity: any) => entity ? entity.name : '';
 
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  private prevDisabled: any;
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
+    super();
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
-    ngModelCtrl.$render = function () {
-            if (ngModelCtrl.$viewValue) {
-                var targetType: any = this.entityType();
-                if (targetType == types.aliasEntityType.current_customer) {
-                    targetType = types.entityType.customer;
-                }
-                this.entityService.getEntity(targetType, ngModelCtrl.$viewValue).then(
-                    (entity?: any) => {
-                        this.entity = entity;
-                    },
-                    () => {
-                        this.entity = null;
-                    }
-                );
-            } else {
-                this.entity = null;
-            }
+    effect(() => {
+      this.entityType();
+      this.load();
+    });
+    effect(() => {
+      const subtype = this.entitySubtype();
+      if (this.entity && this.entity.type != subtype) {
+        this.entity = null;
+        this.updateView();
+      }
+    });
+    effect(() => {
+      const disabled = this.disabled();
+      if (!isEqual(disabled, this.prevDisabled)) {
+        this.updateView();
+      }
+      this.prevDisabled = disabled;
+    });
+  }
+
+  override $render(): void {
+    if (this.$viewValue) {
+      let targetType: any = this.entityType();
+      if (targetType == types.aliasEntityType.current_customer) {
+        targetType = types.entityType.customer;
+      }
+      this.entityService.getEntity(targetType, this.$viewValue).then(
+        (entity?: any) => {
+          this.entity = entity;
+          this.updateView();
+        },
+        () => {
+          this.entity = null;
+          this.updateView();
         }
-    this.$watch('entityType', () => {
-            this.load();
-        });
-    this.$watch('entitySubtype', () => {
-            if (this.entity && this.entity.type != this.entitySubtype()) {
-                this.entity = null;
-                this.updateView();
-            }
-        });
-    this.$watch('entity', (newVal?: any, prevVal?: any) => {
-            if (!angular.equals(newVal, prevVal)) {
-                this.updateView();
-            }
-        });
-    this.$watch('disabled', (newVal?: any, prevVal?: any) => {
-            if (!angular.equals(newVal, prevVal)) {
-                this.updateView();
-            }
-        });
-    $compile($(this.element.nativeElement).contents())(this);
+      );
+    } else {
+      this.entity = null;
+    }
   }
 
   fetchEntities(searchText?: any, ...rest: any[]): any {
@@ -154,7 +136,7 @@ export class TbEntityAutocompleteDirective {
 
   updateView(...rest: any[]): any {
     if (!this.disabled()) {
-        ngModelCtrl.$setViewValue(this.entity ? this.entity.id.id : null);
+        this.$setViewValue(this.entity ? this.entity.id.id : null);
     }
   }
 

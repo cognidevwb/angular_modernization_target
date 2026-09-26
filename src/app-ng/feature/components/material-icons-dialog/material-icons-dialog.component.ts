@@ -1,10 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UtilsService } from '../../common/services/utils.service';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $scope: any;
-declare let icon: any;
+import { RootState } from '../../../root-state';
 
 /**
  * Ported from the AngularJS controller `MaterialIconsDialogController` (module `thingsboard.directives.jsonForm`) in src/app/components/json-form.directive.js:28.
@@ -16,48 +13,48 @@ declare let icon: any;
   template: '', // TODO(port): this controller's screen template is the templateUrl of its route in the legacy router
 })
 export class MaterialIconsDialogComponent {
-  // TODO(port): '$scope' — component state: fields and signals on this class
-  protected readonly dialog = inject(MatDialog);
+  protected readonly dialogRef = inject(MatDialogRef<MaterialIconsDialogComponent>);
   protected readonly utils = inject(UtilsService);
-  // TODO(port): 'icon' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
+  protected readonly rootScope = inject(RootState);
+  private readonly data = inject<{ icon: any }>(MAT_DIALOG_DATA);
 
-  selectedIcon: any = icon;
-  showAll: any = false;
+  selectedIcon: any = this.data.icon;
   loadingIcons: any = false;
   icons: any;
 
-  // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
+  private _showAll: any = false;
+  get showAll(): any {
+    return this._showAll;
+  }
+  set showAll(showAll: any) {
+    this._showAll = showAll;
+    if (showAll) {
+        this.loadingIcons = true;
+        setTimeout(() => {
+            this.utils.getMaterialIcons().then(
+                (icons?: any) => {
+                    this.icons = icons;
+                }
+            );
+        });
+    } else {
+        this.icons = this.utils.getCommonMaterialIcons();
+    }
+  }
 
   constructor() {
-    let vm = this;
-    $scope.$watch('vm.showAll', (showAll?: any) => {
-        if (showAll) {
-            this.loadingIcons = true;
-            setTimeout(() => {
-                this.utils.getMaterialIcons().then(
-                    (icons?: any) => {
-                        this.icons = icons;
-                    }
-                );
-            });
-        } else {
-            this.icons = this.utils.getCommonMaterialIcons();
-        }
-    });
-    $scope.$on('iconsLoadFinished', () => {
+    this.showAll = false;
+    this.rootScope.$on('iconsLoadFinished', () => {
         this.loadingIcons = false;
     });
-    this.cancel = this.cancel;
-    this.selectIcon = this.selectIcon;
   }
 
   cancel = (...rest: any[]): any => {
-    (this.dialog as any).cancel();
+    this.dialogRef.close();
   };
 
   selectIcon = ($event?: any, icon?: any, ...rest: any[]): any => {
     this.selectedIcon = icon;
-    (this.dialog as any).hide(this.selectedIcon);
+    this.dialogRef.close(this.selectedIcon);
   };
 }

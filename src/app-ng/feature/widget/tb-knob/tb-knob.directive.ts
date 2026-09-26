@@ -2,9 +2,7 @@ import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import tinycolor from 'tinycolor2';
 import { isNumber } from 'lodash-es';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let scope: any;
-declare let CanvasDigitalGauge: any;
+import { CanvasDigitalGauge } from '../canvas-digital-gauge';
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 function KnobController(this: any, $element?: any, $scope?: any, $document?: any) {
@@ -374,7 +372,6 @@ export class TbKnobDirective {
   title: any = '';
 
   restrict: any = "E";
-  scope: any = true;
   bindToController: any = {
             ctx: '='
         };

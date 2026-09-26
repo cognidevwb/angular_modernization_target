@@ -53,6 +53,22 @@ export class WidgetService {
   private allWidgetsBundles: any = undefined;
   private systemWidgetsBundles: any = undefined;
   private tenantWidgetsBundles: any = undefined;
+  private readonly ocLazyLoad = {
+    load: (url: string): Promise<void> => new Promise<void>((resolve, reject) => {
+      const isCss = /\.css($|\?)/i.test(url);
+      const el: any = document.createElement(isCss ? 'link' : 'script');
+      if (isCss) {
+        el.rel = 'stylesheet';
+        el.href = url;
+      } else {
+        el.src = url;
+        el.async = false;
+      }
+      el.onload = () => resolve();
+      el.onerror = () => reject();
+      document.head.appendChild(el);
+    })
+  };
 
   // TODO(port): $http — $http: this.http returns an Observable; the response body is the value, not .data
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
@@ -64,7 +80,7 @@ export class WidgetService {
     window.jQuery = $;
     window.moment = moment;
     window.tinycolor = tinycolor;
-    window.lazyLoad = $ocLazyLoad;
+    window.lazyLoad = this.ocLazyLoad;
     window.TbFlot = TbFlot;
     window.TbAnalogueLinearGauge = TbAnalogueLinearGauge;
     window.TbAnalogueRadialGauge = TbAnalogueRadialGauge;
@@ -271,7 +287,13 @@ export class WidgetService {
             this.allWidgetsBundles = response.data;
             this.systemWidgetsBundles = [];
             this.tenantWidgetsBundles = [];
-            this.allWidgetsBundles = $filter('orderBy')(this.allWidgetsBundles, ['+title', '-createdTime']);
+            this.allWidgetsBundles = [...this.allWidgetsBundles].sort((a: any, b: any) => {
+                const titleCompare = String(a.title).localeCompare(String(b.title));
+                if (titleCompare !== 0) {
+                    return titleCompare;
+                }
+                return b.createdTime - a.createdTime;
+            });
             for (var i: any = 0; i < this.allWidgetsBundles.length; i++) {
                 var widgetsBundle: any = this.allWidgetsBundles[i];
                 if (widgetsBundle.tenantId.id === types.id.nullUid) {
@@ -505,7 +527,6 @@ export class WidgetService {
   }
 
   createWidgetTypeFunction(this: any, widgetInfo?: any, name?: any, ...rest: any[]): any {
-    let vm = this;
     var widgetTypeFunctionBody: any = 'return function '+ name +' (ctx) {\n' +
         '    var self = this;\n' +
         '    self.ctx = ctx;\n\n'; /*+
@@ -609,12 +630,12 @@ export class WidgetService {
         }
         for (var actionSourceId in types.widgetActionSources) {
             result.actionSources[actionSourceId] = structuredClone(types.widgetActionSources[actionSourceId]);
-            result.actionSources[actionSourceId].name = vm.translate.instant(result.actionSources[actionSourceId].name) + '';
+            result.actionSources[actionSourceId].name = this.translate.instant(result.actionSources[actionSourceId].name) + '';
         }
 
         return result;
     } catch (e: any) {
-        vm.utils.processWidgetException(e);
+        this.utils.processWidgetException(e);
         throw e;
     }
     return undefined;
@@ -757,10 +778,10 @@ export class WidgetService {
         }
     }
 
-    function loadNext(i?: any): any {
+    const loadNext = (i?: any): any => {
         var resourceUrl: any = widgetInfo.resources[i].url;
         if (resourceUrl && resourceUrl.length > 0) {
-            $ocLazyLoad.load(resourceUrl).then(
+            this.ocLazyLoad.load(resourceUrl).then(
                 function success() {
                     loadNextOrComplete(i);
                 },
@@ -772,7 +793,7 @@ export class WidgetService {
         } else {
             loadNextOrComplete(i);
         }
-    }
+    };
 
     if (widgetInfo.resources.length > 0) {
         loadNext(0);
