@@ -1,0 +1,25 @@
+{
+  "elapsedMs": 10633,
+  "finishedAt": 1790440514,
+  "inputs": [],
+  "kind": "rust-binary",
+  "outputs": [
+    {
+      "exists": true,
+      "kind": null,
+      "name": "decisions",
+      "optional": false,
+      "path": "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/.cognidev/modernization-angular-v2/decisions.json"
+    },
+    {
+      "exists": true,
+      "kind": "report",
+      "name": "DECISIONS",
+      "optional": false,
+      "path": "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/.cognidev/modernization-angular-v2/DECISIONS.md"
+    }
+  ],
+  "status": "Ok",
+  "step": "resolve",
+  "summary": "Tool `tools/resolve/target/release/resolve` completed."
+}

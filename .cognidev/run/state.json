@@ -2,9 +2,9 @@
   "playbook_id": "modernization-angular-v2",
   "playbook_name": "Modernize Angular V2 — AngularJS / old Angular → Angular 22",
   "status": "running",
-  "phase_id": "resolve",
-  "phase_label": "Settle the open choices with Jev",
-  "phase_index": 13,
+  "phase_id": "gaps",
+  "phase_label": "List what is left",
+  "phase_index": 14,
   "phase_total": 15,
-  "updated_at": 1790440503
+  "updated_at": 1790440514
 }

@@ -35,6 +35,11 @@
       "reused": false,
       "status": "Ok"
     },
+    "resolve": {
+      "at": 1790440514,
+      "reused": false,
+      "status": "Ok"
+    },
     "scaffold-app": {
       "at": 1790440479,
       "reused": false,
