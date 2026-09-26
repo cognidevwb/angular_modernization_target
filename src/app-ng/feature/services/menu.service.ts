@@ -1,4 +1,5 @@
 import { inject, Injectable } from '@angular/core';
+import { stateIncludes } from '../../state-paths';
 import { RootState } from '../../root-state';
 import { Router } from '@angular/router';
 import { UserService } from '../api/services/user.service';
@@ -19,22 +20,14 @@ export class MenuService {
   private sections: any = [];
   private homeSections: any = [];
   authenticatedHandle: any;
-  private authenticatedSubscription: any;
-
-  // TODO(port): $rootScope.$on — a root scope event: subscribe to the service that raises it
-  // TODO(port): $state.includes — $state.includes: this.router.url.startsWith(...)
 
   constructor() {
     if (this.userService.isUserLoaded() === true) {
         this.buildMenu();
     }
-    this.authenticatedSubscription = (this.userService as any).authenticated$.subscribe(() => {
+    this.authenticatedHandle = this.rootScope.$on('authenticated', () => {
         this.buildMenu();
     });
-  }
-
-  ngOnDestroy(): void {
-    this.authenticatedSubscription.unsubscribe();
   }
 
   getSections(...rest: any[]): any {
@@ -353,7 +346,7 @@ export class MenuService {
   }
 
   sectionHeight(section?: any, ...rest: any[]): any {
-    if ((this.router as any).includes(section.state)) {
+    if (stateIncludes(this.router, section.state)) {
         return section.height;
     } else {
         return '0px';
@@ -362,6 +355,6 @@ export class MenuService {
   }
 
   sectionActive(section?: any, ...rest: any[]): any {
-    return (this.router as any).includes(section.state);
+    return stateIncludes(this.router, section.state);
   }
 }

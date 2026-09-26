@@ -1,4 +1,4 @@
-import { Component, DoCheck, forwardRef, inject, model } from '@angular/core';
+import { Component, DoCheck, forwardRef, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ElementRef } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
@@ -30,6 +30,7 @@ declare let $templateCache: any;
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entity-filter',
   standalone: true,
   imports: [TranslatePipe, MatSlideToggleModule, MatSelectModule, MatInputModule, MatFormFieldModule, FormsModule, forwardRef(() => TbEntitySelectDirective), forwardRef(() => TbEntityTypeSelectDirective), forwardRef(() => TbEntityListDirective), forwardRef(() => TbEntitySubtypeAutocompleteDirective), forwardRef(() => TbRelationFiltersDirective), forwardRef(() => TbRelationTypeAutocompleteDirective), forwardRef(() => TbEntitySubtypeListDirective)],
@@ -61,8 +62,13 @@ export class TbEntityFilterDirective extends NgModelController implements DoChec
   constructor() {
     super();
     this.types = this.typesRef;
+  }
+
+  ngOnInit(): void {
+    // Reads its inputs: they are set after the constructor (the legacy link ran with the scope bound), so this runs in ngOnInit.
     this.aliasFilterTypes = this.entityService.getAliasFilterTypesByEntityTypes(this.allowedEntityTypes());
   }
+
 
   ngDoCheck(): void {
     if (this.filter) {

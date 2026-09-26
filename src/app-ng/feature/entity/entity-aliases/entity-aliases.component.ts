@@ -1,4 +1,6 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { attachLegacyForm, lateLegacyForm, LegacyForm } from '../../components/tb-grid/legacy-form';
+import { Component, forwardRef, inject, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { EntityService } from '../../api/services/entity.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -32,6 +34,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'entity-aliases',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatSlideToggleModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatDialogModule, MatButtonModule, FormsModule, forwardRef(() => TbEntityFilterViewDirective)],
@@ -57,7 +60,14 @@ export class EntityAliasesComponent {
   disableAdd: any;
   aliasToWidgetsMap: any = {};
   allowedEntityTypes: any;
-  theForm: any;
+
+  /** The legacy `theForm` (FormController), over the template's `#theFormRef` NgForm. */
+  readonly theForm: LegacyForm = lateLegacyForm('theForm');
+
+  @ViewChild('theFormRef')
+  set theFormRef(form: NgForm | undefined) {
+    attachLegacyForm(this.theForm, form);
+  }
   entityAlias: any;
 
   constructor() {

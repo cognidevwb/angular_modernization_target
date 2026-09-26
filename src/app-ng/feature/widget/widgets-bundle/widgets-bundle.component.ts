@@ -1,4 +1,4 @@
-import { Component, Type, inject } from '@angular/core';
+import { Component, Type, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ImportExportService } from '../../import-export/services/import-export.service';
 import { Router } from '@angular/router';
@@ -16,6 +16,7 @@ import { AddWidgetsBundleDialogComponent } from './add-widgets-bundle-dialog.com
  * Ported from the AngularJS controller `WidgetsBundleController` (module `thingsboard.widget-library`) in src/app/widget/index.js:40.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'widgets-bundle',
   standalone: true,
   imports: [TbGridDirective, TbWidgetsBundleDirective],

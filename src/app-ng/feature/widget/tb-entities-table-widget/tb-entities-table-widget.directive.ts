@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, InjectionToken, Injector, model, untracked } from '@angular/core';
+import { Component, DestroyRef, effect, inject, InjectionToken, Injector, model, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { ElementRef } from '@angular/core';
 import { Overlay } from '@angular/cdk/overlay';
@@ -30,6 +30,7 @@ const DISPLAY_COLUMNS_PANEL_DATA = new InjectionToken<any>('DISPLAY_COLUMNS_PANE
 
 /** Ported from `DisplayColumnsPanelController` + src/app/widget/lib/display-columns-panel.tpl.html. */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entities-display-columns-panel',
   standalone: true,
   imports: [TranslatePipe, MatCheckboxModule, FormsModule],
@@ -52,6 +53,7 @@ export class EntitiesDisplayColumnsPanelComponent {
  * the widget type's script broadcasts `entities-table-data-updated` on `ctx.$scope` when data arrives.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entities-table-widget',
   standalone: true,
   imports: [TranslatePipe, MatPaginatorModule, MatTooltipModule, MatToolbarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, CommonModule, FormsModule],

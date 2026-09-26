@@ -1,4 +1,4 @@
-import { Component, Type, inject } from '@angular/core';
+import { Component, Type, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -20,6 +20,7 @@ import { AddTenantDialogComponent } from './add-tenant-dialog.component';
  * Ported from the AngularJS controller `TenantController` (module `thingsboard.tenant`) in src/app/tenant/index.js:26.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tenant',
   standalone: true,
   imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbTenantDirective, TbAttributeTableDirective, TbAlarmTableDirective, TbEventTableDirective, TbRelationTableDirective],

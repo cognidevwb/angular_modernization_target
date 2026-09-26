@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ImportExportService } from '../services/import-export.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
@@ -31,6 +31,7 @@ declare let $scope: any;
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'import-dialog-csv',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatStepperModule, MatSelectModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, TbHelpDirective, TbTableColumnsAssignmentDirective],

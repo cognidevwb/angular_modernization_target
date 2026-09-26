@@ -1,4 +1,4 @@
-import { Component, Type, inject } from '@angular/core';
+import { Component, Type, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
@@ -29,6 +29,7 @@ import { AddEntityViewDialogComponent } from './add-entity-view-dialog.component
  * (template src/app/entity-view/entity-views.tpl.html): the tenant's / a customer's entity views in tb-grid.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'entity-view',
   standalone: true,
   imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbEntityViewDirective, TbAttributeTableDirective, TbAlarmTableDirective, TbEventTableDirective, TbRelationTableDirective, TbAuditLogTableDirective],

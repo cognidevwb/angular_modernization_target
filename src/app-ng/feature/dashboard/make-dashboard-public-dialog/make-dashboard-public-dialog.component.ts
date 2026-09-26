@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +20,7 @@ export interface MakeDashboardPublicDialogData {
  * with its template src/app/dashboard/make-dashboard-public-dialog.tpl.html. Closes with `true` on OK / close.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'make-dashboard-public-dialog',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatIconModule, MatDialogModule, MatButtonModule, TbSocialSharePanelDirective],

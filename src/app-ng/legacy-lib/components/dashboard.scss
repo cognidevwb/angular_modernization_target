@@ -52,7 +52,7 @@ div.tb-widget {
       right: 8px;
     }
 
-    .md-button.md-icon-button {
+    :is(.md-button, .mat-mdc-button-base):is(.md-icon-button, .mat-mdc-icon-button) {
       width: 32px;
       min-width: 32px;
       height: 32px;
@@ -61,7 +61,7 @@ div.tb-widget {
       margin: 0 !important;
       line-height: 20px;
 
-      md-icon,
+      mat-icon,
       ng-md-icon {
         width: 20px;
         min-width: 20px;
@@ -97,7 +97,7 @@ tb-dashboard {
   left: 0;
 }
 
-md-content.tb-dashboard-content {
+.md-content.tb-dashboard-content {
   position: absolute;
   top: 0;
   right: 0;

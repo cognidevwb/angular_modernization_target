@@ -24,16 +24,16 @@
             <div [hidden]="!(widgetType() === types.widgetType.timeseries.value || widgetType() === types.widgetType.alarm.value)" layout='column' layout-align="center"
                  layout-gt-sm='row' layout-align-gt-sm="start center">
                 <div layout="column" flex>
-                    <mat-checkbox flex attr.aria-label="{{ 'widget-config.use-dashboard-timewindow' | translate }}"
+                    <mat-checkbox name="useDashboardTimewindow" flex attr.aria-label="{{ 'widget-config.use-dashboard-timewindow' | translate }}"
                                   [ngModel]="useDashboardTimewindow" (ngModelChange)="setField('useDashboardTimewindow', $event)">{{ 'widget-config.use-dashboard-timewindow' | translate }}
                     </mat-checkbox>
-                    <mat-checkbox [disabled]="useDashboardTimewindow" flex attr.aria-label="{{ 'widget-config.display-timewindow' | translate }}"
+                    <mat-checkbox name="displayTimewindow" [disabled]="useDashboardTimewindow" flex attr.aria-label="{{ 'widget-config.display-timewindow' | translate }}"
                                   [ngModel]="displayTimewindow" (ngModelChange)="setField('displayTimewindow', $event)">{{ 'widget-config.display-timewindow' | translate }}
                     </mat-checkbox>
                 </div>
                 <section flex layout="row" layout-align="start center" style="margin-bottom: 16px;">
                     <span [ngClass]="{'tb-disabled-label': useDashboardTimewindow}" style="padding-right: 8px;">{{ 'widget-config.timewindow' | translate }}</span>
-                    <tb-timewindow [ngDisabled]="useDashboardTimewindow" [asButton]="true"
+                    <tb-timewindow name="timewindow" [ngDisabled]="useDashboardTimewindow" [asButton]="true"
                                    [attr.aggregation]="widgetType() === types.widgetType.timeseries.value"
                                    flex [ngModel]="timewindow" (ngModelChange)="onTimewindowChange($event)"></tb-timewindow>
                 </section>
@@ -42,7 +42,7 @@
                 <div layout-gt-sm='row' layout-align-gt-sm="start center">
                     <mat-form-field class="md-block" flex>
                         <mat-label>{{ 'alarm.alarm-status' | translate }}</mat-label>
-                        <mat-select [ngModel]="alarmSearchStatus" (ngModelChange)="setField('alarmSearchStatus', $event)" style="padding-bottom: 24px;">
+                        <mat-select name="alarmSearchStatus" [ngModel]="alarmSearchStatus" (ngModelChange)="setField('alarmSearchStatus', $event)" style="padding-bottom: 24px;">
                             @for (searchStatus of alarmSearchStatuses; track searchStatus) {
                             <mat-option [value]="searchStatus">
                                 {{ ('alarm.search-status.' + searchStatus) | translate }}
@@ -141,7 +141,7 @@
                                 <span flex="5">{{i + 1}}.</span>
                                 <div class="md-whiteframe-4dp" flex layout="row" layout-align="start center"
                                      style="padding: 0 0 0 10px; margin: 5px;">
-                                    <tb-datasource flex [ngModel]="datasource.value"
+                                    <tb-datasource name="value" flex [ngModel]="datasource.value"
                                                    (ngModelChange)="datasource.value = $event; onDatasourcesChange()"
                                                    [widgetType]="widgetType()"
                                                    [maxDataKeys]="typeParameters()?.maxDataKeys"
@@ -189,7 +189,7 @@
                         {{ 'widget-config.target-device' | translate }}
                     </mat-expansion-panel-header>
                     <div style="padding: 0 5px;">
-                        <tb-entity-alias-select flex
+                        <tb-entity-alias-select name="value-2" flex
                                                 [tbRequired]="widgetType() === types.widgetType.rpc.value && !widgetEditMode"
                                                 [aliasController]="aliasController()"
                                                 [allowedEntityTypes]="[types.entityType.device]"
@@ -207,7 +207,7 @@
                         {{ 'widget-config.alarm-source' | translate }}
                     </mat-expansion-panel-header>
                     <div style="padding: 0 5px;">
-                        <tb-datasource flex
+                        <tb-datasource name="value-3" flex
                                        [ngModel]="alarmSource.value"
                                        (ngModelChange)="onAlarmSourceChange($event)"
                                        [widgetType]="widgetType()"
@@ -242,12 +242,12 @@
                 </div>
                 <div layout='column' layout-align="center" layout-gt-sm='row' layout-align-gt-sm="start center">
                     <div layout="row" flex layout-padding>
-                        <mat-checkbox attr.aria-label="{{ 'widget-config.display-icon' | translate }}"
+                        <mat-checkbox name="showTitleIcon" attr.aria-label="{{ 'widget-config.display-icon' | translate }}"
                                       [ngModel]="showTitleIcon" (ngModelChange)="setField('showTitleIcon', $event)">{{ 'widget-config.display-icon' | translate }}
                         </mat-checkbox>
                     </div>
                     <div flex>
-                        <tb-material-icon-select [ngModel]="titleIcon" [disabled]="!showTitleIcon"
+                        <tb-material-icon-select name="titleIcon" [ngModel]="titleIcon" [disabled]="!showTitleIcon"
                                                  (ngModelChange)="setField('titleIcon', $event)">
                         </tb-material-icon-select>
                     </div>
@@ -268,17 +268,17 @@
                 </div>
                 <div layout='column' layout-align="center" layout-gt-sm='row' layout-align-gt-sm="start center">
                     <div layout="row" layout-padding>
-                        <mat-checkbox attr.aria-label="{{ 'widget-config.display-title' | translate }}"
+                        <mat-checkbox name="showTitle" attr.aria-label="{{ 'widget-config.display-title' | translate }}"
                                       [ngModel]="showTitle" (ngModelChange)="setField('showTitle', $event)">{{ 'widget-config.display-title' | translate }}
                         </mat-checkbox>
                     </div>
                     <div layout="row" layout-padding>
-                        <mat-checkbox attr.aria-label="{{ 'widget-config.drop-shadow' | translate }}"
+                        <mat-checkbox name="dropShadow" attr.aria-label="{{ 'widget-config.drop-shadow' | translate }}"
                                       [ngModel]="dropShadow" (ngModelChange)="setField('dropShadow', $event)">{{ 'widget-config.drop-shadow' | translate }}
                         </mat-checkbox>
                     </div>
                     <div layout="row" layout-padding>
-                        <mat-checkbox attr.aria-label="{{ 'widget-config.enable-fullscreen' | translate }}"
+                        <mat-checkbox name="enableFullscreen" attr.aria-label="{{ 'widget-config.enable-fullscreen' | translate }}"
                                       [ngModel]="enableFullscreen" (ngModelChange)="setField('enableFullscreen', $event)">{{ 'widget-config.enable-fullscreen' | translate }}
                         </mat-checkbox>
                     </div>
@@ -326,11 +326,11 @@
                 <div [hidden]="!(widgetType() === types.widgetType.timeseries.value ||
                               widgetType() === types.widgetType.latest.value)" layout='column' layout-align="center"
                      layout-gt-sm='row' layout-align-gt-sm="start center">
-                    <mat-checkbox flex attr.aria-label="{{ 'widget-config.display-legend' | translate }}"
+                    <mat-checkbox name="showLegend" flex attr.aria-label="{{ 'widget-config.display-legend' | translate }}"
                                   [ngModel]="showLegend" (ngModelChange)="setField('showLegend', $event)">{{ 'widget-config.display-legend' | translate }}
                     </mat-checkbox>
                     <section flex layout="row" layout-align="start center" style="margin-bottom: 16px;">
-                        <tb-legend-config [ngDisabled]="!showLegend" flex [ngModel]="legendConfig"
+                        <tb-legend-config name="legendConfig" [ngDisabled]="!showLegend" flex [ngModel]="legendConfig"
                                           (ngModelChange)="onLegendConfigChange($event)"></tb-legend-config>
                     </section>
                 </div>

@@ -1,4 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { currentStateData } from '../../../state-paths';
 import { ActivatedRoute } from '@angular/router';
 import { LoginService } from '../../api/services/login.service';
 import { Router } from '@angular/router';
@@ -21,9 +23,10 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'reset-password',
   standalone: true,
-  imports: [TranslatePipe, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCardModule, MatButtonModule, FormsModule],
+  imports: [RouterLink, TranslatePipe, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCardModule, MatButtonModule, FormsModule],
   templateUrl: './reset-password.component.html',
 })
 export class ResetPasswordComponent {
@@ -34,7 +37,6 @@ export class ResetPasswordComponent {
   protected readonly toast = inject(ToastService);
   protected readonly loginService = inject(LoginService);
   protected readonly userService = inject(UserService);
-  // TODO(port): template: 1 × ui-sref left in place
 
   newPassword: any = '';
   newPassword2: any = '';
@@ -44,7 +46,7 @@ export class ResetPasswordComponent {
 
   constructor() {
     this.resetPassword = this.resetPassword;
-    this.isExpiredPassword = (this.router as any).$current.data.expiredPassword === true;
+    this.isExpiredPassword = currentStateData(this.router).expiredPassword === true;
   }
 
   resetPassword = (...rest: any[]): any => {

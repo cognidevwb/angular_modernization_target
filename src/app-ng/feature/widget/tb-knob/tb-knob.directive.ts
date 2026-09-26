@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, effect, inject, model, untracked } from '@angular/core';
+import { AfterViewInit, Component, effect, inject, model, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -15,6 +15,7 @@ import { RootState } from '../../../root-state';
  * whenever `ctx` is set, once its template is in the DOM (the legacy `$scope.$watch('vm.ctx')`).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-knob',
   standalone: true,
   imports: [CommonModule],

@@ -15,8 +15,7 @@ import {
   OnDestroy,
   OnInit,
   reflectComponentType,
-  Type,
-} from '@angular/core';
+  Type, ChangeDetectionStrategy } from '@angular/core';
 import { NgComponentOutlet, NgTemplateOutlet } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -38,7 +37,7 @@ import { TbLegendDirective } from '../tb-legend/tb-legend.directive';
 import { RootState } from '../../../root-state';
 import { goState } from '../../../state-paths';
 import { $q, $timeout } from '../../../core/q';
-import { createLegacyFilter, legacyCopy, legacyEquals } from './legacy-helpers';
+import { createLegacyFilter, legacyCopy, legacyEquals, legacyPromise } from './legacy-helpers';
 import { createLegacyInjector } from './legacy-injector';
 import { WidgetScope } from './widget-scope';
 import { attrToInputName, WIDGET_DIRECTIVES } from './widget-directives';
@@ -84,6 +83,7 @@ interface EmbeddedDirective {
  * ported components, rendered with `ngComponentOutlet` and bound to `ctx.$scope`.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'widget',
   standalone: true,
   imports: [NgComponentOutlet, NgTemplateOutlet, MatProgressSpinnerModule, TbLegendDirective],
@@ -225,6 +225,9 @@ export class WidgetComponent implements OnInit, AfterViewInit, DoCheck, OnDestro
     );
     // The grid lays the item out with CSS: it is placed as soon as the view is (gridster-item-initialized).
     this.gridsterItemInitialized({ gridster: this.dashboard });
+    // What the steps above changed synchronously (loading, rendered, the widget's own init) is shown now,
+    // as the digest that ran the legacy link function went on until nothing changed.
+    this.cdr.detectChanges();
   }
 
   ngDoCheck(): void {
@@ -334,9 +337,9 @@ export class WidgetComponent implements OnInit, AfterViewInit, DoCheck, OnDestro
       },
       controlApi: {
         sendOneWayCommand: (method?: any, params?: any, timeout?: any) =>
-          context.defaultSubscription ? context.defaultSubscription.sendOneWayCommand(method, params, timeout) : null,
+          context.defaultSubscription ? legacyPromise(context.defaultSubscription.sendOneWayCommand(method, params, timeout)) : null,
         sendTwoWayCommand: (method?: any, params?: any, timeout?: any) =>
-          context.defaultSubscription ? context.defaultSubscription.sendTwoWayCommand(method, params, timeout) : null,
+          context.defaultSubscription ? legacyPromise(context.defaultSubscription.sendTwoWayCommand(method, params, timeout)) : null,
       },
       utils: {
         formatValue: this.formatValue,

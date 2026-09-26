@@ -18,7 +18,7 @@
 tb-dashboard-select {
   min-width: 52px;
 
-  md-select {
+  mat-select {
     max-width: 300px;
     pointer-events: all;
   }
@@ -60,7 +60,7 @@ tb-dashboard-select {
     max-width: 100%;
   }
 
-  md-content {
+  .md-content {
     background-color: #fff;
   }
 }

@@ -16,11 +16,11 @@
     limitations under the License.
 
 -->
-  <mat-sidenav-container class="tb-site-sidenav-container"><mat-sidenav class="tb-site-sidenav md-sidenav-left md-whiteframe-z2" [hidden]="!(!forceFullscreen)" hide-print="" md-component-id="left" aria-label="Toggle Nav" (click)="sidenavClicked()" md-is-open="vm.isShowSidenav" md-is-locked-open="vm.isLockSidenav" layout="column">
+  <mat-sidenav-container class="tb-site-sidenav-container" flex><mat-sidenav class="tb-site-sidenav md-sidenav-left md-whiteframe-z2" [hidden]="!(!forceFullscreen)" hide-print="" aria-label="Toggle Nav" (click)="sidenavClicked()" [mode]="isLockSidenav ? 'side' : 'over'" [opened]="isLockSidenav || isShowSidenav" (closedStart)="isShowSidenav = false" layout="column">
       <header class="tb-nav-header">
           <mat-toolbar class="tb-nav-header-toolbar">
           	 <div flex layout="row" class="md-toolbar-tools inset">
-				<mat-icon attr.md-svg-src="{{logoSvg}}" aria-label="logo" class="tb-logo-title"></mat-icon>
+				<img [src]="logoSvg" aria-label="logo" class="tb-logo-title">
           	 </div>
           </mat-toolbar>
       </header>
@@ -42,19 +42,17 @@
 		      	  <mat-icon attr.aria-label="{{ 'action.back' | translate }}" class="material-icons">arrow_back</mat-icon>
 	          </button>		    
 			  <div flex layout="row" [hidden]="!(!displaySearchMode())" tb-no-animate class="md-toolbar-tools">
-				  <!-- TODO(port): ng-cloak has no one-to-one Angular form -->
-				  <span ng-cloak ncy-breadcrumb></span>
+				  <tb-breadcrumb [view]="routedView()"></tb-breadcrumb>
 			  </div>
 			  <div layout="row" [hidden]="!(displaySearchMode())" flex>
 				  @if (displayEntitySubtypeSearch()) {
 				    <div class="tb-entity-subtype-search" layout="row" layout-align="start center">
-					  <tb-entity-subtype-select [(entityType)]="searchConfig.searchEntityType" [(ngModel)]="searchConfig.searchEntitySubtype">
+					  <tb-entity-subtype-select name="searchEntitySubtype" [(entityType)]="searchConfig.searchEntityType" [(ngModel)]="searchConfig.searchEntitySubtype">
 					  </tb-entity-subtype-select>
 				  </div>
 				  }
 				  <mat-form-field [ngClass]="{'tb-entity-search': displayEntitySubtypeSearch()}" flex>
-					  <mat-label>&nbsp;</mat-label>
-					  <input matInput id="tb-search-text-input" [(ngModel)]="searchConfig.searchText" (ngModelChange)="searchTextUpdated()" attr.placeholder="{{ 'common.enter-search' | translate }}">
+					  <input name="searchText" matInput id="tb-search-text-input" [(ngModel)]="searchConfig.searchText" (ngModelChange)="searchTextUpdated()" attr.placeholder="{{ 'common.enter-search' | translate }}">
 				  </mat-form-field>
 			  </div>
 		      <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" [hidden]="!(searchConfig?.searchEnabled)" (click)="openSearch()">
@@ -70,7 +68,8 @@
    	<mat-progress-bar color="warn" style="z-index: 10; max-height: 0px; width: 100%;" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
     
     <div flex layout="column" id="toast-parent" style="position: relative;">
-    	<!-- TODO(port): ng-cloak has no one-to-one Angular form -->
-    	<div ng-cloak flex layout="column" class="md-content page-content" ui-view name="content"></div>
+    	<div flex layout="column" class="md-content page-content">
+    		<router-outlet (activate)="routedView.set($event)" (deactivate)="routedView.set(null)"></router-outlet>
+    	</div>
     </div>
   </div></mat-sidenav-content></mat-sidenav-container>

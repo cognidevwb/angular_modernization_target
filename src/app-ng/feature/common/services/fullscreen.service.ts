@@ -15,7 +15,6 @@ declare let angular: any;
 export class FullscreenService {
   private readonly __bound = bindMethods(this);
   private readonly documentRef = inject(DOCUMENT);
-  private readonly rootScope = inject(RootState);
 
   private document: any;
   private isKeyboardAvailbleOnFullScreen: any = (typeof Element !== 'undefined' && 'ALLOW_KEYBOARD_INPUT' in Element) && Element.ALLOW_KEYBOARD_INPUT;
@@ -24,7 +23,8 @@ export class FullscreenService {
 
   constructor() {
     this.document = this.documentRef;
-    this.emitter = this.rootScope.$new();
+    // The legacy factory emitted on a private child of $rootScope; its own event bus keeps the same isolation.
+    this.emitter = new RootState();
     $(this.documentRef).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', () =>{
         this.emitter.$emit('FBFullscreen.change', this.isEnabled());
     });

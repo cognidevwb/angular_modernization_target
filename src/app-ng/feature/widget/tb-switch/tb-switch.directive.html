@@ -25,7 +25,7 @@
     </div>
     <div attr.flex="{{showTitle ? 70 : 100}}" id="switch-container" layout="column" layout-align="center center">
         <div class="switch">
-            <mat-slide-toggle aria-label="Switch control" [(ngModel)]="value" (ngModelChange)="onValue()">
+            <mat-slide-toggle name="value" aria-label="Switch control" [(ngModel)]="value" (ngModelChange)="onValue()">
             </mat-slide-toggle>
         </div>
         <div class="onoff-container" layout="row" layout-align="center start" [hidden]="!(showOnOffLabels)">

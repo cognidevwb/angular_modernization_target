@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -12,6 +12,7 @@ import { TbWidgetsBundleDirective } from '../tb-widgets-bundle/tb-widgets-bundle
 
 /** The add dialog of the widgets-bundle grid (legacy src/app/widget/add-widgets-bundle.tpl.html with AddItemController). */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'add-widgets-bundle-dialog',
   standalone: true,
   imports: [FormsModule, MatDialogModule, MatToolbarModule, MatButtonModule, MatIconModule, MatProgressBarModule, TranslatePipe, TbGridHelpButtonComponent, TbWidgetsBundleDirective],

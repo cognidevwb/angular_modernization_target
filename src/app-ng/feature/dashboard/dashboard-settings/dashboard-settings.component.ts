@@ -1,8 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { MdColorPickerComponent } from './md-color-picker.component';
+import { attachLegacyForm, lateLegacyForm, LegacyForm } from '../../components/tb-grid/legacy-form';
+import { Component, inject, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { StatesControllerService } from '../services/states-controller.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,9 +24,10 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'dashboard-settings',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatSelectModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule],
+  imports: [MdColorPickerComponent, TranslatePipe, MatTooltipModule, MatToolbarModule, MatSelectModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule],
   templateUrl: './dashboard-settings.component.html',
 })
 export class DashboardSettingsComponent {
@@ -32,14 +35,16 @@ export class DashboardSettingsComponent {
   protected readonly dialog = inject(MatDialog);
   protected readonly statesControllerService = inject(StatesControllerService);
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
-  // TODO(port): template: 12 × ng-message left in place
-  // TODO(port): template: 4 × ng-messages left in place
 
   settings: any;
   gridSettings: any;
   stateControllers: any;
   hMargin: any;
-  theForm: any;
+  /** The legacy `theForm` FormController, over the template's `<form name="theForm">`. */
+  readonly theForm: LegacyForm = lateLegacyForm('theForm');
+  @ViewChild('theFormRef') set theFormRef(form: NgForm | undefined) {
+    attachLegacyForm(this.theForm, form);
+  }
   vMargin: any;
 
   // TODO(port): $scope.$apply — $apply is not needed: Angular detects the change
@@ -116,6 +121,25 @@ export class DashboardSettingsComponent {
     };
     reader.readAsDataURL($file.file);
   };
+
+  /** ng-flow's `flow-btn` (single file, images): the chosen file goes to `imageAdded` as flow's `$file` did. */
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      this.imageAdded({ file });
+    }
+    input.value = '';
+  }
+
+  /** ng-flow's `flow-drop`: the dropped image goes to `imageAdded`. */
+  onImageDropped(event: DragEvent): void {
+    event.preventDefault();
+    const file = event.dataTransfer?.files?.[0];
+    if (file) {
+      this.imageAdded({ file });
+    }
+  }
 
   clearImage = (...rest: any[]): any => {
     this.theForm.$setDirty();

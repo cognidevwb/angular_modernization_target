@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
 
@@ -7,6 +7,7 @@ import { types } from '../../common/constants/types';
  * with its card template src/app/device/device-card.tpl.html. Rendered by tb-grid for each device.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'device-card',
   standalone: true,
   imports: [TranslatePipe],

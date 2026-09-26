@@ -1,4 +1,5 @@
 import { httpOptions } from '../../../core/http-options';
+import { goState } from '../../../state-paths';
 import { firstValueFrom } from 'rxjs';
 import { inject, Injectable } from '@angular/core';
 import { AdminService } from './admin.service';
@@ -493,7 +494,7 @@ export class UserService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-    firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
+    firstValueFrom(this.http.get(url)).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -513,7 +514,7 @@ export class UserService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-    firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
+    firstValueFrom(this.http.get(url)).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -556,7 +557,7 @@ export class UserService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    firstValueFrom(this.http.get(url, config)).then(function success(response?: any) {
+    firstValueFrom(this.http.get(url, httpOptions(config))).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -645,7 +646,7 @@ export class UserService {
                 }
             );
         }
-        (this.router as any).go(place, params, {reload: true});
+        goState(this.router, place, params, {reload: true});
     } else {
         this.router.navigate(['/login'], { queryParams: params });
     }

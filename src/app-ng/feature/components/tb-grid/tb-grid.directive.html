@@ -20,7 +20,7 @@
 <section layout="row" flex style="height: 100%;" layout-wrap>
     <div layout="column" style="height: 100%;" flex layout-wrap>
         <cdk-virtual-scroll-viewport [hidden]="!hasData()" id="tb-vertical-container" [itemSize]="itemHeight" (scrolledIndexChange)="onScrolledIndexChange($event)" flex>
-            <div layout="column" style="padding: 0 16px;">
+            <div class="md-padding" layout="column">
                 <section layout="row" *cdkVirtualFor="let rowItem of rows; trackBy: trackRow" [style.height.px]="itemHeight">
                     @for (n of columnIndexes; track n) {
                       @if (rowItem[n]; as item) {
@@ -86,7 +86,7 @@
       </button>
     }
     @if (addItemAction?.name?.() && addItemActions.length > 0) {
-      <div class="tb-fab-speed-dial" style="display: flex; flex-direction: column-reverse; align-items: center;" (mouseenter)="addItemActionsOpen = true" (mouseleave)="addItemActionsOpen = false">
+      <div class="tb-fab-speed-dial" style="display: flex; flex-direction: column-reverse; align-items: center;">
         <button mat-fab color="accent" [disabled]="rootScope.loading" class="tb-btn-footer md-hue-2" (click)="addItemActionsOpen = !addItemActionsOpen" [attr.aria-label]="addItemAction.name()" [matTooltip]="addItemAction.details()" matTooltipPosition="above">
           <mat-icon>{{ addItemAction.icon }}</mat-icon>
         </button>

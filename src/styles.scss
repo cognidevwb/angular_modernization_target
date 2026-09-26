@@ -13,6 +13,8 @@ body { font-family: Roboto, 'Helvetica Neue', sans-serif; }
 
 // AngularJS Material's utility classes the ported templates keep (md-toolbar-tools, md-headline …)
 @import 'styles/angularjs-material-compat';
+// angular-material-data-table's stylesheet, which the legacy table directives imported
+@import 'styles/md-data-table';
 
 // The legacy app's own stylesheets, as its JavaScript imported them
 @import 'app-ng/legacy-lib/admin/settings-card';
@@ -119,3 +121,10 @@ body { font-family: Roboto, 'Helvetica Neue', sans-serif; }
 @import 'app-ng/legacy-lib/widget/lib/timeseries-table-widget';
 @import 'app-ng/legacy-lib/widget/lib/tripAnimation/trip-animation-widget';
 @import 'app-ng/legacy-lib/widget/lib/web-camera-input-widget';
+
+/* tbNoAnimate / `$animate.enabled(el, false)`: no transitions or animations on the element and inside it. */
+.tb-no-animate,
+.tb-no-animate * {
+  transition: none !important;
+  animation: none !important;
+}

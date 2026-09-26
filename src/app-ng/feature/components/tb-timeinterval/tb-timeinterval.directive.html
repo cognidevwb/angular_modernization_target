@@ -19,7 +19,7 @@
 <section layout="row">
 	<section layout="column" layout-align=" none" [hidden]="!(isEdit())">
 		<label class="tb-small advanced-label">{{ 'timewindow.hide' | translate }}</label>
-		<mat-checkbox attr.aria-label="{{ 'timewindow.hide' | translate }}" [(ngModel)]="hideFlag">
+		<mat-checkbox name="hideFlag" attr.aria-label="{{ 'timewindow.hide' | translate }}" [(ngModel)]="hideFlag">
 		</mat-checkbox>
 	</section>
 	<section layout="column" flex [hidden]="!(advanced && (isEdit() || !hideFlag()))">
@@ -27,26 +27,26 @@
 		<section layout="row" layout-align="start start" flex>
 			<mat-form-field>
 				 <mat-label>{{ 'timeinterval.days' | translate }}</mat-label>
-				 <input matInput type="number" [(ngModel)]="days" step="1" attr.aria-label="{{ 'timeinterval.days' | translate }}">
+				 <input name="days" matInput type="number" [(ngModel)]="days" step="1" attr.aria-label="{{ 'timeinterval.days' | translate }}">
 			</mat-form-field>
 			<mat-form-field>
 				 <mat-label>{{ 'timeinterval.hours' | translate }}</mat-label>
-				 <input matInput [disabled]="hideFlag()" type="number" [(ngModel)]="hours" step="1" attr.aria-label="{{ 'timeinterval.hours' | translate }}">
+				 <input name="hours" matInput [disabled]="hideFlag()" type="number" [(ngModel)]="hours" step="1" attr.aria-label="{{ 'timeinterval.hours' | translate }}">
 			</mat-form-field>
 			<mat-form-field>
 				 <mat-label>{{ 'timeinterval.minutes' | translate }}</mat-label>
-				 <input matInput type="number" [(ngModel)]="mins" step="1" attr.aria-label="{{ 'timeinterval.minutes' | translate }}">
+				 <input name="mins" matInput type="number" [(ngModel)]="mins" step="1" attr.aria-label="{{ 'timeinterval.minutes' | translate }}">
 			</mat-form-field>
 			<mat-form-field>
 				 <mat-label>{{ 'timeinterval.seconds' | translate }}</mat-label>
-				 <input matInput [disabled]="hideFlag()" type="number" [(ngModel)]="secs" step="1" attr.aria-label="{{ 'timeinterval.seconds' | translate }}">
+				 <input name="secs" matInput [disabled]="hideFlag()" type="number" [(ngModel)]="secs" step="1" attr.aria-label="{{ 'timeinterval.seconds' | translate }}">
 			</mat-form-field>
 		</section>
 	</section>
 	<section layout="row" flex [hidden]="!(!advanced && (isEdit() || !hideFlag()))">
 		<mat-form-field flex>
 			<mat-label>{{ (predefinedName()) | translate }}</mat-label>
-			<mat-select [disabled]="hideFlag()" [(ngModel)]="intervalMs" style="min-width: 150px;" aria-label="predefined-interval">
+			<mat-select name="intervalMs" [disabled]="hideFlag()" [(ngModel)]="intervalMs" style="min-width: 150px;" aria-label="predefined-interval">
 				@for (interval of intervals; track $index) {
 				  <mat-option [value]="interval?.value">
 					{{interval?.name}}
@@ -57,7 +57,7 @@
 	</section>
 	<section layout="column" layout-align="center center" [hidden]="!((isEdit() || !hideFlag()))">
 		<label class="tb-small advanced-label">{{ 'timeinterval.advanced' | translate }}</label>
-		<mat-slide-toggle [disabled]="hideFlag()" class="advanced-switch" [(ngModel)]="advanced" aria-label="predefined-switcher">
+		<mat-slide-toggle name="advanced" [disabled]="hideFlag()" class="advanced-switch" [(ngModel)]="advanced" aria-label="predefined-switcher">
 		</mat-slide-toggle>
 	</section>
 </section>

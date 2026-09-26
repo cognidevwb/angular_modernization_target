@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, forwardRef, inject, model } from '@angular/core';
+import { Component, OnInit, effect, forwardRef, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { isEqual } from 'lodash-es';
 import { EntityService } from '../../api/services/entity.service';
@@ -13,6 +13,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * chosen). A required, empty value makes the host form invalid (the legacy inner controls' `required` in the host form).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entity-select',
   standalone: true,
   imports: [FormsModule, forwardRef(() => TbEntityTypeSelectDirective), forwardRef(() => TbEntityAutocompleteDirective)],

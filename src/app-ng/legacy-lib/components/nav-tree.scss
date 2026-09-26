@@ -304,7 +304,7 @@
   }
 }
 
-.tb-nav-tree .md-button.tb-active {
+.tb-nav-tree :is(.md-button, .mat-mdc-button-base).tb-active {
   font-weight: 500;
   background-color: rgba(255, 255, 255, .15);
 }
@@ -319,7 +319,7 @@
   }
 
   li {
-    .md-button {
+    :is(.md-button, .mat-mdc-button-base) {
       width: 100%;
       max-height: 40px;
       padding: 0 16px;

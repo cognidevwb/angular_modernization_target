@@ -64,7 +64,7 @@
 									{{widgetTitle(widget)}}
 								</span>
 								@if (hasTimewindow(widget)) {
-								<tb-timewindow [attr.aggregation]="hasAggregation(widget)"
+								<tb-timewindow name="timewindow" [attr.aggregation]="hasAggregation(widget)"
 								               [ngModel]="widget.config.timewindow"
 								               (ngModelChange)="widget.config.timewindow = $event"></tb-timewindow>
 								}

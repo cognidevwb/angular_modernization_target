@@ -1,3 +1,4 @@
+import { httpOptions } from '../../../core/http-options';
 import { firstValueFrom } from 'rxjs';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -51,7 +52,7 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    firstValueFrom(this.http.get(url, config)).then(function success(response?: any) {
+    firstValueFrom(this.http.get(url, httpOptions(config))).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -66,7 +67,7 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    firstValueFrom(this.http.get(url, config)).then(function success(response?: any) {
+    firstValueFrom(this.http.get(url, httpOptions(config))).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -81,7 +82,7 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    firstValueFrom(this.http.post(url, alarm, config)).then(function success(response?: any) {
+    firstValueFrom(this.http.post(url, alarm, httpOptions(config))).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -96,7 +97,7 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    firstValueFrom(this.http.post(url, null, config)).then(function success(response?: any) {
+    firstValueFrom(this.http.post(url, null, httpOptions(config))).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -111,7 +112,7 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    firstValueFrom(this.http.post(url, null, config)).then(function success(response?: any) {
+    firstValueFrom(this.http.post(url, null, httpOptions(config))).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -126,7 +127,7 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    firstValueFrom(this.http.delete(url, config)).then(function success(response?: any) {
+    firstValueFrom(this.http.delete(url, httpOptions(config))).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -160,7 +161,7 @@ export class AlarmService {
         url += '&ascOrder=' + (ascOrder ? 'true' : 'false');
     }
 
-    firstValueFrom(this.http.get(url, config)).then(function success(response?: any) {
+    firstValueFrom(this.http.get(url, httpOptions(config))).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -177,7 +178,7 @@ export class AlarmService {
     } else if (alarmStatus) {
         url += '?status=' + alarmStatus;
     }
-    firstValueFrom(this.http.get(url, config)).then(function success(response?: any) {
+    firstValueFrom(this.http.get(url, httpOptions(config))).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -275,7 +276,8 @@ export class AlarmService {
         onAlarms: onAlarms
     };
     this.onPollAlarms(alarmsQuery);
-    return setInterval(this.onPollAlarms, pollingInterval, 0, false, alarmsQuery);
+    // $interval(fn, delay, count, invokeApply, query): the query is the one argument each poll gets.
+    return setInterval(this.onPollAlarms, pollingInterval, alarmsQuery);
   }
 
   cancelPollAlarms(pollPromise?: any, ...rest: any[]): any {
@@ -325,8 +327,7 @@ export class AlarmService {
             alarmSourceListener.alarmsUpdated(alarms, false);
         }
         this.onPollAlarms(alarmSourceListener.alarmsQuery);
-        alarmSourceListener.pollPromise = setInterval(this.onPollAlarms, pollingInterval,
-            0, false, alarmSourceListener.alarmsQuery);
+        alarmSourceListener.pollPromise = setInterval(this.onPollAlarms, pollingInterval, alarmSourceListener.alarmsQuery);
     }
 
   }

@@ -1,4 +1,4 @@
-import { Component, forwardRef, model } from '@angular/core';
+import { Component, forwardRef, model, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TbExtensionTableDirective } from '../../extension/tb-extension-table/tb-extension-table.directive';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -116,6 +116,7 @@ function ExtensionsTableWidgetController(this: any, utils?: any) {
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-extensions-table-widget',
   standalone: true,
   imports: [MatTabsModule, CommonModule, forwardRef(() => TbExtensionTableDirective)],

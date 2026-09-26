@@ -70,7 +70,7 @@ $edit-toolbar-height: 40px !default;
 }
 
 .tb-split-vertical {
-  md-tabs {
+  mat-tab-group {
     md-tabs-content-wrapper {
       height: calc(100% - 49px);
 
@@ -101,7 +101,7 @@ div.tb-editor-area-title-panel {
     border-radius: 5px;
   }
 
-  .md-button {
+  :is(.md-button, .mat-mdc-button-base) {
     min-width: 32px;
     min-height: 15px;
     padding: 4px;
@@ -124,7 +124,7 @@ div.tb-editor-area-title-panel {
   }
 }
 
-md-toolbar.tb-edit-toolbar {
+mat-toolbar.tb-edit-toolbar {
 
   min-height: $edit-toolbar-height !important;
   max-height: $edit-toolbar-height !important;
@@ -133,13 +133,13 @@ md-toolbar.tb-edit-toolbar {
     min-height: $edit-toolbar-height !important;
     max-height: $edit-toolbar-height !important;
 
-    .md-button {
+    :is(.md-button, .mat-mdc-button-base) {
       min-width: 65px;
       min-height: 30px;
       font-size: 12px;
       line-height: 30px;
 
-      md-icon {
+      mat-icon {
         font-size: 20px;
       }
 
@@ -148,7 +148,7 @@ md-toolbar.tb-edit-toolbar {
       }
     }
 
-    md-input-container {
+    mat-form-field {
       input {
         height: 28px;
         font-size: 1.2rem;

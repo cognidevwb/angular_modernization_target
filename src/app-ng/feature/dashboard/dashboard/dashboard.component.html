@@ -41,7 +41,7 @@
                             [matTooltip]="'dashboard.export' | translate" matTooltipPosition="below">
                         <mat-icon [attr.aria-label]="'action.export' | translate" class="material-icons">file_download</mat-icon>
                     </button>
-                    <tb-timewindow [hidden]="!(isEdit || displayDashboardTimewindow())" is-toolbar [isEdit]="isEdit" direction="left" tooltip-direction="bottom" aggregation="true"
+                    <tb-timewindow name="dashboardTimewindow" [hidden]="!(isEdit || displayDashboardTimewindow())" is-toolbar [isEdit]="isEdit" direction="left" tooltip-direction="bottom" aggregation="true"
                                    [(ngModel)]="dashboardCtx.dashboardTimewindow">
                     </tb-timewindow>
                     <tb-aliases-entity-select [hidden]="!(!isEdit && displayEntitiesSelect())" tooltip-direction="bottom" [aliasController]="dashboardCtx.aliasController">
@@ -54,7 +54,7 @@
                             [matTooltip]="'dashboard.settings' | translate" matTooltipPosition="below">
                         <mat-icon [attr.aria-label]="'dashboard.settings' | translate" class="material-icons">settings</mat-icon>
                     </button>
-                    <tb-dashboard-select [hidden]="!(!isEdit && !widgetEditMode && displayDashboardsSelect())" [(ngModel)]="currentDashboardId"
+                    <tb-dashboard-select name="currentDashboardId" [hidden]="!(!isEdit && !widgetEditMode && displayDashboardsSelect())" [(ngModel)]="currentDashboardId"
                                          [dashboardsScope]="currentDashboardScope" [(customerId)]="currentCustomerId">
                     </tb-dashboard-select>
                 </div>
@@ -140,7 +140,7 @@
               <div class="tb-header-pane">
                 <div layout="row">
                     <span class="tb-details-subtitle">{{ 'widgets-bundle.current' | translate }}</span>
-                    <tb-widgets-bundle-select flex-offset="5" flex [(ngModel)]="widgetsBundle" [tbRequired]="true" [selectFirstBundle]="false">
+                    <tb-widgets-bundle-select name="widgetsBundle" flex-offset="5" flex [(ngModel)]="widgetsBundle" [tbRequired]="true" [selectFirstBundle]="false">
                     </tb-widgets-bundle-select>
                 </div>
               </div>

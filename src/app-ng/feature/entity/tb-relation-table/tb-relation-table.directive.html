@@ -20,7 +20,7 @@
     <section layout="row">
         <mat-form-field class="md-block" style="width: 200px;">
             <mat-label>{{ 'relation.direction' | translate }}</mat-label>
-            <mat-select [ngModel]="direction" (ngModelChange)="setDirection($event)" [disabled]="rootScope['loading']">
+            <mat-select name="direction" [ngModel]="direction" (ngModelChange)="setDirection($event)" [disabled]="rootScope['loading']">
                 @for (dir of directions; track dir) {
                   <mat-option [value]="dir">
                     {{ ('relation.search-direction.' + dir) | translate }}
@@ -52,7 +52,7 @@
                     <mat-icon [attr.aria-label]="'action.search' | translate" class="material-icons">search</mat-icon>
                 </button>
                 <mat-form-field flex>
-                    <input matInput #searchInput [ngModel]="query.search" (ngModelChange)="setSearch($event)" class="searchInput" [placeholder]="'common.enter-search' | translate">
+                    <input name="search" matInput #searchInput [ngModel]="query.search" (ngModelChange)="setSearch($event)" class="searchInput" [placeholder]="'common.enter-search' | translate">
                 </mat-form-field>
                 <button mat-icon-button [attr.aria-label]="'action.back' | translate" (click)="exitFilterMode()" [matTooltip]="'action.close' | translate" matTooltipPosition="above">
                     <mat-icon [attr.aria-label]="'action.close' | translate" class="material-icons">close</mat-icon>

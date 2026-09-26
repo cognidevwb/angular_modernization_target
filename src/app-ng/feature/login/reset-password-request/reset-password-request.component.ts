@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { LoginService } from '../../api/services/login.service';
 import { ToastService } from '../../services/toast.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -18,9 +19,10 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'reset-password-request',
   standalone: true,
-  imports: [TranslatePipe, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCardModule, MatButtonModule, FormsModule],
+  imports: [RouterLink, TranslatePipe, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCardModule, MatButtonModule, FormsModule],
   templateUrl: './reset-password-request.component.html',
 })
 export class ResetPasswordRequestComponent {
@@ -28,7 +30,6 @@ export class ResetPasswordRequestComponent {
   protected readonly translate = inject(TranslateService);
   protected readonly toast = inject(ToastService);
   protected readonly loginService = inject(LoginService);
-  // TODO(port): template: 1 × ui-sref left in place
 
   email: any = '';
 

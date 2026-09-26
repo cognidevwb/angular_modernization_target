@@ -75,7 +75,7 @@
       right: 0;
     }
 
-    .md-button {
+    :is(.md-button, .mat-mdc-button-base) {
       min-width: auto;
     }
   }

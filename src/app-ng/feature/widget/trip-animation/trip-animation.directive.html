@@ -38,7 +38,7 @@
             <button mat-icon-button aria-label="Previous" (click)="$any(this).movePrev()">
                 <mat-icon class="material-icons" [ngStyle]="{'color': staticSettings?.buttonColor}">skip_previous</mat-icon>
             </button>
-            <mat-slider [(ngModel)]="$any(this).index" min="{{$any(this).minTimeIndex}}" max="{{$any(this).maxTimeIndex}}" (ngModelChange)="$any(this).recalculateTrips()"></mat-slider>
+            <mat-slider name="any" [(ngModel)]="$any(this).index" min="{{$any(this).minTimeIndex}}" max="{{$any(this).maxTimeIndex}}" (ngModelChange)="$any(this).recalculateTrips()"></mat-slider>
             <button mat-icon-button aria-label="Next" (click)="$any(this).moveNext()">
                 <mat-icon class="material-icons" [ngStyle]="{'color': staticSettings?.buttonColor}">skip_next</mat-icon>
             </button>
@@ -50,7 +50,7 @@
                     play_circle_outline
                 </mat-icon>
             </button>
-            <mat-select [(ngModel)]="speed" aria-label="Speed selector">
+            <mat-select name="speed" [(ngModel)]="speed" aria-label="Speed selector">
                 @for (speed of speeds; track $index) {
                   <mat-option [value]="speed" flex="1">{{ speed}}
                 </mat-option>

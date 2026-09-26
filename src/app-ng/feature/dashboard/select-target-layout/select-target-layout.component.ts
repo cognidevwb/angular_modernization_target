@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RootState } from '../../../root-state';
@@ -15,6 +15,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * or with nothing when cancelled.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'select-target-layout',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule],

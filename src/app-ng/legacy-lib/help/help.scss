@@ -16,11 +16,11 @@
 @import "scss/constants";
 
 /*
-.md-button.tb-help-button-style,
+:is(.md-button, .mat-mdc-button-base).tb-help-button-style,
 .tb-help-button-style {
 }
 
-.md-button.tb-help-button-pos,
+:is(.md-button, .mat-mdc-button-base).tb-help-button-pos,
 .tb-help-button-pos {
 }
 */

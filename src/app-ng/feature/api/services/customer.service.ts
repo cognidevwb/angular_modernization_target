@@ -1,3 +1,4 @@
+import { httpOptions } from '../../../core/http-options';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { types } from '../../common/constants/types';
@@ -31,7 +32,7 @@ export class CustomerService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-    this.http.get(url, config).toPromise().then(function success(response?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -42,7 +43,7 @@ export class CustomerService {
   getCustomer(customerId?: any, config?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/' + customerId;
-    this.http.get(url, config).toPromise().then(function success(response?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail(response?: any) {
         deferred.reject(response?.error);
@@ -53,7 +54,7 @@ export class CustomerService {
   getShortCustomerInfo(customerId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/' + customerId + '/shortInfo';
-    this.http.get(url, null).toPromise().then(function success(response?: any) {
+    this.http.get(url).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail(response?: any) {
         deferred.reject(response?.error);

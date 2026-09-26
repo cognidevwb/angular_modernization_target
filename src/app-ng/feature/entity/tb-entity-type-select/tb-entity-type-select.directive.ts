@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import { UserService } from '../../api/services/user.service';
@@ -23,6 +23,7 @@ declare let $templateCache: any;
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entity-type-select',
   standalone: true,
   imports: [TranslatePipe, MatSelectModule, MatInputModule, MatFormFieldModule, FormsModule],
@@ -71,8 +72,13 @@ export class TbEntityTypeSelectDirective extends NgModelController {
         } else {
             this.showLabel = true;
         }
+  }
+
+  ngOnInit(): void {
+    // Reads its inputs: they are set after the constructor (the legacy link ran with the scope bound), so this runs in ngOnInit.
     this.entityTypes = this.entityService.prepareAllowedEntityTypesList(this.allowedEntityTypes(), this.useAliasEntityTypes());
   }
+
 
   override $render(): void {
     if (this.$viewValue) {

@@ -1,4 +1,4 @@
-import { Component, input, model } from '@angular/core';
+import { Component, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -21,6 +21,7 @@ export type FetchEntityKeys = (args: { entityAliasId: string; query: string; typ
  * decimals, generation / post-processing functions, and the widget's key settings) bound through `[(ngModel)]`.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-datakey-config',
   standalone: true,
   imports: [NgTemplateOutlet, FormsModule, MatAutocompleteModule, MatCheckboxModule, MatFormFieldModule, MatInputModule, MatTabsModule, TranslatePipe,

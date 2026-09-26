@@ -15,7 +15,7 @@
  */
 .tb-has-timewindow {
   .tb-entities-table {
-    md-toolbar {
+    mat-toolbar {
       min-height: 60px;
       max-height: 60px;
 
@@ -29,7 +29,7 @@
 }
 
 .tb-entities-table {
-  md-toolbar {
+  mat-toolbar {
     min-height: 39px;
     max-height: 39px;
 
@@ -49,8 +49,8 @@
           min-width: 36px;
           max-width: 36px;
 
-          .md-button[disabled] {
-            md-icon {
+          :is(.md-button, .mat-mdc-button-base)[disabled] {
+            mat-icon {
               color: rgba(0, 0, 0, .38);
             }
           }

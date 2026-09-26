@@ -1,34 +1,21 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { Component, inject } from '@angular/core';
-import { ElementRef } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { types } from '../../common/constants/types';
 
-import { linkAttrs } from '../../../legacy-link';
-
 /**
- * Ported from the AngularJS directive `tbAuditLogHeader` (module `thingsboard.auditLog`) in src/app/audit/index.js:23.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbAuditLogHeader` (src/app/audit/audit-log-header.directive.js): the column
+ * titles of the audit log table, without the entity columns in entity mode and the user column in user mode.
+ * The legacy link read `attrs.auditLogMode`; here it is an input.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: '[tb-audit-log-header]',
   standalone: true,
   imports: [TranslatePipe],
   templateUrl: './tb-audit-log-header.directive.html',
 })
 export class TbAuditLogHeaderDirective {
-  protected readonly typesRef: any = types;
-  protected readonly element = inject(ElementRef);
+  readonly auditLogMode = input<any>();
 
-  auditLogMode: any;
-  types: any;
-
-  constructor() {
-    this.auditLogMode = this.attrs.auditLogMode;
-    this.types = this.typesRef;
-  }
-
-  /** The link's `attrs`: the host element's attributes, read live. */
-  protected get attrs(): any {
-    return linkAttrs(this.element.nativeElement);
-  }
+  protected readonly types: any = types;
 }

@@ -38,9 +38,8 @@
             </div>
         </mat-option>
     </mat-autocomplete>
-    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-    <div ng-messages="theForm()?.entity?.$error">
-        <!-- TODO(port): ng-message has no one-to-one Angular form -->
-        <div ng-message="required">{{ (entityRequiredText) | translate }}</div>
-    </div>
+    <!-- ng-messages: the first message whose key is set in theForm()?.entity?.$error -->
+    @if ((theForm()?.entity?.$error)?.['required']) {
+      <mat-error>{{ (entityRequiredText) | translate }}</mat-error>
+    }
 </mat-form-field>

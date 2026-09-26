@@ -1,3 +1,4 @@
+import { httpOptions } from '../../../core/http-options';
 import { inject, Injectable } from '@angular/core';
 import { AttributeService } from './attribute.service';
 import { CustomerService } from './customer.service';
@@ -41,7 +42,7 @@ export class EntityViewService {
     if ((type !== undefined) && type.length) {
         url += '&type=' + type;
     }
-    this.http.get(url, config).toPromise().then((response?: any) => {
+    this.http.get(url, httpOptions(config)).toPromise().then((response?: any) => {
         if (applyCustomersInfo) {
             this.customerService.applyAssignedCustomersInfo(response.data).then(
                 function success(data?: any) {
@@ -76,7 +77,7 @@ export class EntityViewService {
     if ((type !== undefined) && type.length) {
         url += '&type=' + type;
     }
-    this.http.get(url, config).toPromise().then((response?: any) => {
+    this.http.get(url, httpOptions(config)).toPromise().then((response?: any) => {
         if (applyCustomersInfo) {
             this.customerService.applyAssignedCustomerInfo(response.data, customerId).then(
                 function success(data?: any) {
@@ -104,7 +105,7 @@ export class EntityViewService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.get(url, config).toPromise().then(function success(response?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail(response?: any) {
         deferred.reject(response?.error);
@@ -176,7 +177,7 @@ export class EntityViewService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    this.http.post(url, query, config).toPromise().then(function success(response?: any) {
+    this.http.post(url, query, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -187,7 +188,7 @@ export class EntityViewService {
   getEntityViewTypes(config?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/entityView/types';
-    this.http.get(url, config).toPromise().then(function success(response?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();

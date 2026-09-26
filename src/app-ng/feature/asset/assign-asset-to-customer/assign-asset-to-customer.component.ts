@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,6 +27,7 @@ export interface AssignAssetToCustomerData {
  * with its template src/app/asset/assign-to-customer.tpl.html. Closes with `true` once the assets are assigned.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'assign-asset-to-customer',
   standalone: true,
   imports: [TranslatePipe, FormsModule, ScrollingModule, MatDialogModule, MatToolbarModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule],

@@ -1,4 +1,6 @@
-import { Component, DoCheck, forwardRef, inject } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { attachLegacyForm, lateLegacyForm, LegacyForm } from '../../components/tb-grid/legacy-form';
+import { Component, DoCheck, forwardRef, inject, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
@@ -25,6 +27,7 @@ import { $q } from '../../../core/q';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'entity-alias-dialog',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatSlideToggleModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatButtonModule, FormsModule, forwardRef(() => TbEntityFilterDirective)],
@@ -48,7 +51,14 @@ export class EntityAliasDialogComponent implements DoCheck {
   allowedEntityTypes: any;
   alias: any;
   entityAliases: any;
-  theForm: any;
+
+  /** The legacy `theForm` (FormController), over the template's `#theFormRef` NgForm. */
+  readonly theForm: LegacyForm = lateLegacyForm('theForm');
+
+  @ViewChild('theFormRef')
+  set theFormRef(form: NgForm | undefined) {
+    attachLegacyForm(this.theForm, form);
+  }
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
   // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()

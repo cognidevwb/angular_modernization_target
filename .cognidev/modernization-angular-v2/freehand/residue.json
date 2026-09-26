@@ -1,26 +1,16 @@
 {
 "summary": {
-"files": 3,
-"uses": 3,
-"names": 1,
+"files": 0,
+"uses": 0,
+"names": 0,
 "by_kind": {
 "angularjs": 0,
 "lost": 0,
 "legacy-import": 0,
 "scope-call": 0,
-"http-config": 3,
+"http-config": 0,
 "template-translate": 0
 }
 },
-"rows": [
-{
-"name": "$http config flags passed to HttpClient",
-"kind": "http-config",
-"at": [
-"src/app-ng/feature/api/services/dashboard.service.ts:111",
-"src/app-ng/feature/api/services/user.service.ts:145",
-"src/app-ng/feature/api/services/time.service.ts:56"
-]
-}
-]
+"rows": []
 }

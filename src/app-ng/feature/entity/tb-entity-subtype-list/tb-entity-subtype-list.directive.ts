@@ -1,4 +1,4 @@
-import { Component, DoCheck, effect, inject, model } from '@angular/core';
+import { Component, DoCheck, effect, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { AssetService } from '../../api/services/asset.service';
 import { DeviceService } from '../../api/services/device.service';
 import { ElementRef } from '@angular/core';
@@ -20,6 +20,7 @@ import { isEqual } from 'lodash-es';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entity-subtype-list',
   standalone: true,
   imports: [FormsModule, MatChipsModule, MatAutocompleteModule, MatIconModule, TranslatePipe],
@@ -66,6 +67,14 @@ export class TbEntitySubtypeListDirective extends NgModelController implements D
 
   constructor() {
     super();
+    effect(() => {
+      this.tbRequired();
+      this.updateValidity();
+    });
+  }
+
+  ngOnInit(): void {
+    // Reads its inputs: they are set after the constructor (the legacy link ran with the scope bound), so this runs in ngOnInit.
     if (this.entityType() == types.entityType.asset) {
             this.placeholder = this.tbRequired() ? this.translate.instant('asset.enter-asset-type')
                 : this.translate.instant('asset.any-asset');
@@ -85,11 +94,8 @@ export class TbEntitySubtypeListDirective extends NgModelController implements D
             this.noSubtypesMathingText = 'entity-view.no-entity-view-types-matching';
             this.subtypeListEmptyText = 'entity-view.entity-view-type-list-empty';
         }
-    effect(() => {
-      this.tbRequired();
-      this.updateValidity();
-    });
   }
+
 
   ngDoCheck(): void {
     if (!isEqual(this.entitySubtypesList, this.previousEntitySubtypesList)) {

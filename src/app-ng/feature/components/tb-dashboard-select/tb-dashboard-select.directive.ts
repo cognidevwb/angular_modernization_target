@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, Injector, input, model, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, Injector, input, model, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Overlay } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,6 +18,7 @@ import { MdPanelRef, mdPanelPlacement, openMdPanel } from '../md-panel/md-panel'
  * screens, a button opening the dashboard select panel on narrow ones. `[(ngModel)]` is the dashboard id.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-dashboard-select',
   standalone: true,
   imports: [MatButtonModule, MatIconModule, MatSelectModule, MatTooltipModule, TranslatePipe],

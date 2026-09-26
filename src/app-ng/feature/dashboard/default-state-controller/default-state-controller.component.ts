@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -10,6 +10,7 @@ import { StatesControllerBase } from '../services/states-controller-base';
  * picked from a select when the dashboard has more than one state.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-default-state-controller',
   standalone: true,
   imports: [TranslatePipe, FormsModule, MatSelectModule],

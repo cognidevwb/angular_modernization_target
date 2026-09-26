@@ -1,4 +1,6 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { attachLegacyForm, lateLegacyForm, LegacyForm } from '../../components/tb-grid/legacy-form';
+import { Component, forwardRef, inject, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
@@ -27,6 +29,7 @@ const SUPPORTED_LANGS: string[] = ['en_US', 'zh_CN'];
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'profile',
   standalone: true,
   imports: [TranslatePipe, MatSelectModule, MatProgressBarModule, MatInputModule, MatFormFieldModule, MatCardModule, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbConfirmOnExitDirective)],
@@ -40,9 +43,17 @@ export class ProfileComponent {
   protected readonly translate = inject(TranslateService);
   // TODO(port): AngularJS built-in filters in the template: date — use Angular pipes
 
-  profileUser: any = {};
+  // The legacy template bound `profileUser.additionalInfo.lang` before the user loaded ($parse read through the undefined).
+  profileUser: any = { additionalInfo: {} };
   languageList: any = SUPPORTED_LANGS;
-  theForm: any;
+
+  /** The legacy `theForm` (FormController), over the template's `#theFormRef` NgForm. */
+  readonly theForm: LegacyForm = lateLegacyForm('theForm');
+
+  @ViewChild('theFormRef')
+  set theFormRef(form: NgForm | undefined) {
+    attachLegacyForm(this.theForm, form);
+  }
 
   constructor() {
     this.save = this.save;
@@ -57,7 +68,7 @@ export class ProfileComponent {
             this.profileUser.additionalInfo = {};
         }
         if (!this.profileUser.additionalInfo.lang) {
-            this.profileUser.additionalInfo.lang = (this.translate as any).use();
+            this.profileUser.additionalInfo.lang = this.translate.getCurrentLang();
         }
     });
   }

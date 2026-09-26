@@ -18,10 +18,10 @@
 <section layout="column" layout-align="start start">
 	<mat-form-field>
 		<mat-label>{{ 'datetime.date-from' | translate }}</mat-label>
-		<input matInput type="datetime-local" step="1" [ngModel]="toLocal(startDate)" (ngModelChange)="setStartDate($event)" [max]="toLocal(maxStartDate)">
+		<input name="toLocal" matInput type="datetime-local" step="1" [ngModel]="toLocal(startDate)" (ngModelChange)="setStartDate($event)" [max]="toLocal(maxStartDate)">
 	</mat-form-field>
 	<mat-form-field>
 		<mat-label>{{ 'datetime.date-to' | translate }}</mat-label>
-		<input matInput type="datetime-local" step="1" [ngModel]="toLocal(endDate)" (ngModelChange)="setEndDate($event)" [min]="toLocal(minEndDate)" [max]="toLocal(maxEndDate)">
+		<input name="toLocal-2" matInput type="datetime-local" step="1" [ngModel]="toLocal(endDate)" (ngModelChange)="setEndDate($event)" [min]="toLocal(minEndDate)" [max]="toLocal(maxEndDate)">
 	</mat-form-field>
 </section>

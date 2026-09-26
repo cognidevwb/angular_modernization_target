@@ -1,4 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { PUBLIC_PATH } from '../../../app-globals';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { LoginService } from '../../api/services/login.service';
 import { Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
@@ -6,7 +8,7 @@ import { UserService } from '../../api/services/user.service';
 import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-const logoSvg = 'assets/svg/logo_title_white.svg';
+const logoSvg = PUBLIC_PATH + 'svg/logo_title_white.svg';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,9 +25,10 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'login',
   standalone: true,
-  imports: [TranslatePipe, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatCardModule, MatButtonModule, CommonModule, FormsModule],
+  imports: [RouterLink, TranslatePipe, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatCardModule, MatButtonModule, CommonModule, FormsModule],
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
@@ -35,7 +38,6 @@ export class LoginComponent {
   protected readonly userService = inject(UserService);
   protected readonly router = inject(Router);
   // TODO(port): AngularJS built-in filters in the template: uppercase — use Angular pipes
-  // TODO(port): template: 1 × ui-sref left in place
 
   logoSvg: any = logoSvg;
   user: any = {

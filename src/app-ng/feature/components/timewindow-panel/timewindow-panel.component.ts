@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, viewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { KeyValuePipe, NgClass } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +23,7 @@ import { MD_PANEL_DATA } from '../md-panel/md-panel';
  * and hands the edited timewindow to `onTimewindowUpdate`.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'timewindow-panel',
   standalone: true,
   imports: [

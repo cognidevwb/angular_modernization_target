@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -12,6 +12,7 @@ import { TbCustomerDirective } from '../tb-customer/tb-customer.directive';
 
 /** The add dialog of the customer grid (legacy src/app/customer/add-customer.tpl.html with AddItemController). */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'add-customer-dialog',
   standalone: true,
   imports: [FormsModule, MatDialogModule, MatToolbarModule, MatButtonModule, MatIconModule, MatProgressBarModule, TranslatePipe, TbGridHelpButtonComponent, TbCustomerDirective],

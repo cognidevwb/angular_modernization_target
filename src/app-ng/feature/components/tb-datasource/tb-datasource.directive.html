@@ -18,7 +18,7 @@
 -->
 <section flex layout='column' layout-align="center" layout-gt-sm='row' layout-align-gt-sm="start center" class="tb-datasource">
     <mat-form-field style="min-width: 110px;">
-        <mat-select placeholder="{{ 'datasource.type' | translate }}" required id="datasourceType" [(ngModel)]="model.type">
+        <mat-select name="type" placeholder="{{ 'datasource.type' | translate }}" required id="datasourceType" [(ngModel)]="model.type">
             @for (datasourceType of datasourceTypes; track $index) {
               <mat-option value="{{datasourceType}}">
                 {{ datasourceType | translate }}
@@ -27,10 +27,10 @@
         </mat-select>
     </mat-form-field>
     <section flex class="datasource" on="model.type">
-        <tb-datasource-func flex [(ngModel)]="model" [(maxDataKeys)]="maxDataKeys" [(optDataKeys)]="optDataKeys" [(datakeySettingsSchema)]="datakeySettingsSchema" [required]="model?.type === types?.datasourceType?.function" [(widgetType)]="widgetType" [generateDataKey]="generateDataKey()">
+        <tb-datasource-func name="model" flex [(ngModel)]="model" [(maxDataKeys)]="maxDataKeys" [(optDataKeys)]="optDataKeys" [(datakeySettingsSchema)]="datakeySettingsSchema" [required]="model?.type === types?.datasourceType?.function" [(widgetType)]="widgetType" [generateDataKey]="generateDataKey()">
         </tb-datasource-func>
         <!-- TODO(port): ng-switch-when has no one-to-one Angular form -->
-        <tb-datasource-entity flex [(ngModel)]="model" [(maxDataKeys)]="maxDataKeys" [(optDataKeys)]="optDataKeys" [(datakeySettingsSchema)]="datakeySettingsSchema" ng-switch-when="entity" [required]="model?.type === types?.datasourceType?.entity" [(widgetType)]="widgetType" [(aliasController)]="aliasController" [generateDataKey]="generateDataKey()" [fetchEntityKeys]="fetchEntityKeys()" [onCreateEntityAlias]="onCreateEntityAlias()">
+        <tb-datasource-entity name="model-2" flex [(ngModel)]="model" [(maxDataKeys)]="maxDataKeys" [(optDataKeys)]="optDataKeys" [(datakeySettingsSchema)]="datakeySettingsSchema" ng-switch-when="entity" [required]="model?.type === types?.datasourceType?.entity" [(widgetType)]="widgetType" [(aliasController)]="aliasController" [generateDataKey]="generateDataKey()" [fetchEntityKeys]="fetchEntityKeys()" [onCreateEntityAlias]="onCreateEntityAlias()">
         </tb-datasource-entity>
     </section>
 </section>

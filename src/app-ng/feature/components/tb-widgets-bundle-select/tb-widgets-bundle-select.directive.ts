@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, model } from '@angular/core';
+import { Component, effect, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { WidgetService } from '../../api/services/widget.service';
 import { types } from '../../common/constants/types';
@@ -13,6 +13,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-widgets-bundle-select',
   standalone: true,
   imports: [TranslatePipe, MatSelectModule, FormsModule],
@@ -48,6 +49,13 @@ export class TbWidgetsBundleSelectDirective extends NgModelController {
   constructor() {
     super();
     this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
+    effect(() => {
+            this.selectWidgetsBundleByAlias(this.selectBundleAlias());
+        });
+  }
+
+  ngOnInit(): void {
+    // Reads its inputs: they are set after the constructor (the legacy link ran with the scope bound), so this runs in ngOnInit.
     this.widgetsBundleFetchFunction = this.widgetService.getAllWidgetsBundles;
     if ((this.bundlesScope !== undefined)) {
             if (this.bundlesScope() === 'system') {
@@ -70,10 +78,8 @@ export class TbWidgetsBundleSelectDirective extends NgModelController {
             function fail() {
             }
         );
-    effect(() => {
-            this.selectWidgetsBundleByAlias(this.selectBundleAlias());
-        });
   }
+
 
   override $render(): void {
     if (this.$viewValue) {

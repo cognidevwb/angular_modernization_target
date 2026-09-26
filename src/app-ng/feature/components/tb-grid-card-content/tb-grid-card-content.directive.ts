@@ -1,4 +1,4 @@
-import { Component, Type, input } from '@angular/core';
+import { Component, Type, input, ChangeDetectionStrategy } from '@angular/core';
 import { NgComponentOutlet } from '@angular/common';
 
 /**
@@ -7,6 +7,7 @@ import { NgComponentOutlet } from '@angular/common';
  * component type, rendered with `item` and `parentCtl` as its inputs.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-grid-card-content',
   standalone: true,
   imports: [NgComponentOutlet],

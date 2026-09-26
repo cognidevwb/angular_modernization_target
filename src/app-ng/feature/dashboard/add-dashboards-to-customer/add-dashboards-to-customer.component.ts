@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,6 +26,7 @@ export interface AddDashboardsToCustomerData {
  * with its template src/app/dashboard/add-dashboards-to-customer.tpl.html. Closes with `true` once the selected dashboards are assigned.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'add-dashboards-to-customer',
   standalone: true,
   imports: [TranslatePipe, FormsModule, ScrollingModule, MatDialogModule, MatToolbarModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule],

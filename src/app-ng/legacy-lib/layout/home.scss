@@ -57,11 +57,12 @@
   }
 }
 
-md-sidenav.tb-site-sidenav {
+mat-sidenav.tb-site-sidenav {
   width: 250px;
 }
 
-md-icon.tb-logo-title {
+mat-icon.tb-logo-title,
+img.tb-logo-title {
   width: 200px;
   height: 36px;
 }

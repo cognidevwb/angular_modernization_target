@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, model, untracked } from '@angular/core';
+import { Component, effect, inject, input, model, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ENTER } from '@angular/cdk/keycodes';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
@@ -17,6 +17,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * "create a new one!" (or Enter on an unknown name) calls `onCreateEntityAlias(event, alias, allowedEntityTypes)`.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entity-alias-select',
   standalone: true,
   imports: [FormsModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, TranslatePipe, TruncatePipe],

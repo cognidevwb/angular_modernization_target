@@ -1,4 +1,4 @@
-import { Component, Type, inject } from '@angular/core';
+import { Component, Type, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ImportExportService } from '../../import-export/services/import-export.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -28,6 +28,7 @@ import { showConfirm } from '../confirm-dialog/confirm-dialog.component';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'rule-chains',
   standalone: true,
   imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbRuleChainDirective, TbAttributeTableDirective, TbAlarmTableDirective, TbEventTableDirective, TbRelationTableDirective, TbAuditLogTableDirective],

@@ -1,4 +1,4 @@
-import { Component, effect, inject, model } from '@angular/core';
+import { Component, effect, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import { FormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
@@ -13,6 +13,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * Ported from the AngularJS directive `tbEntityList` (module `thingsboard.entity`) in src/app/entity/index.js:37.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entity-list',
   standalone: true,
   imports: [TranslatePipe, FormsModule, MatChipsModule, MatAutocompleteModule, MatFormFieldModule, MatIconModule],

@@ -1,3 +1,4 @@
+import { httpOptions } from '../../../core/http-options';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RootState } from '../../../root-state';
@@ -283,7 +284,7 @@ export class WidgetService {
     var deferred: any = $q.defer();
     if (!this.allWidgetsBundles) {
         var url: any = '/api/widgetsBundles';
-        firstValueFrom(this.http.get(url, config)).then((response?: any) => {
+        firstValueFrom(this.http.get(url, httpOptions(config))).then((response?: any) => {
             this.allWidgetsBundles = response;
             this.systemWidgetsBundles = [];
             this.tenantWidgetsBundles = [];
@@ -424,7 +425,7 @@ export class WidgetService {
     var deferred: any = $q.defer();
 
     var url: any = '/api/widgetsBundle/' + widgetsBundleId;
-    firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
+    firstValueFrom(this.http.get(url)).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail(response?: any) {
         deferred.reject(response?.error);
@@ -461,7 +462,7 @@ export class WidgetService {
     var deferred: any = $q.defer();
     var url: any = '/api/widgetTypes?isSystem=' + (isSystem ? 'true' : 'false') +
                 '&bundleAlias='+bundleAlias;
-    firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
+    firstValueFrom(this.http.get(url)).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail(response?: any) {
         deferred.reject(response?.error);
@@ -689,7 +690,7 @@ export class WidgetService {
     var deferred: any = $q.defer();
     var url: any = '/api/widgetType?isSystem=' + (isSystem ? 'true' : 'false') +
         '&bundleAlias='+bundleAlias+'&alias='+widgetTypeAlias;
-    firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
+    firstValueFrom(this.http.get(url)).then(function success(response?: any) {
         var widgetType: any = response;
         deferred.resolve(widgetType);
     }, function fail() {
@@ -701,7 +702,7 @@ export class WidgetService {
   getWidgetTypeById(widgetTypeId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/widgetType/' + widgetTypeId;
-    firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
+    firstValueFrom(this.http.get(url)).then(function success(response?: any) {
         var widgetType: any = response;
         deferred.resolve(widgetType);
     }, function fail() {

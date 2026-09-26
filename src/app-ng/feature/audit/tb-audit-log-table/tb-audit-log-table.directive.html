@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/audit/audit-log-table.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/audit/audit-log-table.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -19,15 +19,14 @@
 <div flex class="md-content md-padding tb-absolute-fill" layout="column">
     <div flex layout="column" class="tb-audit-logs" [ngClass]="{'md-whiteframe-z1': pageMode()}">
         <div layout="column" layout-gt-sm="row" layout-align-gt-sm="start center" class="tb-audit-log-toolbar" [ngClass]="{'md-padding': pageMode(), 'tb-audit-log-margin-18px': !pageMode()}">
-            <tb-timewindow [(ngModel)]="timewindow" history-only [asButton]="true"></tb-timewindow>
+            <tb-timewindow name="timewindow" [(ngModel)]="timewindow" history-only [asButton]="true"></tb-timewindow>
             <div flex layout="row" layout-align="start center">
                 <button mat-icon-button attr.aria-label="{{ 'action.search' | translate }}" attr.matTooltip="{{'audit-log.search' | translate}}" matTooltipPosition="above">
                     <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
                     
                 </button>
                 <mat-form-field flex class="tb-audit-log-search-input">
-                    <mat-label>&nbsp;</mat-label>
-                    <input matInput [(ngModel)]="searchText" attr.placeholder="{{'audit-log.search' | translate}}">
+                    <input name="searchText" matInput [(ngModel)]="searchText" attr.placeholder="{{'audit-log.search' | translate}}">
                 </mat-form-field>
                 <button mat-icon-button [disabled]="rootScope?.loading" aria-label="Close" (click)="searchText = ''" attr.matTooltip="{{ 'audit-log.clear-search' | translate }}" matTooltipPosition="above">
                     <mat-icon aria-label="Close" class="material-icons">close</mat-icon>
@@ -41,18 +40,21 @@
         </div>
         <div flex layout="column" class="tb-audit-log-container" [ngClass]="{'md-whiteframe-z1': !pageMode()}">
             <mat-list flex layout="column" class="tb-audit-log-table" [ngClass]="{'tb-audit-log-table-full': pageMode()}">
-                <mat-list class="tb-row tb-header" layout="row" layout-align="start center" tb-audit-log-header attr.audit-log-mode="{{auditLogMode()}}">
-                </mat-list>
+                <div class="tb-row tb-header" layout="row" layout-align="start center" tb-audit-log-header [auditLogMode]="auditLogMode()">
+                </div>
                 <mat-progress-bar style="max-height: 0px;" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
                 <mat-divider></mat-divider>
                 <span layout-align="center center" style="margin-top: 25px;" class="tb-prompt" [hidden]="!(noData())">{{ 'audit-log.no-audit-logs-prompt' | translate }}</span>
-                <!-- TODO(port): md-virtual-repeat-container: a cdk-virtual-scroll-viewport with *cdkVirtualFor --><md-virtual-repeat-container [hidden]="!(hasData())" flex md-top-index="topIndex" tb-scope-element="repeatContainer">
-                    <mat-list-item md-virtual-repeat="auditLog in theAuditLogs" md-on-demand flex [ngStyle]="hasScroll() ? {'margin-right':'-15px'} : {}">
-                        <mat-list class="tb-row" flex layout="row" layout-align="start center" tb-audit-log-row attr.audit-log-mode="{{auditLogMode()}}" attr.audit-log="{{auditLog}}">
-                        </mat-list>
-                        <mat-divider flex></mat-divider>
-                    </mat-list-item>
-                </md-virtual-repeat-container>
+                <!-- md-virtual-repeat-container with md-on-demand: the rows of the loaded pages; scrolling near the end loads the next page -->
+                <div #repeatContainer class="tb-audit-log-repeat-container" [hidden]="!(hasData())" flex (scroll)="onScroll()">
+                    @for (auditLog of auditLogs.filtered; track auditLog.id?.id ?? $index) {
+                      <div class="tb-audit-log-item" flex>
+                        <div class="tb-row" flex layout="row" layout-align="start center" tb-audit-log-row [auditLogMode]="auditLogMode()" [auditLog]="auditLog">
+                        </div>
+                        <mat-divider></mat-divider>
+                      </div>
+                    }
+                </div>
             </mat-list>
         </div>
     </div>

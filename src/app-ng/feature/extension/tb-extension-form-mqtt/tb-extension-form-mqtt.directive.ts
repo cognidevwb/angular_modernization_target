@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, model } from '@angular/core';
+import { Component, OnInit, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +25,7 @@ import { UiAceDirective, UiAceOptions } from '../../components/ui-ace/ui-ace.dir
  * in the template bound to `pemCredentialsValid()`.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: '[tb-extension-form-mqtt]',
   standalone: true,
   templateUrl: './tb-extension-form-mqtt.directive.html',

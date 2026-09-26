@@ -25,7 +25,7 @@
     z-index: 1;
     pointer-events: none;
 
-    .md-button.tb-btn-open-library {
+    :is(.md-button, .mat-mdc-button-base).tb-btn-open-library {
       top: 0;
       left: 0;
       width: 36px;
@@ -41,11 +41,11 @@
     width: 250px;
     min-width: 250px;
 
-    md-toolbar {
+    mat-toolbar {
       height: 48px;
       min-height: 48px;
 
-      .md-toolbar-tools > .md-button:last-child {
+      .md-toolbar-tools > :is(.md-button, .mat-mdc-button-base):last-child {
         margin-right: 0;
       }
 
@@ -54,7 +54,7 @@
         padding: 0 6px;
         font-size: 14px;
 
-        .md-button.md-icon-button {
+        :is(.md-button, .mat-mdc-button-base):is(.md-icon-button, .mat-mdc-icon-button) {
           margin: 0;
 
           &.tb-small {
@@ -64,7 +64,7 @@
             padding: 6px;
             line-height: 20px;
 
-            md-icon {
+            mat-icon {
               width: 20px;
               min-width: 20px;
               height: 20px;
@@ -77,9 +77,58 @@
       }
     }
 
+    // md-sidenav's own look: a white panel the height of the layout.
+    background-color: #fff;
+    min-height: 0;
+
+    // The search field on the dark toolbar (md-theme="tb-dark"): light text over the toolbar, no filled box.
+    mat-toolbar mat-form-field {
+      --mat-form-field-filled-container-color: transparent;
+      --mat-form-field-filled-input-text-color: #fff;
+      --mat-form-field-filled-input-text-placeholder-color: rgba(255, 255, 255, .7);
+      --mat-form-field-filled-active-indicator-color: rgba(255, 255, 255, .12);
+      --mat-form-field-filled-hover-active-indicator-color: rgba(255, 255, 255, .5);
+      --mat-form-field-filled-focus-active-indicator-color: #fff;
+      --mat-form-field-filled-caret-color: #fff;
+      --mat-form-field-container-height: 40px;
+      --mat-form-field-container-vertical-padding: 8px;
+      --mat-form-field-filled-with-label-container-padding-top: 8px;
+      --mat-form-field-filled-with-label-container-padding-bottom: 8px;
+      font-size: 14px;
+      .mdc-text-field {
+        padding: 0 2px;
+      }
+    }
+
     .tb-rulechain-library-panel-group {
+      min-height: 0;
       overflow-x: hidden;
       overflow-y: auto;
+
+      // md-expansion-panel: square, flat, stacked, a grey 48px header, no body padding.
+      mat-expansion-panel {
+        margin: 0;
+        border-radius: 0;
+        box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .14);
+      }
+
+      mat-expansion-panel-header {
+        height: 48px;
+        padding: 0 16px 0 24px;
+        font-size: 16px;
+        background: #e6e6e6;
+        border-radius: 0;
+
+        &:hover,
+        &.mat-expanded:hover,
+        &.mat-expanded:focus {
+          background: #e6e6e6;
+        }
+      }
+
+      .mat-expansion-panel-body {
+        padding: 0;
+      }
 
       .tb-panel-title {
         min-width: 150px;
@@ -90,7 +139,7 @@
         background: #f9f9f9;
       }
 
-      md-icon.md-expansion-panel-icon {
+      mat-icon.md-expansion-panel-icon {
         margin-right: 0;
       }
 
@@ -101,7 +150,7 @@
         border-color: #909090;
       }
 
-      md-expansion-panel {
+      mat-expansion-panel {
         &.md-open {
           margin-top: 0;
           margin-bottom: 0;
@@ -141,7 +190,7 @@
       background-color: #aac7e4;
     }
 
-    md-icon {
+    mat-icon {
       padding-right: 10px;
       padding-left: 2px;
     }
@@ -156,9 +205,12 @@
   }
 }
 
+// ngFlowchart's stylesheet (flowchart.css): the canvas grid; the library canvases replace it with a plain background.
 .fc-canvas {
   min-width: 100%;
   min-height: 100%;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, .1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, .1) 1px, transparent 1px);
+  background-size: 25px 25px;
   user-select: none;
   outline: none;
   -webkit-touch-callout: none;
@@ -234,7 +286,7 @@
     background-color: #a3eaa9;
   }
 
-  md-icon {
+  mat-icon {
     width: 20px;
     min-width: 20px;
     height: 20px;

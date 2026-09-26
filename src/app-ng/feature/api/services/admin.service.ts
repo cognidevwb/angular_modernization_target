@@ -21,7 +21,7 @@ export class AdminService {
   getAdminSettings(key?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/admin/settings/' + key;
-this.http.get(url, null).toPromise().then(function success(response?: any) {
+this.http.get(url).toPromise().then(function success(response?: any) {
     deferred.resolve(response);
 }, function fail() {
     deferred.reject();
@@ -43,7 +43,7 @@ this.http.post(url, settings).toPromise().then(function success(response?: any) 
   getSecuritySettings(...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/admin/securitySettings';
-this.http.get(url, null).toPromise().then(function success(response?: any) {
+this.http.get(url).toPromise().then(function success(response?: any) {
     deferred.resolve(response);
 }, function fail() {
     deferred.reject();
@@ -76,7 +76,7 @@ this.http.post(url, settings).toPromise().then(function success() {
   checkUpdates(...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/admin/updates';
-this.http.get(url, null).toPromise().then(function success(response?: any) {
+this.http.get(url).toPromise().then(function success(response?: any) {
     deferred.resolve(response);
 }, function fail() {
     deferred.reject();

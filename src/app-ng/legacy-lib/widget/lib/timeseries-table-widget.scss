@@ -27,11 +27,21 @@ tb-timeseries-table-widget {
     height: 46px;
   }
 
-  .tb-data-table md-toolbar {
+  .tb-data-table mat-toolbar {
     z-index: 10;
   }
 
-  md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
+  mat-tab-group:not(.md-no-tab-content):not(.md-dynamic-height) {
     min-height: 0;
+  }
+
+  // md-tabs with `flex` gave its content the rest of the tab group (the tab body is absolutely filled).
+  mat-tab-group .mat-mdc-tab-body-wrapper {
+    flex: 1 1 auto;
+  }
+
+  // One source: the tabs are headless (main.scss pulls the group up over its header); the header is not shown.
+  mat-tab-group.tb-headless > .mat-mdc-tab-header {
+    visibility: hidden;
   }
 }

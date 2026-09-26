@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, effect, inject, input, model } from '@angular/core';
+import { Component, DestroyRef, ElementRef, effect, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,6 +22,7 @@ const js_beautify: any = beautify.js;
  * bound through `[(ngModel)]` (the string), validated as JSON when `validateContent` is set.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-json-content',
   standalone: true,
   imports: [TranslatePipe, MatButtonModule, CommonModule, FormsModule, TbExpandFullscreenDirective, UiAceDirective],

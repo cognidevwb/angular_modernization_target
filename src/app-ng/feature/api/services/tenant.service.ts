@@ -1,3 +1,4 @@
+import { httpOptions } from '../../../core/http-options';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { bindMethods } from '../../../bind-methods';
@@ -30,7 +31,7 @@ export class TenantService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-    this.http.get(url, config).toPromise().then(function success(response?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -41,7 +42,7 @@ export class TenantService {
   getTenant(tenantId?: any, config?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/tenant/' + tenantId;
-    this.http.get(url, config).toPromise().then(function success(response?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail(response?: any) {
         deferred.reject(response?.error);

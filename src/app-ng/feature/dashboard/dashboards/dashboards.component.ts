@@ -1,4 +1,4 @@
-import { Component, Type, inject } from '@angular/core';
+import { Component, Type, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
@@ -26,6 +26,7 @@ import { AddDashboardDialogComponent } from './add-dashboard-dialog.component';
  * Ported from the AngularJS controller `DashboardsController` (module `thingsboard.dashboard`) in src/app/dashboard/index.js:50.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'dashboards',
   standalone: true,
   imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbDashboardDetailsDirective, TbAuditLogTableDirective],

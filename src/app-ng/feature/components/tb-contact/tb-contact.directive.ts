@@ -1,4 +1,4 @@
-import { Component, model } from '@angular/core';
+import { Component, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { joinParentForm } from '../tb-grid/legacy-form';
@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-contact',
   standalone: true,
   imports: [TranslatePipe, MatSelectModule, MatInputModule, MatFormFieldModule, FormsModule],

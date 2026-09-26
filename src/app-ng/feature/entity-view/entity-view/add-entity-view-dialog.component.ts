@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -12,6 +12,7 @@ import { TbEntityViewDirective } from '../tb-entity-view/tb-entity-view.directiv
 
 /** The add-entity-view dialog (legacy src/app/entity-view/add-entity-view.tpl.html with AddItemController). */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'add-entity-view-dialog',
   standalone: true,
   imports: [FormsModule, MatDialogModule, MatToolbarModule, MatButtonModule, MatIconModule, MatProgressBarModule, TranslatePipe, TbGridHelpButtonComponent, TbEntityViewDirective],

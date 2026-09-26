@@ -1,4 +1,4 @@
-import { Component, DestroyRef, Injectable, effect, inject, model } from '@angular/core';
+import { Component, DestroyRef, Injectable, effect, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DateAdapter, NativeDateAdapter, provideNativeDateAdapter } from '@angular/material/core';
@@ -72,6 +72,7 @@ interface DateRangeTemplate {
  * Ported from the AngularJS directive `dateRangeNavigatorWidget` (module `thingsboard.widgets.dateRangeNavigator`) in src/app/widget/lib/date-range-navigator/date-range-navigator.js:21.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'date-range-navigator-widget',
   standalone: true,
   imports: [TranslatePipe, MatSelectModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, MatDatepickerModule, MatMenuModule, CommonModule, FormsModule],

@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/audit/audit-log-row.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/audit/audit-log-row.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -29,8 +29,7 @@
 <div class="tb-cell" flex="15">{{ auditLog?.actionTypeText }}</div>
 <div class="tb-cell" flex="15">{{ auditLog?.actionStatusText }}</div>
 <div class="tb-cell" flex="10">
-    <button mat-icon-button color="primary" (click)="showAuditLogDetails($event)" attr.aria-label="{{ 'action.view' | translate }}" attr.matTooltip="{{ 'audit-log.details' | translate }}" matTooltipPosition="above">
-        
+    <button mat-icon-button color="primary" (click)="showAuditLogDetails($event)" attr.aria-label="{{ 'action.view' | translate }}" [matTooltip]="'audit-log.details' | translate" matTooltipPosition="above">
         <mat-icon attr.aria-label="{{ 'action.view' | translate }}" class="material-icons">
             more_horiz
         </mat-icon>

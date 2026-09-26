@@ -19,7 +19,7 @@
   transform: rotateZ(180deg);
 }
 
-.tb-menu-toggle-list.ng-hide {
+.tb-menu-toggle-list:is(.ng-hide, [hidden]) {
   max-height: 0;
 }
 

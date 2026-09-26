@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, forwardRef, inject, model, untracked, viewChild } from '@angular/core';
+import { Component, OnInit, effect, forwardRef, inject, model, untracked, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
@@ -23,6 +23,7 @@ import { TbAlarmRowDirective } from '../tb-alarm-row/tb-alarm-row.directive';
  * page is fetched when the scroll reaches the end of what is loaded.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-alarm-table',
   standalone: true,
   imports: [

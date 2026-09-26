@@ -1,4 +1,4 @@
-import { Component, Type, inject } from '@angular/core';
+import { Component, Type, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,6 +30,7 @@ import { AddAssetDialogComponent } from './add-asset-dialog.component';
  * (template src/app/asset/assets.tpl.html): the tenant's / a customer's assets in tb-grid.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'asset',
   standalone: true,
   imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbAssetDirective, TbAttributeTableDirective, TbAlarmTableDirective, TbEventTableDirective, TbRelationTableDirective, TbAuditLogTableDirective],

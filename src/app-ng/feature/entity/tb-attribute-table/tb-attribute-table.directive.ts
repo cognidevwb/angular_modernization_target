@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, effect, forwardRef, inject, input } from '@angular/core';
+import { Component, DestroyRef, ElementRef, effect, forwardRef, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -40,6 +40,7 @@ import { EditAttributeValueDialogComponent, EditAttributeValueDialogData } from 
  * the host attributes (`attr.entity-type="…"`) are still read when the inputs are not bound.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-attribute-table',
   standalone: true,
   imports: [

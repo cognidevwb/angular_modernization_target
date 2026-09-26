@@ -32,8 +32,8 @@
                   </button>
                 }
                 <mat-date-range-input [rangePicker]="rangePicker" style="display: none;">
-                    <input matStartDate [(ngModel)]="pickStart">
-                    <input matEndDate [(ngModel)]="pickEnd" (dateChange)="onRangePicked()">
+                    <input name="pickStart" matStartDate [(ngModel)]="pickStart">
+                    <input name="pickEnd" matEndDate [(ngModel)]="pickEnd" (dateChange)="onRangePicked()">
                 </mat-date-range-input>
                 <mat-date-range-picker #rangePicker (opened)="onPickerOpened()">
                     @if (!settings?.autoConfirm) {
@@ -55,7 +55,7 @@
     <div class="drn__element navigation" [hidden]="settings?.hideInterval">
         <mat-form-field class="md-block" flex-gt-sm>
             <mat-label [hidden]="settings?.hideLabels">{{ 'widgets.date-range-navigator.localizationMap.Interval' | translate }}</mat-label>
-            <mat-select [(ngModel)]="selectedDateInterval" (ngModelChange)="changeInterval()" aria-label="Pick date interval">
+            <mat-select name="selectedDateInterval" [(ngModel)]="selectedDateInterval" (ngModelChange)="changeInterval()" aria-label="Pick date interval">
                 @if (customInterval) {
                   <mat-option [value]="customInterval?.ts">{{'widgets.date-range-navigator.localizationMap.' + customInterval?.label | translate}}</mat-option>
                 }
@@ -75,7 +75,7 @@
         </button>
         <mat-form-field class="md-block" flex-gt-sm>
             <mat-label [hidden]="settings?.hideLabels">{{ 'widgets.date-range-navigator.localizationMap.Step size' | translate }}</mat-label>
-            <mat-select [(ngModel)]="selectedStepSize" aria-label="Pick date interval">
+            <mat-select name="selectedStepSize" [(ngModel)]="selectedStepSize" aria-label="Pick date interval">
                 @for (dateKey of __keys(datesMap); track dateKey) {
                   @let dateValue = (datesMap)[dateKey];
                   <mat-option [value]="dateValue?.ts">

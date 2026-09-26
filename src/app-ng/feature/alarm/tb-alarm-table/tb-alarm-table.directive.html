@@ -19,7 +19,7 @@
     <section layout="row">
         <mat-form-field class="md-block" style="width: 200px;">
             <mat-label>{{ 'alarm.alarm-status' | translate }}</mat-label>
-            <mat-select [ngModel]="alarmSearchStatus" (ngModelChange)="onAlarmSearchStatusChange($event)" [disabled]="rootScope.loading">
+            <mat-select name="alarmSearchStatus" [ngModel]="alarmSearchStatus" (ngModelChange)="onAlarmSearchStatusChange($event)" [disabled]="rootScope.loading">
                 @for (searchStatus of alarmSearchStatuses; track searchStatus) {
                 <mat-option [value]="searchStatus">
                     {{ ('alarm.search-status.' + searchStatus) | translate }}
@@ -27,7 +27,7 @@
                 }
             </mat-select>
         </mat-form-field>
-        <tb-timewindow flex [ngModel]="timewindow" (ngModelChange)="onTimewindowChange($event)" history-only [asButton]="true"></tb-timewindow>
+        <tb-timewindow name="timewindow" flex [ngModel]="timewindow" (ngModelChange)="onTimewindowChange($event)" history-only [asButton]="true"></tb-timewindow>
         <button mat-icon-button type="button" [disabled]="rootScope.loading" (click)="reload()"
                 matTooltip="{{ 'action.refresh' | translate }}" matTooltipPosition="above">
             <mat-icon>refresh</mat-icon>

@@ -18,7 +18,7 @@
 -->
 <mat-form-field class="tb-queue-autocomplete">
     <mat-label>{{'queue.name' | translate}}</mat-label>
-    <input matInput [required]="tbRequired()" [disabled]="disabled()" [(ngModel)]="queue" [matAutocomplete]="auto" [placeholder]="'queue.select_name' | translate" (blur)="queue = queueSearchText">
+    <input name="queue" matInput [required]="tbRequired()" [disabled]="disabled()" [(ngModel)]="queue" [matAutocomplete]="auto" [placeholder]="'queue.select_name' | translate" (blur)="queue = queueSearchText">
     <mat-autocomplete #auto="matAutocomplete">
         <mat-option *ngFor="let item of queues" [value]="item">
             <div class="tb-queue-item">

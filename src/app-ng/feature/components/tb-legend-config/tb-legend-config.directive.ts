@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, Injector, model } from '@angular/core';
+import { Component, ElementRef, inject, Injector, model, ChangeDetectionStrategy } from '@angular/core';
 import { Overlay } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,7 @@ import { mdPanelPlacement, openMdPanel } from '../md-panel/md-panel';
  * `{ direction, position, showMin, showMax, showAvg, showTotal }`; the button opens the legend config panel.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-legend-config',
   standalone: true,
   imports: [MatButtonModule, MatIconModule, TranslatePipe],

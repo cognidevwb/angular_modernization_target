@@ -1,6 +1,7 @@
-import { Component, DestroyRef, effect, ElementRef, inject, Injector, input, model, untracked } from '@angular/core';
+import { Component, DestroyRef, effect, ElementRef, inject, Injector, input, model, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { DatePipe } from '@angular/common';
+import { MilliSecondsToTimeStringPipe } from '../pipes/milli-seconds-to-time-string.pipe';
 import { Overlay } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,6 +26,7 @@ const GT_MD = '(min-width: 1280px)';
  * `direction`, `tooltip-direction`.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-timewindow',
   standalone: true,
   imports: [MatButtonModule, MatIconModule, MatTooltipModule, TranslatePipe],
@@ -57,7 +59,7 @@ const GT_MD = '(min-width: 1280px)';
       </section>
     }
   `,
-  providers: [DatePipe, ...ngModelProviders(TbTimewindowDirective)],
+  providers: [DatePipe, MilliSecondsToTimeStringPipe, ...ngModelProviders(TbTimewindowDirective)],
 })
 export class TbTimewindowDirective extends NgModelController {
   readonly asButton = model<any>(undefined, { alias: 'asButton' });
@@ -72,6 +74,7 @@ export class TbTimewindowDirective extends NgModelController {
   protected readonly timeService = inject(TimeService);
   protected readonly element = inject(ElementRef);
   protected readonly datePipe = inject(DatePipe);
+  private readonly milliSecondsToTimeStringPipe = inject(MilliSecondsToTimeStringPipe);
 
   model: any;
   timewindowDisabled: any;
@@ -248,30 +251,7 @@ export class TbTimewindowDirective extends NgModelController {
 
   /** The legacy `$filter('milliSecondsToTimeString')`. */
   protected milliSecondsToTimeString(milliSeconds: number): string {
-    const seconds = Math.floor((milliSeconds / 1000) % 60);
-    const minutes = Math.floor((milliSeconds / 60000) % 60);
-    const hours = Math.floor((milliSeconds / 3600000) % 24);
-    const days = Math.floor(milliSeconds / 86400000);
-    let timeStr: string;
-    if (days > 0) {
-      timeStr = days + ' ' + this.translate.instant(days > 1 ? 'timewindow.days' : 'timewindow.day');
-      if (hours > 0) {
-        timeStr += ' ' + hours + ' ' + this.translate.instant(hours > 1 ? 'timewindow.hours' : 'timewindow.hour');
-      }
-    } else if (hours > 0) {
-      timeStr = hours + ' ' + this.translate.instant(hours > 1 ? 'timewindow.hours' : 'timewindow.hour');
-      if (minutes > 0) {
-        timeStr += ' ' + minutes + ' ' + this.translate.instant(minutes > 1 ? 'timewindow.minutes' : 'timewindow.minute');
-      }
-    } else if (minutes > 0) {
-      timeStr = minutes + ' ' + this.translate.instant(minutes > 1 ? 'timewindow.minutes' : 'timewindow.minute');
-      if (seconds > 0) {
-        timeStr += ' ' + seconds + ' ' + this.translate.instant(seconds > 1 ? 'timewindow.seconds' : 'timewindow.second');
-      }
-    } else {
-      timeStr = seconds + ' ' + this.translate.instant(seconds > 1 ? 'timewindow.seconds' : 'timewindow.second');
-    }
-    return timeStr;
+    return this.milliSecondsToTimeStringPipe.transform(milliSeconds);
   }
 
   isTimewindowDisabled(): boolean {

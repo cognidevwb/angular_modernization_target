@@ -1,3 +1,4 @@
+import { httpOptions } from '../../../core/http-options';
 import { inject, Injectable } from '@angular/core';
 import { AssetService } from './asset.service';
 import { AttributeService } from './attribute.service';
@@ -945,7 +946,7 @@ export class EntityService {
     } else if (type === types.dataKeyType.attribute) {
         url += 'attributes';
     }
-    this.http.get(url, config).toPromise().then(function success(response?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
         var result: any = [];
         if (response) {
             if (query) {

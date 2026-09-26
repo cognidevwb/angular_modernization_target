@@ -1,4 +1,4 @@
-import { Component, DOCUMENT, effect, inject, model, untracked, ViewEncapsulation } from '@angular/core';
+import { Component, DOCUMENT, effect, inject, model, untracked, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import tinycolor from 'tinycolor2';
@@ -25,6 +25,7 @@ interface JsonFormGroup {
  * the model is validated against the schema and `formControl` gets `$setDirty` / `$setValidity('jsonForm', …)`.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-json-form',
   standalone: true,
   imports: [NgTemplateOutlet, TbExpandFullscreenDirective, TbJsonFormFieldComponent],

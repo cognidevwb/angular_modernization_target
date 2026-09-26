@@ -1,3 +1,4 @@
+import { httpOptions } from '../../../core/http-options';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { bindMethods } from '../../../bind-methods';
@@ -22,7 +23,7 @@ export class QueueService {
     let deferred: any = $q.defer();
     let url: any = '/api/tenant/queues?serviceType=' + serviceType;
 
-    this.http.get(url, config).toPromise().then(function success(data?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(data?: any) {
         deferred.resolve(data);
     }, function fail() {
         deferred.reject();

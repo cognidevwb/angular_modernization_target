@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 .extension-form {
-  li > .md-button {
+  li > :is(.md-button, .mat-mdc-button-base) {
     margin: 0;
     color: rgba(0, 0, 0, .7);
   }
@@ -44,7 +44,7 @@
 }
 
 .extension-form.extension-mqtt {
-  md-checkbox{
+  mat-checkbox{
     margin-left: 10px;
   }
 }

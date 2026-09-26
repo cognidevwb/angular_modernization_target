@@ -48,8 +48,7 @@
                     <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
                 </button>
                 <mat-form-field flex>
-                    <mat-label>&nbsp;</mat-label>
-                    <input matInput [ngModel]="query.search" (ngModelChange)="onSearchChange($event)" class="searchInput" placeholder="{{ 'common.enter-search' | translate }}">
+                    <input name="search" matInput [ngModel]="query.search" (ngModelChange)="onSearchChange($event)" class="searchInput" placeholder="{{ 'common.enter-search' | translate }}">
                 </mat-form-field>
                 <button mat-icon-button attr.aria-label="{{ 'action.back' | translate }}" (click)="exitFilterMode()" matTooltip="{{ 'action.close' | translate }}" [matTooltipPosition]="ctx()?.dashboard?.isWidgetExpanded ? 'below' : 'above'">
                     <mat-icon attr.aria-label="{{ 'action.close' | translate }}" class="material-icons">close</mat-icon>

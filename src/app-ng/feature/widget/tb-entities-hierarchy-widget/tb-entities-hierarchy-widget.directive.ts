@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, forwardRef, inject, model, untracked } from '@angular/core';
+import { Component, DestroyRef, effect, forwardRef, inject, model, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { EntityRelationService } from '../../api/services/entity-relation.service';
 import { EntityService } from '../../api/services/entity.service';
@@ -25,6 +25,7 @@ import { onWidgetEvent } from '../../components/widget/widget-scope';
  * the widget type's script broadcasts `entities-hierarchy-data-updated` on `ctx.$scope` when data arrives.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entities-hierarchy-widget',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, FormsModule, forwardRef(() => TbNavTreeDirective)],

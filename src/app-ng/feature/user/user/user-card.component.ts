@@ -1,10 +1,11 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 /**
  * The card body of a user: first and last name.
  * Rendered by tb-grid for each item (legacy card template src/app/user/user-card.tpl.html).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'user-card',
   standalone: true,
   imports: [],

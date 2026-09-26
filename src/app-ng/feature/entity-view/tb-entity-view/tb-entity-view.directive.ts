@@ -1,4 +1,4 @@
-import { Component, ElementRef, effect, inject, model, output } from '@angular/core';
+import { Component, ElementRef, effect, inject, model, output, ChangeDetectionStrategy } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
@@ -33,6 +33,7 @@ const SEMICOLON = 186;
  * keeping the legacy clamping (start ≤ end).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entity-view',
   standalone: true,
   imports: [TranslatePipe, NgClass, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, MatExpansionModule, MatChipsModule, MatAutocompleteModule, FormsModule, TbEntitySubtypeAutocompleteDirective, TbEntitySelectDirective],

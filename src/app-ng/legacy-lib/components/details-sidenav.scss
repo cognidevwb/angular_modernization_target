@@ -40,7 +40,7 @@
   opacity: .8;
 }
 
-md-sidenav.tb-sidenav-details {
+.tb-sidenav-details {
   .md-toolbar-tools {
     height: 100%;
     min-height: 100px;
@@ -59,7 +59,7 @@ md-sidenav.tb-sidenav-details {
   }
 
   tb-dashboard {
-    md-content {
+    .md-content {
       background-color: $primary-hue-3;
     }
   }

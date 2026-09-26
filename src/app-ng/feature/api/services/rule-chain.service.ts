@@ -1,3 +1,4 @@
+import { httpOptions } from '../../../core/http-options';
 import { inject, Injectable } from '@angular/core';
 import { ComponentDescriptorService } from './component-descriptor.service';
 import { HttpClient } from '@angular/common/http';
@@ -41,7 +42,7 @@ export class RuleChainService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-this.http.get(url, config).toPromise().then(function success(response?: any) {
+this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
     deferred.resolve(response);
 }, function fail() {
     deferred.reject();
@@ -52,7 +53,7 @@ this.http.get(url, config).toPromise().then(function success(response?: any) {
   getRuleChain(ruleChainId?: any, config?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/ruleChain/' + ruleChainId;
-this.http.get(url, config).toPromise().then(function success(response?: any) {
+this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
     deferred.resolve(response);
 }, function fail() {
     deferred.reject();
@@ -96,7 +97,7 @@ this.http.delete(url).toPromise().then(function success() {
   getRuleChainMetaData(ruleChainId?: any, config?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/ruleChain/' + ruleChainId + '/metadata';
-this.http.get(url, config).toPromise().then(function success(response?: any) {
+this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
     deferred.resolve(response);
 }, function fail() {
     deferred.reject();

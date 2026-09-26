@@ -47,7 +47,7 @@ div.tb-shrinked {
 }
 
 tb-details-sidenav.tb-widget-details-sidenav {
-  md-sidenav.tb-sidenav-details {
+  mat-sidenav.tb-sidenav-details {
     @media (min-width: $layout-breakpoint-sm) {
       width: 85% !important;
     }
@@ -118,7 +118,7 @@ section.tb-dashboard-toolbar {
     }
 
     #tb-right-layout {
-      md-sidenav {
+      mat-sidenav {
         z-index: 1;
       }
     }

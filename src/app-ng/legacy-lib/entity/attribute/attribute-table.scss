@@ -18,9 +18,9 @@
 $md-light: rgba(255, 255, 255, 100%) !default;
 $md-edit-icon-fill: #757575 !default;
 
-md-toolbar.md-table-toolbar.alternate {
+mat-toolbar.md-table-toolbar.alternate {
   .md-toolbar-tools {
-    md-icon {
+    mat-icon {
       color: $md-light;
     }
   }

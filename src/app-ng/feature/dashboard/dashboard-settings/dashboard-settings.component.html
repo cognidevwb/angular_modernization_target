@@ -17,7 +17,7 @@
 
 -->
 <div attr.aria-label="{{ 'dashboard.settings' | translate }}" class="md-dialog">
-    <form name="theForm" (ngSubmit)="save()">
+    <form name="theForm" #theFormRef="ngForm" (ngSubmit)="save()">
         <mat-toolbar>
             <div class="md-toolbar-tools">
                 <h2>{{ (settings ? 'dashboard.settings' : 'layout.settings') | translate }}</h2>
@@ -35,7 +35,7 @@
                     <div [hidden]="!(settings)">
                        <mat-form-field class="md-block">
                             <mat-label>{{ 'dashboard.state-controller' | translate }}</mat-label>
-                            <mat-select attr.aria-label="{{ 'dashboard.state-controller' | translate }}" [(ngModel)]="settings.stateControllerId" (ngModelChange)="stateControllerIdChanged()">
+                            <mat-select name="stateControllerId" attr.aria-label="{{ 'dashboard.state-controller' | translate }}" [(ngModel)]="settings.stateControllerId" (ngModelChange)="stateControllerIdChanged()">
                                 @for (stateControllerId of __keys(stateControllers); track stateControllerId) {
                                   @let stateController = (stateControllers)[stateControllerId];
                                   <mat-option [value]="stateControllerId">
@@ -45,73 +45,73 @@
                             </mat-select>
                         </mat-form-field>
                         <div layout="row" layout-align="start center">
-                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.toolbar-always-open' | translate }}" [(ngModel)]="settings.toolbarAlwaysOpen">{{ 'dashboard.toolbar-always-open' | translate }}
+                            <mat-checkbox name="toolbarAlwaysOpen" flex attr.aria-label="{{ 'dashboard.toolbar-always-open' | translate }}" [(ngModel)]="settings.toolbarAlwaysOpen">{{ 'dashboard.toolbar-always-open' | translate }}
                             </mat-checkbox>
-                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.display-title' | translate }}" [(ngModel)]="settings.showTitle">{{ 'dashboard.display-title' | translate }}
+                            <mat-checkbox name="showTitle" flex attr.aria-label="{{ 'dashboard.display-title' | translate }}" [(ngModel)]="settings.showTitle">{{ 'dashboard.display-title' | translate }}
                             </mat-checkbox>
-                            <div flex [required]="false" md-color-picker [(ngModel)]="settings.titleColor" attr.label="{{ 'dashboard.title-color' | translate }}" icon="format_color_fill" default="rgba(0, 0, 0, 0.870588)" md-color-clear-button="false" open-on-input="true" md-color-generic-palette="false" md-color-history="false"></div>
+                            <div name="titleColor" flex [required]="false" md-color-picker [(ngModel)]="settings.titleColor" label="{{ 'dashboard.title-color' | translate }}" icon="format_color_fill" default="rgba(0, 0, 0, 0.870588)" md-color-clear-button="false" open-on-input="true" md-color-generic-palette="false" md-color-history="false"></div>
                         </div>
                         <div layout="row" layout-align="start center">
-                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.display-dashboards-selection' | translate }}" [(ngModel)]="settings.showDashboardsSelect">{{ 'dashboard.display-dashboards-selection' | translate }}
+                            <mat-checkbox name="showDashboardsSelect" flex attr.aria-label="{{ 'dashboard.display-dashboards-selection' | translate }}" [(ngModel)]="settings.showDashboardsSelect">{{ 'dashboard.display-dashboards-selection' | translate }}
                             </mat-checkbox>
-                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.display-entities-selection' | translate }}" [(ngModel)]="settings.showEntitiesSelect">{{ 'dashboard.display-entities-selection' | translate }}
+                            <mat-checkbox name="showEntitiesSelect" flex attr.aria-label="{{ 'dashboard.display-entities-selection' | translate }}" [(ngModel)]="settings.showEntitiesSelect">{{ 'dashboard.display-entities-selection' | translate }}
                             </mat-checkbox>
-                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.display-dashboard-timewindow' | translate }}" [(ngModel)]="settings.showDashboardTimewindow">{{ 'dashboard.display-dashboard-timewindow' | translate }}
+                            <mat-checkbox name="showDashboardTimewindow" flex attr.aria-label="{{ 'dashboard.display-dashboard-timewindow' | translate }}" [(ngModel)]="settings.showDashboardTimewindow">{{ 'dashboard.display-dashboard-timewindow' | translate }}
                             </mat-checkbox>
-                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.display-dashboard-export' | translate }}" [(ngModel)]="settings.showDashboardExport">{{ 'dashboard.display-dashboard-export' | translate }}
+                            <mat-checkbox name="showDashboardExport" flex attr.aria-label="{{ 'dashboard.display-dashboard-export' | translate }}" [(ngModel)]="settings.showDashboardExport">{{ 'dashboard.display-dashboard-export' | translate }}
                             </mat-checkbox>
                         </div>
                     </div>
                     <div [hidden]="!(gridSettings)">
-                        <div flex [required]="false" md-color-picker [(ngModel)]="gridSettings.color" attr.label="{{ 'layout.color' | translate }}" icon="format_color_fill" default="rgba(0, 0, 0, 0.870588)" md-color-clear-button="false" open-on-input="true" md-color-generic-palette="false" md-color-history="false"></div>
+                        <div name="color" flex [required]="false" md-color-picker [(ngModel)]="gridSettings.color" label="{{ 'layout.color' | translate }}" icon="format_color_fill" default="rgba(0, 0, 0, 0.870588)" md-color-clear-button="false" open-on-input="true" md-color-generic-palette="false" md-color-history="false"></div>
                         <mat-form-field class="md-block">
                             <mat-label>{{ 'dashboard.columns-count' | translate }}</mat-label>
                             <input matInput [required]="gridSettings" type="number" step="any" name="columns" [(ngModel)]="gridSettings.columns" min="10" max="1000">
-                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                            <div ng-messages="theForm?.columns?.$error" multiple md-auto-hide="false">
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="required">{{ 'dashboard.columns-count-required' | translate }}</div>
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="min">{{ 'dashboard.min-columns-count-message' | translate }}</div>
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="max">dashboard.max-columns-count-message</div>
-                            </div>
+                            @if ((theForm?.columns?.$error)?.['required']) {
+                              <mat-error>{{ 'dashboard.columns-count-required' | translate }}</mat-error>
+                            }
+                            @if ((theForm?.columns?.$error)?.['min']) {
+                              <mat-error>{{ 'dashboard.min-columns-count-message' | translate }}</mat-error>
+                            }
+                            @if ((theForm?.columns?.$error)?.['max']) {
+                              <mat-error>{{ 'dashboard.max-columns-count-message' | translate }}</mat-error>
+                            }
                         </mat-form-field>
                         <small>{{ 'dashboard.widgets-margins' | translate }}</small>
                         <div flex layout="row">
                             <mat-form-field flex class="md-block">
                                 <mat-label>{{ 'dashboard.horizontal-margin' | translate }}</mat-label>
                                 <input matInput [required]="gridSettings" type="number" step="any" name="hMargin" [(ngModel)]="hMargin" min="0" max="50">
-                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                <div ng-messages="theForm?.hMargin?.$error" multiple md-auto-hide="false">
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="required">{{ 'dashboard.horizontal-margin-required' | translate }}</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="min">{{ 'dashboard.min-horizontal-margin-message' | translate }}</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="max">{{ 'dashboard.max-horizontal-margin-message' | translate }}</div>
-                                </div>
+                                @if ((theForm?.hMargin?.$error)?.['required']) {
+                                  <mat-error>{{ 'dashboard.horizontal-margin-required' | translate }}</mat-error>
+                                }
+                                @if ((theForm?.hMargin?.$error)?.['min']) {
+                                  <mat-error>{{ 'dashboard.min-horizontal-margin-message' | translate }}</mat-error>
+                                }
+                                @if ((theForm?.hMargin?.$error)?.['max']) {
+                                  <mat-error>{{ 'dashboard.max-horizontal-margin-message' | translate }}</mat-error>
+                                }
                             </mat-form-field>
                             <mat-form-field flex class="md-block">
                                 <mat-label>{{ 'dashboard.vertical-margin' | translate }}</mat-label>
                                 <input matInput [required]="gridSettings" type="number" step="any" name="vMargin" [(ngModel)]="vMargin" min="0" max="50">
-                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                <div ng-messages="theForm?.vMargin?.$error" multiple md-auto-hide="false">
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="required">{{ 'dashboard.vertical-margin-required' | translate }}</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="min">{{ 'dashboard.min-vertical-margin-message' | translate }}</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="max">{{ 'dashboard.max-vertical-margin-message' | translate }}</div>
-                                </div>
+                                @if ((theForm?.vMargin?.$error)?.['required']) {
+                                  <mat-error>{{ 'dashboard.vertical-margin-required' | translate }}</mat-error>
+                                }
+                                @if ((theForm?.vMargin?.$error)?.['min']) {
+                                  <mat-error>{{ 'dashboard.min-vertical-margin-message' | translate }}</mat-error>
+                                }
+                                @if ((theForm?.vMargin?.$error)?.['max']) {
+                                  <mat-error>{{ 'dashboard.max-vertical-margin-message' | translate }}</mat-error>
+                                }
                             </mat-form-field>
                         </div>
-                        <mat-checkbox flex attr.aria-label="{{ 'dashboard.autofill-height' | translate }}" [(ngModel)]="gridSettings.autoFillHeight">{{ 'dashboard.autofill-height' | translate }}
+                        <mat-checkbox name="autoFillHeight" flex attr.aria-label="{{ 'dashboard.autofill-height' | translate }}" [(ngModel)]="gridSettings.autoFillHeight">{{ 'dashboard.autofill-height' | translate }}
                         </mat-checkbox>
-                        <div flex [required]="false" md-color-picker [(ngModel)]="gridSettings.backgroundColor" attr.label="{{ 'dashboard.background-color' | translate }}" icon="format_color_fill" default="rgba(0,0,0,0)" md-color-clear-button="false" open-on-input="true" md-color-generic-palette="false" md-color-history="false"></div>
+                        <div name="backgroundColor" flex [required]="false" md-color-picker [(ngModel)]="gridSettings.backgroundColor" label="{{ 'dashboard.background-color' | translate }}" icon="format_color_fill" default="rgba(0,0,0,0)" md-color-clear-button="false" open-on-input="true" md-color-generic-palette="false" md-color-history="false"></div>
                         <div class="tb-container">
                             <label class="tb-label">{{ 'dashboard.background-image' | translate }}</label>
-                            <div flow-init="{singleFile:true}" flow-file-added="vm.imageAdded( $file )" class="tb-image-select-container">
+                            <div class="tb-image-select-container">
                                 <div class="tb-image-preview-container">
                                     <div [hidden]="!(!gridSettings?.backgroundImageUrl)">{{ 'dashboard.no-image' | translate }}</div>
                                     <img [hidden]="!(gridSettings?.backgroundImageUrl)" class="tb-image-preview" attr.src="{{gridSettings?.backgroundImageUrl}}">
@@ -124,15 +124,15 @@
                                         </mat-icon>
                                     </button>
                                 </div>
-                                <div class="alert tb-flow-drop" flow-drop>
+                                <div class="alert tb-flow-drop" (dragover)="$event.preventDefault()" (drop)="onImageDropped($event)">
                                     <label for="select">{{ 'dashboard.drop-image' | translate }}</label>
-                                    <input class="file-input" flow-btn flow-attrs="{accept:'image/*'}" id="select">
+                                    <input class="file-input" type="file" accept="image/*" id="select" (change)="onImageSelected($event)">
                                 </div>
                             </div>
                         </div>
                         <mat-form-field class="md-block">
                             <mat-label>{{ 'dashboard.background-size-mode' | translate }}</mat-label>
-                            <mat-select [(ngModel)]="gridSettings.backgroundSizeMode" placeholder="{{ 'dashboard.background-size-mode' | translate }}">
+                            <mat-select name="backgroundSizeMode" [(ngModel)]="gridSettings.backgroundSizeMode" placeholder="{{ 'dashboard.background-size-mode' | translate }}">
                                 <mat-option value="100%">Fit width</mat-option>
                                 <mat-option value="auto 100%">Fit height</mat-option>
                                 <mat-option value="cover">Cover</mat-option>
@@ -142,20 +142,20 @@
                         </mat-form-field>
                         <small>{{ 'dashboard.mobile-layout' | translate }}</small>
                         <div flex layout="row" layout-align="start center">
-                            <mat-checkbox flex attr.aria-label="{{ 'dashboard.autofill-height' | translate }}" [(ngModel)]="gridSettings.mobileAutoFillHeight">{{ 'dashboard.autofill-height' | translate }}
+                            <mat-checkbox name="mobileAutoFillHeight" flex attr.aria-label="{{ 'dashboard.autofill-height' | translate }}" [(ngModel)]="gridSettings.mobileAutoFillHeight">{{ 'dashboard.autofill-height' | translate }}
                             </mat-checkbox>
                             <mat-form-field flex class="md-block">
                                 <mat-label>{{ 'dashboard.mobile-row-height' | translate }}</mat-label>
                                 <input matInput [required]="gridSettings" type="number" step="any" name="mobileRowHeight" [(ngModel)]="gridSettings.mobileRowHeight" min="5" max="200">
-                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                <div ng-messages="theForm?.mobileRowHeight?.$error" multiple md-auto-hide="false">
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="required">{{ 'dashboard.mobile-row-height-required' | translate }}</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="min">{{ 'dashboard.min-mobile-row-height-message' | translate }}</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="max">{{ 'dashboard.max-mobile-row-height-message' | translate }}</div>
-                                </div>
+                                @if ((theForm?.mobileRowHeight?.$error)?.['required']) {
+                                  <mat-error>{{ 'dashboard.mobile-row-height-required' | translate }}</mat-error>
+                                }
+                                @if ((theForm?.mobileRowHeight?.$error)?.['min']) {
+                                  <mat-error>{{ 'dashboard.min-mobile-row-height-message' | translate }}</mat-error>
+                                }
+                                @if ((theForm?.mobileRowHeight?.$error)?.['max']) {
+                                  <mat-error>{{ 'dashboard.max-mobile-row-height-message' | translate }}</mat-error>
+                                }
                             </mat-form-field>
                         </div>
                     </div>

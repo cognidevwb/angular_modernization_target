@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, inject, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, inject, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,6 +29,7 @@ export interface RelationDialogData {
  * relation-dialog.tpl.html. Closes with `true` once the relation is saved.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-relation-dialog',
   standalone: true,
   imports: [TranslatePipe, FormsModule, MatDialogModule, MatButtonModule, MatIconModule, MatProgressBarModule, MatToolbarModule, TbRelationTypeAutocompleteDirective, TbEntitySelectDirective],

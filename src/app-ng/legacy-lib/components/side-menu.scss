@@ -15,7 +15,7 @@
  */
 @import "compass-sass-mixins/lib/compass";
 
-.tb-side-menu .md-button.tb-active {
+.tb-side-menu :is(.md-button, .mat-mdc-button-base).tb-active {
   font-weight: 500;
   background-color: rgba(255, 255, 255, .15);
 }
@@ -34,7 +34,7 @@
   text-rendering: optimizeLegibility;
 }
 
-.tb-side-menu .tb-menu-toggle-list .md-button {
+.tb-side-menu .tb-menu-toggle-list :is(.md-button, .mat-mdc-button-base) {
   padding: 0 16px 0 32px;
   text-transform: none;
 }
@@ -56,7 +56,7 @@
   transition: transform .3s, ease-in-out;
 }
 
-.tb-side-menu .md-button {
+.tb-side-menu :is(.md-button, .mat-mdc-button-base) {
   display: flex;
   width: 100%;
   max-height: 40px;
@@ -89,7 +89,7 @@
   margin-left: 0;
 }
 
-.tb-side-menu md-icon {
+.tb-side-menu mat-icon {
   margin-right: 8px;
   margin-left: 0;
 }

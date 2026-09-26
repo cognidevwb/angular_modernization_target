@@ -23,6 +23,8 @@ export abstract class NgModelController implements ControlValueAccessor, Validat
   $parsers: Array<(v: any) => any> = [];
   $formatters: Array<(v: any) => any> = [];
   $viewChangeListeners: Array<() => void> = [];
+  /** ngModelController's `$$lastCommittedViewValue`: what the form last wrote in, or the control last sent out. */
+  private lastCommittedViewValue: any;
   private onChange: (v: any) => void = () => {};
   private onTouched: () => void = () => {};
   private onValidatorChange: () => void = () => {};
@@ -30,15 +32,20 @@ export abstract class NgModelController implements ControlValueAccessor, Validat
   /** The form wrote a value in: format it and render it (the legacy `$render`). */
   writeValue(value: any): void {
     this.$modelValue = value;
-    this.$viewValue = this.$formatters.reduceRight((v, f) => f(v), value);
+    this.$viewValue = this.lastCommittedViewValue = this.$formatters.reduceRight((v, f) => f(v), value);
     this.$render();
   }
 
   /** Override: show `$viewValue` in the element. */
   $render(): void {}
 
+  /** As ngModelController's `$commitViewValue`, a value equal to the last committed one changes nothing. */
   $setViewValue(value: any): void {
     this.$viewValue = value;
+    if (value === this.lastCommittedViewValue) {
+      return;
+    }
+    this.lastCommittedViewValue = value;
     const model = this.$parsers.reduce((v, p) => p(v), value);
     this.$modelValue = model;
     this.$dirty = true;

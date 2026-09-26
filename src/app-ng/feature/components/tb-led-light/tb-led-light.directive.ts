@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, input, untracked, viewChild } from '@angular/core';
+import { Component, effect, ElementRef, input, untracked, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import Raphael from 'raphael';
 import tinycolor from 'tinycolor2';
 
@@ -8,6 +8,7 @@ import tinycolor from 'tinycolor2';
  * at `offOpacity` otherwise. The canvas is redrawn when `size` changes, the light when `tbEnabled` does.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-led-light',
   standalone: true,
   template: `<div #canvasContainer id="canvas_container" [style.width.px]="canvasSize()" [style.height.px]="canvasSize()"></div>`,

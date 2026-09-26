@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /**
@@ -6,6 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Rendered by tb-grid for each item (legacy card template src/app/widget/widgets-bundle-card.tpl.html).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'widgets-bundle-card',
   standalone: true,
   imports: [TranslatePipe],

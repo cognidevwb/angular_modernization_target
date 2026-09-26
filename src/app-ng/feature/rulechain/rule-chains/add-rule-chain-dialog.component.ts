@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -12,6 +12,7 @@ import { TbRuleChainDirective } from '../tb-rule-chain/tb-rule-chain.directive';
 
 /** The add dialog of the rulechain grid (legacy src/app/rulechain/add-rulechain.tpl.html with AddItemController). */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'add-rule-chain-dialog',
   standalone: true,
   imports: [FormsModule, MatDialogModule, MatToolbarModule, MatButtonModule, MatIconModule, MatProgressBarModule, TranslatePipe, TbGridHelpButtonComponent, TbRuleChainDirective],

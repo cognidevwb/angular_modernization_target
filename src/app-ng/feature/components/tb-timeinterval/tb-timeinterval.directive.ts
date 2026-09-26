@@ -1,4 +1,4 @@
-import { Component, inject, model, DoCheck } from '@angular/core';
+import { Component, inject, model, DoCheck, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { TimeService } from '../../api/services/time.service';
 import { FormsModule, NgControl } from '@angular/forms';
@@ -17,6 +17,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-timeinterval',
   standalone: true,
   imports: [TranslatePipe, MatSlideToggleModule, MatSelectModule, MatInputModule, MatFormFieldModule, MatCheckboxModule, FormsModule],

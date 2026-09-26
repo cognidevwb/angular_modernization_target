@@ -17,7 +17,7 @@
 
 -->
 <div attr.aria-label="{{ 'layout.manage' | translate }}" class="md-dialog">
-    <form name="theForm" (ngSubmit)="save()">
+    <form name="theForm" #theFormRef="ngForm" (ngSubmit)="save()">
         <mat-toolbar>
             <div class="md-toolbar-tools">
                 <h2>{{ ('layout.manage') | translate }}</h2>
@@ -33,9 +33,9 @@
             <div class="md-dialog-content">
                 <fieldset [disabled]="rootScope?.loading">
                     <div layout="row" layout-align="start center">
-                        <mat-checkbox [disabled]="true" flex attr.aria-label="{{ 'layout.main' | translate }}" [(ngModel)]="displayLayouts.main">{{ 'layout.main' | translate }}
+                        <mat-checkbox name="main" [disabled]="true" flex attr.aria-label="{{ 'layout.main' | translate }}" [(ngModel)]="displayLayouts.main">{{ 'layout.main' | translate }}
                         </mat-checkbox>
-                        <mat-checkbox flex attr.aria-label="{{ 'layout.right' | translate }}" [(ngModel)]="displayLayouts.right">{{ 'layout.right' | translate }}
+                        <mat-checkbox name="right" flex attr.aria-label="{{ 'layout.right' | translate }}" [(ngModel)]="displayLayouts.right">{{ 'layout.right' | translate }}
                         </mat-checkbox>
                     </div>
                     <div layout="row" layout-align="start center">

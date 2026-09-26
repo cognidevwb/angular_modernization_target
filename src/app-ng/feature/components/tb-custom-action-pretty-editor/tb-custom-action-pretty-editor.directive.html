@@ -67,7 +67,7 @@
                             </button>
                             <button mat-icon-button type="button" id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
                         </div>
-                        <div id="css-panel" class="css-panel" [ui-ace]="cssEditorOptions" [(ngModel)]="action.customCss" (ngModelChange)="onActionChanged()"></div>
+                        <div name="customCss" id="css-panel" class="css-panel" [ui-ace]="cssEditorOptions" [(ngModel)]="action.customCss" (ngModelChange)="onActionChanged()"></div>
                     </div>
                 </mat-tab>
                 <mat-tab label="{{ 'widget.html' | translate }}">
@@ -77,11 +77,11 @@
                             </button>
                             <button mat-icon-button type="button" id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
                         </div>
-                        <div id="html-panel" class="html-panel" [ui-ace]="htmlEditorOptions" [(ngModel)]="action.customHtml" (ngModelChange)="onActionChanged()"></div>
+                        <div name="customHtml" id="html-panel" class="html-panel" [ui-ace]="htmlEditorOptions" [(ngModel)]="action.customHtml" (ngModelChange)="onActionChanged()"></div>
                     </div>
                 </mat-tab>
                 <mat-tab label="{{ 'widget.js' | translate }}">
-                    <tb-js-func [(ngModel)]="action.customFunction" (ngModelChange)="onActionChanged()" [functionArgs]="functionArgs" [validationArgs]="[]">
+                    <tb-js-func name="customFunction" [(ngModel)]="action.customFunction" (ngModelChange)="onActionChanged()" [functionArgs]="functionArgs" [validationArgs]="[]">
                     </tb-js-func>
                 </mat-tab>
             </mat-tab-group>
@@ -123,7 +123,7 @@
                                 </button>
                                 <button mat-icon-button type="button" id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
                             </div>
-                            <div id="css-panel" class="css-panel" [ui-ace]="cssEditorOptions" [(ngModel)]="action.customCss" (ngModelChange)="onActionChanged()"></div>
+                            <div name="customCss-2" id="css-panel" class="css-panel" [ui-ace]="cssEditorOptions" [(ngModel)]="action.customCss" (ngModelChange)="onActionChanged()"></div>
                         </div>
                     </mat-tab>
                     <mat-tab label="{{ 'widget.html' | translate }}">
@@ -133,13 +133,13 @@
                                 </button>
                                 <button mat-icon-button type="button" id="expand-button" attr.aria-label="{{ 'fullscreen.fullscreen' | translate }}" class="tb-md-32"></button>
                             </div>
-                            <div id="html-panel" class="html-panel" [ui-ace]="htmlEditorOptions" [(ngModel)]="action.customHtml" (ngModelChange)="onActionChanged()"></div>
+                            <div name="customHtml-2" id="html-panel" class="html-panel" [ui-ace]="htmlEditorOptions" [(ngModel)]="action.customHtml" (ngModelChange)="onActionChanged()"></div>
                         </div>
                     </mat-tab>
                 </mat-tab-group>
             </div>
             <div id="right-panel" class="tb-split tb-content">
-                <tb-js-func [(ngModel)]="action.customFunction" (ngModelChange)="onActionChanged()" [functionArgs]="functionArgs" [validationArgs]="[]" [fillHeight]="true">
+                <tb-js-func name="customFunction-2" [(ngModel)]="action.customFunction" (ngModelChange)="onActionChanged()" [functionArgs]="functionArgs" [validationArgs]="[]" [fillHeight]="true">
                 </tb-js-func>
             </div>
         </div>

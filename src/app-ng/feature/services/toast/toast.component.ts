@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, inject } from '@angular/core';
+import { Component, ViewEncapsulation, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -15,6 +15,7 @@ export interface ToastData {
  * and a Close button that hides the toast.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'toast',
   standalone: true,
   imports: [TranslatePipe, MatButtonModule],

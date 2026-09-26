@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/audit/audit-log-header.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/audit/audit-log-header.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -17,13 +17,13 @@
 
 -->
 <div class="tb-cell" flex="30">{{ 'audit-log.timestamp' | translate }}</div>
-@if (auditLogMode != types?.auditLogMode?.entity) {
+@if (auditLogMode() != types?.auditLogMode?.entity) {
   <div class="tb-cell" flex="10">{{ 'audit-log.entity-type' | translate }}</div>
 }
-@if (auditLogMode != types?.auditLogMode?.entity) {
+@if (auditLogMode() != types?.auditLogMode?.entity) {
   <div class="tb-cell" flex="30">{{ 'audit-log.entity-name' | translate }}</div>
 }
-@if (auditLogMode != types?.auditLogMode?.user) {
+@if (auditLogMode() != types?.auditLogMode?.user) {
   <div class="tb-cell" flex="30">{{ 'audit-log.user' | translate }}</div>
 }
 <div class="tb-cell" flex="15">{{ 'audit-log.type' | translate }}</div>

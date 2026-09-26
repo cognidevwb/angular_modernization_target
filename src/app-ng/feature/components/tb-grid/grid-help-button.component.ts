@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -10,6 +10,7 @@ import { helpLinks } from '../../help/constants/help-links';
  * opens the help page of `helpId` (a key of helpLinks.linksMap, or a URL) in a new window.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-grid-help',
   standalone: true,
   imports: [MatButtonModule, MatIconModule, MatTooltipModule, TranslatePipe],

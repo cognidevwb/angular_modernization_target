@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, inject, input, model } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,6 +18,7 @@ import { fixAceEditor } from '../ui-ace/ace-editor-fix';
  * bound through `[(ngModel)]` (the object), with tidy/minify and a fullscreen toggle.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-json-object-edit',
   standalone: true,
   imports: [NgClass, FormsModule, MatButtonModule, TranslatePipe, TbExpandFullscreenDirective, UiAceDirective],

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -10,6 +10,7 @@ import { MD_PANEL_DATA } from '../md-panel/md-panel';
  * with its template dashboard-select-panel.tpl.html. Opened by tb-dashboard-select as an `$mdPanel`.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'dashboard-select-panel',
   standalone: true,
   imports: [FormsModule, MatFormFieldModule, MatSelectModule, TranslatePipe],

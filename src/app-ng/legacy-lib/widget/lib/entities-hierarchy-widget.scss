@@ -15,7 +15,7 @@
  */
 .tb-has-timewindow {
   .tb-entities-hierarchy {
-    md-toolbar {
+    mat-toolbar {
       min-height: 60px;
       max-height: 60px;
     }
@@ -23,7 +23,7 @@
 }
 
 .tb-entities-hierarchy {
-  md-toolbar {
+  mat-toolbar {
     min-height: 39px;
     max-height: 39px;
   }
@@ -48,7 +48,7 @@
             background-size: 18px 18px;
           }
 
-          md-icon.node-icon {
+          mat-icon.node-icon {
             width: 22px;
             min-width: 22px;
             height: 22px;
@@ -89,7 +89,7 @@
               background-size: 24px 24px;
             }
 
-            md-icon.node-icon {
+            mat-icon.node-icon {
               width: 40px;
               min-width: 40px;
               height: 40px;

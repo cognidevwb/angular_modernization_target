@@ -24,7 +24,7 @@
               <div flex layout="row">
                 <mat-form-field flex>
                     <mat-label>{{entityAliasInfo?.alias}}</mat-label>
-                    <mat-select [(ngModel)]="entityAliasInfo.selectedId" (ngModelChange)="currentAliasEntityChanged(aliasId, entityAliasInfo.selectedId)">
+                    <mat-select name="selectedId" [(ngModel)]="entityAliasInfo.selectedId" (ngModelChange)="currentAliasEntityChanged(aliasId, entityAliasInfo.selectedId)">
                         @for (resolvedEntity of entityAliasInfo?.resolvedEntities; track $index) {
                           <mat-option [value]="resolvedEntity?.id">
                             {{resolvedEntity?.name}}

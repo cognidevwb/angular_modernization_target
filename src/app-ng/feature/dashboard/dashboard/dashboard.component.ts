@@ -1,4 +1,4 @@
-import { Component, DoCheck, forwardRef, inject, ViewChild } from '@angular/core';
+import { Component, DoCheck, forwardRef, inject, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { DOCUMENT } from '@angular/common';
@@ -110,10 +110,14 @@ class WidgetFormState {
  * the add/edit widget panels and the dashboard dialogs.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'dashboard',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatTabsModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbExpandFullscreenDirective), forwardRef(() => TbDashboardToolbarDirective), forwardRef(() => TbUserMenuDirective), forwardRef(() => TbTimewindowDirective), forwardRef(() => TbAliasesEntitySelectDirective), forwardRef(() => TbDashboardSelectDirective), forwardRef(() => TbStatesComponentDirective), forwardRef(() => TbDashboardLayoutDirective), forwardRef(() => TbDetailsSidenavDirective), forwardRef(() => TbHelpDirective), forwardRef(() => TbEditWidgetDirective), forwardRef(() => TbWidgetsBundleSelectDirective), forwardRef(() => TbDashboardDirective)],
   templateUrl: './dashboard.component.html',
+  // The legacy template's root (`<md-content flex>`) was the view itself, a flex item filling the page content;
+  // this element sits in between, so it fills the page content and lays its root out as that column did.
+  host: { style: 'display: flex; flex-direction: column; flex: 1 1 auto; height: 100%; min-height: 0; min-width: 0;' },
 })
 export class DashboardComponent implements DoCheck {
   protected readonly utils = inject(UtilsService);

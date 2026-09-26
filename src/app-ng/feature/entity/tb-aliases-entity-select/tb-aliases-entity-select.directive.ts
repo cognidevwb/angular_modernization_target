@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { DOCUMENT } from '@angular/common';
 import { ElementRef } from '@angular/core';
@@ -18,6 +18,7 @@ import { RootState } from '../../../root-state';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-aliases-entity-select',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatIconModule, MatButtonModule],

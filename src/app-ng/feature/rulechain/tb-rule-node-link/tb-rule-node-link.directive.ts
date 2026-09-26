@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,6 +16,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-rule-node-link',
   standalone: true,
   imports: [TranslatePipe, CommonModule, FormsModule, MatChipsModule, MatAutocompleteModule],
@@ -35,12 +36,6 @@ export class TbRuleNodeLinkDirective extends NgModelController {
   // TODO(port): '$filter' — inject the pipe class and call transform()
   protected readonly element = inject(ElementRef);
   // TODO(port): elements not resolved to a component: md-chips, md-autocomplete, md-not-found, md-chip-template
-  // TODO(port): template: 1 × md-autocomplete left in place
-  // TODO(port): template: 1 × md-chip-template left in place
-  // TODO(port): template: 1 × md-chips left in place
-  // TODO(port): template: 1 × md-not-found left in place
-  // TODO(port): template: 1 × ng-message left in place
-  // TODO(port): template: 1 × ng-messages left in place
 
   selectedLabel: any = null;
   labelSearchText: any = null;

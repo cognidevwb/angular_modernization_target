@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, OnInit, inject, input, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, inject, input, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import {
   FcConnector,
@@ -58,6 +58,7 @@ let canvasSeq = 0;
  * `control` receives `modelservice` and `adjustCanvasSize(fit)`, as it did.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-rule-chain-canvas',
   standalone: true,
   imports: [MatIconModule],

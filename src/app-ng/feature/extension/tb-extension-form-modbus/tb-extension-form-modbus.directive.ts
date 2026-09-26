@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, model } from '@angular/core';
+import { Component, OnInit, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { types } from '../../common/constants/types';
@@ -73,6 +73,7 @@ function Tag(this: any, globalPollPeriod?: any): void {
  * The legacy `scope.$parent.theForm` is the enclosing extension dialog's form: here the enclosing NgForm.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: '[tb-extension-form-modbus]',
   standalone: true,
   templateUrl: './tb-extension-form-modbus.directive.html',

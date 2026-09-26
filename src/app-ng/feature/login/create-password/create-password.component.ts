@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LoginService } from '../../api/services/login.service';
 import { ToastService } from '../../services/toast.service';
@@ -20,9 +21,10 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'create-password',
   standalone: true,
-  imports: [TranslatePipe, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCardModule, MatButtonModule, FormsModule],
+  imports: [RouterLink, TranslatePipe, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCardModule, MatButtonModule, FormsModule],
   templateUrl: './create-password.component.html',
 })
 export class CreatePasswordComponent {
@@ -32,7 +34,6 @@ export class CreatePasswordComponent {
   protected readonly toast = inject(ToastService);
   protected readonly loginService = inject(LoginService);
   protected readonly userService = inject(UserService);
-  // TODO(port): template: 1 × ui-sref left in place
 
   password: any = '';
   password2: any = '';

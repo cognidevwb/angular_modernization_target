@@ -1,4 +1,4 @@
-import { Component, inject, input, linkedSignal } from '@angular/core';
+import { Component, inject, input, linkedSignal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,7 @@ import { AlarmDetailsDialogComponent } from '../alarm-details-dialog/alarm-detai
  * one alarm table row; the details button opens the alarm details dialog and shows the alarm it returns.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: '[tb-alarm-row]',
   standalone: true,
   templateUrl: './tb-alarm-row.directive.html',

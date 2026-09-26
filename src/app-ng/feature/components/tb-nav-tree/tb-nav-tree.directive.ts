@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, effect, inject, input, output } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, effect, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import $ from 'jquery';
 import 'jstree';
 
@@ -18,6 +18,7 @@ export type NavTreeSearchCallback = (searchText: string, node: any) => boolean;
  * `searchCallback` was an optional `&` whose result jstree reads, so it is a function input.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-nav-tree',
   standalone: true,
   templateUrl: './tb-nav-tree.directive.html',

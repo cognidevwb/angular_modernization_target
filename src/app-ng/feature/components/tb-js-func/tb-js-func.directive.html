@@ -28,7 +28,7 @@
 		<div id="expand-button" layout="column" aria-label="Fullscreen" class="md-button md-icon-button tb-md-32 tb-fullscreen-button-style"></div>
 	</div>
 	<div id="tb-javascript-panel" class="tb-js-func-panel">
-		<div id="tb-javascript-input" [ngClass]="{'fill-height': fillHeight()}" [ui-ace]="jsEditorOptions" [readonly]="disabled()" [(ngModel)]="functionBody">
+		<div name="functionBody" id="tb-javascript-input" [ngClass]="{'fill-height': fillHeight()}" [ui-ace]="jsEditorOptions" [readonly]="disabled()" [(ngModel)]="functionBody">
 		</div>
 	</div>
 	<div layout="row" layout-align="start center" style="height: 40px;">

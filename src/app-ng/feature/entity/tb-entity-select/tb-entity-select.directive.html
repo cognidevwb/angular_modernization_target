@@ -18,11 +18,11 @@
 -->
 <div layout='row' class="tb-entity-select">
     @if (displayEntityTypeSelect) {
-      <tb-entity-type-select style="min-width: 100px;" [(theForm)]="theForm" [(ngDisabled)]="disabled" [(tbRequired)]="tbRequired" [(useAliasEntityTypes)]="useAliasEntityTypes" [(allowedEntityTypes)]="allowedEntityTypes" [ngModel]="model.entityType" (ngModelChange)="setEntityType($event)">
+      <tb-entity-type-select name="entityType" style="min-width: 100px;" [(theForm)]="theForm" [(ngDisabled)]="disabled" [(tbRequired)]="tbRequired" [(useAliasEntityTypes)]="useAliasEntityTypes" [(allowedEntityTypes)]="allowedEntityTypes" [ngModel]="model.entityType" (ngModelChange)="setEntityType($event)">
     </tb-entity-type-select>
     }
     @if (model?.entityType && model?.entityType !== entityTypeCurrentTenant) {
-      <tb-entity-autocomplete flex [(theForm)]="theForm" [(ngDisabled)]="disabled" [(tbRequired)]="tbRequired" [(entityType)]="model.entityType" [ngModel]="model.entityId" (ngModelChange)="setEntityId($event)">
+      <tb-entity-autocomplete name="entityId" flex [(theForm)]="theForm" [(ngDisabled)]="disabled" [(tbRequired)]="tbRequired" [(entityType)]="model.entityType" [ngModel]="model.entityId" (ngModelChange)="setEntityId($event)">
     </tb-entity-autocomplete>
     }
 </div>

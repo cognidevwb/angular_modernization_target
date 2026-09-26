@@ -25,7 +25,7 @@
                 {{chip?.name}}
               </mat-chip-row>
             }
-            <input id="link_label" placeholder="{{'rulenode.link-label' | translate }}" class="tb-link-label-input" [matChipInputFor]="chipGrid" [matAutocomplete]="auto" [(ngModel)]="labelSearchText" />
+            <input name="labelSearchText" id="link_label" placeholder="{{'rulenode.link-label' | translate }}" class="tb-link-label-input" [matChipInputFor]="chipGrid" [matAutocomplete]="auto" [(ngModel)]="labelSearchText"/>
         </mat-chip-grid>
         <mat-autocomplete #auto="matAutocomplete" class="tb-link-label-autocomplete" (optionSelected)="onLabelSelected($event)">
             @for (item of labelsSearch(labelSearchText); track item) {
@@ -51,10 +51,10 @@
                 </div>
             }
         </mat-autocomplete>
-        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-        <div class="tb-error-messages" ng-messages="ngModelCtrl?.$error" role="alert">
-            <!-- TODO(port): ng-message has no one-to-one Angular form -->
-            <div ng-message="linkLabels" class="tb-error-message">{{ 'rulenode.link-labels-required' | translate }}</div>
+        <div class="tb-error-messages" role="alert">
+            @if ($error['linkLabels']) {
+              <div class="tb-error-message">{{ 'rulenode.link-labels-required' | translate }}</div>
+            }
         </div>
     </fieldset>
 </div>

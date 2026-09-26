@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Subject } from 'rxjs';
 
 /**
@@ -16,6 +16,21 @@ export class RootState {
   [key: string]: any;
 
   private readonly events = new Subject<{ name: string; args: any[] }>();
+
+  /**
+   * `$root.loading`: the HTTP interceptor sets it when a request starts and ends, which can be in the middle
+   * of a change detection pass (a screen loading in ngOnInit). Held in a signal, so the views that show it
+   * are refreshed again in the same pass instead of failing the dev-mode check, as the next digest did.
+   */
+  private readonly loadingState = signal<any>(undefined);
+
+  get loading(): any {
+    return this.loadingState();
+  }
+
+  set loading(value: any) {
+    this.loadingState.set(value);
+  }
 
   /** Sends `name` to every `$on(name)` listener, with an AngularJS-shaped event first. */
   $broadcast(name: string, ...args: any[]): { name: string; defaultPrevented: boolean } {

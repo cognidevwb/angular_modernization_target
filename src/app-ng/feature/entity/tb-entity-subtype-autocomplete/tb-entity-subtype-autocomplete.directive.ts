@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, model } from '@angular/core';
+import { Component, DestroyRef, effect, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,6 +19,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * input's `required` in the host form).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entity-subtype-autocomplete',
   standalone: true,
   imports: [TranslatePipe, FormsModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule],

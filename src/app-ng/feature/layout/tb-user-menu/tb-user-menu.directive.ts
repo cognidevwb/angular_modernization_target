@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +12,7 @@ import { goState } from '../../../state-paths';
  * Its `UserMenuController` (controllerAs `vm`) is this class.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-user-menu',
   standalone: true,
   imports: [TranslatePipe, MatMenuModule, MatIconModule, MatButtonModule],

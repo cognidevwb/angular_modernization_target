@@ -1,4 +1,4 @@
-import { Component, DOCUMENT, inject, input, model } from '@angular/core';
+import { Component, DOCUMENT, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -28,6 +28,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * The md-chips drag handle (tb-chip-draggable) reorders the chips with the CDK drop list.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-datasource-entity',
   standalone: true,
   imports: [

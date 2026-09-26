@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, forwardRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { AdminService } from '../../api/services/admin.service';
 import { RootState } from '../../../root-state';
 import { Router } from '@angular/router';
@@ -19,6 +19,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'admin',
   standalone: true,
   imports: [TranslatePipe, MatProgressBarModule, MatInputModule, MatFormFieldModule, MatCheckboxModule, MatCardModule, MatButtonModule, FormsModule, forwardRef(() => TbConfirmOnExitDirective)],

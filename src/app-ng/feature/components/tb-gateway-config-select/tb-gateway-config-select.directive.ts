@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,6 +13,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * Ported from the AngularJS directive `tbGatewayConfigSelect` (module `thingsboard.directives.gatewayConfigSelect`) in src/app/components/gateway/gateway-config-select.directive.js:27.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-gateway-config-select',
   standalone: true,
   imports: [FormsModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, TranslatePipe],

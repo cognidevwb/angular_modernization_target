@@ -17,7 +17,7 @@
 
 -->
 <div class="md-dialog tb-aliases-dialog" style="width: 700px;" attr.aria-label="{{ title | translate }}">
-	<form name="theForm" (ngSubmit)="save()">
+	<form name="theForm" #theFormRef="ngForm" (ngSubmit)="save()">
 		<mat-toolbar>
 			<div class="md-toolbar-tools">
 				<h2>{{ title | translate }}</h2>
@@ -49,16 +49,13 @@
 						<div class="md-whiteframe-4dp tb-alias" flex layout="row" layout-align="start center">
 							<mat-form-field flex="20" style="min-width: 150px;" class="md-block">
 								<input matInput required name="alias" attr.placeholder="{{ 'entity.alias' | translate }}" [(ngModel)]="entityAlias.alias">
-								<!-- TODO(port): ng-messages has no one-to-one Angular form -->
-								<div ng-messages="aliasForm?.alias?.$error">
-									<!-- TODO(port): ng-message has no one-to-one Angular form -->
-									<div ng-message="required">{{ 'entity.alias-required' | translate }}</div>
-								</div>
+								<!-- ng-messages on the ng-form's alias field: its one validator is required, shown when the field is in error -->
+								<mat-error>{{ 'entity.alias-required' | translate }}</mat-error>
 							</mat-form-field>
-							<tb-entity-filter-view flex="70" style="padding-left: 10px;" [(ngModel)]="entityAlias.filter">
+							<tb-entity-filter-view name="filter" flex="70" style="padding-left: 10px;" [(ngModel)]="entityAlias.filter">
 							</tb-entity-filter-view>
 							<section flex="10" style="padding-left: 10px; min-width: 120px;" class="tb-resolve-multiple-switch" layout="column" layout-align="center center">
-								<mat-slide-toggle class="resolve-multiple-switch" [(ngModel)]="entityAlias.filter.resolveMultiple" aria-label="resolve-multiple-switcher">
+								<mat-slide-toggle name="resolveMultiple" class="resolve-multiple-switch" [(ngModel)]="entityAlias.filter.resolveMultiple" aria-label="resolve-multiple-switcher">
 								</mat-slide-toggle>
 							</section>
 							<button mat-icon-button color="primary" [disabled]="rootScope?.loading" style="min-width: 40px;" (click)="editAlias($event, entityAlias)" attr.aria-label="{{ 'action.edit' | translate }}" attr.matTooltip="{{ 'alias.edit' | translate }}" matTooltipPosition="above">

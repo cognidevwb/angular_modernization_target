@@ -1,4 +1,4 @@
-import { Component, DestroyRef, Directive, DoCheck, ElementRef, HostListener, OnDestroy, OnInit, forwardRef, inject, input, output, effect } from '@angular/core';
+import { Component, DestroyRef, Directive, DoCheck, ElementRef, HostListener, OnDestroy, OnInit, forwardRef, inject, input, output, effect, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
@@ -126,6 +126,7 @@ export class TbWidgetAceDirective implements OnInit, OnDestroy {
  * Ported from the AngularJS controller `WidgetEditorController` (module `thingsboard.widget-library`) in src/app/widget/index.js:40.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'widget-editor',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatTabsModule, MatSelectModule, MatProgressSpinnerModule, MatMenuModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, FormsModule, forwardRef(() => TbConfirmOnExitDirective), TbWidgetAceDirective],

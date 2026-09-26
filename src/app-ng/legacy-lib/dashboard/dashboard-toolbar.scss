@@ -27,7 +27,7 @@ tb-dashboard-toolbar {
   md-fab-toolbar {
     &.md-is-open {
       md-fab-trigger {
-        .md-button {
+        :is(.md-button, .mat-mdc-button-base) {
           &.md-fab {
             opacity: 1;
 
@@ -42,7 +42,7 @@ tb-dashboard-toolbar {
     }
 
     md-fab-trigger {
-      .md-button {
+      :is(.md-button, .mat-mdc-button-base) {
         &.md-fab {
           width: 36px;
           height: 36px;
@@ -52,7 +52,7 @@ tb-dashboard-toolbar {
 
           transition: opacity .3s cubic-bezier(.55, 0, .55, .2) .2s;
 
-          md-icon {
+          mat-icon {
             position: absolute;
             top: 25%;
             width: 18px;
@@ -69,7 +69,7 @@ tb-dashboard-toolbar {
     &.is-fullscreen {
       &.md-is-open {
         md-fab-trigger {
-          .md-button {
+          :is(.md-button, .mat-mdc-button-base) {
             &.md-fab {
               .md-fab-toolbar-background {
                 transition-delay: 0ms !important;
@@ -87,7 +87,7 @@ tb-dashboard-toolbar {
           height: $fullscreen-toolbar-height;
         }
 
-        md-toolbar {
+        mat-toolbar {
           height: $mobile-toolbar-height;
           min-height: $mobile-toolbar-height;
 
@@ -106,7 +106,7 @@ tb-dashboard-toolbar {
         height: $toolbar-height;
       }
 
-      md-toolbar {
+      mat-toolbar {
         height: $mobile-toolbar-height;
         min-height: $mobile-toolbar-height;
 
@@ -171,7 +171,7 @@ tb-dashboard-toolbar {
                   }
                 }
 
-                md-select {
+                mat-select {
                   margin: 0;
                   pointer-events: all;
                 }

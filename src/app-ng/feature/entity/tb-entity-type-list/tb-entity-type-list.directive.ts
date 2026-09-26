@@ -1,4 +1,4 @@
-import { Component, inject, model, effect, DoCheck } from '@angular/core';
+import { Component, inject, model, effect, DoCheck, ChangeDetectionStrategy } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
@@ -17,6 +17,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entity-type-list',
   standalone: true,
   imports: [FormsModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatAutocompleteModule, TranslatePipe],
@@ -54,6 +55,13 @@ export class TbEntityTypeListDirective extends NgModelController implements DoCh
 
   constructor() {
     super();
+    effect(() => {
+            this.updateValidity();
+        });
+  }
+
+  ngOnInit(): void {
+    // Reads its inputs: they are set after the constructor (the legacy link ran with the scope bound), so this runs in ngOnInit.
     this.placeholder = this.tbRequired() ? this.translate.instant('entity.enter-entity-type')
                                 : this.translate.instant('entity.any-entity');
     this.secondaryPlaceholder = '+' + this.translate.instant('entity.entity-type');
@@ -75,10 +83,8 @@ export class TbEntityTypeListDirective extends NgModelController implements DoCh
             entityTypeInfo.name = this.translate.instant(types.entityTypeTranslations[entityTypeInfo.value].type) + '';
             this.entityTypesList.push(entityTypeInfo);
         }
-    effect(() => {
-            this.updateValidity();
-        });
   }
+
 
   override $render(): void {
     const entityTypeList: any[] = [];

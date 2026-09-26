@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, DestroyRef, OnInit, Type, forwardRef, inject, input, viewChild } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, OnInit, Type, forwardRef, inject, input, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
@@ -78,6 +78,7 @@ const MEDIA = {
  * projected content (`<div details-buttons>` for the header buttons, the rest for the details).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-grid',
   standalone: true,
   imports: [TranslatePipe, NgClass, ScrollingModule, MatTooltipModule, MatIconModule, MatCheckboxModule, MatCardModule, MatButtonModule, TbGridCardContentDirective, forwardRef(() => TbDetailsSidenavDirective)],

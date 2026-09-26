@@ -48,7 +48,7 @@
       z-index: 2;
       pointer-events: none;
 
-      .md-button {
+      :is(.md-button, .mat-mdc-button-base) {
         top: 0;
         left: 0;
         width: 32px;
@@ -94,7 +94,7 @@
     padding-left: 10px;
 
     md-slider-container {
-      md-slider {
+      mat-slider {
         min-width: 80px;
       }
 
@@ -106,7 +106,7 @@
         margin: 0;
         line-height: 28px;
 
-        md-icon {
+        mat-icon {
           width: 28px;
           height: 28px;
           font-size: 28px;
@@ -118,7 +118,7 @@
         }
       }
 
-      md-select {
+      mat-select {
         margin: 0;
       }
     }

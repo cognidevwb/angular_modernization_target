@@ -199,7 +199,7 @@
         <button mat-button type="button" class="tidy-button" (click)="onTidy()">Tidy</button>
         <button mat-button type="button" class="tidy-button" (click)="onToggleFull()">{{ isFull ? 'Exit fullscreen' : 'Fullscreen' }}</button>
       </div>
-      <div [ui-ace]="aceOptions" [readonly]="!!form().readonly"
+      <div name="value" [ui-ace]="aceOptions" [readonly]="!!form().readonly"
            [ngModel]="value" (ngModelChange)="onChangeValidate($event)"
            style="width: 100%;" [ngStyle]="form()['style'] || {}" [style.height]="isFull ? '100%' : '150px'"
            (focusin)="focused = true" (focusout)="focused = false"></div>

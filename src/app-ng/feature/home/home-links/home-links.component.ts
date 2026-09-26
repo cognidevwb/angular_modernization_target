@@ -1,5 +1,7 @@
+import { mdMedia } from '../../../core/md-media';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Component, effect, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MenuService } from '../../services/menu.service';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +16,7 @@ import { stateHref } from '../../../state-paths';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'home-links',
   standalone: true,
   imports: [TranslatePipe, MatIconModule, MatCardModule, MatButtonModule, MatGridListModule, RouterLink],
@@ -33,16 +36,9 @@ export class HomeLinksComponent {
   model: any;
   cols: any;
 
-  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
-
   constructor() {
     this.sectionColspan = this.sectionColspan;
-    effect(() => {
-      this.breakpoints.isMatched('lg');
-      this.updateColumnCount();
-    });
-    effect(() => {
-      this.breakpoints.isMatched('gt-lg');
+    this.breakpoints.observe([mdMedia('lg'), mdMedia('gt-lg')]).pipe(takeUntilDestroyed()).subscribe(() => {
       this.updateColumnCount();
     });
     this.updateColumnCount();
@@ -51,10 +47,10 @@ export class HomeLinksComponent {
 
   updateColumnCount(...rest: any[]): any {
     this.cols = 2;
-    if (this.breakpoints.isMatched('lg')) {
+    if (this.breakpoints.isMatched(mdMedia('lg'))) {
         this.cols = 3;
     }
-    if (this.breakpoints.isMatched('gt-lg')) {
+    if (this.breakpoints.isMatched(mdMedia('gt-lg'))) {
         this.cols = 4;
     }
   }

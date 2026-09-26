@@ -1,4 +1,4 @@
-import { Component, forwardRef, viewChild } from '@angular/core';
+import { Component, forwardRef, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { UiAceDirective, UiAceOptions } from '../../components/ui-ace/ui-ace.directive';
@@ -11,6 +11,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
  * With its template src/app/jsonform/jsonform.tpl.html: a playground for tb-json-form.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'json-form',
   standalone: true,
   imports: [MatCheckboxModule, MatButtonModule, CommonModule, FormsModule, UiAceDirective, forwardRef(() => TbJsonFormDirective)],

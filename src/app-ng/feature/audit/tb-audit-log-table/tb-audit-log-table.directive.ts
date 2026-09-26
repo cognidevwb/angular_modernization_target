@@ -1,12 +1,13 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, forwardRef, inject, input, model } from '@angular/core';
+import { Component, ElementRef, effect, inject, input, model, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { AuditLogService } from '../../api/services/audit-log.service';
-import { ElementRef } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TbTimewindowDirective } from '../../components/tb-timewindow/tb-timewindow.directive';
+import { TbAuditLogHeaderDirective } from '../tb-audit-log-header/tb-audit-log-header.directive';
+import { TbAuditLogRowDirective } from '../tb-audit-log-row/tb-audit-log-row.directive';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,6 +19,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { isEqual } from 'lodash-es';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-audit-log-table',
   standalone: true,
   templateUrl: './tb-audit-log-table.directive.html',
@@ -33,10 +35,24 @@ import { isEqual } from 'lodash-es';
     MatProgressBarModule,
     MatDividerModule,
     MatTooltipModule,
-    TranslatePipe
+    TranslatePipe,
+    TbAuditLogHeaderDirective,
+    TbAuditLogRowDirective
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  styles: [`
+    .tb-audit-log-repeat-container {
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+  `],
 })
+/**
+ * Ported from the AngularJS directive `tbAuditLogTable` (src/app/audit/audit-log-table.directive.js) with its template:
+ * the audit logs of the tenant, an entity, a user or a customer (`auditLogMode`) in the chosen time window, loaded a
+ * page at a time as the list scrolls (the md-virtual-repeat `md-on-demand` data source `theAuditLogs`), filtered by
+ * the search text.
+ */
 export class TbAuditLogTableDirective {
   readonly entityType = model<any>();
   readonly entityId = model<any>();
@@ -45,16 +61,12 @@ export class TbAuditLogTableDirective {
   readonly auditLogMode = input<any>();
   readonly pageMode = input<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly rootScope = inject(RootState);
-  // TODO(port): '$filter' — inject the pipe class and call transform()
   protected readonly translate = inject(TranslateService);
   protected readonly typesRef: any = types;
   protected readonly auditLogService = inject(AuditLogService);
   protected readonly element = inject(ElementRef);
-  // TODO(port): elements not resolved to a component: md-virtual-repeat-container
-  // TODO(port): template: 1 × md-virtual-repeat-container left in place
+  private readonly repeatContainer = viewChild<ElementRef<HTMLElement>>('repeatContainer');
 
   types: any;
   protected pageSize: any = 20;
@@ -95,11 +107,7 @@ export class TbAuditLogTableDirective {
   }
   theAuditLogs: any;
   auditLogs: any;
-  auditLog: any;
-  repeatContainer: any;
 
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
     this.types = this.typesRef;
@@ -136,6 +144,7 @@ export class TbAuditLogTableDirective {
                                     this.auditLogs.nextPageLink.limit = this.pageSize;
                                 }
                                 this.auditLogs.pending = false;
+                                setTimeout(() => this.onScroll());
                             },
                             () => {
                                 this.auditLogs.hasNext = false;
@@ -147,12 +156,14 @@ export class TbAuditLogTableDirective {
                 }
             }
         };
-    let prevEntityId: any = this.entityId();
-    let prevUserId: any = this.userId();
-    let prevCustomerId: any = this.customerId();
+    // A $watch's first call only records the value (newVal === oldVal); these effects do the same.
+    const UNSET = {};
+    let prevEntityId: any = UNSET;
+    let prevUserId: any = UNSET;
+    let prevCustomerId: any = UNSET;
     effect(() => {
         const newVal = this.entityId();
-        if (newVal && !isEqual(newVal, prevEntityId)) {
+        if (prevEntityId !== UNSET && newVal && !isEqual(newVal, prevEntityId)) {
             this.resetFilter();
             this.reload();
         }
@@ -160,7 +171,7 @@ export class TbAuditLogTableDirective {
     });
     effect(() => {
         const newVal = this.userId();
-        if (newVal && !isEqual(newVal, prevUserId)) {
+        if (prevUserId !== UNSET && newVal && !isEqual(newVal, prevUserId)) {
             this.resetFilter();
             this.reload();
         }
@@ -168,12 +179,16 @@ export class TbAuditLogTableDirective {
     });
     effect(() => {
         const newVal = this.customerId();
-        if (newVal && !isEqual(newVal, prevCustomerId)) {
+        if (prevCustomerId !== UNSET && newVal && !isEqual(newVal, prevCustomerId)) {
             this.resetFilter();
             this.reload();
         }
         prevCustomerId = newVal;
     });
+  }
+
+  ngOnInit(): void {
+    // Reads its inputs (entityId, userId, customerId, auditLogMode): they are set after the constructor.
     this.reload();
     this.initWatchers();
   }
@@ -291,14 +306,17 @@ export class TbAuditLogTableDirective {
     return this.rootScope.loading;
   }
 
-  hasScroll(...rest: any[]): any {
-    var repeatContainer: any = this.repeatContainer[0];
-    if (repeatContainer) {
-        var scrollElement: any = repeatContainer.children[0];
-        if (scrollElement) {
-            return scrollElement.scrollHeight > scrollElement.clientHeight;
-        }
+  /**
+   * md-virtual-repeat asked its data source for the rows coming into view; when they reach past the loaded ones
+   * (`getItemAtIndex` beyond `filtered.length`) the next page loads. The list asks for the row a page below its end.
+   */
+  onScroll(): void {
+    const container = this.repeatContainer()?.nativeElement;
+    if (!container || !this.auditLogs) {
+      return;
     }
-    return false;
+    const rowHeight = 49;
+    const lastVisible = Math.ceil((container.scrollTop + container.clientHeight) / rowHeight);
+    this.theAuditLogs.getItemAtIndex(lastVisible + this.pageSize);
   }
 }

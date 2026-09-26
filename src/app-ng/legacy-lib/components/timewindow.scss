@@ -35,7 +35,7 @@
     height: 100%;
   }
 
-  md-content {
+  .md-content {
     overflow: hidden;
     background-color: #fff;
   }
@@ -45,13 +45,13 @@
   }
 
   .md-radio-interactive {
-    md-select,
-    md-switch {
+    mat-select,
+    mat-slide-toggle {
       pointer-events: all;
     }
   }
 
-  md-radio-button {
+  mat-radio-button {
     .md-label {
       width: 100%;
     }

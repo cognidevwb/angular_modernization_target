@@ -1,8 +1,9 @@
-import { Component, inject, DoCheck } from '@angular/core';
+import { attachLegacyForm, lateLegacyForm, LegacyForm } from '../../components/tb-grid/legacy-form';
+import { Component, inject, DoCheck, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { DashboardUtilsService } from '../../common/services/dashboard-utils.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,6 +22,7 @@ import { isEqual } from 'lodash-es';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'dashboard-state-dialog',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule],
@@ -33,15 +35,17 @@ export class DashboardStateDialogComponent implements DoCheck {
   // TODO(port): '$filter' — inject the pipe class and call transform()
   protected readonly dashboardUtils = inject(DashboardUtilsService);
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
-  // TODO(port): template: 3 × ng-message left in place
-  // TODO(port): template: 2 × ng-messages left in place
 
   isAdd: any;
   allStates: any;
   state: any;
   stateIdTouched: any = false;
   prevStateId: any;
-  theForm: any;
+  /** The legacy `theForm` FormController, over the template's `<form name="theForm">`. */
+  readonly theForm: LegacyForm = lateLegacyForm('theForm');
+  @ViewChild('theFormRef') set theFormRef(form: NgForm | undefined) {
+    attachLegacyForm(this.theForm, form);
+  }
 
   // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library

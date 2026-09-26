@@ -5,7 +5,6 @@
 
 .md-toolbar-tools {
   display: flex;
-  flex-direction: row;
   align-items: center;
   width: 100%;
   height: 64px;
@@ -17,6 +16,10 @@
   box-sizing: border-box;
   font-weight: 400;
   h1, h2, h3 { font-size: inherit; font-weight: inherit; margin: inherit; }
+}
+// a row unless its layout attribute says otherwise
+.md-toolbar-tools:not([layout]) {
+  flex-direction: row;
 }
 
 .md-display-4 { font-size: 112px; font-weight: 300; letter-spacing: -0.010em; line-height: 112px; }
@@ -36,9 +39,18 @@
 .md-inline-form { display: inline-block; }
 
 .md-content {
-  display: block;
   position: relative;
   overflow: auto;
+}
+// md-content was a block unless a layout attribute made it a flex box.
+.md-content:not([layout]) {
+  display: block;
+}
+// AngularJS Material's .md-padding grew from 8px to 16px from the gt-sm breakpoint on.
+@media (min-width: 960px) {
+  .md-padding {
+    padding: 16px;
+  }
 }
 
 .md-subheader {
@@ -70,4 +82,388 @@
 // a toolbar row in a dialog or a card, as AngularJS Material laid it out
 mat-toolbar.mat-toolbar {
   min-height: 64px;
+}
+
+// AngularJS Material's theme as the legacy app rendered it (its `default` theme: a primary
+// toolbar with light text, grey page content behind white cards, a white page).
+body {
+  background-color: #fafafa;
+  color: rgba(0, 0, 0, .87);
+}
+
+mat-toolbar.mat-toolbar {
+  background-color: #305680;
+  color: rgba(255, 255, 255, .87);
+  --mat-icon-button-icon-color: currentColor;
+  --mat-button-text-label-text-color: currentColor;
+  .mat-mdc-icon-button,
+  .mat-mdc-button {
+    color: inherit;
+  }
+}
+
+// md-content took the theme's grey background; inside a sidenav it was white.
+.md-content {
+  background-color: #eee;
+}
+.tb-md-sidenav .md-content,
+mat-sidenav .md-content {
+  background-color: #fff;
+}
+
+// The shell: the routed screen (home, login, a fullscreen dashboard) fills the page, as the legacy
+// `<ui-view layout="row" layout-fill>` made it.
+app-root > :not(router-outlet) {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+mat-sidenav-container.tb-site-sidenav-container {
+  flex: 1 1 auto;
+  height: 100%;
+  background: transparent;
+  > mat-sidenav-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+}
+
+// The legacy page was bounded by the window: the main column, its content area and the routed screen
+// (ui-view's element, a flex column) shrink to it, and a screen scrolls inside itself, not the page.
+[role=main],
+#toast-parent,
+.page-content {
+  min-height: 0;
+}
+.page-content > :not(router-outlet) {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+mat-sidenav.tb-site-sidenav {
+  border-right: none;
+  border-radius: 0;
+  background-color: #305680;
+  > .mat-drawer-inner-container {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+// `ng-show` / `ng-hide` became `[hidden]`; AngularJS's `.ng-hide` was `display: none !important`,
+// so an element hidden that way stays hidden even where a layout attribute sets `display: flex`.
+[hidden] {
+  display: none !important;
+}
+
+// md-toolbar was a column that grew with its content (its rows are `.md-toolbar-tools`), not a fixed single row.
+mat-toolbar.mat-toolbar.mat-toolbar-single-row {
+  height: auto;
+  min-height: 64px;
+  padding: 0;
+  flex-direction: column;
+  align-items: stretch;
+  white-space: normal;
+}
+
+// md-button: uppercase, square-cornered; `md-raised md-primary` / `md-accent` / `md-warn` filled with the
+// palette; md-fab round and accent. Set through Angular Material's tokens (its own rules read them).
+html {
+  --mat-button-text-label-text-transform: uppercase;
+  --mat-button-protected-label-text-transform: uppercase;
+  --mat-button-filled-label-text-transform: uppercase;
+  --mat-button-outlined-label-text-transform: uppercase;
+  --mat-button-tonal-label-text-transform: uppercase;
+  --mat-button-text-container-shape: 2px;
+  --mat-button-protected-container-shape: 2px;
+  --mat-button-filled-container-shape: 2px;
+  --mat-button-outlined-container-shape: 2px;
+  --mat-button-tonal-container-shape: 2px;
+  --mat-button-text-label-text-color: rgba(0, 0, 0, .87);
+  --mat-button-protected-container-color: #fafafa;
+  --mat-button-protected-label-text-color: rgba(0, 0, 0, .87);
+  --mat-fab-container-shape: 50%;
+  --mat-fab-small-container-shape: 50%;
+  --mat-fab-container-color: #ff5722;
+  --mat-fab-foreground-color: #fff;
+  --mat-fab-small-container-color: #ff5722;
+  --mat-fab-small-foreground-color: #fff;
+  // md-card: white, 2px corners, the z1 whiteframe.
+  --mat-card-elevated-container-color: #fff;
+  --mat-card-elevated-container-shape: 2px;
+  --mat-card-elevated-container-elevation: 0 1px 3px 0 rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 2px 1px -1px rgba(0, 0, 0, .12);
+  --mat-card-title-text-size: 14px;
+  --mat-card-title-text-line-height: 20px;
+  --mat-card-title-text-weight: 400;
+  --mat-card-subtitle-text-size: 14px;
+  // md-input-container: a bare underline, no filled box.
+  --mat-form-field-filled-container-color: transparent;
+  --mat-form-field-filled-disabled-container-color: transparent;
+}
+.mat-primary {
+  &.mat-mdc-raised-button,
+  &.mat-mdc-unelevated-button {
+    --mat-button-protected-container-color: #305680;
+    --mat-button-protected-label-text-color: rgba(255, 255, 255, .87);
+    --mat-button-filled-container-color: #305680;
+    --mat-button-filled-label-text-color: rgba(255, 255, 255, .87);
+  }
+  &.mat-mdc-button,
+  &.mat-mdc-outlined-button {
+    --mat-button-text-label-text-color: #305680;
+    --mat-button-outlined-label-text-color: #305680;
+  }
+  &.mat-mdc-icon-button {
+    --mat-icon-button-icon-color: #305680;
+  }
+  &.mat-mdc-fab,
+  &.mat-mdc-mini-fab {
+    --mat-fab-container-color: #305680;
+    --mat-fab-small-container-color: #305680;
+  }
+}
+.mat-accent {
+  &.mat-mdc-raised-button,
+  &.mat-mdc-unelevated-button {
+    --mat-button-protected-container-color: #ff5722;
+    --mat-button-protected-label-text-color: #fff;
+    --mat-button-filled-container-color: #ff5722;
+    --mat-button-filled-label-text-color: #fff;
+  }
+  &.mat-mdc-button {
+    --mat-button-text-label-text-color: #ff5722;
+  }
+}
+.mat-warn {
+  &.mat-mdc-raised-button,
+  &.mat-mdc-unelevated-button {
+    --mat-button-protected-container-color: #f44336;
+    --mat-button-protected-label-text-color: #fff;
+    --mat-button-filled-container-color: #f44336;
+    --mat-button-filled-label-text-color: #fff;
+  }
+  &.mat-mdc-button {
+    --mat-button-text-label-text-color: #f44336;
+  }
+}
+
+mat-card.mat-mdc-card {
+  margin: 8px;
+}
+
+// md-card-title / md-card-title-text: the title texts stacked, the header's parts side by side.
+mat-card-header.mat-mdc-card-header {
+  display: flex;
+  flex-direction: row;
+}
+mat-card-title.mat-mdc-card-title {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+// md-card-title padded 24px 16px 16px, md-card-content 16px.
+mat-card-header.mat-mdc-card-header {
+  padding: 24px 16px 16px;
+}
+mat-card-content.mat-mdc-card-content {
+  padding: 16px;
+}
+
+// md-input-container.md-block: a full-width field on its own line.
+mat-form-field.md-block {
+  display: flex;
+  width: 100%;
+}
+.mat-mdc-form-field .mdc-text-field--filled {
+  padding: 0 2px;
+}
+
+// md-button laid its content from the start; Angular Material's button centres it.
+.tb-side-menu .mat-mdc-button-base {
+  justify-content: flex-start;
+}
+
+// An md-icon's size class (tb-md-96) sized it inside a button too; Angular Material's button sizes its icons
+// to 18px with a more specific rule, so the legacy size classes are restated at that specificity.
+.mat-mdc-button-base .material-icons {
+  &.tb-md-96 { width: 96px; height: 96px; font-size: 96px; }
+}
+
+// md-card-title held its md-card-title-text parts side by side (each a column: the headline, then its detail).
+.mat-mdc-card-header-text {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  // a header with no title (the login card's logo) has nothing to lay out here
+  &:empty {
+    display: none;
+  }
+}
+
+// The grid card's md-card-title held the selection checkbox before the title; mat-card-header projects its
+// titles first and other content after, so the checkbox section is ordered back in front.
+.tb-card-item .mat-mdc-card-header > section {
+  order: -1;
+}
+
+// md-icon kept its 24px inside a text button (the side menu's entries); Angular Material's button shrinks it to 18px.
+.tb-side-menu .mat-mdc-button-base > .mat-icon {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+}
+
+// md-button.md-icon-button: 40px round with a 6px margin on each side.
+.mat-mdc-icon-button.mat-mdc-button-base {
+  margin: 0 6px;
+}
+
+// md-sidenav outside a sidenav container (the details panel): absolutely placed at the right edge of its
+// positioned ancestor, full height, sliding in; `md-closed` is off to the right. AngularJS Material's own values.
+.tb-md-sidenav {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+  overflow: auto;
+  background-color: #fff;
+  transition: transform .4s cubic-bezier(.25, .8, .25, 1), visibility .4s;
+  &.md-sidenav-right {
+    left: 100%;
+    transform: translate3d(-100%, 0, 0);
+    &.md-closed {
+      transform: translate3d(0, 0, 0);
+      visibility: hidden;
+    }
+  }
+}
+// AngularJS Material's whiteframes.
+.md-whiteframe-1dp,
+.md-whiteframe-z1 {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 2px 1px -1px rgba(0, 0, 0, .12);
+}
+.md-whiteframe-4dp,
+.md-whiteframe-z2 {
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12);
+}
+
+// md-tabs: uppercase labels, the active one in the primary colour over an accent ink bar.
+html {
+  --mat-tab-active-label-text-color: #305680;
+  --mat-tab-active-focus-label-text-color: #305680;
+  --mat-tab-active-hover-label-text-color: #305680;
+  --mat-tab-active-indicator-color: #ff5722;
+  --mat-tab-active-focus-indicator-color: #ff5722;
+  --mat-tab-active-hover-indicator-color: #ff5722;
+  --mat-tab-inactive-label-text-color: rgba(0, 0, 0, .54);
+  --mat-tab-label-text-weight: 500;
+}
+.mat-mdc-tab .mdc-tab__text-label {
+  text-transform: uppercase;
+}
+
+// md-button (text, raised, flat): a 6px/8px margin around each.
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-outlined-button {
+  margin: 6px 8px;
+}
+
+// md-dialog: white with 4px corners and the z-depth shadow; its actions a bordered row at the end.
+html {
+  --mat-dialog-container-color: #fff;
+  --mat-dialog-container-shape: 4px;
+  --mat-dialog-container-elevation-shadow: 0 7px 8px -4px rgba(0, 0, 0, .2), 0 13px 19px 2px rgba(0, 0, 0, .14), 0 5px 24px 4px rgba(0, 0, 0, .12);
+  --mat-dialog-supporting-text-color: rgba(0, 0, 0, .87);
+  --mat-dialog-actions-alignment: flex-end;
+}
+
+// A link in a toolbar (the breadcrumb's parent steps) took the toolbar's text colour, undecorated.
+mat-toolbar.mat-toolbar a:not(.mat-mdc-button-base) {
+  color: inherit;
+  text-decoration: none;
+}
+
+// AngularJS Material's `.layout-row > .flex { min-width: 0 }` / `.layout-column > .flex { min-height: 0 }`,
+// for the attribute form the ported templates keep: a flex child may shrink below its content (text ellipsis).
+[layout=row] > [flex] {
+  min-width: 0;
+}
+[layout=column] > [flex] {
+  min-height: 0;
+}
+
+// md-virtual-repeat's offsetter was exactly as wide as its container; the CDK viewport's content wrapper only
+// has a minimum width and grows with wide content (a long unwrapped card title), so it is pinned to the width.
+.cdk-virtual-scroll-orientation-vertical > .cdk-virtual-scroll-content-wrapper {
+  width: 100%;
+}
+
+// md-icon sat on the middle of its line of text.
+mat-icon.mat-icon {
+  vertical-align: middle;
+}
+
+// The login card's `md-theme="tb-dark"`: the primary colour behind light text, fields in the theme's
+// light indigo, a pale raised button, as AngularJS Material rendered that theme.
+mat-card.tb-login-card {
+  --mat-card-elevated-container-color: #305680;
+  color: #fff;
+  --mat-form-field-filled-label-text-color: rgb(159, 168, 218);
+  --mat-form-field-filled-hover-label-text-color: rgb(159, 168, 218);
+  --mat-form-field-filled-focus-label-text-color: rgb(159, 168, 218);
+  --mat-form-field-filled-input-text-color: #fff;
+  --mat-form-field-filled-caret-color: #fff;
+  --mat-form-field-filled-active-indicator-color: rgb(159, 168, 218);
+  --mat-form-field-filled-hover-active-indicator-color: rgb(159, 168, 218);
+  --mat-form-field-filled-focus-active-indicator-color: rgb(159, 168, 218);
+  --mat-form-field-leading-icon-color: rgb(159, 168, 218);
+  --mat-button-text-label-text-color: #fff;
+  --mat-button-protected-container-color: rgb(232, 234, 246);
+  --mat-button-protected-label-text-color: rgb(26, 35, 126);
+}
+
+// `flex="initial"` (and the other keyword values) were classes AngularJS's layout directive added
+// (.flex-initial …); the vendored attribute stylesheet only knows the `flex-initial` attribute form.
+[flex=initial] { flex: 0 1 auto; }
+[flex=auto] { flex: 1 1 auto; }
+[flex=none] { flex: 0 0 auto; }
+[flex=grow] { flex: 1 1 100%; }
+[flex=nogrow] { flex: 0 1 auto; }
+[flex=noshrink] { flex: 1 0 auto; }
+
+// md-tabs (without md-dynamic-height) filled their own height: the content wrapper took all the space under
+// the tab bar and a tab's content could fill it (tb-absolute-fill). mat-tab-group's body only sizes to content.
+.mat-mdc-tab-group:not(.mat-mdc-tab-group-dynamic-height) > .mat-mdc-tab-body-wrapper {
+  flex: 1 1 auto;
+}
+
+// md-checkbox: the accent colour when checked, a 54% black box otherwise.
+html {
+  --mat-checkbox-selected-icon-color: #ff5722;
+  --mat-checkbox-selected-focus-icon-color: #ff5722;
+  --mat-checkbox-selected-hover-icon-color: #ff5722;
+  --mat-checkbox-selected-checkmark-color: #fff;
+  --mat-checkbox-unselected-icon-color: rgba(0, 0, 0, .54);
+}
+
+// An md-select in a toolbar took the toolbar's text colour (the dashboard select in the dark header).
+mat-toolbar.mat-toolbar {
+  --mat-select-enabled-trigger-text-color: currentColor;
+  --mat-select-enabled-arrow-color: currentColor;
+  --mat-select-focused-arrow-color: currentColor;
 }

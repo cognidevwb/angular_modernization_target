@@ -1,4 +1,4 @@
-import { Component, ComponentRef, DestroyRef, effect, inject, model, reflectComponentType, Type, untracked, viewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, DestroyRef, effect, inject, model, reflectComponentType, Type, untracked, viewChild, ViewContainerRef, ChangeDetectionStrategy } from '@angular/core';
 import { StatesControllerService } from '../services/states-controller.service';
 
 /**
@@ -7,6 +7,7 @@ import { StatesControllerService } from '../services/states-controller.service';
  * here the registered controller is a component, created into the outlet whenever `statesControllerId` changes.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-states-component',
   standalone: true,
   template: '<ng-container #outlet></ng-container>',

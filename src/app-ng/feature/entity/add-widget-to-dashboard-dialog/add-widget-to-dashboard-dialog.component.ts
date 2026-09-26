@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, viewChild } from '@angular/core';
+import { Component, forwardRef, inject, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -37,6 +37,7 @@ export interface AddWidgetToDashboardDialogData {
  * optionally opens that dashboard. Closes with `true` once saved.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'add-widget-to-dashboard-dialog',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatRadioModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, forwardRef(() => TbDashboardAutocompleteDirective)],

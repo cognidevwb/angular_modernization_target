@@ -1,4 +1,4 @@
-import { Component, ElementRef, effect, inject, input, model, untracked, viewChild } from '@angular/core';
+import { Component, ElementRef, effect, inject, input, model, untracked, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -64,6 +64,7 @@ function matchesAny(value: any, needle: string): boolean {
  * the relations from / to an entity, sorted, searched and paged on the client.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-relation-table',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatSelectModule, MatInputModule, MatPaginatorModule, MatIconModule, MatFormFieldModule, MatButtonModule, MatTableModule, MatSortModule, MatCheckboxModule, FormsModule],

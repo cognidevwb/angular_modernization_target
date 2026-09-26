@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, forwardRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { AdminService } from '../../api/services/admin.service';
 import { FormsModule } from '@angular/forms';
 import { TbHelpDirective } from '../../help/tb-help/tb-help.directive';
@@ -21,6 +21,7 @@ declare let $mdExpansionPanel: any;
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'security-settings',
   standalone: true,
   imports: [TranslatePipe, MatProgressBarModule, MatInputModule, MatFormFieldModule, MatCardModule, MatButtonModule, MatExpansionModule, FormsModule, forwardRef(() => TbHelpDirective), forwardRef(() => TbConfirmOnExitDirective)],

@@ -20,7 +20,7 @@
     @for (connector of gatewayConfig(); track $index) {
       <section layout="row">
         <div layout="column" layout-align="center start" class="gateway-config-row">
-            <mat-slide-toggle [disabled]="isReadOnly() || validateJSON(connector.config)" [(ngModel)]="connector.enabled" attr.aria-label="{{ 'gateway.connector-enabled' | translate }}">
+            <mat-slide-toggle name="enabled" [disabled]="isReadOnly() || validateJSON(connector.config)" [(ngModel)]="connector.enabled" attr.aria-label="{{ 'gateway.connector-enabled' | translate }}">
             </mat-slide-toggle>
         </div>
         <div layout="row" flex class="gateway-config-row" [ngClass]="{'gateway-config-row-vertical': changeAlignment()}">
@@ -33,20 +33,18 @@
                     </mat-option>
                     }
                 </mat-select>
-                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                <div ng-messages="theForm()?.connectorType?.$error">
-                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                    <div ng-message="required">{{ 'gateway.connector-type-required' | translate }}</div>
-                </div>
+                <!-- ng-messages: the first message whose key is set in theForm()?.connectorType?.$error -->
+                @if ((theForm()?.connectorType?.$error)?.['required']) {
+                  <mat-error>{{ 'gateway.connector-type-required' | translate }}</mat-error>
+                }
             </mat-form-field>
             <mat-form-field class="md-block" flex>
                 <!-- TODO(port): ng-model-options has no one-to-one Angular form -->
                 <input matInput [disabled]="isReadOnly()" attr.placeholder="{{'gateway.connector-name' | translate }}" ng-model-options="{ updateOn: 'blur' }" (ngModelChange)="changeConnectorName(connector, $index)" name="connectorName" [(ngModel)]="connector.name" required>
-                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                <div ng-messages="theForm()?.connectorName?.$error">
-                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                    <div ng-message="required">{{ 'gateway.connector-name-required' | translate }}</div>
-                </div>
+                <!-- ng-messages: the first message whose key is set in theForm()?.connectorName?.$error -->
+                @if ((theForm()?.connectorName?.$error)?.['required']) {
+                  <mat-error>{{ 'gateway.connector-name-required' | translate }}</mat-error>
+                }
             </mat-form-field>
         </div>
         <div layout="row" layout-align="end center" class="action-buttons" [ngClass]="{'gateway-config-row-vertical': changeAlignment()}">

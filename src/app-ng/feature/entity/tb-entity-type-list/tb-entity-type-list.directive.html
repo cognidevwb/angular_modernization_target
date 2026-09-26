@@ -27,7 +27,7 @@
                     </button>
                 </mat-chip-row>
             }
-            <input id="entity_type_list_chips"
+            <input name="entityTypeSearchText" id="entity_type_list_chips"
                    [placeholder]="(!entityTypeList || !entityTypeList.length) ? placeholder : secondaryPlaceholder"
                    [matChipInputFor]="entityTypeChipGrid"
                    [matAutocomplete]="entityTypeAutocomplete"

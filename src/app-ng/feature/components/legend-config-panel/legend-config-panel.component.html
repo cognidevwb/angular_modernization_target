@@ -1,5 +1,5 @@
 <!-- Ported from src/app/components/legend-config-panel.tpl.html -->
-<form name="theForm" (ngSubmit)="update()">
+<form name="theForm" #theFormRef="ngForm" (ngSubmit)="update()">
     <fieldset [disabled]="rootScope['loading']">
         <div style="height: 100%" flex layout="column" class="md-content">
             <section layout="column">

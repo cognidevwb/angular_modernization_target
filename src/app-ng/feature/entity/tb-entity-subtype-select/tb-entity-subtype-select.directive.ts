@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, input, model } from '@angular/core';
+import { Component, DestroyRef, effect, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { AssetService } from '../../api/services/asset.service';
 import { DeviceService } from '../../api/services/device.service';
 import { ElementRef } from '@angular/core';
@@ -21,6 +21,7 @@ import { RootState } from '../../../root-state';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entity-subtype-select',
   standalone: true,
   imports: [TranslatePipe, MatSelectModule, MatInputModule, MatFormFieldModule, FormsModule],

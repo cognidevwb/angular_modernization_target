@@ -306,6 +306,26 @@ export function createLegacyFilter(translate: (key: string, params?: any) => str
   };
 }
 
+/**
+ * A promise with AngularJS 1.5 `$q` semantics for the widget scripts stored on the server: a rejection
+ * still propagates down the chain, but one nobody handles is not reported (1.5 had no "possibly unhandled
+ * rejection"; a native promise would reach the app's error handler, e.g. an offline device's RPC reply).
+ */
+export function legacyPromise<T = any>(promise: PromiseLike<T> | null | undefined): any {
+  if (!promise) {
+    return promise;
+  }
+  const wrap = (p: Promise<any>): any => {
+    p.catch(() => undefined);
+    return {
+      then: (onFulfilled?: any, onRejected?: any) => wrap(p.then(onFulfilled, onRejected)),
+      catch: (onRejected?: any) => wrap(p.catch(onRejected)),
+      finally: (onFinally?: any) => wrap(p.finally(onFinally)),
+    };
+  };
+  return wrap(Promise.resolve(promise));
+}
+
 /** The helper object, under the name the legacy scripts call it by. */
 export const legacyHelpers = {
   copy: legacyCopy,

@@ -1,4 +1,6 @@
-import { Component, DoCheck, forwardRef, inject } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { attachLegacyForm, lateLegacyForm, LegacyForm } from '../tb-grid/legacy-form';
+import { Component, DoCheck, forwardRef, inject, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { DashboardService } from '../../api/services/dashboard.service';
 import { DashboardUtilsService } from '../../common/services/dashboard-utils.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -32,6 +34,7 @@ import { isEqual } from 'lodash-es';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'widget-action-dialog',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatSelectModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, forwardRef(() => TbMaterialIconSelectDirective), forwardRef(() => TbDashboardAutocompleteDirective), forwardRef(() => TbJsFuncDirective), forwardRef(() => TbCustomActionPrettyEditorDirective)],
@@ -63,7 +66,14 @@ export class WidgetActionDialogComponent implements DoCheck {
   targetDashboardStateSearchText: any = '';
   selectedDashboardStateIds: any = [];
   action: any;
-  theForm: any;
+
+  /** The legacy `theForm` (FormController), over the template's `#theFormRef` NgForm. */
+  readonly theForm: LegacyForm = lateLegacyForm('theForm');
+
+  @ViewChild('theFormRef')
+  set theFormRef(form: NgForm | undefined) {
+    attachLegacyForm(this.theForm, form);
+  }
   item: any;
 
   private prevActionName: any;

@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, inject, input, model } from '@angular/core';
+import { Component, OnInit, effect, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,6 +15,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * `[(ngModel)]` is the dashboard id (string).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-dashboard-autocomplete',
   standalone: true,
   imports: [FormsModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, TranslatePipe],

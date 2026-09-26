@@ -1,4 +1,4 @@
-import { Component, DoCheck, forwardRef, inject, input, model } from '@angular/core';
+import { Component, DoCheck, forwardRef, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { isEqual } from 'lodash-es';
 import { CreateEntityAliasFn, FetchEntityKeysFn, GenerateDataKeyFn } from './datasource-callbacks';
 import { UtilsService } from '../../common/services/utils.service';
@@ -18,6 +18,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-datasource',
   standalone: true,
   imports: [TranslatePipe, MatSelectModule, MatInputModule, MatFormFieldModule, FormsModule, forwardRef(() => TbDatasourceFuncDirective), forwardRef(() => TbDatasourceEntityDirective)],
@@ -50,12 +51,17 @@ export class TbDatasourceDirective extends NgModelController implements DoCheck 
   constructor() {
     super();
     this.types = this.typesRef;
+  }
+
+  ngOnInit(): void {
+    // Reads its inputs: they are set after the constructor (the legacy link ran with the scope bound), so this runs in ngOnInit.
     if (this.functionsOnly()) {
             this.datasourceTypes = [this.typesRef.datasourceType.function];
         } else{
             this.datasourceTypes = [this.typesRef.datasourceType.entity, this.typesRef.datasourceType.function];
         }
   }
+
 
   ngDoCheck(): void {
     const currentType = this.model?.type;

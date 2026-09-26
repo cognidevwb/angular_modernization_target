@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, model } from '@angular/core';
+import { Component, OnInit, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,6 +26,7 @@ interface FileFields {
  * The legacy `scope.$parent.theForm` is the enclosing extension dialog's form: here the enclosing NgForm.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: '[tb-extension-form-opc]',
   standalone: true,
   templateUrl: './tb-extension-form-opc.directive.html',

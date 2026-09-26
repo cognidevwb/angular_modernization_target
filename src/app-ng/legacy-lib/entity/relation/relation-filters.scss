@@ -44,11 +44,11 @@
       padding-right: 5px;
       padding-left: 5px;
 
-      md-select {
+      mat-select {
         margin: 0 0 24px;
       }
 
-      md-input-container {
+      mat-form-field {
         margin: 0;
       }
 
@@ -56,7 +56,7 @@
         padding: 0;
         margin: 0 0 24px;
 
-        md-autocomplete {
+        mat-autocomplete {
           height: 30px;
 
           md-autocomplete-wrap {
@@ -72,7 +72,7 @@
       }
     }
 
-    .md-button {
+    :is(.md-button, .mat-mdc-button-base) {
       margin: 0;
     }
   }

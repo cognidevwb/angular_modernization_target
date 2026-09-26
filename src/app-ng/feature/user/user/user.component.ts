@@ -1,4 +1,4 @@
-import { Component, Type, inject } from '@angular/core';
+import { Component, Type, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,6 +19,7 @@ import { UserCardComponent } from './user-card.component';
  * Ported from the AngularJS controller `UserController` (module `thingsboard.user`) in src/app/user/index.js:27.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'user',
   standalone: true,
   imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbUserDirective, TbAuditLogTableDirective],

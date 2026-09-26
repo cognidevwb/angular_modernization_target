@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, inject, model, effect } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, model, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -8,6 +8,7 @@ import $ from 'jquery';
  * Ported from the AngularJS directive `tbSwitch` (module `thingsboard.widgets.rpc.switch`) in src/app/widget/lib/rpc/switch.directive.js:24.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-switch',
   standalone: true,
   imports: [MatSlideToggleModule, CommonModule, FormsModule],

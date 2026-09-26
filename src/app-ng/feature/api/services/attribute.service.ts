@@ -1,3 +1,4 @@
+import { httpOptions } from '../../../core/http-options';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TelemetryWebsocketService } from './telemetry-websocket.service';
@@ -35,7 +36,7 @@ export class AttributeService {
     } else if (type === types.dataKeyType.attribute) {
         url += 'attributes';
     }
-    this.http.get(url, config).toPromise().then(function success(response?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
         var result: any = [];
         if (response) {
             if (query) {
@@ -66,7 +67,7 @@ export class AttributeService {
     if ((limit !== undefined)) {
         url += '&limit=' + limit;
     }
-    this.http.get(url, null).toPromise().then(function success(response?: any) {
+    this.http.get(url).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail(response?: any) {
         deferred.reject(response?.error);
@@ -80,7 +81,7 @@ export class AttributeService {
     if (keys && keys.length) {
         url += '?keys=' + keys;
     }
-    this.http.get(url, config).toPromise().then(function success(response?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -145,7 +146,7 @@ export class AttributeService {
         }
     } else {
         var url: any = '/api/plugins/telemetry/' + entityType + '/' + entityId + '/values/attributes/' + attributeScope;
-    this.http.get(url, config).toPromise().then((response?: any) => {
+    this.http.get(url, httpOptions(config)).toPromise().then((response?: any) => {
         this.processAttributes(response, query, deferred, successCallback);
     }, function fail() {
         deferred.reject();
@@ -243,7 +244,7 @@ export class AttributeService {
     }
     if (Object.keys(attributesData).length) {
         var url: any = '/api/plugins/telemetry/' + entityType + '/' + entityId + '/' + attributeScope;
-    this.http.post(url, attributesData, config).toPromise().then((response?: any) => {
+    this.http.post(url, attributesData, httpOptions(config)).toPromise().then((response?: any) => {
         if (deleteEntityAttributesPromise) {
             deleteEntityAttributesPromise.then(
                 function success() {
@@ -292,7 +293,7 @@ export class AttributeService {
     }
     if (Object.keys(timeseriesData).length) {
         var url: any = '/api/plugins/telemetry/' + entityType + '/' + entityId + '/timeseries/' + timeseriesScope;
-    this.http.post(url, timeseriesData, config).toPromise().then((response?: any) => {
+    this.http.post(url, timeseriesData, httpOptions(config)).toPromise().then((response?: any) => {
         if (deleteEntityTimeseriesPromise) {
             deleteEntityTimeseriesPromise.then(
                 function success() {
@@ -334,7 +335,7 @@ export class AttributeService {
         keys += attributes[i].key;
     }
     var url: any = '/api/plugins/telemetry/' + entityType + '/' + entityId + '/' + attributeScope + '?keys=' + keys;
-    this.http.delete(url, config).toPromise().then(function success() {
+    this.http.delete(url, httpOptions(config)).toPromise().then(function success() {
         deferred.resolve();
     }, function fail() {
         deferred.reject();
@@ -356,7 +357,7 @@ export class AttributeService {
     var url: any = '/api/plugins/telemetry/' + entityType + '/' + entityId + '/timeseries/delete' +
         '?keys=' + keys +
         '&deleteAllDataForKeys=' + deleteAllDataForKeys;
-    this.http.delete(url, config).toPromise().then(function success() {
+    this.http.delete(url, httpOptions(config)).toPromise().then(function success() {
         deferred.resolve();
     }, function fail() {
         deferred.reject();

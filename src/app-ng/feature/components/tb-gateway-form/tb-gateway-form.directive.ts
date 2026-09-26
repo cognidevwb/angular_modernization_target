@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnChanges, OnInit, SimpleChanges, forwardRef, inject, model } from '@angular/core';
+import { Component, DestroyRef, OnChanges, OnInit, SimpleChanges, forwardRef, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import $ from 'jquery';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -33,6 +33,7 @@ const templateLogsConfig = '[loggers]}}keys=root, service, connector, converter,
  * The `$scope.$watch('vm.ctx')` becomes ngOnInit + ngOnChanges; the `gateway-form-resize` scope event is heard on RootState.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-gateway-form',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatSelectModule, MatInputModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule, MatExpansionModule, CommonModule, FormsModule, forwardRef(() => TbGatewayConfigSelectDirective), forwardRef(() => TbGatewayConfigDirective)],

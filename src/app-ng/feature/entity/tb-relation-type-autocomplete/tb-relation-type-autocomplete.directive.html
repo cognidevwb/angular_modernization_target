@@ -16,14 +16,13 @@
     limitations under the License.
 
 -->
-<!-- TODO(port): md-autocomplete: an input with [matAutocomplete] and a mat-autocomplete panel --><md-autocomplete [required]="tbRequired()" [disabled]="disabled()" md-no-cache="true" md-input-name="relationType" [(ngModel)]="relationType" md-selected-item="relationType" md-search-text="relationTypeSearchText" md-search-text-change="relationTypeSearchTextChanged()" md-items="item in fetchRelationTypes(relationTypeSearchText)" md-item-text="item" md-min-length="0" attr.md-floating-label="{{ tbRequired()  ? ('relation.relation-type' | translate) : ( !relationType ? ('relation.any-relation-type' | translate) : ' ') }}" md-select-on-match="true" md-menu-class="tb-relation-type-autocomplete">
+<!-- TODO(port): md-autocomplete: an input with [matAutocomplete] and a mat-autocomplete panel --><md-autocomplete name="relationType" [required]="tbRequired()" [disabled]="disabled()" md-no-cache="true" md-input-name="relationType" [(ngModel)]="relationType" md-selected-item="relationType" md-search-text="relationTypeSearchText" md-search-text-change="relationTypeSearchTextChanged()" md-items="item in fetchRelationTypes(relationTypeSearchText)" md-item-text="item" md-min-length="0" attr.md-floating-label="{{ tbRequired()  ? ('relation.relation-type' | translate) : ( !relationType ? ('relation.any-relation-type' | translate) : ' ') }}" md-select-on-match="true" md-menu-class="tb-relation-type-autocomplete">
     <!-- TODO(port): md-item-template: the content of each mat-option in the autocomplete -->
     <div *ngFor="let item of relationTypes" class="tb-relation-type-item">
         <span md-highlight-text="relationTypeSearchText" md-highlight-flags="^i">{{item}}</span>
     </div>
-    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-    <div ng-messages="theForm()?.relationType?.$error">
-        <!-- TODO(port): ng-message has no one-to-one Angular form -->
-        <div ng-message="required">{{ 'relation.relation-type-required' | translate }}</div>
-    </div>
+    <!-- ng-messages: the first message whose key is set in theForm()?.relationType?.$error -->
+    @if ((theForm()?.relationType?.$error)?.['required']) {
+      <div>{{ 'relation.relation-type-required' | translate }}</div>
+    }
 </md-autocomplete>

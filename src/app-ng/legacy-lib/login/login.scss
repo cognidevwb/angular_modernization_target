@@ -15,7 +15,7 @@
  */
 @import "scss/constants";
 
-md-card.tb-login-card {
+mat-card.tb-login-card {
   width: 330px !important;
 
   @media (min-width: $layout-breakpoint-sm) {
@@ -26,17 +26,18 @@ md-card.tb-login-card {
     padding: 8px;
   }
 
-  md-card-title {
+  // md-card-title became mat-card-header
+  mat-card-header {
     img.tb-login-logo {
       height: 50px;
     }
   }
 
-  md-card-content {
+  mat-card-content {
     margin-top: -50px;
   }
 
-  md-input-container .md-errors-spacer {
+  mat-form-field .md-errors-spacer {
     display: none;
   }
 

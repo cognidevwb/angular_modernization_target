@@ -4,7 +4,7 @@
         <div flex class="md-content md-padding" layout="column">
             <mat-form-field flex>
                 <mat-label>{{ 'dashboard.select-dashboard' | translate }}</mat-label>
-                <mat-select [(ngModel)]="dashboardId" (ngModelChange)="dashboardSelected($event)">
+                <mat-select name="dashboardId" [(ngModel)]="dashboardId" (ngModelChange)="dashboardSelected($event)">
                     @for (dashboard of dashboards; track dashboard.id.id) {
                     <mat-option [value]="dashboard.id.id">{{ dashboard.title }}</mat-option>
                     }

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, model, untracked } from '@angular/core';
+import { Component, DestroyRef, effect, inject, model, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
@@ -28,6 +28,7 @@ import { createLegacyFilter } from '../../components/widget/legacy-helpers';
  * the widget type's script broadcasts `timeseries-table-data-updated` on `ctx.$scope` when data arrives.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-timeseries-table-widget',
   standalone: true,
   imports: [TranslatePipe, MatPaginatorModule, MatTooltipModule, MatToolbarModule, MatTabsModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, CommonModule, FormsModule],

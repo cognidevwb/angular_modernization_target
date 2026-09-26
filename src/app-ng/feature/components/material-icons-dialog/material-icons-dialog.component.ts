@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -20,6 +20,7 @@ import { TbOnFinishRenderDirective } from '../tb-on-finish-render/tb-on-finish-r
  * with its template src/app/components/material-icons-dialog.tpl.html. Opened with `data: { icon }`; closes with the chosen icon.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'material-icons-dialog',
   standalone: true,
   imports: [

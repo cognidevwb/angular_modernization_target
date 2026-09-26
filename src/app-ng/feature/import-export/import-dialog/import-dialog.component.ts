@@ -1,4 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { attachLegacyForm, lateLegacyForm, LegacyForm } from '../../components/tb-grid/legacy-form';
+import { Component, inject, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../../services/toast.service';
@@ -18,6 +20,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'import-dialog',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatProgressBarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule],
@@ -33,7 +36,14 @@ export class ImportDialogComponent {
   importFileLabel: any;
   fileName: any;
   importData: any;
-  theForm: any;
+
+  /** The legacy `theForm` (FormController), over the template's `#theFormRef` NgForm. */
+  readonly theForm: LegacyForm = lateLegacyForm('theForm');
+
+  @ViewChild('theFormRef')
+  set theFormRef(form: NgForm | undefined) {
+    attachLegacyForm(this.theForm, form);
+  }
 
   // TODO(port): $scope.$apply — $apply is not needed: Angular detects the change
 

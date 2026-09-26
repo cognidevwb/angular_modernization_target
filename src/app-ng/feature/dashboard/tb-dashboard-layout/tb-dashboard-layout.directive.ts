@@ -1,4 +1,4 @@
-import { Component, effect, forwardRef, HostListener, inject, model, untracked } from '@angular/core';
+import { Component, effect, forwardRef, HostListener, inject, model, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +20,7 @@ import { notifyWidgetEditor } from '../widget-editor-frame';
  * (reload, highlight, select …), and forwards the grid's events to the page's `dashboardCtx` callbacks.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-dashboard-layout',
   standalone: true,
   imports: [TranslatePipe, MatIconModule, MatButtonModule, CommonModule, forwardRef(() => TbDashboardDirective)],

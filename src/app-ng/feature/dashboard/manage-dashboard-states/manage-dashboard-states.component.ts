@@ -1,4 +1,4 @@
-import { Component, inject, DoCheck, ViewChild } from '@angular/core';
+import { Component, inject, DoCheck, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
@@ -31,6 +31,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * The dialog that lists, adds, edits and deletes the dashboard states; closes with the states by id.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'manage-dashboard-states',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, MatTableModule, MatSortModule, MatPaginatorModule],

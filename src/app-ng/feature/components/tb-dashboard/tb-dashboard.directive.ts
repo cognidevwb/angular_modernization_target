@@ -1,5 +1,7 @@
 import {
+  AfterViewChecked,
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   DestroyRef,
   ElementRef,
@@ -11,8 +13,7 @@ import {
   model,
   output,
   untracked,
-  viewChild,
-} from '@angular/core';
+  viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { NgClass, NgComponentOutlet, NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -73,6 +74,7 @@ const GT_SM = '(min-width: 960px)';
  * as the last argument, so a widget can tell its own dashboard's events from another's.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-dashboard',
   standalone: true,
   imports: [
@@ -82,7 +84,7 @@ const GT_SM = '(min-width: 960px)';
   ],
   templateUrl: './tb-dashboard.directive.html',
 })
-export class TbDashboardDirective implements OnInit, AfterViewInit {
+export class TbDashboardDirective implements OnInit, AfterViewInit, AfterViewChecked {
   readonly widgets = model<any>();
   readonly widgetLayouts = model<any>();
   readonly aliasController = model<any>();
@@ -120,6 +122,9 @@ export class TbDashboardDirective implements OnInit, AfterViewInit {
   protected readonly widgetComponent = TbWidgetDirective;
   private readonly breakpoints = inject(BreakpointObserver);
   private readonly zone = inject(NgZone);
+  private readonly cdr = inject(ChangeDetectorRef);
+  /** What the widget headers last rendered from the widgets' contexts (see ngAfterViewChecked). */
+  private headerSignature = '';
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly gridsterParent = viewChild<ElementRef<HTMLElement>>('gridsterParent');
@@ -296,6 +301,22 @@ export class TbDashboardDirective implements OnInit, AfterViewInit {
     if (parent && typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(() => this.zone.run(() => this.onGridsterParentResize()));
       this.resizeObserver.observe(parent);
+    }
+  }
+
+  /**
+   * A widget's header (its actions, title template, timewindow) reads the widget context the widget
+   * component creates while this view is being checked. The AngularJS digest looped until nothing
+   * changed; here, when a context appeared or its actions changed since the last check, the view is
+   * checked once more so the headers show them.
+   */
+  ngAfterViewChecked(): void {
+    const signature = (this.widgets() || [])
+      .map((w: any) => `${w.$ctx ? 1 : 0}:${this.widgetActions(w).length}:${this.customWidgetHeaderActions(w).length}`)
+      .join('|');
+    if (signature !== this.headerSignature) {
+      this.headerSignature = signature;
+      this.cdr.detectChanges();
     }
   }
 

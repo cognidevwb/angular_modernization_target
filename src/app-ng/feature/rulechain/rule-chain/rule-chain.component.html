@@ -25,15 +25,15 @@
                 </button>
             </section>
             @if (isLibraryOpen) {
-              <div class="tb-rulechain-library md-sidenav-left md-whiteframe-4dp">
+              <div class="tb-rulechain-library md-sidenav-left md-whiteframe-4dp" layout="column">
                 <mat-toolbar>
                     <div class="md-toolbar-tools">
                         <button mat-icon-button class="tb-small" [attr.aria-label]="'action.search' | translate" [matTooltip]="'rulenode.search' | translate" [matTooltipPosition]="isFullscreen ? 'below' : 'above'">
                             <mat-icon [attr.aria-label]="'action.search' | translate" class="material-icons">search</mat-icon>
                         </button>
                         <div layout="row" flex>
-                            <mat-form-field flex>
-                                <input matInput [ngModel]="ruleNodeSearch" (ngModelChange)="setRuleNodeSearch($event)" [placeholder]="'rulenode.search' | translate">
+                            <mat-form-field flex subscriptSizing="dynamic">
+                                <input name="ruleNodeSearch" matInput [ngModel]="ruleNodeSearch" (ngModelChange)="setRuleNodeSearch($event)" [placeholder]="'rulenode.search' | translate">
                             </mat-form-field>
                         </div>
                         <button mat-icon-button class="tb-small" aria-label="Close" [hidden]="!ruleNodeSearch" (click)="setRuleNodeSearch('')" [matTooltip]="'action.clear-search' | translate" [matTooltipPosition]="isFullscreen ? 'below' : 'above'">
@@ -45,7 +45,7 @@
                     </div>
                 </mat-toolbar>
                 @if (ruleChainLibraryLoaded) {
-                  <mat-accordion class="tb-rulechain-library-panel-group" [multi]="true">
+                  <mat-accordion class="tb-rulechain-library-panel-group" flex [multi]="true" [displayMode]="'flat'">
                     @for (typeId of __keys(ruleNodeTypesModel); track typeId) {
                       <mat-expansion-panel [id]="typeId" [expanded]="libraryPanelExpanded[typeId]" (expandedChange)="libraryPanelExpanded[typeId] = $event">
                         <mat-expansion-panel-header (mouseenter)="typeHeaderMouseEnter($event, typeId)" (mouseleave)="destroyTooltips()">

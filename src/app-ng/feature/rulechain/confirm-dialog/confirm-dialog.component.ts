@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { firstValueFrom } from 'rxjs';
@@ -17,6 +17,7 @@ export interface ConfirmDialogData {
  * cancel / ok buttons; closes with `true` on ok.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-confirm-dialog',
   standalone: true,
   imports: [MatDialogModule, MatButtonModule],

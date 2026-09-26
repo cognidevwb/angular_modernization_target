@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, forwardRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
@@ -32,6 +32,7 @@ const js_beautify: any = (beautify as any).js;
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'node-script-test',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, forwardRef(() => TbMessageTypeAutocompleteDirective), forwardRef(() => TbJsonContentDirective), forwardRef(() => TbKeyValMapDirective), forwardRef(() => TbJsFuncDirective)],

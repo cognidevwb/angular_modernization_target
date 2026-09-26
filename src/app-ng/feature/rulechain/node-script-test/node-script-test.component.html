@@ -38,10 +38,10 @@
                             <ng-form name="payloadForm">
                                 <div layout="column" style="height: 100%;">
                                     <div layout="row">
-                                        <tb-message-type-autocomplete style="margin-bottom: 0px; min-width: 300px;" [ngRequired]="true" [(ngModel)]="inputParams.msgType" [(theForm)]="payloadForm">
+                                        <tb-message-type-autocomplete name="msgType" style="margin-bottom: 0px; min-width: 300px;" [ngRequired]="true" [(ngModel)]="inputParams.msgType" [(theForm)]="payloadForm">
                                         </tb-message-type-autocomplete>
                                     </div>
-                                    <tb-json-content flex [(ngModel)]="inputParams.msg" [label]="'rulenode.message' | translate" [(contentType)]="types.contentType.JSON.value" [validateContent]="true" validation-trigger-arg="validatePayload" [fillHeight]="true">
+                                    <tb-json-content name="msg" flex [(ngModel)]="inputParams.msg" [label]="'rulenode.message' | translate" [(contentType)]="types.contentType.JSON.value" [validateContent]="true" validation-trigger-arg="validatePayload" [fillHeight]="true">
                                     </tb-json-content>
                                 </div>
                             </ng-form>
@@ -65,7 +65,7 @@
                                 <label>{{ functionTitle }}</label>
                             </div>
                             <ng-form name="funcBodyForm">
-                                <tb-js-func id="funcBodyInput" [(ngModel)]="inputParams.script" [functionName]="inputParams?.functionName" [functionArgs]="inputParams?.argNames" [validationArgs]="[[inputParams?.msg, inputParams?.metadata, inputParams?.msgType]]" validation-trigger-arg="validateFuncBody" result-type="object" [fillHeight]="true">
+                                <tb-js-func name="script" id="funcBodyInput" [(ngModel)]="inputParams.script" [functionName]="inputParams?.functionName" [functionArgs]="inputParams?.argNames" [validationArgs]="[[inputParams?.msg, inputParams?.metadata, inputParams?.msgType]]" validation-trigger-arg="validateFuncBody" result-type="object" [fillHeight]="true">
                                 </tb-js-func>
                             </ng-form>
                         </div>
@@ -75,7 +75,7 @@
                             <div class="tb-editor-area-title-panel">
                                 <label>{{ 'rulenode.output' | translate }}</label>
                             </div>
-                            <tb-json-content [(ngModel)]="output" [label]="'rulenode.output' | translate" [(contentType)]="types.contentType.JSON.value" [validateContent]="false" [ngReadonly]="true" [fillHeight]="true">
+                            <tb-json-content name="output" [(ngModel)]="output" [label]="'rulenode.output' | translate" [(contentType)]="types.contentType.JSON.value" [validateContent]="false" [ngReadonly]="true" [fillHeight]="true">
                             </tb-json-content>
                         </div>
                     </div>

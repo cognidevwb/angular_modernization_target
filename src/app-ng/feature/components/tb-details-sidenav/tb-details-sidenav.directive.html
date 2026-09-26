@@ -16,7 +16,8 @@
     limitations under the License.
 
 -->
-<mat-sidenav class="md-sidenav-right md-whiteframe-4dp tb-sidenav-details" position="end" mode="over" [opened]="isOpen()">
+<!-- md-sidenav (md-disable-backdrop, md-is-open): a panel sliding in from the right edge of the page content; closed, it is off to the right -->
+<aside class="tb-md-sidenav md-sidenav-right md-whiteframe-4dp tb-sidenav-details" [class.md-closed]="!isOpen()" layout="column">
       <header>
 	      <mat-toolbar class="md-theme-light" [ngStyle]="{'height':headerHeightPx()+'px'}">
 	      	<div class="md-toolbar-tools" layout="row">
@@ -47,4 +48,4 @@
       <div flex class="md-content">
 			<div><ng-content></ng-content></div>
       </div>
-</mat-sidenav>
+</aside>

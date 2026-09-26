@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { attachLegacyForm, lateLegacyForm, LegacyForm } from '../../components/tb-grid/legacy-form';
+import { Component, inject, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { DashboardUtilsService } from '../../common/services/dashboard-utils.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 
 import $ from 'jquery';
 const dashboardSettingsTemplate = '../../../../app/dashboard/dashboard-settings.tpl.html';
@@ -22,6 +23,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'manage-dashboard-layouts',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatIconModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule],
@@ -36,7 +38,11 @@ export class ManageDashboardLayoutsComponent {
 
   layouts: any;
   displayLayouts: any;
-  theForm: any;
+  /** The legacy `theForm` FormController, over the template's `<form name="theForm">`. */
+  readonly theForm: LegacyForm = lateLegacyForm('theForm');
+  @ViewChild('theFormRef') set theFormRef(form: NgForm | undefined) {
+    attachLegacyForm(this.theForm, form);
+  }
 
   constructor() {
     this.openLayoutSettings = this.openLayoutSettings;

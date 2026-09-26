@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,6 +15,7 @@ import { EventContentDialogComponent } from '../event-content-dialog/event-conte
  * tb-event-row.directive.html.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: '[tb-event-row]',
   standalone: true,
   imports: [DatePipe, NgTemplateOutlet, TranslatePipe, MatButtonModule, MatIconModule, MatTooltipModule],

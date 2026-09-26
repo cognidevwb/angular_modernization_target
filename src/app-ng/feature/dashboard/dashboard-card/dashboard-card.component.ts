@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
 
@@ -7,6 +7,7 @@ import { types } from '../../common/constants/types';
  * with its card template src/app/dashboard/dashboard-card.tpl.html. Rendered by tb-grid for each dashboard.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'dashboard-card',
   standalone: true,
   imports: [TranslatePipe],

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, OnChanges, SimpleChanges, inject, input, model } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnChanges, SimpleChanges, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import $ from 'jquery';
@@ -21,6 +21,7 @@ import { RootState } from '../../../root-state';
 
 /** The `$mdDialog.confirm()` the legacy table showed before a delete: title, html content, no / yes. */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-extension-confirm-dialog',
   standalone: true,
   imports: [MatDialogModule, MatButtonModule],
@@ -44,6 +45,7 @@ export class TbExtensionConfirmDialogComponent {
  * in; `selectedExtensions`, `filterMode` out) go over RootState.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-extension-table',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, MatCheckboxModule, MatPaginatorModule, MatDialogModule, CommonModule, FormsModule],

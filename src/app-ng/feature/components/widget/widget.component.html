@@ -15,7 +15,8 @@
 			@if (legendFirst) {
 			<tb-legend [style]="legendStyle" [legendConfig]="legendConfig" [legendData]="legendData"></tb-legend>
 			}
-			<div flex id="widget-container">
+			<!-- the legend's keys arrive after the container was sized: the container yields to it, and the widget is resized -->
+			<div flex id="widget-container" style="min-height: 0; min-width: 0;">
 				<ng-container *ngTemplateOutlet="containerTpl"></ng-container>
 			</div>
 			@if (!legendFirst) {

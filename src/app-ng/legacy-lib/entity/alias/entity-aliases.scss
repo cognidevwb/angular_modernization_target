@@ -34,7 +34,7 @@
     padding: 0 0 0 10px;
     margin: 5px;
 
-    md-input-container {
+    mat-form-field {
       margin: 0;
     }
 
@@ -46,8 +46,8 @@
       }
     }
 
-    .md-button {
-      &.md-icon-button {
+    :is(.md-button, .mat-mdc-button-base) {
+      &:is(.md-icon-button, .mat-mdc-icon-button) {
         margin: 0;
       }
     }

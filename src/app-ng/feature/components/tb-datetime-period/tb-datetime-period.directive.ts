@@ -1,4 +1,4 @@
-import { Component, effect, model } from '@angular/core';
+import { Component, effect, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,6 +11,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * bound through `[(ngModel)]`, edited as a start and an end date-time (the legacy mdp date + time pickers).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-datetime-period',
   standalone: true,
   imports: [TranslatePipe, FormsModule, MatFormFieldModule, MatInputModule],

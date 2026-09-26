@@ -22,10 +22,10 @@
             <div flex class="md-toolbar-tools">
                 <mat-form-field>
                     <mat-label>&nbsp;</mat-label>
-                    <input matInput [disabled]="isReadOnly()" [ngModel]="widget?.widgetName" (ngModelChange)="widget.widgetName = $event" attr.placeholder="{{ 'widget.title' | translate }}">
+                    <input name="widget" matInput [disabled]="isReadOnly()" [ngModel]="widget?.widgetName" (ngModelChange)="widget.widgetName = $event" attr.placeholder="{{ 'widget.title' | translate }}">
                 </mat-form-field>
                 <mat-form-field>
-                    <mat-select [disabled]="isReadOnly()" placeholder="{{ 'widget.type' | translate }}" required id="widgetType" [ngModel]="widget?.type" (ngModelChange)="widget.type = $event">
+                    <mat-select name="widget-2" [disabled]="isReadOnly()" placeholder="{{ 'widget.type' | translate }}" required id="widgetType" [ngModel]="widget?.type" (ngModelChange)="widget.type = $event">
                         @for (type of widgetTypeList; track $index) {
                           <mat-option value="{{type?.value}}">
                             {{ type?.name | translate }}

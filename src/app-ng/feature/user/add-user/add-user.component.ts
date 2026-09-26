@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,6 +22,7 @@ import { ActivationLinkDialogComponent } from '../activation-link-dialog/activat
  * (its `usersType`, `tenantId`, `customerId`). Closes with the saved user.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'add-user',
   standalone: true,
   imports: [FormsModule, MatDialogModule, MatToolbarModule, MatButtonModule, MatIconModule, MatProgressBarModule, MatFormFieldModule, MatSelectModule, TranslatePipe, TbGridHelpButtonComponent, TbUserDirective],

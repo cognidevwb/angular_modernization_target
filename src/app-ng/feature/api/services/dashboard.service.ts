@@ -1,8 +1,9 @@
+import { filter } from 'rxjs';
 import { httpOptions } from '../../../core/http-options';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RootState } from '../../../root-state';
-import { Router } from '@angular/router';
+import { NavigationStart, Router } from '@angular/router';
 import { bindMethods } from '../../../bind-methods';
 
 import { $q } from '../../../core/q';
@@ -27,10 +28,10 @@ export class DashboardService {
   // TODO(port): $http — $http: this.http returns an Observable; the response body is the value, not .data
   // TODO(port): $location.host — $location.host: window.location.host
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): $rootScope.$on — a root scope event: subscribe to the service that raises it
 
   constructor() {
-    this.rootScope.dadshboardServiceStateChangeStartHandle = this.rootScope.$on('$stateChangeStart', () => {
+    // `$stateChangeStart`: every navigation measures the server time difference afresh.
+    this.router.events.pipe(filter((event) => event instanceof NavigationStart)).subscribe(() => {
         this.stDiffPromise = undefined;
     });
   }
@@ -48,7 +49,7 @@ export class DashboardService {
         url += '&textOffset=' + pageLink.textOffset;
     }
     return new Promise((resolve, reject) => {
-      this.http.get(url, config).subscribe((response: any) => {
+      this.http.get(url, httpOptions(config)).subscribe((response: any) => {
         resolve(this.prepareDashboards(response));
       }, () => {
         reject();
@@ -70,7 +71,7 @@ export class DashboardService {
         url += '&textOffset=' + pageLink.textOffset;
     }
     return new Promise((resolve, reject) => {
-      this.http.get(url, config).subscribe((response: any) => {
+      this.http.get(url, httpOptions(config)).subscribe((response: any) => {
         resolve(this.prepareDashboards(response));
       }, () => {
         reject();
@@ -86,7 +87,7 @@ export class DashboardService {
         url += '&offset=' + pageLink.idOffset;
     }
     return new Promise((resolve, reject) => {
-      this.http.get(url, config).subscribe((response: any) => {
+      this.http.get(url, httpOptions(config)).subscribe((response: any) => {
         var data: any = this.prepareDashboards(response);
         if (pageLink.textSearch) {
             data.data = data.data.filter((item: any) => item.title && item.title.toLowerCase().indexOf(pageLink.textSearch.toLowerCase()) !== -1);
@@ -100,14 +101,11 @@ export class DashboardService {
   }
 
   getServerTimeDiff(...rest: any[]): any {
-    if (this.stDiffPromise) {
-        return this.stDiffPromise;
-    } else {
-        var deferred: any = $q.defer();
-        this.stDiffPromise = deferred.promise;
+    // One request for every caller: the promise is kept and handed to each (as the legacy deferred was).
+    if (!this.stDiffPromise) {
         var url: any = '/api/dashboard/serverTime';
         var ct1: any = Date.now();
-        return new Promise((resolve, reject) => {
+        this.stDiffPromise = new Promise((resolve, reject) => {
           this.http.get(url, httpOptions({ignoreLoading: true})).subscribe((response: any) => {
             var ct2: any = Date.now();
             var st: any = response;
@@ -125,7 +123,7 @@ export class DashboardService {
     var deferred: any = $q.defer();
     var url: any = '/api/dashboard/' + dashboardId;
     return new Promise((resolve, reject) => {
-      this.http.get(url, null as any).subscribe((response: any) => {
+      this.http.get(url).subscribe((response: any) => {
         resolve(this.prepareDashboard(response));
       }, () => {
         reject();
@@ -138,7 +136,7 @@ export class DashboardService {
     var deferred: any = $q.defer();
     var url: any = '/api/dashboard/info/' + dashboardId;
     return new Promise((resolve, reject) => {
-      this.http.get(url, config).subscribe((response: any) => {
+      this.http.get(url, httpOptions(config)).subscribe((response: any) => {
         resolve(this.prepareDashboard(response));
       }, () => {
         reject();

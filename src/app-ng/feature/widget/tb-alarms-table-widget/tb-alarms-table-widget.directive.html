@@ -26,7 +26,7 @@
                 </button>
                 <mat-form-field flex>
                     <mat-label>&nbsp;</mat-label>
-                    <input matInput [(ngModel)]="query.search" (ngModelChange)="onSearchChanged()" class="searchInput" attr.placeholder="{{'alarm.search' | translate}}">
+                    <input name="search" matInput [(ngModel)]="query.search" (ngModelChange)="onSearchChanged()" class="searchInput" attr.placeholder="{{'alarm.search' | translate}}">
                 </mat-form-field>
                 <button mat-icon-button aria-label="Close" (click)="exitFilterMode()" matTooltip="{{ 'action.close' | translate }}" [matTooltipPosition]="ctx()?.dashboard?.isWidgetExpanded ? 'below' : 'above'">
                     <mat-icon aria-label="Close" class="material-icons">close</mat-icon>

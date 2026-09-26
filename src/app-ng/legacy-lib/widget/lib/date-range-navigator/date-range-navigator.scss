@@ -36,7 +36,7 @@
   }
 
   .navigation {
-    md-input-container {
+    mat-form-field {
       margin: 0;
     }
   }
@@ -76,7 +76,7 @@
     .drn__element {
       width: 100%;
 
-      md-input-container {
+      mat-form-field {
         flex: 1;
       }
     }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, effect, inject, model } from '@angular/core';
+import { Component, ElementRef, effect, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,7 @@ const DEFAULT_IMAGE_QUALITY = 0.92;
  * Ported from the AngularJS directive `tbWebCameraWidget` (module `thingsboard.widgets.webCameraWidget`) in src/app/widget/lib/web-camera-input-widget.js:22.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-web-camera-widget',
   standalone: true,
   imports: [TranslatePipe, MatIconModule, MatButtonModule],

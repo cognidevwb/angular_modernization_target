@@ -1,4 +1,4 @@
-import { Component, DoCheck, ElementRef, HostListener, OnDestroy, forwardRef, inject, viewChild } from '@angular/core';
+import { Component, DoCheck, ElementRef, HostListener, OnDestroy, forwardRef, inject, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { NgForm, FormsModule } from '@angular/forms';
@@ -80,6 +80,7 @@ function modelSnapshot(model: any): string {
  * The ngFlowchart canvas is `tb-rule-chain-canvas` (same model: nodes with x/y and connectors, edges between connector ids).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'rule-chain',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatTabsModule, MatMenuModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, MatExpansionModule, KeyboardShortcutPipe, FormsModule, RuleChainCanvasComponent, forwardRef(() => TbExpandFullscreenDirective), forwardRef(() => TbConfirmOnExitDirective), forwardRef(() => TbDetailsSidenavDirective), forwardRef(() => TbHelpDirective), forwardRef(() => TbRuleNodeDirective), forwardRef(() => TbEventTableDirective), forwardRef(() => TbRuleNodeLinkDirective)],

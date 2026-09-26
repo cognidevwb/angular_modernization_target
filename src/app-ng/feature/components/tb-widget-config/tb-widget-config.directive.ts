@@ -1,4 +1,4 @@
-import { Component, OnInit, forwardRef, inject, input, model } from '@angular/core';
+import { Component, OnInit, forwardRef, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { CreateEntityAliasFn, FetchDashboardStatesFn, FetchEntityKeysFn, GenerateDataKeyFn } from '../tb-datasource/datasource-callbacks';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -37,6 +37,7 @@ type ConfigField =
  * The `ngModel` it required is the NgModelController base: `$render`, `$setViewValue`, `$setValidity`.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-widget-config',
   standalone: true,
   imports: [

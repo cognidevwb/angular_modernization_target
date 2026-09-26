@@ -17,7 +17,7 @@
 
 -->
 <div class="md-dialog tb-widget-action-dialog" attr.aria-label="{{'widget-config.action' | translate }}" style="min-width: 600px;">
-    <form name="theForm" (ngSubmit)="save()">
+    <form name="theForm" #theFormRef="ngForm" (ngSubmit)="save()">
         <mat-toolbar>
             <div class="md-toolbar-tools">
                 <h2>{{ (isAdd ? 'widget-config.add-action' : 'widget-config.edit-action') | translate }}</h2>
@@ -43,24 +43,22 @@
                                 </mat-option>
                                 }
                             </mat-select>
-                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                            <div ng-messages="theForm?.actionSource?.$error">
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="required">{{ 'widget-config.action-source-required' | translate }}</div>
-                            </div>
+                            <!-- ng-messages: the first message whose key is set in theForm?.actionSource?.$error -->
+                            @if ((theForm?.actionSource?.$error)?.['required']) {
+                              <mat-error>{{ 'widget-config.action-source-required' | translate }}</mat-error>
+                            }
                         </mat-form-field>
                         <mat-form-field class="md-block">
                             <mat-label>{{ 'widget-config.action-name' | translate }}</mat-label>
                             <input matInput name="name" required [(ngModel)]="action.name">
-                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                            <div ng-messages="theForm?.name?.$error">
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="required">{{ 'widget-config.action-name-required' | translate }}</div>
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="actionNameNotUnique">{{ 'widget-config.action-name-not-unique' | translate }}</div>
-                            </div>
+                            <!-- ng-messages: the first message whose key is set in theForm?.name?.$error -->
+                            @if ((theForm?.name?.$error)?.['required']) {
+                              <mat-error>{{ 'widget-config.action-name-required' | translate }}</mat-error>
+                            } @else if ((theForm?.name?.$error)?.['actionNameNotUnique']) {
+                              <mat-error>{{ 'widget-config.action-name-not-unique' | translate }}</mat-error>
+                            }
                         </mat-form-field>
-                        <tb-material-icon-select [(ngModel)]="action.icon">
+                        <tb-material-icon-select name="icon" [(ngModel)]="action.icon">
                         </tb-material-icon-select>
                         <mat-form-field class="md-block">
                             <mat-label>{{ 'widget-config.action-type' | translate }}</mat-label>
@@ -71,44 +69,42 @@
                                 </mat-option>
                                 }
                             </mat-select>
-                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                            <div ng-messages="theForm?.actionType?.$error">
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="required">{{ 'widget-config.action-type-required' | translate }}</div>
-                            </div>
+                            <!-- ng-messages: the first message whose key is set in theForm?.actionType?.$error -->
+                            @if ((theForm?.actionType?.$error)?.['required']) {
+                              <mat-error>{{ 'widget-config.action-type-required' | translate }}</mat-error>
+                            }
                         </mat-form-field>
                         @if (action?.type == types?.widgetActionTypes?.openDashboard?.value) {
                           <div layout="column" style="padding-bottom: 20px;">
                             <div class="md-caption tb-required" style="padding-left: 3px; padding-bottom: 10px; color: rgba(0,0,0,0.57);">{{ 'widget-action.target-dashboard' | translate }}</div>
-                            <tb-dashboard-autocomplete [(theForm)]="theForm" [tbRequired]="true" [(ngModel)]="action.targetDashboardId" [selectFirstDashboard]="false">
+                            <tb-dashboard-autocomplete name="targetDashboardId" [(theForm)]="theForm" [tbRequired]="true" [(ngModel)]="action.targetDashboardId" [selectFirstDashboard]="false">
                             </tb-dashboard-autocomplete>
                         </div>
                         }
                         <!-- TODO(port): md-autocomplete: an input with [matAutocomplete] and a mat-autocomplete panel -->@if (action?.type == types?.widgetActionTypes?.openDashboardState?.value ||
                                                 action?.type == types?.widgetActionTypes?.updateDashboardState?.value ||
                                                 action?.type == types?.widgetActionTypes?.openDashboard?.value) {
-                          <md-autocomplete [required]="action?.type == types?.widgetActionTypes?.openDashboardState?.value" md-no-cache="true" md-input-name="targetDashboardState" [(ngModel)]="action.targetDashboardStateId" md-selected-item="vm.action.targetDashboardStateId" md-search-text="vm.targetDashboardStateSearchText" md-search-text-change="vm.targetDashboardStateSearchTextChanged()" md-items="item in vm.dashboardStateSearch(vm.targetDashboardStateSearchText)" md-item-text="item" md-min-length="0" attr.md-floating-label="{{ 'widget-action.target-dashboard-state' | translate }}" md-select-on-match="true">
+                          <md-autocomplete name="targetDashboardStateId" [required]="action?.type == types?.widgetActionTypes?.openDashboardState?.value" md-no-cache="true" md-input-name="targetDashboardState" [(ngModel)]="action.targetDashboardStateId" md-selected-item="vm.action.targetDashboardStateId" md-search-text="vm.targetDashboardStateSearchText" md-search-text-change="vm.targetDashboardStateSearchTextChanged()" md-items="item in vm.dashboardStateSearch(vm.targetDashboardStateSearchText)" md-item-text="item" md-min-length="0" attr.md-floating-label="{{ 'widget-action.target-dashboard-state' | translate }}" md-select-on-match="true">
                             <!-- TODO(port): md-item-template: the content of each mat-option in the autocomplete -->
                                 <div>
                                     <span md-highlight-text="vm.targetDashboardStateSearchText" md-highlight-flags="^i">{{item}}</span>
                                 </div>
-                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                            <div ng-messages="theForm?.targetDashboardState?.$error">
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="required">{{ 'widget-action.target-dashboard-state-required' | translate }}</div>
-                            </div>
+                            <!-- ng-messages: the first message whose key is set in theForm?.targetDashboardState?.$error -->
+                            @if ((theForm?.targetDashboardState?.$error)?.['required']) {
+                              <div>{{ 'widget-action.target-dashboard-state-required' | translate }}</div>
+                            }
                         </md-autocomplete>
                         }
                         @if (action?.type == types?.widgetActionTypes?.openDashboardState?.value ||
                                             action?.type == types?.widgetActionTypes?.updateDashboardState?.value) {
-                          <mat-checkbox flex attr.aria-label="{{ 'widget-action.open-right-layout' | translate }}" [(ngModel)]="action.openRightLayout">{{ 'widget-action.open-right-layout' | translate }}
+                          <mat-checkbox name="openRightLayout" flex attr.aria-label="{{ 'widget-action.open-right-layout' | translate }}" [(ngModel)]="action.openRightLayout">{{ 'widget-action.open-right-layout' | translate }}
                         </mat-checkbox>
                         }
                         @if (action?.type == types?.widgetActionTypes?.openDashboardState?.value ||
                                                 action?.type == types?.widgetActionTypes?.updateDashboardState?.value ||
                                                 action?.type == types?.widgetActionTypes?.openDashboard?.value) {
                           <div flex layout="column">
-                            <mat-checkbox flex attr.aria-label="{{ 'widget-action.set-entity-from-widget' | translate }}" [(ngModel)]="action.setEntityId">{{ 'widget-action.set-entity-from-widget' | translate }}
+                            <mat-checkbox name="setEntityId" flex attr.aria-label="{{ 'widget-action.set-entity-from-widget' | translate }}" [(ngModel)]="action.setEntityId">{{ 'widget-action.set-entity-from-widget' | translate }}
                             </mat-checkbox>
                             @if (action?.setEntityId) {
                               <mat-form-field class="md-block">
@@ -119,7 +115,7 @@
                         </div>
                         }
                         @if (action?.type == types?.widgetActionTypes?.custom?.value) {
-                          <tb-js-func [(ngModel)]="action.customFunction" [functionArgs]="['$event', 'widgetContext', 'entityId', 'entityName', 'additionalParams']" [validationArgs]="[]">
+                          <tb-js-func name="customFunction" [(ngModel)]="action.customFunction" [functionArgs]="['$event', 'widgetContext', 'entityId', 'entityName', 'additionalParams']" [validationArgs]="[]">
                         </tb-js-func>
                         }
                         @if (action?.type == types?.widgetActionTypes?.customPretty?.value) {

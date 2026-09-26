@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { ContactShortPipe } from '../../components/pipes/contact-short.pipe';
 
 /**
@@ -6,6 +6,7 @@ import { ContactShortPipe } from '../../components/pipes/contact-short.pipe';
  * Rendered by tb-grid for each item (legacy card template src/app/tenant/tenant-card.tpl.html).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tenant-card',
   standalone: true,
   imports: [ContactShortPipe],

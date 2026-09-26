@@ -1,4 +1,4 @@
-import { Component, DoCheck, effect, inject, input, model } from '@angular/core';
+import { Component, DoCheck, effect, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RootState } from '../../../root-state';
@@ -13,6 +13,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Ported from the AngularJS directive `tbKeyValMap` (module `thingsboard.directives.keyValMap`) in src/app/components/kv-map.directive.js:24.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-key-val-map',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, CommonModule, FormsModule],

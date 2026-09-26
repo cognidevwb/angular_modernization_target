@@ -29,9 +29,9 @@
         @for (filter of relationFilters; track $index) {
           <div class="row" ng-form name="relationFilterForm" flex layout="row" layout-align="start center">
             <div class="md-whiteframe-1dp" flex layout="row" layout-align="start center">
-                <tb-relation-type-autocomplete class="cell" style="width: 200px; min-width: 200px;" hide-label [(theForm)]="relationFilterForm" [(ngModel)]="filter.relationType" [tbRequired]="false">
+                <tb-relation-type-autocomplete name="relationType" class="cell" style="width: 200px; min-width: 200px;" hide-label [(theForm)]="relationFilterForm" [(ngModel)]="filter.relationType" [tbRequired]="false">
                 </tb-relation-type-autocomplete>
-                <tb-entity-type-list class="cell" flex [(ngModel)]="filter.entityTypes" [(allowedEntityTypes)]="allowedEntityTypes" [tbRequired]="false">
+                <tb-entity-type-list name="entityTypes" class="cell" flex [(ngModel)]="filter.entityTypes" [(allowedEntityTypes)]="allowedEntityTypes" [tbRequired]="false">
                 </tb-entity-type-list>
                 <button mat-icon-button color="primary" [disabled]="rootScope?.loading" style="width: 40px; min-width: 40px;" (click)="removeFilter($event, filter)" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'relation.remove-relation-filter' | translate }}" matTooltipPosition="above">
                     

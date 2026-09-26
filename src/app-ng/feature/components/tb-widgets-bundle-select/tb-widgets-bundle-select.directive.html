@@ -16,7 +16,7 @@
     limitations under the License.
 
 -->
-<mat-select [required]="tbRequired()" [(ngModel)]="widgetsBundle" placeholder="{{ 'widget.select-widgets-bundle' | translate }}" class="md-no-underline">
+<mat-select name="widgetsBundle" [required]="tbRequired()" [(ngModel)]="widgetsBundle" placeholder="{{ 'widget.select-widgets-bundle' | translate }}" class="md-no-underline">
     @for (item of widgetsBundles; track $index) {
       <mat-option [value]="item">
         <div class="tb-bundle-item">

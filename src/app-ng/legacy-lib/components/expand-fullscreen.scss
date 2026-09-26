@@ -36,7 +36,7 @@
   background-color: $gray;
 }
 
-.md-button.tb-fullscreen-button-style,
+:is(.md-button, .mat-mdc-button-base).tb-fullscreen-button-style,
 .tb-fullscreen-button-style {
   background: #ccc;
   opacity: .85;
@@ -46,7 +46,7 @@
   }
 }
 
-.md-button.tb-fullscreen-button-pos,
+:is(.md-button, .mat-mdc-button-base).tb-fullscreen-button-pos,
 .tb-fullscreen-button-pos {
   position: absolute;
   top: 10px;

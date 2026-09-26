@@ -1,4 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { attachLegacyForm, lateLegacyForm, LegacyForm } from '../tb-grid/legacy-form';
+import { Component, inject, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { KeyValuePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -15,12 +17,21 @@ import { MD_PANEL_DATA } from '../md-panel/md-panel';
  * every edit is reported through `onLegendConfigUpdate` (the legacy deep `$watch('vm.legendConfig')`).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'legend-config-panel',
   standalone: true,
   imports: [KeyValuePipe, FormsModule, MatCheckboxModule, MatFormFieldModule, MatSelectModule, TranslatePipe],
   templateUrl: './legend-config-panel.component.html',
 })
 export class LegendConfigPanelComponent {
+  /** The legacy `theForm` (FormController), over the template's `#theFormRef` NgForm. */
+  readonly theForm: LegacyForm = lateLegacyForm('theForm');
+
+  @ViewChild('theFormRef')
+  set theFormRef(form: NgForm | undefined) {
+    attachLegacyForm(this.theForm, form);
+  }
+
   protected readonly rootScope = inject(RootState);
   private readonly data: any = inject(MD_PANEL_DATA);
 

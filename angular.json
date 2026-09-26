@@ -49,6 +49,8 @@
               }
             ],
             "styles": [
+              "node_modules/typeface-roboto/index.css",
+              "node_modules/material-icons/iconfont/material-icons.css",
               "src/styles/layout-attributes.css",
               "node_modules/jquery.terminal/css/jquery.terminal.min.css",
               "node_modules/jstree-bootstrap-theme/dist/themes/proton/style.min.css",

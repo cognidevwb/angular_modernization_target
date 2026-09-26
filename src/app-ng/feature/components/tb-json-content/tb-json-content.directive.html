@@ -33,7 +33,7 @@
         <button mat-icon-button type="button" id="expand-button" aria-label="Fullscreen" class="tb-md-32 tb-fullscreen-button-style"></button>
     </div>
     <div flex id="tb-json-panel" class="tb-json-content-panel" layout="column">
-        <div flex id="tb-json-input" [ngClass]="{'fill-height': fillHeight()}" [readonly]="readonly()" [ui-ace]="jsonEditorOptions" [ngModel]="contentBody" (ngModelChange)="contentBody = $event">
+        <div name="contentBody" flex id="tb-json-input" [ngClass]="{'fill-height': fillHeight()}" [readonly]="readonly()" [ui-ace]="jsonEditorOptions" [ngModel]="contentBody" (ngModelChange)="contentBody = $event">
         </div>
     </div>
 </div>

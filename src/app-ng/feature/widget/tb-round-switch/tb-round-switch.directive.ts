@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, effect, inject, model, untracked } from '@angular/core';
+import { AfterViewInit, Component, effect, inject, model, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { DestroyRef } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { UtilsService } from '../../common/services/utils.service';
@@ -14,6 +14,7 @@ import { RootState } from '../../../root-state';
  * initialises whenever `ctx` is set, once its template is in the DOM (the legacy `$scope.$watch('vm.ctx')`).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-round-switch',
   standalone: true,
   imports: [CommonModule],

@@ -72,7 +72,7 @@ export class TelemetryWebsocketService {
     }
     this.telemetryUri += "//" + this.location.hostname + ":" + this.port;
     this.telemetryUri += "/api/ws/plugins/telemetry";
-    this.telemetryWsLogoutSub = this.rootScope.$on('unauthenticated', (doLogout?: any) => {
+    this.telemetryWsLogoutSub = this.rootScope.$on('unauthenticated', (_event: any, doLogout?: any) => {
         if (doLogout) {
             this.reset(true);
         }
@@ -84,9 +84,9 @@ export class TelemetryWebsocketService {
 
   publishCommands(...rest: any[]): any {
     while(this.isOpened && this.hasCommands()) {
-        this.dataStream.send(this.preparePublishCommands()).then(() => {
-            this.checkToClose();
-        });
+        // angular-websocket's send serialised the object; the native socket takes the JSON text.
+        this.dataStream.send(JSON.stringify(this.preparePublishCommands()));
+        this.checkToClose();
     }
     this.tryOpenSocket();
   }
@@ -169,7 +169,7 @@ export class TelemetryWebsocketService {
         if (this.reconnectTimer) {
             clearTimeout(this.reconnectTimer);
         }
-        this.reconnectTimer = setTimeout(this.tryOpenSocket, RECONNECT_INTERVAL, false);
+        this.reconnectTimer = setTimeout(this.tryOpenSocket, RECONNECT_INTERVAL);
     }
   };
 
@@ -305,7 +305,7 @@ export class TelemetryWebsocketService {
   checkToClose(...rest: any[]): any {
     if (this.subscribersCount === 0 && this.isOpened) {
         if (!this.socketCloseTimer) {
-            this.socketCloseTimer = setTimeout(this.closeSocket, WS_IDLE_TIMEOUT, false);
+            this.socketCloseTimer = setTimeout(this.closeSocket, WS_IDLE_TIMEOUT);
         }
     }
   }
@@ -333,11 +333,13 @@ export class TelemetryWebsocketService {
   };
 
   openSocket(token?: any, ...rest: any[]): any {
-    this.dataStream = new WebSocket(this.telemetryUri + '?token=' + token) as any;
-    this.dataStream.onError(this.onError);
-    this.dataStream.onOpen(this.onOpen);
-    this.dataStream.onClose(this.onClose);
-    this.dataStream.onMessage(this.onMessage, {autoApply: false});
+    // angular-websocket's $websocket(url) with its onError/onOpen/onClose/onMessage registrations, on the native WebSocket.
+    const socket = new WebSocket(this.telemetryUri + '?token=' + token);
+    socket.onerror = (event) => this.onError(event);
+    socket.onopen = () => this.onOpen();
+    socket.onclose = (event) => this.onClose(event);
+    socket.onmessage = (message) => this.onMessage(message);
+    this.dataStream = socket;
   }
 
   closeSocket = (...rest: any[]): any => {

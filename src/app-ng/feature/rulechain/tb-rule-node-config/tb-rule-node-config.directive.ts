@@ -1,4 +1,4 @@
-import { Component, effect, forwardRef, inject, model } from '@angular/core';
+import { Component, effect, forwardRef, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { TbRuleNodeDefinedConfigDirective } from '../tb-rule-node-defined-config/tb-rule-node-defined-config.directive';
@@ -13,6 +13,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * The node definition's `configDirective` renders through tb-rule-node-defined-config when RuleNodeConfigRegistry knows it; otherwise the configuration is edited as JSON.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-rule-node-config',
   standalone: true,
   imports: [TranslatePipe, FormsModule, forwardRef(() => TbRuleNodeDefinedConfigDirective), forwardRef(() => TbJsonObjectEditDirective)],

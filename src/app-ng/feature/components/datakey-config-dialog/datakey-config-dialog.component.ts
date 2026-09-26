@@ -1,4 +1,6 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { attachLegacyForm, lateLegacyForm, LegacyForm } from '../tb-grid/legacy-form';
+import { Component, forwardRef, inject, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -22,6 +24,7 @@ declare let $scope: any;
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'datakey-config-dialog',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, forwardRef(() => TbDatakeyConfigDirective)],
@@ -40,7 +43,14 @@ export class DatakeyConfigDialogComponent {
   dataKeySettingsSchema: any;
   entityAlias: any;
   aliasController: any;
-  theForm: any;
+
+  /** The legacy `theForm` (FormController), over the template's `#theFormRef` NgForm. */
+  readonly theForm: LegacyForm = lateLegacyForm('theForm');
+
+  @ViewChild('theFormRef')
+  set theFormRef(form: NgForm | undefined) {
+    attachLegacyForm(this.theForm, form);
+  }
 
   // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
   // TODO(port): $scope.$broadcast — a scope event: call the service that listens

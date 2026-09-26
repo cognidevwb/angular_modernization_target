@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DashboardUtilsService } from '../../common/services/dashboard-utils.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormsModule, NgForm } from '@angular/forms';
@@ -17,6 +17,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * or with nothing when cancelled (`$mdDialog.cancel`).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'select-target-state',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatSelectModule, MatProgressBarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule],

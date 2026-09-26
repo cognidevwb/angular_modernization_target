@@ -17,7 +17,7 @@
 
 -->
 <div class="md-dialog tb-entity-alias-dialog" style="width: 600px;" attr.aria-label="{{ (isAdd ? 'alias.add' : 'alias.edit') | translate  }}">
-    <form name="theForm" (ngSubmit)="save()">
+    <form name="theForm" #theFormRef="ngForm" (ngSubmit)="save()">
         <mat-toolbar>
             <div class="md-toolbar-tools">
                 <h2>{{ (isAdd ? 'alias.add' : 'alias.edit') | translate  }}</h2>
@@ -37,26 +37,26 @@
                             <mat-form-field flex class="md-block">
                                 <mat-label>{{ 'alias.name' | translate }}</mat-label>
                                 <input matInput required name="aliasName" [(ngModel)]="alias.alias" attr.aria-label="{{ 'alias.name' | translate }}">
-                                <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                                <div ng-messages="theForm?.aliasName?.$error">
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="required">{{ 'alias.name-required' | translate }}</div>
-                                    <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                    <div ng-message="duplicateAliasName">{{ 'alias.duplicate-alias' | translate }}</div>
-                                </div>
+                                <!-- ng-messages: the first message whose key is set in theForm?.aliasName?.$error -->
+                                @if ((theForm?.aliasName?.$error)?.['required']) {
+                                  <mat-error>{{ 'alias.name-required' | translate }}</mat-error>
+                                } @else if ((theForm?.aliasName?.$error)?.['duplicateAliasName']) {
+                                  <mat-error>{{ 'alias.duplicate-alias' | translate }}</mat-error>
+                                }
                             </mat-form-field>
                             <section class="tb-resolve-multiple-switch" layout="column" layout-align="start center">
                                 <label class="tb-small resolve-multiple-label">{{ 'alias.resolve-multiple' | translate }}</label>
-                                <mat-slide-toggle class="resolve-multiple-switch" [(ngModel)]="alias.filter.resolveMultiple" attr.aria-label="{{ 'alias.resolve-multiple' | translate }}">
+                                <mat-slide-toggle name="resolveMultiple" class="resolve-multiple-switch" [(ngModel)]="alias.filter.resolveMultiple" attr.aria-label="{{ 'alias.resolve-multiple' | translate }}">
                                 </mat-slide-toggle>
                             </section>
                         </div>
-                        <tb-entity-filter [(ngModel)]="alias.filter" [(allowedEntityTypes)]="allowedEntityTypes" [(theForm)]="theForm">
+                        <tb-entity-filter name="filter" [(ngModel)]="alias.filter" [(allowedEntityTypes)]="allowedEntityTypes" [(theForm)]="theForm">
                         </tb-entity-filter>
-                        <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                        <div class="tb-error-messages" ng-messages="theForm?.$error" role="alert">
-                            <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                            <div ng-message="entityFilter" class="tb-error-message">{{ 'alias.entity-filter-no-entity-matched' | translate }}</div>
+                        <div class="tb-error-messages" role="alert">
+                          <!-- ng-messages: the first message whose key is set in theForm?.$error -->
+                          @if ((theForm?.$error)?.['entityFilter']) {
+                            <div class="tb-error-message">{{ 'alias.entity-filter-no-entity-matched' | translate }}</div>
+                          }
                         </div>
                     </div>
                 </fieldset>

@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, model } from '@angular/core';
+import { Component, effect, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { FetchDashboardStatesFn } from '../tb-datasource/datasource-callbacks';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,6 +19,7 @@ import { isEqual, orderBy } from 'lodash-es';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-manage-widget-actions',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, FormsModule, MatTableModule, MatSortModule, MatPaginatorModule],

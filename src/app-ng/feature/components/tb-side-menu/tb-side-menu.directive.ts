@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, forwardRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MenuService } from '../../services/menu.service';
 import { CommonModule } from '@angular/common';
 import { TbMenuLinkDirective } from '../tb-menu-link/tb-menu-link.directive';
@@ -7,6 +7,7 @@ import { TbMenuLinkDirective } from '../tb-menu-link/tb-menu-link.directive';
  * Ported from the AngularJS directive `tbSideMenu` (module `thingsboard.directives.sideMenu`) in src/app/components/side-menu.directive.js:27.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-side-menu',
   standalone: true,
   imports: [CommonModule, forwardRef(() => TbMenuLinkDirective)],

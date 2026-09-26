@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { types } from '../../common/constants/types';
 import { TbAuditLogTableDirective } from '../tb-audit-log-table/tb-audit-log-table.directive';
 
@@ -7,6 +7,7 @@ import { TbAuditLogTableDirective } from '../tb-audit-log-table/tb-audit-log-tab
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'audit-logs',
   standalone: true,
   imports: [TbAuditLogTableDirective],

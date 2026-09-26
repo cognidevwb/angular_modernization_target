@@ -31,7 +31,7 @@ export class AuditLogService {
     if ((pageLink.idOffset !== undefined) && pageLink.idOffset != null) {
         url += '&offset=' + pageLink.idOffset;
     }
-this.http.get(url, null).toPromise().then(function success(response?: any) {
+this.http.get(url).toPromise().then(function success(response?: any) {
     deferred.resolve(response);
 }, function fail() {
     deferred.reject();
@@ -52,7 +52,7 @@ this.http.get(url, null).toPromise().then(function success(response?: any) {
     if ((pageLink.idOffset !== undefined) && pageLink.idOffset != null) {
         url += '&offset=' + pageLink.idOffset;
     }
-this.http.get(url, null).toPromise().then(function success(response?: any) {
+this.http.get(url).toPromise().then(function success(response?: any) {
     deferred.resolve(response);
 }, function fail() {
     deferred.reject();
@@ -73,7 +73,7 @@ this.http.get(url, null).toPromise().then(function success(response?: any) {
     if ((pageLink.idOffset !== undefined) && pageLink.idOffset != null) {
         url += '&offset=' + pageLink.idOffset;
     }
-this.http.get(url, null).toPromise().then(function success(response?: any) {
+this.http.get(url).toPromise().then(function success(response?: any) {
     deferred.resolve(response);
 }, function fail() {
     deferred.reject();
@@ -94,7 +94,7 @@ this.http.get(url, null).toPromise().then(function success(response?: any) {
     if ((pageLink.idOffset !== undefined) && pageLink.idOffset != null) {
         url += '&offset=' + pageLink.idOffset;
     }
-this.http.get(url, null).toPromise().then(function success(response?: any) {
+this.http.get(url).toPromise().then(function success(response?: any) {
     deferred.resolve(response);
 }, function fail() {
     deferred.reject();

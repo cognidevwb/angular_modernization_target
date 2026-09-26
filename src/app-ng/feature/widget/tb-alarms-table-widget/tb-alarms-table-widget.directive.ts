@@ -1,4 +1,4 @@
-import { Component, DestroyRef, DoCheck, ElementRef, InjectionToken, Injector, effect, inject, model } from '@angular/core';
+import { Component, DestroyRef, DoCheck, ElementRef, InjectionToken, Injector, effect, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -19,6 +19,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import $ from 'jquery';
 import tinycolor from 'tinycolor2';
 import { firstValueFrom } from 'rxjs';
+import { onWidgetEvent } from '../../components/widget/widget-scope';
 import cssjs from '../../../../vendor/css.js/css';
 import { RootState } from '../../../root-state';
 import { AlarmService } from '../../api/services/alarm.service';
@@ -31,6 +32,7 @@ const ALARMS_TABLE_PANEL_DATA = new InjectionToken<any>('ALARMS_TABLE_PANEL_DATA
 
 /** The `$mdDialog.confirm()` the legacy widget showed before acknowledging or clearing: title, html content, no / yes. */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-alarms-table-confirm-dialog',
   standalone: true,
   imports: [MatDialogModule, MatButtonModule],
@@ -49,6 +51,7 @@ export class TbAlarmsTableConfirmDialogComponent {
 
 /** Ported from `AlarmStatusFilterPanelController` + alarm-status-filter-panel.tpl.html. */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-alarm-status-filter-panel',
   standalone: true,
   imports: [TranslatePipe, MatRadioModule, FormsModule],
@@ -73,6 +76,7 @@ export class AlarmStatusFilterPanelComponent {
 
 /** Ported from `DisplayColumnsPanelController` + display-columns-panel.tpl.html. */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-display-columns-panel',
   standalone: true,
   imports: [TranslatePipe, MatCheckboxModule, FormsModule],
@@ -95,6 +99,7 @@ export class DisplayColumnsPanelComponent {
  * The md-data-table becomes a plain table with a row-select column, per-column ordering and a MatPaginator.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-alarms-table-widget',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDividerModule, MatButtonModule, MatCheckboxModule, MatPaginatorModule, MatDialogModule, CommonModule, FormsModule],
@@ -190,6 +195,21 @@ export class TbAlarmsTableWidgetDirective implements DoCheck {
   /** The `$watch('vm.selectedAlarms.length')` state. */
   private lastSelectedLength: number | undefined;
 
+  /** The widget type's script broadcasts on its widget scope (`ctx.$scope`) when new alarms arrived for this table. */
+  private listenForData(ctx: any): void {
+    this.offDataUpdated?.();
+    this.offDataUpdated = onWidgetEvent(ctx, 'alarms-table-data-updated', (_event: any, tableId: any) => {
+      if (this.tableId() == tableId) {
+        if (this.subscription) {
+          this.allAlarms = this.subscription.alarms || [];
+          this.updateAlarms(true);
+        }
+      }
+    });
+  }
+
+  private offDataUpdated: (() => void) | null = null;
+
   constructor() {
     effect(() => {
       const ctx: any = this.ctx();
@@ -200,18 +220,10 @@ export class TbAlarmsTableWidgetDirective implements DoCheck {
         this.alarmSource = this.subscription.alarmSource;
         this.initializeConfig();
         this.updateAlarmSource();
+        this.listenForData(ctx);
       }
     });
-
-    const deregister = this.rootScope.$on('alarms-table-data-updated', (event: any, tableId: any) => {
-      if (this.tableId() == tableId) {
-        if (this.subscription) {
-          this.allAlarms = this.subscription.alarms || [];
-          this.updateAlarms(true);
-        }
-      }
-    });
-    this.destroyRef.onDestroy(() => deregister());
+    this.destroyRef.onDestroy(() => this.offDataUpdated?.());
 
     this.breakpointObserver.observe(['(min-width: 600px)', '(min-width: 1280px)'])
       .subscribe((state) => {

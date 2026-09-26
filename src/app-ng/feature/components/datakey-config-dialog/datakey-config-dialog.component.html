@@ -17,7 +17,7 @@
 
 -->
 <div attr.aria-label="{{ 'datakey.configuration' | translate }}" style="width: 600px;" class="md-dialog">
-	<form name="theForm" (ngSubmit)="save()">
+	<form name="theForm" #theFormRef="ngForm" (ngSubmit)="save()">
 		<mat-toolbar>
 	      <div class="md-toolbar-tools">
 	        <h2>{{ 'datakey.configuration' | translate }}</h2>
@@ -30,7 +30,7 @@
    	    <mat-progress-bar color="warn" mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
   	    <span style="min-height: 5px;" flex="" [hidden]="!(!rootScope?.loading)"></span>
 	    <mat-dialog-content>
-			<tb-datakey-config [(ngModel)]="dataKey" [fetchEntityKeys]="fetchKeys" [(entityAlias)]="entityAlias" [(datakeySettingsSchema)]="dataKeySettingsSchema">
+			<tb-datakey-config name="dataKey" [(ngModel)]="dataKey" [fetchEntityKeys]="fetchKeys" [(entityAlias)]="entityAlias" [(datakeySettingsSchema)]="dataKeySettingsSchema">
 			</tb-datakey-config>
 	    </mat-dialog-content>
 	    <mat-dialog-actions layout="row">

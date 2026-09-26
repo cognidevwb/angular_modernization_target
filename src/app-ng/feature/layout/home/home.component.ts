@@ -1,4 +1,6 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { PUBLIC_PATH } from '../../../app-globals';
+import { mdMedia } from '../../../core/md-media';
+import { Component, forwardRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { DOCUMENT } from '@angular/common';
 import { DeviceService } from '../../api/services/device.service';
@@ -6,7 +8,8 @@ import { ElementRef } from '@angular/core';
 import { FullscreenService } from '../../common/services/fullscreen.service';
 import { LoginService } from '../../api/services/login.service';
 import { RootState } from '../../../root-state';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { TbBreadcrumbComponent } from '../tb-breadcrumb/tb-breadcrumb.component';
 import { UserService } from '../../api/services/user.service';
 import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
@@ -38,9 +41,10 @@ declare let $window: any;
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 4 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'home',
   standalone: true,
-  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, MatSidenavModule, CommonModule, FormsModule, forwardRef(() => TbSideMenuDirective), forwardRef(() => TbNoAnimateDirective), forwardRef(() => TbEntitySubtypeSelectDirective), forwardRef(() => TbUserMenuDirective)],
+  imports: [RouterOutlet, TbBreadcrumbComponent, TranslatePipe, MatToolbarModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, MatSidenavModule, CommonModule, FormsModule, forwardRef(() => TbSideMenuDirective), forwardRef(() => TbNoAnimateDirective), forwardRef(() => TbEntitySubtypeSelectDirective), forwardRef(() => TbUserMenuDirective)],
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
@@ -56,20 +60,26 @@ export class HomeComponent {
   // TODO(port): '$window' — use window directly, or inject(DOCUMENT).defaultView
   protected readonly breakpoints = inject(BreakpointObserver);
   // TODO(port): '$animate' — @angular/animations
-  // TODO(port): elements not resolved to a component: md-sidenav
-  // TODO(port): template: 1 × md-sidenav left in place
-  // TODO(port): template: 2 × ng-cloak left in place
 
-  protected siteSideNav: any;
   Fullscreen: any;
-  logoSvg: any = '/assets/svg/logo_title_white.svg';
+  logoSvg: any = PUBLIC_PATH + 'svg/logo_title_white.svg';
   isShowSidenav: any = false;
   isLockSidenav: any = false;
-  forceFullscreen: any = false;
+  /** The screen in the content outlet (the `vm` its breadcrumb label reads). */
+  readonly routedView = signal<any>(null);
+
+  /** `forceFullscreen` in the legacy template: the `$rootScope` value. */
+  get forceFullscreen(): any {
+    return this.rootScope.forceFullscreen;
+  }
   isGtSm: any;
   entitySubtypeWatch: any;
-  searchConfig: any;
-  private prevUrl: string | undefined;
+  private prevStateName: string | undefined;
+
+  /** The legacy `$scope.searchConfig`: the object on `$rootScope`, read through the scope chain. */
+  get searchConfig(): any {
+    return this.rootScope.searchConfig;
+  }
 
   // TODO(port): $scope.$broadcast — a scope event: call the service that listens
   // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
@@ -77,7 +87,6 @@ export class HomeComponent {
   // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
 
   constructor() {
-    this.siteSideNav = $('.tb-site-sidenav', $(this.element.nativeElement));
     this.Fullscreen = this.fullscreen;
     if ((this.rootScope.searchConfig === undefined)) {
         this.rootScope.searchConfig = {
@@ -105,12 +114,12 @@ export class HomeComponent {
             routeSnapshot = routeSnapshot.firstChild;
         }
         const data: any = routeSnapshot.data;
-        const url = event.urlAfterRedirects;
+        const stateName: string = data.state;
         if ((data.searchEnabled !== undefined)) {
             this.searchConfig.searchEnabled = data.searchEnabled;
             this.searchConfig.searchByEntitySubtype = data.searchByEntitySubtype;
             this.searchConfig.searchEntityType = data.searchEntityType;
-            if (this.searchConfig.searchEnabled === false || url !== this.prevUrl) {
+            if (this.searchConfig.searchEnabled === false || stateName !== this.prevStateName) {
                 this.searchConfig.showSearch = false;
                 this.searchConfig.searchText = "";
                 this.searchConfig.searchEntitySubtype = "";
@@ -124,14 +133,14 @@ export class HomeComponent {
             this.searchConfig.searchEntitySubtype = "";
         }
         this.watchEntitySubtype(this.searchConfig.searchByEntitySubtype);
-        this.prevUrl = url;
+        this.prevStateName = stateName;
     });
-this.isGtSm = this.breakpoints.isMatched('gt-sm');
+this.isGtSm = this.breakpoints.isMatched(mdMedia('gt-sm'));
     if (this.isGtSm) {
         this.isLockSidenav = true;
         this.setSidenavAnimationEnabled(false);
     }
-this.breakpoints.observe('gt-sm').subscribe((state) => {
+this.breakpoints.observe(mdMedia('gt-sm')).subscribe((state) => {
     const isGtSm = state.matches;
     this.isGtSm = isGtSm;
     this.isLockSidenav = isGtSm;
@@ -147,7 +156,8 @@ this.breakpoints.observe('gt-sm').subscribe((state) => {
   }
 
   private setSidenavAnimationEnabled(enabled: boolean): void {
-    this.siteSideNav.toggleClass('ng-animate-disabled', !enabled);
+    // Queried when used: the constructor runs before the template's elements exist.
+    $('.tb-site-sidenav', $(this.element.nativeElement)).toggleClass('tb-no-animate', !enabled);
   }
 
   watchEntitySubtype(enableWatch?: any, ...rest: any[]): any {

@@ -26,7 +26,7 @@
                 </button>
                 <mat-form-field flex>
                     <mat-label>&nbsp;</mat-label>
-                    <input matInput [(ngModel)]="query.search" class="searchInput" [placeholder]="'widget.search-data' | translate">
+                    <input name="search" matInput [(ngModel)]="query.search" class="searchInput" [placeholder]="'widget.search-data' | translate">
                 </mat-form-field>
                 <button mat-icon-button aria-label="Close" (click)="exitFilterMode()" [matTooltip]="'action.close' | translate"
                         [matTooltipPosition]="ctx()?.dashboard?.isWidgetExpanded ? 'below' : 'above'">
@@ -42,7 +42,7 @@
                 <div class="tb-absolute-fill" layout="column">
                     <div flex class="md-table-container">
                         <table class="md-table">
-                            <thead>
+                            <thead class="md-head">
                                 <tr class="md-row">
                                     <th [hidden]="!showTimestamp" class="md-column md-sort" [class.md-active]="sortDirection(source, 0)"
                                         (click)="sortBy(source, 0)">
@@ -62,7 +62,7 @@
                                 </tr>
                             </thead>
 
-                            <tbody>
+                            <tbody class="md-body">
                                 @for (row of source?.ts?.data; track $index) {
                                   <tr class="md-row" (click)="onRowClick($event, row)">
                                     @for (d of row; track $index) {

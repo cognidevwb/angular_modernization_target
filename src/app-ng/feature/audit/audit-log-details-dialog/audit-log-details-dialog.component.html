@@ -29,11 +29,11 @@
     <mat-dialog-content>
         <div class="md-dialog-content" layout="column">
             <label class="tb-title no-padding">{{ 'audit-log.action-data' | translate }}</label>
-            <div flex id="tb-audit-log-action-data" #actionDataEditorElement [readonly]="true" [ui-ace]="actionDataContentOptions" [(ngModel)]="actionData">
+            <div name="actionData" flex id="tb-audit-log-action-data" #actionDataEditorElement [readonly]="true" [ui-ace]="actionDataContentOptions" [(ngModel)]="actionData">
             </div>
             <span style="height: 30px;"></span>
             <label [hidden]="!displayFailureDetails" class="tb-title no-padding">{{ 'audit-log.failure-details' | translate }}</label>
-            <div [hidden]="!displayFailureDetails" flex id="tb-audit-log-failure-details" #failureDetailsEditorElement [readonly]="true" [ui-ace]="failureDetailsContentOptions" [(ngModel)]="actionFailureDetails">
+            <div name="actionFailureDetails" [hidden]="!displayFailureDetails" flex id="tb-audit-log-failure-details" #failureDetailsEditorElement [readonly]="true" [ui-ace]="failureDetailsContentOptions" [(ngModel)]="actionFailureDetails">
             </div>
         </div>
     </mat-dialog-content>

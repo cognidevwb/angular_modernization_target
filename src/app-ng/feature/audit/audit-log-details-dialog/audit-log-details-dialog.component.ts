@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,6 +16,7 @@ import { UiAceDirective, UiAceOptions } from '../../components/ui-ace/ui-ace.dir
  * sized to their content once the dialog is shown (the legacy `onShowing`).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'audit-log-details-dialog',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, UiAceDirective],

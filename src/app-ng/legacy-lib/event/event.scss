@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-md-list.tb-event-table {
+mat-list.tb-event-table {
   padding: 0;
 
-  md-list-item {
+  mat-list-item {
     padding: 0;
   }
 
@@ -74,7 +74,7 @@ md-list.tb-event-table {
     text-align: left;
     vertical-align: middle;
 
-    .md-button {
+    :is(.md-button, .mat-mdc-button-base) {
       padding: 0;
       margin: 0;
     }

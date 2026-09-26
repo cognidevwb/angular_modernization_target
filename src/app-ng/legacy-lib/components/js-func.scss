@@ -26,7 +26,7 @@ tb-js-func {
 }
 
 .tb-js-func-toolbar {
-  .md-button.tidy {
+  :is(.md-button, .mat-mdc-button-base).tidy {
     min-width: 32px;
     min-height: 15px;
     padding: 4px;

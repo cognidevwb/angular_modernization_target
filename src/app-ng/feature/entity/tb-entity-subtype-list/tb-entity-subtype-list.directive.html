@@ -28,7 +28,7 @@
                 </button>
             </mat-chip-row>
         }
-        <input
+        <input name="entitySubtypeSearchText"
             id="entitySubtype"
             [placeholder]="(!entitySubtypesList || !entitySubtypesList?.length) ? placeholder : secondaryPlaceholder"
             [matChipInputFor]="entitySubtypeChipGrid"
@@ -36,7 +36,7 @@
             [(ngModel)]="entitySubtypeSearchText"
             (ngModelChange)="onSearchTextChanged()"
             (focus)="onSearchTextChanged()"
-            (blur)="inputTouched = true" />
+            (blur)="inputTouched = true"/>
     </mat-chip-grid>
     <mat-autocomplete #entitySubtypeAuto="matAutocomplete" (optionSelected)="onSubtypeSelected($event)">
         @for (item of filteredSubtypes; track item) {
@@ -49,9 +49,11 @@
     </mat-autocomplete>
     <!-- TODO(port): ng-messages has no one-to-one Angular form -->
     @if (inputTouched && tbRequired()) {
-      <div class="tb-error-messages" ng-messages="ngModelCtrl?.$error" role="alert">
-        <!-- TODO(port): ng-message has no one-to-one Angular form -->
-        <div ng-message="entitySubtypesList" class="tb-error-message">{{ (subtypeListEmptyText) | translate }}</div>
-    </div>
+      <div class="tb-error-messages" role="alert">
+        <!-- ng-messages: the first message whose key is set in the control's own $error (this directive is the ngModelCtrl) -->
+        @if ((this.$error)?.['entitySubtypesList']) {
+          <div class="tb-error-message">{{ (subtypeListEmptyText) | translate }}</div>
+        }
+      </div>
     }
 </section>

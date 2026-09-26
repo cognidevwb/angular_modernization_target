@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, forwardRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { EntityService } from '../../api/services/entity.service';
@@ -42,6 +42,7 @@ const $filter = (name: string): any => {
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 5 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'widget-library',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatIconModule, MatButtonModule, forwardRef(() => TbDashboardDirective)],
@@ -226,7 +227,7 @@ export class WidgetLibraryComponent {
             panelClass: 'tb-dialog'
         }).afterClosed()).then((widgetType?: any) => {
             if (widgetType !== undefined) {
-                (this.router as any).go('home.widgets-bundles.widget-types.widget-type',
+                goState(this.router, 'home.widgets-bundles.widget-types.widget-type',
                     {widgetType: widgetType});
             }
         }, () => {

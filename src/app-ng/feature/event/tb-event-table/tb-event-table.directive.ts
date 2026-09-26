@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, effect, forwardRef, inject, model, untracked, viewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, effect, forwardRef, inject, model, untracked, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
@@ -25,6 +25,7 @@ import { TbEventRowDirective } from '../tb-event-row/tb-event-row.directive';
  * `default-event-type`, `disabled-event-types` and `debug-event-types` stay plain host attributes.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-event-table',
   standalone: true,
   imports: [

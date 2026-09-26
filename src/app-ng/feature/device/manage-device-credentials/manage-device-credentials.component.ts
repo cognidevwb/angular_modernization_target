@@ -1,4 +1,4 @@
-import { Component, inject, viewChild } from '@angular/core';
+import { Component, inject, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +23,7 @@ export interface ManageDeviceCredentialsData {
  * with its template src/app/device/device-credentials.tpl.html. Closes with the saved credentials.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'manage-device-credentials',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatSelectModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatButtonModule, FormsModule],

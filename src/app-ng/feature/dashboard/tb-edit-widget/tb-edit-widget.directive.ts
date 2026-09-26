@@ -1,4 +1,4 @@
-import { Component, effect, forwardRef, inject, model, untracked } from '@angular/core';
+import { Component, effect, forwardRef, inject, model, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import { MatDialog } from '@angular/material/dialog';
 import { WidgetService } from '../../api/services/widget.service';
@@ -15,6 +15,7 @@ import { $q } from '../../../core/q';
  * key/state lookups and alias creation it needs from the dashboard.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-edit-widget',
   standalone: true,
   imports: [FormsModule, forwardRef(() => TbWidgetConfigDirective)],

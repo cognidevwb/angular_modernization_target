@@ -17,7 +17,7 @@
 
 -->
 <div attr.aria-label="{{ importTitle | translate }}" class="md-dialog">
-    <form name="theForm" (ngSubmit)="importFromJson()">
+    <form name="theForm" #theFormRef="ngForm" (ngSubmit)="importFromJson()">
         <mat-toolbar>
             <div class="md-toolbar-tools">
                 <h2>{{ (importTitle) | translate }}</h2>

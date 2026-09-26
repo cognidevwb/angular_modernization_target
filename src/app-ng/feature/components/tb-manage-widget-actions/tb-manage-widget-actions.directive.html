@@ -36,7 +36,6 @@
                 <mat-icon attr.aria-label="{{ 'action.search' | translate }}" class="material-icons">search</mat-icon>
             </button>
             <mat-form-field flex>
-                <mat-label>&nbsp;</mat-label>
                 <input matInput [(ngModel)]="query.search" class="searchInput" name="querySearchInput" attr.placeholder="{{ 'widget-config.search-actions' | translate }}">
             </mat-form-field>
             <button mat-icon-button aria-label="Close" (click)="exitFilterMode()" attr.matTooltip="{{ 'action.close' | translate }}" matTooltipPosition="above">

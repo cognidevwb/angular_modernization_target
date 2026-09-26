@@ -26,32 +26,28 @@
                 <mat-form-field flex class="md-block">
                     <mat-label>{{ 'rulenode.name' | translate }}</mat-label>
                     <input matInput required name="name" [ngModel]="ruleNode().name" (ngModelChange)="ruleNode().name = $event">
-                    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                    <div ng-messages="theForm()?.name?.$error">
-                        <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                        <div ng-message="required">{{ 'rulenode.name-required' | translate }}</div>
-                    </div>
+                    <mat-error>{{ 'rulenode.name-required' | translate }}</mat-error>
                 </mat-form-field>
-                <mat-form-field class="md-block">
-                    <mat-checkbox [disabled]="rootScope?.loading || !isEdit()" attr.aria-label="{{ 'rulenode.debug-mode' | translate }}" [ngModel]="ruleNode().debugMode" (ngModelChange)="ruleNode().debugMode = $event">{{ 'rulenode.debug-mode' | translate }}
+                <div class="md-block tb-rulenode-debug-mode">
+                    <mat-checkbox name="debugMode" [disabled]="rootScope?.loading || !isEdit()" attr.aria-label="{{ 'rulenode.debug-mode' | translate }}" [ngModel]="ruleNode().debugMode" (ngModelChange)="ruleNode().debugMode = $event">{{ 'rulenode.debug-mode' | translate }}
                     </mat-checkbox>
-                </mat-form-field>
+                </div>
             </section>
-            <tb-rule-node-config [ngModel]="ruleNode().configuration" (ngModelChange)="ruleNode().configuration = $event" [ruleNodeId]="ruleNode().ruleNodeId.id" (ruleNodeIdChange)="ruleNode().ruleNodeId.id = $event" [ngRequired]="true" [nodeDefinition]="ruleNode().component.configurationDescriptor.nodeDefinition" (nodeDefinitionChange)="ruleNode().component.configurationDescriptor.nodeDefinition = $event" [ngReadonly]="rootScope?.loading || !isEdit() || isReadOnly()">
+            <tb-rule-node-config name="ruleNode-2" [ngModel]="ruleNode().configuration" (ngModelChange)="ruleNode().configuration = $event" [ruleNodeId]="ruleNode().ruleNodeId.id" (ruleNodeIdChange)="ruleNode().ruleNodeId.id = $event" [ngRequired]="true" [nodeDefinition]="ruleNode().component.configurationDescriptor.nodeDefinition" (nodeDefinitionChange)="ruleNode().component.configurationDescriptor.nodeDefinition = $event" [ngReadonly]="rootScope?.loading || !isEdit() || isReadOnly()">
             </tb-rule-node-config>
             <mat-form-field class="md-block">
                 <mat-label>{{ 'rulenode.description' | translate }}</mat-label>
-                <textarea matInput [ngModel]="ruleNode().additionalInfo.description" (ngModelChange)="ruleNode().additionalInfo.description = $event" rows="2"></textarea>
+                <textarea name="ruleNode-3" matInput [ngModel]="ruleNode().additionalInfo.description" (ngModelChange)="ruleNode().additionalInfo.description = $event" rows="2"></textarea>
             </mat-form-field>
         </section>
         }
         @if (ruleNode()?.component?.type == types?.ruleNodeType?.RULE_CHAIN?.value) {
           <section>
-            <tb-entity-autocomplete [(theForm)]="theForm" [ngDisabled]="rootScope?.loading || !isEdit() || isReadOnly()" [tbRequired]="true" [excludeEntityIds]="[ruleChainId()]" [(entityType)]="types.entityType.rulechain" [(ngModel)]="params.targetRuleChainId">
+            <tb-entity-autocomplete name="targetRuleChainId" [(theForm)]="theForm" [ngDisabled]="rootScope?.loading || !isEdit() || isReadOnly()" [tbRequired]="true" [excludeEntityIds]="[ruleChainId()]" [(entityType)]="types.entityType.rulechain" [(ngModel)]="params.targetRuleChainId">
             </tb-entity-autocomplete>
             <mat-form-field class="md-block">
                 <mat-label>{{ 'rulenode.description' | translate }}</mat-label>
-                <textarea matInput [ngModel]="ruleNode().additionalInfo.description" (ngModelChange)="ruleNode().additionalInfo.description = $event" rows="2"></textarea>
+                <textarea name="ruleNode-4" matInput [ngModel]="ruleNode().additionalInfo.description" (ngModelChange)="ruleNode().additionalInfo.description = $event" rows="2"></textarea>
             </mat-form-field>
         </section>
         }

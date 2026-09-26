@@ -28,21 +28,20 @@
                     <span style="height: 50px;"></span>
                     <mat-form-field class="md-block">
                         <mat-label>{{ 'login.username' | translate }}</mat-label>
-                        <mat-icon attr.aria-label="{{ 'login.username' | translate }}" class="material-icons">
+                        <mat-icon matPrefix attr.aria-label="{{ 'login.username' | translate }}" class="material-icons">
                             email
                         </mat-icon>
-                        <input matInput id="username-input" type="email" autofocus [(ngModel)]="user.name">
+                        <input name="name" matInput id="username-input" type="email" autofocus [(ngModel)]="user.name">
                     </mat-form-field>
                     <mat-form-field class="md-block">
                         <mat-label>{{ 'common.password' | translate }}</mat-label>
-                        <mat-icon attr.aria-label="{{ 'common.password' | translate }}" class="material-icons">
+                        <mat-icon matPrefix attr.aria-label="{{ 'common.password' | translate }}" class="material-icons">
                             lock
                         </mat-icon>
-                        <input matInput id="password-input" type="password" [(ngModel)]="user.password">
+                        <input name="password" matInput id="password-input" type="password" [(ngModel)]="user.password">
                     </mat-form-field>
                     <div layout-gt-sm="column" layout-align="center end" class="tb-padding">
-                        <!-- TODO(port): ui-sref has no one-to-one Angular form -->
-                        <a mat-button ui-sref="login.resetPasswordRequest">{{ 'login.forgot-password' | translate }}
+                        <a mat-button routerLink="/login/resetPasswordRequest">{{ 'login.forgot-password' | translate }}
                         </a>
                     </div>
                     <button mat-raised-button type="submit">{{ 'login.login' | translate }}</button>

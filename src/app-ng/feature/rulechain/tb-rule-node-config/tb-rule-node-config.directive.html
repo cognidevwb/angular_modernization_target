@@ -17,13 +17,13 @@
 
 -->
 @if (useDefinedDirective()) {
-  <tb-rule-node-defined-config [(ruleNodeId)]="ruleNodeId" [(ngModel)]="configuration" attr.rule-node-directive="{{nodeDefinition()?.configDirective}}" [(ngRequired)]="required" [(ngReadonly)]="readonly">
+  <tb-rule-node-defined-config name="configuration" [(ruleNodeId)]="ruleNodeId" [(ngModel)]="configuration" attr.rule-node-directive="{{nodeDefinition()?.configDirective}}" [(ngRequired)]="required" [(ngReadonly)]="readonly">
 </tb-rule-node-defined-config>
 }
 @if (definedDirectiveError) {
   <div class="tb-rulenode-directive-error">{{definedDirectiveError}}</div>
 }
 @if (!useDefinedDirective()) {
-  <tb-json-object-edit class="tb-rule-node-configuration-json" [(ngModel)]="configuration" [label]="'rulenode.configuration' | translate" [(ngRequired)]="required" [fillHeight]="true">
+  <tb-json-object-edit name="configuration-2" class="tb-rule-node-configuration-json" [(ngModel)]="configuration" [label]="'rulenode.configuration' | translate" [(ngRequired)]="required" [fillHeight]="true">
 </tb-json-object-edit>
 }

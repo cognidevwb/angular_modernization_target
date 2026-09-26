@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, model } from '@angular/core';
+import { Component, forwardRef, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TbRelationTypeAutocompleteDirective } from '../tb-relation-type-autocomplete/tb-relation-type-autocomplete.directive';
@@ -18,6 +18,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-relation-filters',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatIconModule, MatButtonModule, FormsModule, forwardRef(() => TbRelationTypeAutocompleteDirective), forwardRef(() => TbEntityTypeListDirective)],

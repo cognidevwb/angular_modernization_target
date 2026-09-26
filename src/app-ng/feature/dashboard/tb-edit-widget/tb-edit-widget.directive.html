@@ -17,7 +17,7 @@
 
 -->
 <fieldset [disabled]="rootScope['loading']">
-	<tb-widget-config [widgetType]="widget().type" (widgetTypeChange)="widget().type = $event" [(typeParameters)]="typeParameters" [(actionSources)]="actionSources"
+	<tb-widget-config name="widgetConfig" [widgetType]="widget().type" (widgetTypeChange)="widget().type = $event" [(typeParameters)]="typeParameters" [(actionSources)]="actionSources"
 	                  [(ngModel)]="widgetConfig" [(isDataEnabled)]="isDataEnabled" [(widgetSettingsSchema)]="settingsSchema" [(datakeySettingsSchema)]="dataKeySettingsSchema"
 	                  [aliasController]="aliasController()" [functionsOnly]="widgetEditMode()"
 	                  [fetchEntityKeys]="fetchEntityKeysFn" [fetchDashboardStates]="fetchDashboardStatesFn" [onCreateEntityAlias]="createEntityAliasFn"

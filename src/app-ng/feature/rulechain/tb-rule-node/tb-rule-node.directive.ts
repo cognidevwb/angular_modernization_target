@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, model, output, effect } from '@angular/core';
+import { Component, forwardRef, inject, model, output, effect, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { RuleChainService } from '../../api/services/rule-chain.service';
 import { types } from '../../common/constants/types';
@@ -23,6 +23,7 @@ declare let $templateCache: any;
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-rule-node',
   standalone: true,
   imports: [TranslatePipe, MatInputModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule, FormsModule, forwardRef(() => TbRuleNodeConfigDirective), forwardRef(() => TbEntityAutocompleteDirective)],
@@ -42,8 +43,6 @@ export class TbRuleNodeDirective {
   protected readonly ruleChainService = inject(RuleChainService);
   protected readonly typesRef: any = types;
   protected readonly element = inject(ElementRef);
-  // TODO(port): template: 1 × ng-message left in place
-  // TODO(port): template: 1 × ng-messages left in place
 
   types: any;
   params: any = {

@@ -1,4 +1,4 @@
-import { Component, Type, inject } from '@angular/core';
+import { Component, Type, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CustomerService } from '../../api/services/customer.service';
 import { Router } from '@angular/router';
@@ -23,6 +23,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Ported from the AngularJS controller `CustomerController` (module `thingsboard.customer`) in src/app/customer/index.js:26.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'customer',
   standalone: true,
   imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbCustomerDirective, TbAttributeTableDirective, TbAlarmTableDirective, TbEventTableDirective, TbRelationTableDirective, TbAuditLogTableDirective],

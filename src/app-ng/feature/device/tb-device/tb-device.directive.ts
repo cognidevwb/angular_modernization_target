@@ -1,4 +1,4 @@
-import { Component, effect, inject, model, output } from '@angular/core';
+import { Component, effect, inject, model, output, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,6 +22,7 @@ import { joinParentForm } from '../../components/tb-grid/legacy-form';
  * the grid's details form, or the add-device dialog's form.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-device',
   standalone: true,
   imports: [TranslatePipe, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule, FormsModule, TbEntitySubtypeAutocompleteDirective],

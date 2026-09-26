@@ -17,7 +17,7 @@
 
 -->
 <div class="md-dialog dashboard-state" attr.aria-label="{{'dashboard.state' | translate }}" style="min-width: 600px;">
-    <form name="theForm" (ngSubmit)="save()">
+    <form name="theForm" #theFormRef="ngForm" (ngSubmit)="save()">
         <mat-toolbar>
             <div class="md-toolbar-tools">
                 <h2>{{ (isAdd ? 'dashboard.add-state' : 'dashboard.edit-state') | translate }}</h2>
@@ -36,24 +36,20 @@
                         <mat-form-field class="md-block">
                             <mat-label>{{ 'dashboard.state-name' | translate }}</mat-label>
                             <input matInput name="name" required [(ngModel)]="state.name">
-                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                            <div ng-messages="theForm?.name?.$error">
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="required">{{ 'dashboard.state-name-required' | translate }}</div>
-                            </div>
+                            @if ((theForm?.name?.$error)?.['required']) {
+                              <mat-error>{{ 'dashboard.state-name-required' | translate }}</mat-error>
+                            }
                         </mat-form-field>
                         <mat-form-field class="md-block">
                             <mat-label>{{ 'dashboard.state-id' | translate }}</mat-label>
                             <input matInput name="stateId" required [(ngModel)]="state.id" (ngModelChange)="stateIdTouched = true">
-                            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-                            <div ng-messages="theForm?.stateId?.$error">
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="required">{{ 'dashboard.state-id-required' | translate }}</div>
-                                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="stateExists">{{ 'dashboard.state-id-exists' | translate }}</div>
-                            </div>
+                            @if ((theForm?.stateId?.$error)?.['required']) {
+                              <mat-error>{{ 'dashboard.state-id-required' | translate }}</mat-error>
+                            } @else if ((theForm?.stateId?.$error)?.['stateExists']) {
+                              <mat-error>{{ 'dashboard.state-id-exists' | translate }}</mat-error>
+                            }
                         </mat-form-field>
-                        <mat-checkbox flex attr.aria-label="{{ 'dashboard.is-root-state' | translate }}" [(ngModel)]="state.root">{{ 'dashboard.is-root-state' | translate }}
+                        <mat-checkbox name="root" flex attr.aria-label="{{ 'dashboard.is-root-state' | translate }}" [(ngModel)]="state.root">{{ 'dashboard.is-root-state' | translate }}
                         </mat-checkbox>
                     </fieldset>
                 </div>

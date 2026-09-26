@@ -1,4 +1,4 @@
-import { Component, inject, input, model, output, effect } from '@angular/core';
+import { Component, inject, input, model, output, effect, ChangeDetectionStrategy } from '@angular/core';
 import { DestroyRef } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /**
@@ -20,9 +19,10 @@ import { TranslatePipe } from '@ngx-translate/core';
  * `[header-pane]` / `.tb-header-pane` and `[details-buttons]` / `.tb-details-buttons`.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-details-sidenav',
   standalone: true,
-  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatIconModule, MatButtonModule, MatSidenavModule, CommonModule],
+  imports: [TranslatePipe, MatTooltipModule, MatToolbarModule, MatIconModule, MatButtonModule, CommonModule],
   templateUrl: './tb-details-sidenav.directive.html',
 })
 export class TbDetailsSidenavDirective {

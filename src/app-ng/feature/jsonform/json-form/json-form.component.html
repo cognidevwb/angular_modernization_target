@@ -24,7 +24,7 @@
             <tb-json-form [(schema)]="schema" [(form)]="form" [(model)]="model" [readonly]="isFormReadonly === 'true'" [formControl]="ngform">
             </tb-json-form>
         </form>
-        <mat-checkbox [ngModel]="isFormReadonly === 'true'" (ngModelChange)="isFormReadonly = $event ? 'true' : 'false'">Readonly</mat-checkbox>
+        <mat-checkbox name="isFormReadonly" [ngModel]="isFormReadonly === 'true'" (ngModelChange)="isFormReadonly = $event ? 'true' : 'false'">Readonly</mat-checkbox>
         <div flex layout="column">
             <div [hidden]="!ngform.valid"><em>Form is valid</em></div>
             <div [hidden]="!ngform.invalid"><em>Form is not valid</em></div>
@@ -37,9 +37,9 @@
 
     <div layout="column" flex>
         <h3>Form</h3>
-        <div [ui-ace]="aceJsonOptions" [ngClass]="{red: !itParsesForm}" [(ngModel)]="formJson" class="form-control form"></div>
+        <div name="formJson" [ui-ace]="aceJsonOptions" [ngClass]="{red: !itParsesForm}" [(ngModel)]="formJson" class="form-control form"></div>
         <h3>Schema</h3>
-        <div [ui-ace]="aceJsonOptions" [ngClass]="{red: !itParses}" [(ngModel)]="schemaJson" class="form-control schema"></div>
+        <div name="schemaJson" [ui-ace]="aceJsonOptions" [ngClass]="{red: !itParses}" [(ngModel)]="schemaJson" class="form-control schema"></div>
 
     </div>
 

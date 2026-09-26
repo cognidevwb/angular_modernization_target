@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, ViewChild } from '@angular/core';
+import { Component, forwardRef, inject, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { EntityService } from '../../api/services/entity.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { types } from '../../common/constants/types';
@@ -48,6 +48,7 @@ class AddWidgetFormState {
  * the dialog that configures a new widget before it is added; closes with `{widget}`.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'add-widget',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, forwardRef(() => TbHelpDirective), forwardRef(() => TbWidgetConfigDirective)],

@@ -75,7 +75,7 @@
                     <div layout="column">
                         <mat-form-field>
                             <mat-label>{{ 'import.csv-delimiter' | translate }}</mat-label>
-                            <mat-select [(ngModel)]="importParameters.delim">
+                            <mat-select name="delim" [(ngModel)]="importParameters.delim">
                                 @for (delimiter of delimiters; track $index) {
                                   <mat-option [value]="delimiter?.key">
                                     {{delimiter?.value}}
@@ -83,10 +83,10 @@
                                 }
                             </mat-select>
                         </mat-form-field>
-                        <mat-checkbox [(ngModel)]="importParameters.isHeader" aria-label="First line contains column names">
+                        <mat-checkbox name="isHeader" [(ngModel)]="importParameters.isHeader" aria-label="First line contains column names">
                             {{ 'import.csv-first-line-header' | translate }}
                         </mat-checkbox>
-                        <mat-checkbox [(ngModel)]="importParameters.isUpdate" aria-label="Update attributes/telemetry">
+                        <mat-checkbox name="isUpdate" [(ngModel)]="importParameters.isUpdate" aria-label="Update attributes/telemetry">
                             {{ 'import.csv-update-data' | translate }}
                         </mat-checkbox>
                     </div>

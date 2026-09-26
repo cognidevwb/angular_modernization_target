@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
@@ -10,6 +10,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * With its template src/app/components/legend.tpl.html.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-legend',
   standalone: true,
   imports: [TranslatePipe, CommonModule],

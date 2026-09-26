@@ -1,6 +1,6 @@
 <!-- Ported from src/app/components/datasource-entity.tpl.html (md-chips + md-autocomplete: mat-chip-grid + mat-autocomplete) -->
 <section flex layout="column" layout-align="center" layout-gt-sm="row" layout-align-gt-sm="start center">
-    <tb-entity-alias-select [tbRequired]="true" [aliasController]="aliasController()"
+    <tb-entity-alias-select name="entityAlias" [tbRequired]="true" [aliasController]="aliasController()"
                             [ngModel]="entityAlias" (ngModelChange)="onEntityAliasChange($event)"
                             [onCreateEntityAlias]="onCreateEntityAlias()">
     </tb-entity-alias-select>

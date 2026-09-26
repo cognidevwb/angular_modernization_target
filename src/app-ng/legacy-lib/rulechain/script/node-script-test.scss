@@ -17,7 +17,7 @@
 
 @import "compass-sass-mixins/lib/compass";
 
-md-dialog.tb-node-script-test-dialog {
+.md-dialog.tb-node-script-test-dialog {
   &.md-dialog-fullscreen {
     width: 100%;
     min-width: 100%;
@@ -95,7 +95,7 @@ md-dialog.tb-node-script-test-dialog {
       border-radius: 5px;
     }
 
-    .md-button {
+    :is(.md-button, .mat-mdc-button-base) {
       min-width: 32px;
       min-height: 15px;
       padding: 4px;

@@ -153,7 +153,7 @@ export class TbExpandFullscreenDirective implements AfterViewInit, OnDestroy {
         this.button = button;
       }
     } else if (!this.hideExpandButton()) {
-      const button = $('<button type="button" class="mat-mdc-icon-button mdc-icon-button tb-fullscreen-button-style tb-fullscreen-button-pos">' +
+      const button = $('<button type="button" class="md-button md-icon-button mat-mdc-button-base mat-mdc-icon-button mdc-icon-button tb-fullscreen-button-style tb-fullscreen-button-pos">' +
         this.iconHtml() + '</button>');
       button.on('click', this.toggleExpand);
       $(this.element.nativeElement).prepend(button);

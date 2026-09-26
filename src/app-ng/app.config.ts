@@ -14,9 +14,13 @@ import { LegacyTranslateCompiler } from './core/translate-compiler';
 // The legacy app.config, as Angular providers: html5 URLs (the Router's
 // default), the global interceptor, the static-file translations with en_US as
 // the fallback (angular-translate's useStaticFilesLoader / fallbackLanguage),
-// the `mdi` icon set ($mdIconProvider.iconSet) and the two extra shapes
+// the `mdi` icon set ($mdIconProvider.iconSet('mdi', …): `svgIcon="mdi:…"`) and the two extra shapes
 // (ngMdIconServiceProvider.addShape). Every route passes the guard that
 // app.run's $stateChangeStart handler was.
+//
+// Every component declares `changeDetection: ChangeDetectionStrategy.Eager`: Angular 22 makes OnPush the
+// default, and the ported screens change plain fields from promises and events as the AngularJS digest let
+// them, so each is checked on every pass (as a digest checked every watcher).
 
 /** app.config's `ngMdIconServiceProvider.addShape(...)`: icons the datasource key chips show (`svgIcon="alpha-a-circle-outline"`). */
 const EXTRA_ICON_SHAPES: Record<string, string> = {
@@ -54,7 +58,7 @@ export const appConfig: ApplicationConfig = {
       const sanitizer = inject(DomSanitizer);
       const icons = inject(MatIconRegistry)
         .setDefaultFontSetClass('material-icons')
-        .addSvgIconSet(sanitizer.bypassSecurityTrustResourceUrl(PUBLIC_PATH + 'svg/mdi.svg'));
+        .addSvgIconSetInNamespace('mdi', sanitizer.bypassSecurityTrustResourceUrl(PUBLIC_PATH + 'svg/mdi.svg'));
       for (const [name, path] of Object.entries(EXTRA_ICON_SHAPES)) {
         icons.addSvgIconLiteral(name, sanitizer.bypassSecurityTrustHtml(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">${path}</svg>`));
       }

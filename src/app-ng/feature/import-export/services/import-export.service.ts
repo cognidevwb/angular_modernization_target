@@ -625,8 +625,8 @@ export class ImportExportService {
     const getExtension = (extensionId?: any): any => {
         var deferred: any = $q.defer();
         var url: any = '/api/plugins/telemetry/DEVICE/' + extensionId;
-        this.http.get(url, null)
-    this.http.get(url, null)
+        this.http.get(url)
+    this.http.get(url)
         .toPromise().then(function success(response?: any) {
             deferred.resolve(response.data);
         }, function fail() {

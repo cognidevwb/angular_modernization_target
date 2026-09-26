@@ -31,7 +31,7 @@
         <mat-progress-bar mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
         <span style="min-height: 5px;" flex="" [hidden]="!(!rootScope?.loading)"></span>
         <mat-card-content>
-            <form name="theForm" (ngSubmit)="save()" tb-confirm-on-exit confirm-form="theForm">
+            <form name="theForm" #theFormRef="ngForm" (ngSubmit)="save()" tb-confirm-on-exit confirm-form="theForm">
                 <fieldset [disabled]="rootScope?.loading">
                     <mat-form-field class="md-block">
                         <mat-label>{{ 'user.email' | translate }}</mat-label>

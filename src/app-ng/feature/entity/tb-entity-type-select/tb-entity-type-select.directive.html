@@ -27,9 +27,8 @@
         </mat-option>
         }
     </mat-select>
-    <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-    <div ng-messages="theForm()?.entityType?.$error">
-        <!-- TODO(port): ng-message has no one-to-one Angular form -->
-        <div ng-message="required">{{ 'entity.type-required' | translate }}</div>
-    </div>
+    <!-- ng-messages: the first message whose key is set in theForm()?.entityType?.$error -->
+    @if ((theForm()?.entityType?.$error)?.['required']) {
+      <mat-error>{{ 'entity.type-required' | translate }}</mat-error>
+    }
 </mat-form-field>

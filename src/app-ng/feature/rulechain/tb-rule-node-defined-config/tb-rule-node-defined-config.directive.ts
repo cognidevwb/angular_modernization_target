@@ -1,5 +1,5 @@
 import { Component, ComponentRef, DestroyRef, effect, ElementRef, inject, model, reflectComponentType, untracked, viewChild,
-  ViewContainerRef } from '@angular/core';
+  ViewContainerRef, ChangeDetectionStrategy } from '@angular/core';
 import { isEqual } from 'lodash-es';
 import { linkAttrs } from '../../../legacy-link';
 import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
@@ -14,6 +14,7 @@ import { RuleNodeConfigRegistry } from './rule-node-config-registry';
  * `[(ngModel)]` is the node configuration.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-rule-node-defined-config',
   standalone: true,
   template: '<ng-container #outlet></ng-container>',

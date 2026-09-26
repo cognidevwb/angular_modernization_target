@@ -1,4 +1,4 @@
-import { Component, Type, inject } from '@angular/core';
+import { Component, Type, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
@@ -32,6 +32,7 @@ import { AddDeviceDialogComponent } from './add-device-dialog.component';
  * (template src/app/device/devices.tpl.html): the tenant's / a customer's devices in tb-grid.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'device',
   standalone: true,
   imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbDeviceDirective, TbAttributeTableDirective, TbAlarmTableDirective, TbEventTableDirective, TbRelationTableDirective, TbExtensionTableDirective, TbAuditLogTableDirective],

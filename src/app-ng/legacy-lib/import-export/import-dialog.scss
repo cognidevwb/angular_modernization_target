@@ -44,7 +44,7 @@ $previewSize: 100px !default;
 }
 
 .tb-table-select{
-  md-input-container{
+  mat-form-field{
     margin: 0;
 
     .md-errors-spacer{

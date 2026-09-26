@@ -16,7 +16,7 @@
 @import "scss/mixins";
 
 tb-widgets-bundle-select {
-  md-select {
+  mat-select {
     padding: 5px 20px;
     margin: 0;
   }
@@ -57,15 +57,15 @@ tb-widgets-bundle-select,
     }
   }
 
-  md-option {
+  mat-option {
     height: auto !important;
     white-space: normal !important;
   }
 }
 
-md-toolbar {
+mat-toolbar {
   tb-widgets-bundle-select {
-    md-select {
+    mat-select {
       background: rgba(255, 255, 255, .2);
 
       .md-select-value {
@@ -83,7 +83,7 @@ md-toolbar {
       }
     }
 
-    md-select.ng-invalid.ng-touched {
+    mat-select.ng-invalid.ng-touched {
       .md-select-value {
         color: #fff !important;
       }

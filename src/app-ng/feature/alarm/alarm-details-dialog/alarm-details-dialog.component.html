@@ -31,11 +31,11 @@
             <div layout="row">
                 <mat-form-field class="md-block">
                     <mat-label>{{ 'alarm.created-time' | translate }}</mat-label>
-                    <input matInput [(ngModel)]="createdTime" readonly>
+                    <input name="createdTime" matInput [(ngModel)]="createdTime" readonly>
                 </mat-form-field>
                 <mat-form-field flex class="md-block">
                     <mat-label>{{ 'alarm.originator' | translate }}</mat-label>
-                    <input matInput [(ngModel)]="alarm.originatorName" readonly>
+                    <input name="originatorName" matInput [(ngModel)]="alarm.originatorName" readonly>
                 </mat-form-field>
             </div>
             @if (startTime || endTime) {
@@ -43,13 +43,13 @@
                 @if (startTime) {
                   <mat-form-field flex class="md-block">
                     <mat-label>{{ 'alarm.start-time' | translate }}</mat-label>
-                    <input matInput [(ngModel)]="startTime" readonly>
+                    <input name="startTime" matInput [(ngModel)]="startTime" readonly>
                 </mat-form-field>
                 }
                 @if (endTime) {
                   <mat-form-field flex class="md-block">
                     <mat-label>{{ 'alarm.end-time' | translate }}</mat-label>
-                    <input matInput [(ngModel)]="endTime" readonly>
+                    <input name="endTime" matInput [(ngModel)]="endTime" readonly>
                 </mat-form-field>
                 }
                 @if (!startTime || !endTime) {
@@ -62,13 +62,13 @@
                 @if (ackTime) {
                   <mat-form-field flex class="md-block">
                     <mat-label>{{ 'alarm.ack-time' | translate }}</mat-label>
-                    <input matInput [(ngModel)]="ackTime" readonly>
+                    <input name="ackTime" matInput [(ngModel)]="ackTime" readonly>
                 </mat-form-field>
                 }
                 @if (clearTime) {
                   <mat-form-field flex class="md-block">
                     <mat-label>{{ 'alarm.clear-time' | translate }}</mat-label>
-                    <input matInput [(ngModel)]="clearTime" readonly>
+                    <input name="clearTime" matInput [(ngModel)]="clearTime" readonly>
                 </mat-form-field>
                 }
                 @if (!ackTime || !clearTime) {
@@ -79,20 +79,20 @@
             <div layout="row">
                 <mat-form-field flex class="md-block">
                     <mat-label>{{ 'alarm.type' | translate }}</mat-label>
-                    <input matInput [(ngModel)]="alarm.type" readonly>
+                    <input name="type" matInput [(ngModel)]="alarm.type" readonly>
                 </mat-form-field>
                 <mat-form-field flex class="md-block">
                     <mat-label>{{ 'alarm.severity' | translate }}</mat-label>
-                    <input matInput class="tb-severity" [ngClass]="types?.alarmSeverity?.[alarm?.severity]?.class" [(ngModel)]="alarmSeverity" readonly>
+                    <input name="alarmSeverity" matInput class="tb-severity" [ngClass]="types?.alarmSeverity?.[alarm?.severity]?.class" [(ngModel)]="alarmSeverity" readonly>
                 </mat-form-field>
                 <mat-form-field flex class="md-block">
                     <mat-label>{{ 'alarm.status' | translate }}</mat-label>
-                    <input matInput [(ngModel)]="alarmStatus" readonly>
+                    <input name="alarmStatus" matInput [(ngModel)]="alarmStatus" readonly>
                 </mat-form-field>
             </div>
             <div [hidden]="!(displayDetails)" class="md-caption" style="padding-left: 3px; padding-bottom: 10px; color: rgba(0,0,0,0.57);">{{ 'alarm.details' | translate }}</div>
             <div [hidden]="!(displayDetails)" flex class="tb-alarm-details-panel" layout="column">
-                <div flex id="tb-alarm-details" [readonly]="true" [ui-ace]="alarmDetailsOptions" [(ngModel)]="alarmDetails">
+                <div name="alarmDetails" flex id="tb-alarm-details" [readonly]="true" [ui-ace]="alarmDetailsOptions" [(ngModel)]="alarmDetails">
                 </div>
             </div>
         </div>

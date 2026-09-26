@@ -1,3 +1,4 @@
+import { httpOptions } from '../../../core/http-options';
 import { inject, Injectable } from '@angular/core';
 import { AttributeService } from './attribute.service';
 import { CustomerService } from './customer.service';
@@ -43,7 +44,7 @@ export class DeviceService {
     if ((type !== undefined) && type.length) {
         url += '&type=' + type;
     }
-    this.http.get(url, config).toPromise().then((response?: any) => {
+    this.http.get(url, httpOptions(config)).toPromise().then((response?: any) => {
         if (applyCustomersInfo) {
             this.customerService.applyAssignedCustomersInfo(response.data).then(
                 function success(data?: any) {
@@ -78,7 +79,7 @@ export class DeviceService {
     if ((type !== undefined) && type.length) {
         url += '&type=' + type;
     }
-    this.http.get(url, config).toPromise().then((response?: any) => {
+    this.http.get(url, httpOptions(config)).toPromise().then((response?: any) => {
         if (applyCustomersInfo) {
             this.customerService.applyAssignedCustomerInfo(response.data, customerId).then(
                 function success(data?: any) {
@@ -106,7 +107,7 @@ export class DeviceService {
         config = {};
     }
     config = Object.assign(config, {ignoreErrors: ignoreErrors});
-    this.http.get(url, config).toPromise().then(function success(response?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail(response?: any) {
         deferred.reject(response?.error);
@@ -124,7 +125,7 @@ export class DeviceService {
         ids += deviceIds[i];
     }
     var url: any = '/api/devices?deviceIds=' + ids;
-    this.http.get(url, config).toPromise().then(function success(response?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
         var devices: any = response;
         devices.sort(function (device1?: any, device2?: any) {
             var id1: any = device1.id.id;
@@ -144,7 +145,7 @@ export class DeviceService {
     config = config || {};
     var deferred: any = $q.defer();
     var url: any = '/api/device';
-    this.http.post(url, device, config).toPromise().then(function success(response?: any) {
+    this.http.post(url, device, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -179,7 +180,7 @@ export class DeviceService {
             deferred.reject();
         }
     } else {
-        this.http.get(url, config).toPromise().then(function success(response?: any) {
+        this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
             deferred.resolve(response);
         }, function fail() {
             deferred.reject();
@@ -192,7 +193,7 @@ export class DeviceService {
     config = config || {};
     var deferred: any = $q.defer();
     var url: any = '/api/device/credentials';
-    this.http.post(url, deviceCredentials, config).toPromise().then(function success(response?: any) {
+    this.http.post(url, deviceCredentials, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -282,7 +283,7 @@ export class DeviceService {
         config = {};
     }
     config = Object.assign(config, {ignoreErrors: ignoreErrors});
-    this.http.post(url, query, config).toPromise().then(function success(response?: any) {
+    this.http.post(url, query, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -293,7 +294,7 @@ export class DeviceService {
   getDeviceTypes(config?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/device/types';
-    this.http.get(url, config).toPromise().then(function success(response?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -305,7 +306,7 @@ export class DeviceService {
     config = config || {};
     var deferred: any = $q.defer();
     var url: any = '/api/tenant/devices?deviceName=' + deviceName;
-    this.http.get(url, config).toPromise().then(function success(response?: any) {
+    this.http.get(url, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -318,7 +319,7 @@ export class DeviceService {
     config = config || {};
     const deferred: any = $q.defer();
     const url: any = '/api/customer/device/' + deviceName + '/claim';
-    this.http.post(url, deviceSecret, config).toPromise().then(function success(response?: any) {
+    this.http.post(url, deviceSecret, httpOptions(config)).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail(rejection?: any) {
         deferred.reject(rejection);

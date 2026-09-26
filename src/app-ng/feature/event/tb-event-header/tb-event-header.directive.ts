@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
 
@@ -7,6 +7,7 @@ import { types } from '../../common/constants/types';
  * The four header templates the legacy link compiled in by `event-type` are the `@switch` arms below.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: '[tb-event-header]',
   standalone: true,
   imports: [TranslatePipe],

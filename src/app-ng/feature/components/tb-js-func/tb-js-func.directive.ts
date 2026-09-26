@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, computed, forwardRef, inject, input, model } from '@angular/core';
+import { Component, DestroyRef, ElementRef, computed, forwardRef, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,6 +21,7 @@ import { fixAceEditor } from '../ui-ace/ace-editor-fix';
  * The legacy read `function-args` / `validation-args` with `scope.$eval(attrs.…)`; they are array inputs here.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-js-func',
   standalone: true,
   imports: [TranslatePipe, MatButtonModule, NgClass, FormsModule, UiAceDirective, forwardRef(() => TbExpandFullscreenDirective)],

@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, forwardRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UserService } from '../../api/services/user.service';
 import { FormsModule } from '@angular/forms';
@@ -25,6 +25,7 @@ export interface SaveWidgetTypeAsResult {
  * Closes with the new title and target bundle on save, with nothing on cancel.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'save-widget-type-as',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatButtonModule, FormsModule, forwardRef(() => TbWidgetsBundleSelectDirective)],

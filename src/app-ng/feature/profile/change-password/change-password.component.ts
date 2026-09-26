@@ -1,4 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { attachLegacyForm, lateLegacyForm, LegacyForm } from '../../components/tb-grid/legacy-form';
+import { Component, inject, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { LoginService } from '../../api/services/login.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../../services/toast.service';
@@ -20,6 +22,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'change-password',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatButtonModule, FormsModule],
@@ -35,7 +38,14 @@ export class ChangePasswordComponent {
   currentPassword: any = '';
   newPassword: any = '';
   newPassword2: any = '';
-  theForm: any;
+
+  /** The legacy `theForm` (FormController), over the template's `#theFormRef` NgForm. */
+  readonly theForm: LegacyForm = lateLegacyForm('theForm');
+
+  @ViewChild('theFormRef')
+  set theFormRef(form: NgForm | undefined) {
+    attachLegacyForm(this.theForm, form);
+  }
 
   constructor() {
     this.cancel = this.cancel;

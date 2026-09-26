@@ -1,4 +1,4 @@
-import { Component, ElementRef, effect, inject, model, output } from '@angular/core';
+import { Component, ElementRef, effect, inject, model, output, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,6 +19,7 @@ import { joinParentForm } from '../../components/tb-grid/legacy-form';
  * the grid's details form, or the add-dashboard dialog's form.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-dashboard-details',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, FormsModule, TbSocialSharePanelDirective],

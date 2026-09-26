@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { AlarmService } from '../../api/services/alarm.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
@@ -28,6 +28,7 @@ const js_beautify: any = (beautify as any).js;
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'alarm-details-dialog',
   standalone: true,
   imports: [UiAceDirective, TranslatePipe, MatToolbarModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatButtonModule, CommonModule, FormsModule],

@@ -1,4 +1,4 @@
-import { Component, ElementRef, forwardRef, inject } from '@angular/core';
+import { Component, ElementRef, forwardRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,6 +30,7 @@ const CUSTOM_ACTION_FUNCTION_ARGS = ['$event', 'widgetContext', 'entityId', 'ent
  * (`[(ngModel)]`, the action object) — resources, CSS, HTML and the JS function — in tabs, or side by side in fullscreen.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-custom-action-pretty-editor',
   standalone: true,
   imports: [TranslatePipe, MatTooltipModule, MatTabsModule, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, NgClass, FormsModule,

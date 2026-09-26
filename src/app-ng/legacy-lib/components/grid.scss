@@ -22,15 +22,16 @@
 .tb-card-item {
   transition: all .2s ease-in-out;
 
-  md-card-content {
+  mat-card-content {
     max-height: 53px;
     padding-top: 0;
   }
 
-  md-card-title {
+  // md-card-title > md-card-title-text > .md-headline became mat-card-header > .mat-mdc-card-header-text > mat-card-title > .md-headline
+  mat-card-header {
     width: 100%;
 
-    md-card-title-text {
+    .mat-mdc-card-header-text {
       min-width: 50%;
       max-height: 32px;
 

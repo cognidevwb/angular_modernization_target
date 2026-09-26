@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +23,7 @@ export interface ManageAssignedCustomersData {
  * with its template src/app/dashboard/manage-assigned-customers.tpl.html. Closes with `true` once applied.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'manage-assigned-customers',
   standalone: true,
   imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, TbEntityListDirective],

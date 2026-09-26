@@ -128,7 +128,7 @@ a.md-button {
 }
 
 form {
-  md-content {
+  .md-content {
     background-color: #fff;
   }
 }
@@ -141,12 +141,12 @@ md-bottom-sheet .md-subheader {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-md-content.md-default-theme,
-md-content {
+.md-content.md-default-theme,
+.md-content {
   background-color: $gray;
 }
 
-md-card {
+mat-card {
   background-color: #fff;
 
   h2:first-of-type {
@@ -154,31 +154,31 @@ md-card {
   }
 }
 
-.md-button:not([disabled]).md-icon-button:hover {
+:is(.md-button, .mat-mdc-button-base):not([disabled]):is(.md-icon-button, .mat-mdc-icon-button):hover {
   background-color: rgba(158, 158, 158, .2);
 }
 
-md-toolbar:not(.md-hue-1),
+mat-toolbar:not(.md-hue-1),
 .md-fab {
   fill: #fff;
 }
 
-md-toolbar md-input-container .md-errors-spacer {
+mat-toolbar mat-form-field .md-errors-spacer {
   min-height: 0;
 }
 
-md-toolbar {
-  md-select.md-default-theme:not([disabled]):focus .md-select-value,
-  md-select:not([disabled]):focus .md-select-value {
+mat-toolbar {
+  mat-select.md-default-theme:not([disabled]):focus .md-select-value,
+  mat-select:not([disabled]):focus .md-select-value {
     color: #fff;
   }
 }
 
-md-menu-item {
+.mat-mdc-menu-item {
   overflow: hidden;
   fill: #737373;
 
-  .md-button {
+  :is(.md-button, .mat-mdc-button-base) {
     display: block;
 
     .tb-alt-text {
@@ -194,11 +194,11 @@ div.md-toast-text {
   word-wrap: break-word;
 }
 
-md-toast .md-button {
+md-toast :is(.md-button, .mat-mdc-button-base) {
   min-width: 88px;
 }
 
-md-sidenav {
+mat-sidenav {
   overflow: hidden;
   fill: #737373;
 }
@@ -213,7 +213,7 @@ button {
 }
 
 .md-color-picker-input-container {
-  md-input-container {
+  mat-form-field {
     margin-bottom: 0;
   }
 }
@@ -293,6 +293,7 @@ div {
   transition: all .3s cubic-bezier(.55, 0, .55, .2);
 
   &.ng-hide,
+  &[hidden],
   &.ng-enter,
   &.ng-leave.ng-leave-active {
     bottom: 26px;
@@ -342,17 +343,17 @@ pre.tb-highlight {
 }
 
 .tb-data-table {
-  md-toolbar {
+  mat-toolbar {
     z-index: 0;
   }
 
-  md-toolbar.md-table-toolbar.md-default-theme:not(.md-menu-toolbar).md-default .md-button[disabled],
-  md-toolbar.md-table-toolbar:not(.md-menu-toolbar).md-default .md-button[disabled] {
+  mat-toolbar.md-table-toolbar.md-default-theme:not(.md-menu-toolbar).md-default :is(.md-button, .mat-mdc-button-base)[disabled],
+  mat-toolbar.md-table-toolbar:not(.md-menu-toolbar).md-default :is(.md-button, .mat-mdc-button-base)[disabled] {
     color: rgba(0, 0, 0, .38);
   }
 
-  md-toolbar.md-default-theme:not(.md-menu-toolbar) .md-button[disabled] md-icon,
-  md-toolbar:not(.md-menu-toolbar) .md-button[disabled] md-icon {
+  mat-toolbar.md-default-theme:not(.md-menu-toolbar) :is(.md-button, .mat-mdc-button-base)[disabled] mat-icon,
+  mat-toolbar:not(.md-menu-toolbar) :is(.md-button, .mat-mdc-button-base)[disabled] mat-icon {
     color: rgba(0, 0, 0, .28);
   }
 
@@ -431,8 +432,8 @@ pre.tb-highlight {
             max-width: 72px;
             white-space: nowrap;
 
-            .md-button {
-              &.md-icon-button {
+            :is(.md-button, .mat-mdc-button-base) {
+              &:is(.md-icon-button, .mat-mdc-icon-button) {
                 width: 36px;
                 height: 36px;
                 padding: 6px;
@@ -585,7 +586,7 @@ $previewSize: 100px !default;
  * Tabs
  ***********************/
 
-md-tabs.tb-headless {
+mat-tab-group.tb-headless {
   margin-top: -50px;
 }
 
@@ -593,7 +594,7 @@ md-tabs.tb-headless {
  * Buttons
  ***********************/
 
-.md-button.tb-card-button {
+:is(.md-button, .mat-mdc-button-base).tb-card-button {
   width: 100%;
   max-width: 240px;
   height: 100%;
@@ -611,7 +612,7 @@ md-tabs.tb-headless {
   }
 }
 
-.md-button.tb-layout-button {
+:is(.md-button, .mat-mdc-button-base).tb-layout-button {
   width: 100%;
   max-width: 240px;
   height: 100%;
@@ -625,7 +626,7 @@ md-tabs.tb-headless {
   }
 }
 
-.md-button.tb-add-new-widget {
+:is(.md-button, .mat-mdc-button-base).tb-add-new-widget {
   padding-right: 12px;
   font-size: 24px;
   border-style: dashed;
@@ -658,7 +659,7 @@ section.tb-top-header-buttons {
   animation: tbMoveFromTopFade .3s ease both;
 }
 
-.tb-header-buttons .tb-btn-header.ng-hide {
+.tb-header-buttons .tb-btn-header:is(.ng-hide, [hidden]) {
   animation: tbMoveToTopFade .3s ease both;
 }
 
@@ -680,7 +681,7 @@ section.tb-footer-buttons {
   animation: tbMoveFromBottomFade .3s ease both;
 }
 
-.tb-footer-buttons .tb-btn-footer.ng-hide {
+.tb-footer-buttons .tb-btn-footer:is(.ng-hide, [hidden]) {
   animation: tbMoveToBottomFade .3s ease both;
 }
 
@@ -694,7 +695,7 @@ section.tb-footer-buttons {
  * Icons
  ***********************/
 
-.md-icon-button.tb-md-32 {
+:is(.md-icon-button, .mat-mdc-icon-button).tb-md-32 {
   width: 32px;
   min-width: 32px;
   height: 32px;

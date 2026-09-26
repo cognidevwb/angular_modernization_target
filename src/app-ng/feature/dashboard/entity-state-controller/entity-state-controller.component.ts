@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -12,6 +12,7 @@ import { StatesControllerBase } from '../services/states-controller-base';
  * each naming the entity it was opened for, shown as a breadcrumb (a select on mobile).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-entity-state-controller',
   standalone: true,
   imports: [TranslatePipe, FormsModule, MatSelectModule],

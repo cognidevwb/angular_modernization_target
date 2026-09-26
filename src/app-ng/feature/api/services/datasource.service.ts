@@ -5,6 +5,8 @@ import { types } from '../../common/constants/types';
 import { bindMethods } from '../../../bind-methods';
 
 import { $timeout } from '../../../core/q';
+// The legacy data aggregator class, carried as it is (src/app/api/data-aggregator.js).
+import DataAggregator from '../../../legacy-lib/api/data-aggregator';
 
 // Ported replacements for the AngularJS `$filter('orderBy')` filter and the `$log` service
 // (both used to be loaded as globals by the legacy page).
@@ -412,7 +414,7 @@ function DatasourceSubscription(this: any, datasourceSubscription?: any, telemet
     }
 
     function createRealtimeDataAggregator(subsTw?: any, tsKeyNames?: any, dataKeyType?: any) {
-        return new dataAggregator(
+        return new DataAggregator(
             function(data?: any, apply?: any) {
                 onData(data, dataKeyType, apply);
             },

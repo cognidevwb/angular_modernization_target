@@ -1,4 +1,4 @@
-import { Component, model } from '@angular/core';
+import { Component, model, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -943,6 +943,7 @@ function tripAnimationController(this: any, $document?: any, $scope?: any, $log?
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'trip-animation',
   standalone: true,
   imports: [TranslatePipe, MatSliderModule, MatSelectModule, MatIconModule, MatButtonModule, CommonModule, FormsModule],

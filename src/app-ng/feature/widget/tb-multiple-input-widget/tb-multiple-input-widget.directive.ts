@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, model, viewChild } from '@angular/core';
+import { Component, DestroyRef, effect, inject, model, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -12,7 +12,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import $ from 'jquery';
 import moment from 'moment';
-import { RootState } from '../../../root-state';
+import { onWidgetEvent } from '../../components/widget/widget-scope';
 import { AttributeService } from '../../api/services/attribute.service';
 import { UtilsService } from '../../common/services/utils.service';
 import { types } from '../../common/constants/types';
@@ -22,6 +22,7 @@ import { ToastService } from '../../services/toast.service';
  * Ported from the AngularJS directive `tbMultipleInputWidget` (module `thingsboard.widgets.multipleInputWidget`) in src/app/widget/lib/multiple-input-widget.js:24.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-multiple-input-widget',
   standalone: true,
   imports: [TranslatePipe, MatSlideToggleModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule, MatDatepickerModule, CommonModule, FormsModule],
@@ -36,7 +37,6 @@ export class TbMultipleInputWidgetDirective {
   private readonly attributeService = inject(AttributeService);
   private readonly toast = inject(ToastService);
   private readonly utils = inject(UtilsService);
-  private readonly rootScope = inject(RootState);
   private readonly destroyRef = inject(DestroyRef);
 
   /** The legacy `name="multipleInputForm"` form controller. */
@@ -67,23 +67,29 @@ export class TbMultipleInputWidgetDirective {
         this.datasources = this.subscription.datasources;
         this.initializeConfig();
         this.updateDatasources();
+        this.listenForWidgetEvents(ctx);
       }
     });
+    this.destroyRef.onDestroy(() => this.offWidgetEvents.forEach((off) => off?.()));
+  }
 
-    const dataUpdated = this.rootScope.$on('multiple-input-data-updated', (event: any, formId: any) => {
-      if (this.formId() == formId) {
-        this.updateWidgetData(this.subscription.data);
-      }
-    });
-    const resize = this.rootScope.$on('multiple-input-resize', (event: any, formId: any) => {
-      if (this.formId() == formId) {
-        this.updateWidgetDisplaying();
-      }
-    });
-    this.destroyRef.onDestroy(() => {
-      dataUpdated();
-      resize();
-    });
+  private offWidgetEvents: ((() => void) | null)[] = [];
+
+  /** The widget type's script broadcasts on its widget scope (`ctx.$scope`) when data arrived or the widget resized. */
+  private listenForWidgetEvents(ctx: any): void {
+    this.offWidgetEvents.forEach((off) => off?.());
+    this.offWidgetEvents = [
+      onWidgetEvent(ctx, 'multiple-input-data-updated', (_event: any, formId: any) => {
+        if (this.formId() == formId) {
+          this.updateWidgetData(this.subscription.data);
+        }
+      }),
+      onWidgetEvent(ctx, 'multiple-input-resize', (_event: any, formId: any) => {
+        if (this.formId() == formId) {
+          this.updateWidgetDisplaying();
+        }
+      }),
+    ];
   }
 
   protected discardAll(): void {

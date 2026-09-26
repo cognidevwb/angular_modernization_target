@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { WidgetService } from '../../api/services/widget.service';
 import { WidgetComponent } from '../widget/widget.component';
 
@@ -11,6 +11,7 @@ import { WidgetComponent } from '../widget/widget.component';
  * (`WidgetController` → `<widget>`) with the widget info and the widget type's function.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'tb-widget, [tb-widget]',
   standalone: true,
   imports: [WidgetComponent],
