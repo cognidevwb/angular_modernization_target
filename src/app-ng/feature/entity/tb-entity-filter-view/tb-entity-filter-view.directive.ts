@@ -15,7 +15,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
   templateUrl: './tb-entity-filter-view.directive.html',
   providers: ngModelProviders(TbEntityFilterViewDirective),
 })
-export class TbEntityFilterViewDirective extends NgModelController<any> {
+export class TbEntityFilterViewDirective extends NgModelController {
   protected readonly document = inject(DOCUMENT);
   protected readonly dialog = inject(MatDialog);
   protected readonly translate = inject(TranslateService);

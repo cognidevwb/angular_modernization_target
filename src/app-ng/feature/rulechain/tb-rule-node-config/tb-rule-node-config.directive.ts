@@ -48,7 +48,7 @@ export class TbRuleNodeConfigDirective extends NgModelController {
     }
   }
 
-  $render(): void {
+  override $render(): void {
     this.configuration = this.$viewValue;
   }
 

@@ -82,7 +82,7 @@ function EntitiesHierarchyWidgetController(this: any, $element?: any, $scope?: a
         }
     });
 
-    entitiesHierarchyDataUpdatedService.subject.subscribe((hierarchyId?: any) => {
+    TbEntitiesHierarchyWidgetDirective.entitiesHierarchyDataUpdatedService.subject.subscribe((hierarchyId?: any) => {
         if (vm.hierarchyId == hierarchyId) {
             if (vm.subscription) {
                 updateNodeData(vm.subscription.data);
@@ -542,13 +542,32 @@ export class TbEntitiesHierarchyWidgetDirective {
   readonly ctx = model<any>();
 
   restrict: any = "E";
-  scope: any = true;
   bindToController: any = {
             hierarchyId: '=',
             ctx: '='
         };
   controller: any = EntitiesHierarchyWidgetController;
   controllerAs: any;
+
+  static readonly entitiesHierarchyDataUpdatedService: any = (() => {
+    const listeners: Array<(hierarchyId?: any) => void> = [];
+    return {
+      subject: {
+        subscribe: (fn: (hierarchyId?: any) => void) => {
+          listeners.push(fn);
+          return {
+            unsubscribe: () => {
+              const i = listeners.indexOf(fn);
+              if (i >= 0) {
+                listeners.splice(i, 1);
+              }
+            }
+          };
+        }
+      },
+      notify: (hierarchyId?: any) => { listeners.forEach(fn => fn(hierarchyId)); }
+    };
+  })();
 
   constructor() {
     let vm = this;

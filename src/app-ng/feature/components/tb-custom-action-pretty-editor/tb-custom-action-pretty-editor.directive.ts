@@ -1,13 +1,10 @@
 import { Component, forwardRef, inject, model, effect } from '@angular/core';
-import { ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TbExpandFullscreenDirective } from '../tb-expand-fullscreen/tb-expand-fullscreen.directive';
 import { TbJsFuncDirective } from '../tb-js-func/tb-js-func.directive';
 
 import $ from 'jquery';
-// @ts-ignore
-import customActionPrettyEditorTemplate from '../../../../app/components/widget/action/custom-action-pretty-editor.tpl.html';
 import Split from 'split.js';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
@@ -48,9 +45,7 @@ export class TbCustomActionPrettyEditorDirective {
   // TODO(port): '$compile' — not in Angular: compose with components instead
   // TODO(port): '$templateCache' — templateUrl on the component
   // TODO(port): '$window' — use window directly, or inject(DOCUMENT).defaultView
-  protected readonly element = inject(ElementRef);
 
-  protected template: any = customActionPrettyEditorTemplate;
   protected ace_editors: any = [];
   fullscreen: any = false;
   htmlEditorOptions: any;
@@ -930,7 +925,6 @@ export class TbCustomActionPrettyEditorDirective {
         this.action.customCss = this.sampleCss;
       }
     };
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   removeResource = (index?: any, ...rest: any[]): any => {

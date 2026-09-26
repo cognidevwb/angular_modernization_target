@@ -1,10 +1,5 @@
 import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// @ts-ignore - template loaded as raw string via build-time html loader
-import ledIndicatorTemplate from '../../../../app/widget/lib/rpc/led-indicator.tpl.html';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let scope: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 function LedIndicatorController(this: any, $element?: any, $scope?: any, $timeout?: any, utils?: any, types?: any) {
@@ -279,13 +274,12 @@ export class TbLedIndicatorDirective {
   error: any;
 
   restrict: any = "E";
-  scope: any = true;
   bindToController: any = {
             ctx: '='
         };
   controller: any = LedIndicatorController;
   controllerAs: any;
-  templateUrl: any = ledIndicatorTemplate;
+  templateUrl: any = './tb-led-indicator.directive.html';
 
   constructor() {
     let vm = this;

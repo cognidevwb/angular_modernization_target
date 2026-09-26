@@ -159,7 +159,7 @@ this.updateAceEditorSizeSub = this.rootScope.$on('update-ace-editor-size', () =>
   }
 
   updateValidity(...rest: any[]): any {
-this.setErrors(this.functionValid ? null : { functionBody: true });
+this.$setValidity('functionBody', this.functionValid);
   }
 
   showError(error?: any, ...rest: any[]): any {
@@ -171,7 +171,7 @@ this.setErrors(this.functionValid ? null : { functionBody: true });
     this.toast.showError(error, toastParent, 'bottom left');
   }
 
-  validate(...rest: any[]): any {
+  override validate(...rest: any[]): any {
     let vm = this;
     try {
         var toValidate: any = new Function(vm.functionArgsString, vm.functionBody);

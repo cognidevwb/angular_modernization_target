@@ -31,6 +31,7 @@ export class TbRelationFiltersDirective extends NgModelController {
   protected readonly element = inject(ElementRef);
 
   relationFilters: any = [];
+  relationFilterForm: any;
   private prevRelationFilters: any = [];
 
   ngDoCheck(): void {
@@ -40,7 +41,7 @@ export class TbRelationFiltersDirective extends NgModelController {
     }
   }
 
-  $render(): void {
+  override $render(): void {
     if (this.$viewValue) {
         var value: any = this.$viewValue;
         this.relationFilters.length = 0;

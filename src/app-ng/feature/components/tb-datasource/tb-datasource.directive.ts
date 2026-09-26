@@ -22,7 +22,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
   templateUrl: './tb-datasource.directive.html',
   providers: ngModelProviders(TbDatasourceDirective),
 })
-export class TbDatasourceDirective extends NgModelController<any> {
+export class TbDatasourceDirective extends NgModelController {
   readonly aliasController = model<any>();
   readonly maxDataKeys = model<any>();
   readonly optDataKeys = model<any>();

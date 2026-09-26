@@ -32,7 +32,6 @@ protected template: any = entityAliasSelectTemplate;
   $watch: any;
   entityAliasSearchText: any;
   ngControl: any;
-  onChange: any;
 
   // TODO(port): `scope.onCreateEntityAlias(…)` — its result was read; an output emits and returns nothing: take the value from an input callback instead
   // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
@@ -82,7 +81,7 @@ protected template: any = entityAliasSelectTemplate;
   }
 
   updateView(...rest: any[]): any {
-    this.onChange?.(this.entityAlias);
+    this.$setViewValue(this.entityAlias);
     this.updateValidity();
   }
 

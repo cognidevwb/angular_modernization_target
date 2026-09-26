@@ -1,53 +1,13 @@
-src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts:79:3 - TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'.
-src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts:25:44 - TS2315: Type 'NgModelController' is not generic.
-src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts:69:12 - TS4112: This member cannot have an 'override' modifier because its containing class 'TbDatasourceDirective' does not extend another class.
-src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts:70:14 - TS2339: Property '$viewValue' does not exist on type 'TbDatasourceDirective'.
-src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts:71:27 - TS2339: Property '$viewValue' does not exist on type 'TbDatasourceDirective'.
-src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts:81:10 - TS2339: Property '$setViewValue' does not exist on type 'TbDatasourceDirective'.
-src/app-ng/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts:19:14 - TS2415: Class 'TbEntityAliasSelectDirective' incorrectly extends base class 'NgModelController'.   Property 'onChange' is private in type 'NgModelController' but not in type 'TbEntityAliasSelectDirective'.
-src/app-ng/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts:35:3 - TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'.
-src/app-ng/feature/components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive.ts:78:3 - TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'.
 src/app-ng/feature/dashboard/add-widget/add-widget.component.ts:14:44 - TS2307: Cannot find module '../../entity/alias/entity-alias-dialog.component' or its corresponding type declarations.
 src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:38:65 - TS2307: Cannot find module '../../entity/alias/entity-aliases.component' or its corresponding type declarations.
 src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:40:83 - TS2307: Cannot find module '../layouts/manage-dashboard-layouts/manage-dashboard-layouts.component' or its corresponding type declarations.
 src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:41:81 - TS2307: Cannot find module '../states/manage-dashboard-states/manage-dashboard-states.component' or its corresponding type declarations.
 src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:43:75 - TS2307: Cannot find module '../layouts/select-target-layout/select-target-layout.component' or its corresponding type declarations.
-src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:32:50 - TS2315: Type 'NgModelController' is not generic.
-src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:77:12 - TS4112: This member cannot have an 'override' modifier because its containing class 'TbEntityTypeSelectDirective' does not extend another class.
-src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:78:14 - TS2339: Property '$viewValue' does not exist on type 'TbEntityTypeSelectDirective'.
-src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:79:30 - TS2339: Property '$viewValue' does not exist on type 'TbEntityTypeSelectDirective'.
-src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:88:27 - TS2339: Property '$viewValue' does not exist on type 'TbEntityTypeSelectDirective'.
-src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:90:10 - TS2339: Property '$setValidity' does not exist on type 'TbEntityTypeSelectDirective'.
-src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts:94:10 - TS2339: Property '$setViewValue' does not exist on type 'TbEntityTypeSelectDirective'.
-src/app-ng/feature/entity/tb-entity-select/tb-entity-select.directive.ts:59:3 - TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'.
 src/app-ng/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts:51:14 - TS2415: Class 'TbJsonObjectEditDirective' incorrectly extends base class 'NgModelController'.   Property 'onChange' is private in type 'NgModelController' but not in type 'TbJsonObjectEditDirective'.
 src/app-ng/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts:75:3 - TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'.
 src/app-ng/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts:76:3 - TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'.
-src/app-ng/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts:184:3 - TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'.
-src/app-ng/feature/rulechain/tb-rule-node-config/tb-rule-node-config.directive.ts:51:3 - TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'.
-src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:23:31 - TS2345: Argument of type 'typeof TbRuleNodeLinkDirective' is not assignable to parameter of type 'Type<any>'.   Type 'typeof TbRuleNodeLinkDirective' is missing the following properties from type 'Type<any>': apply, call, bind, length, and 4 more.
-src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:25:46 - TS2315: Type 'NgModelController' is not generic.
-src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:50:12 - TS4112: This member cannot have an 'override' modifier because its containing class 'TbRuleNodeLinkDirective' does not extend another class.
-src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:61:28 - TS2339: Property '$viewValue' does not exist on type 'TbRuleNodeLinkDirective'.
-src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:138:14 - TS2339: Property '$viewValue' does not exist on type 'TbRuleNodeLinkDirective'.
-src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:143:14 - TS2339: Property '$viewValue' does not exist on type 'TbRuleNodeLinkDirective'.
-src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:144:14 - TS2339: Property '$viewValue' does not exist on type 'TbRuleNodeLinkDirective'.
-src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:150:27 - TS2339: Property '$viewValue' does not exist on type 'TbRuleNodeLinkDirective'.
-src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:151:10 - TS2339: Property '$viewValue' does not exist on type 'TbRuleNodeLinkDirective'.
-src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts:152:10 - TS2339: Property '$setValidity' does not exist on type 'TbRuleNodeLinkDirective'.
-src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:162:6 - TS2339: Property 'setErrors' does not exist on type 'TbJsFuncDirective'.
-src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:174:3 - TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'.
-src/app-ng/feature/components/widget/widget.component.ts:72:4 - TS2552: Cannot find name 'Input'. Did you mean 'oninput'?
-src/app-ng/feature/components/widget/widget.component.ts:73:4 - TS2552: Cannot find name 'Input'. Did you mean 'oninput'?
-src/app-ng/feature/components/widget/widget.component.ts:74:4 - TS2552: Cannot find name 'Input'. Did you mean 'oninput'?
-src/app-ng/feature/components/widget/widget.component.ts:75:4 - TS2552: Cannot find name 'Input'. Did you mean 'oninput'?
-src/app-ng/feature/components/widget/widget.component.ts:76:4 - TS2552: Cannot find name 'Input'. Did you mean 'oninput'?
-src/app-ng/feature/components/widget/widget.component.ts:77:4 - TS2552: Cannot find name 'Input'. Did you mean 'oninput'?
-src/app-ng/feature/components/widget/widget.component.ts:78:4 - TS2552: Cannot find name 'Input'. Did you mean 'oninput'?
-src/app-ng/feature/components/widget/widget.component.ts:79:4 - TS2552: Cannot find name 'Input'. Did you mean 'oninput'?
-src/app-ng/feature/components/widget/widget.component.ts:80:4 - TS2552: Cannot find name 'Input'. Did you mean 'oninput'?
-src/app-ng/feature/components/widget/widget.component.ts:81:4 - TS2552: Cannot find name 'Input'. Did you mean 'oninput'?
-src/app-ng/feature/components/widget/widget.component.ts:87:27 - TS2304: Cannot find name 'Injector'.
+src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts:183:12 - TS2339: Property 'element' does not exist on type 'TbCustomActionPrettyEditorDirective'.
+src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts:183:45 - TS2339: Property 'template' does not exist on type 'TbCustomActionPrettyEditorDirective'.
 src/app-ng/feature/components/widget/widget.component.ts:103:30 - TS2729: Property 'widgetInfo' is used before its initialization.
 src/app-ng/feature/components/widget/widget.component.ts:231:96 - TS2339: Property 'translate' does not exist on type 'WidgetComponent'.
 src/app-ng/feature/components/widget/widget.component.ts:827:10 - TS2339: Property 'rootScope' does not exist on type 'WidgetComponent'.
@@ -58,17 +18,118 @@ src/app-ng/feature/components/widget/widget.component.ts:853:10 - TS2339: Proper
 src/app-ng/feature/components/widget/widget.component.ts:864:10 - TS2339: Property 'rootScope' does not exist on type 'WidgetComponent'.
 src/app-ng/feature/components/widget/widget.component.ts:869:10 - TS2339: Property 'rootScope' does not exist on type 'WidgetComponent'.
 src/app-ng/feature/dashboard/manage-dashboard-states/manage-dashboard-states.component.ts:10:47 - TS2307: Cannot find module './dashboard-state-dialog/dashboard-state-dialog.component' or its corresponding type declarations.
-src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.ts:43:3 - TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'.
-src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts:18:50 - TS2315: Type 'NgModelController' is not generic.
-src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts:33:12 - TS4112: This member cannot have an 'override' modifier because its containing class 'TbEntityFilterViewDirective' does not extend another class.
-src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts:34:14 - TS2339: Property '$viewValue' does not exist on type 'TbEntityFilterViewDirective'.
-src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts:35:26 - TS2339: Property '$viewValue' does not exist on type 'TbEntityFilterViewDirective'.
 src/app-ng/feature/root/services/global-interceptor.service.ts:6:30 - TS2307: Cannot find module '../../../core/toast.service' or its corresponding type declarations.
 src/app-ng/feature/root/services/global-interceptor.service.ts:7:29 - TS2307: Cannot find module '../../../core/user.service' or its corresponding type declarations.
 src/app-ng/feature/root/services/global-interceptor.service.ts:8:35 - TS2307: Cannot find module '../../../core/types' or its corresponding type declarations.
 src/app-ng/feature/widget/tb-knob/tb-knob.directive.ts:5:36 - TS2307: Cannot find module '../canvas-digital-gauge' or its corresponding type declarations.
-src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.html:32:125 - TS2551: Property 'relationFilterForm' does not exist on type 'TbRelationFiltersDirective'. Did you mean 'relationFilters'?
-src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.html:32:125 - TS2551: Property 'relationFilterForm' does not exist on type 'TbRelationFiltersDirective'. Did you mean 'relationFilters'?
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:26:9 - NG8001: 'v-accordion' is not a known element:
+1. If 'v-accordion' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-accordion' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:27:13 - NG8001: 'v-pane' is not a known element:
+1. If 'v-pane' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:28:17 - NG8001: 'v-pane-header' is not a known element:
+1. If 'v-pane-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:31:17 - NG8001: 'v-pane-content' is not a known element:
+1. If 'v-pane-content' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-content' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:190:41 - NG8001: 'v-accordion' is not a known element:
+1. If 'v-accordion' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-accordion' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:191:45 - NG8001: 'v-pane' is not a known element:
+1. If 'v-pane' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:192:49 - NG8001: 'v-pane-header' is not a known element:
+1. If 'v-pane-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:195:49 - NG8001: 'v-pane-content' is not a known element:
+1. If 'v-pane-content' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-content' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:354:75 - NG8001: 'v-accordion' is not a known element:
+1. If 'v-accordion' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-accordion' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:355:77 - NG8001: 'v-pane' is not a known element:
+1. If 'v-pane' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:356:81 - NG8001: 'v-pane-header' is not a known element:
+1. If 'v-pane-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:359:81 - NG8001: 'v-pane-content' is not a known element:
+1. If 'v-pane-content' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-content' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:427:75 - NG8001: 'v-accordion' is not a known element:
+1. If 'v-accordion' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-accordion' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:428:77 - NG8001: 'v-pane' is not a known element:
+1. If 'v-pane' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:429:81 - NG8001: 'v-pane-header' is not a known element:
+1. If 'v-pane-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:432:81 - NG8001: 'v-pane-content' is not a known element:
+1. If 'v-pane-content' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-content' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:516:41 - NG8001: 'v-accordion' is not a known element:
+1. If 'v-accordion' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-accordion' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:517:45 - NG8001: 'v-pane' is not a known element:
+1. If 'v-pane' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:518:49 - NG8001: 'v-pane-header' is not a known element:
+1. If 'v-pane-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:521:49 - NG8001: 'v-pane-content' is not a known element:
+1. If 'v-pane-content' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-content' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:600:41 - NG8001: 'v-accordion' is not a known element:
+1. If 'v-accordion' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-accordion' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:601:45 - NG8001: 'v-pane' is not a known element:
+1. If 'v-pane' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:602:49 - NG8001: 'v-pane-header' is not a known element:
+1. If 'v-pane-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:605:49 - NG8001: 'v-pane-content' is not a known element:
+1. If 'v-pane-content' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-content' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:684:41 - NG8001: 'v-accordion' is not a known element:
+1. If 'v-accordion' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-accordion' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:685:45 - NG8001: 'v-pane' is not a known element:
+1. If 'v-pane' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:686:49 - NG8001: 'v-pane-header' is not a known element:
+1. If 'v-pane-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:689:49 - NG8001: 'v-pane-content' is not a known element:
+1. If 'v-pane-content' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-content' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:875:41 - NG8001: 'v-accordion' is not a known element:
+1. If 'v-accordion' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-accordion' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:876:45 - NG8001: 'v-pane' is not a known element:
+1. If 'v-pane' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:877:49 - NG8001: 'v-pane-header' is not a known element:
+1. If 'v-pane-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:880:49 - NG8001: 'v-pane-content' is not a known element:
+1. If 'v-pane-content' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-content' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:948:41 - NG8001: 'v-accordion' is not a known element:
+1. If 'v-accordion' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-accordion' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:949:45 - NG8001: 'v-pane' is not a known element:
+1. If 'v-pane' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:950:49 - NG8001: 'v-pane-header' is not a known element:
+1. If 'v-pane-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
+src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html:953:49 - NG8001: 'v-pane-content' is not a known element:
+1. If 'v-pane-content' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'v-pane-content' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. Find more at https://next.angular.dev/errors/NG8001
 src/app-ng/feature/dashboard/dashboard-settings/dashboard-settings.component.html:40:35 - warning NG8112: NG8112: @let stateController is declared but its value is never read. Find more at https://v22.angular.dev/extended-diagnostics/NG8112
 src/app-ng/feature/dashboard/add-widget/add-widget.component.ts:32:147 - warning NG8113: TbHelpDirective is not used within the template of AddWidgetComponent
 src/app-ng/feature/dashboard/dashboard/dashboard.component.ts:66:173 - warning NG8113: TbExpandFullscreenDirective is not used within the template of DashboardComponent
@@ -81,8 +142,8 @@ src/app-ng/feature/tenant/tenant/tenant.component.ts:27:109 - warning NG8113: Tb
 src/app-ng/feature/asset/add-assets-to-customer/add-assets-to-customer.component.ts:28:234 - warning NG8113: TbScopeElementDirective is not used within the template of AddAssetsToCustomerComponent
 src/app-ng/feature/asset/assign-asset-to-customer/assign-asset-to-customer.component.ts:29:234 - warning NG8113: TbScopeElementDirective is not used within the template of AssignAssetToCustomerComponent
 src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts:33:89 - warning NG8113: TbExpandFullscreenDirective is not used within the template of TbJsFuncDirective
-src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts:41:173 - warning NG8113: TbExpandFullscreenDirective is not used within the template of TbCustomActionPrettyEditorDirective
-src/app-ng/feature/components/tb-json-content/tb-json-content.directive.ts:36:89 - warning NG8113: TbExpandFullscreenDirective is not used within the template of TbJsonContentDirective
+src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts:38:173 - warning NG8113: TbExpandFullscreenDirective is not used within the template of TbCustomActionPrettyEditorDirective
+src/app-ng/feature/components/tb-json-content/tb-json-content.directive.ts:33:89 - warning NG8113: TbExpandFullscreenDirective is not used within the template of TbJsonContentDirective
 src/app-ng/feature/dashboard/add-dashboards-to-customer/add-dashboards-to-customer.component.ts:28:234 - warning NG8113: TbScopeElementDirective is not used within the template of AddDashboardsToCustomerComponent
 src/app-ng/feature/device/add-devices-to-customer/add-devices-to-customer.component.ts:28:234 - warning NG8113: TbScopeElementDirective is not used within the template of AddDevicesToCustomerComponent
 src/app-ng/feature/device/assign-device-to-customer/assign-device-to-customer.component.ts:29:234 - warning NG8113: TbScopeElementDirective is not used within the template of AssignDeviceToCustomerComponent

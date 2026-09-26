@@ -76,7 +76,7 @@ export class TbTimewindowDirective extends NgModelController {
         });
   }
 
-  $render(): void {
+  override $render(): void {
     this.model = this.timeService.defaultTimewindow();
     if (this.$viewValue) {
         var value: any = this.$viewValue;

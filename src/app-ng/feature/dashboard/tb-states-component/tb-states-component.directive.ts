@@ -10,7 +10,6 @@ declare let $controller: any;
 declare let $templateCache: any;
 declare let $scope: any;
 declare let scope: any;
-declare let element: any;
 
 /**
  * Ported from the AngularJS directive `tbStatesComponent` (module `thingsboard.dashboard.states`) in src/app/dashboard/states/index.js:22.

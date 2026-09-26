@@ -1,4 +1,4 @@
-import { Directive, forwardRef, inject, model } from '@angular/core';
+import { Component, forwardRef, inject, model } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
@@ -7,7 +7,6 @@ import { FormsModule } from '@angular/forms';
 import { ParseToNullDirective } from '../parse-to-null/parse-to-null.directive';
 
 import $ from 'jquery';
-import extensionFormMqttTemplate from '../../../../app/extension/extensions-forms/extension-form-mqtt.tpl.html?raw';
 import { LegacyInitDirective } from '../../../legacy-init.directive';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -27,16 +26,30 @@ declare let element: any;
  * Ported from the AngularJS directive `tbExtensionFormMqtt` (module `thingsboard.extension`) in src/app/extension/index.js:24.
  * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
-@Directive({
+@Component({
   selector: '[tb-extension-form-mqtt]',
   standalone: true,
+  templateUrl: './tb-extension-form-mqtt.directive.html',
+  imports: [
+    CommonModule,
+    FormsModule,
+    ParseToNullDirective,
+    LegacyInitDirective,
+    MatButtonModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatSelectModule,
+    MatTooltipModule,
+    TranslatePipe,
+  ],
 })
 export class TbExtensionFormMqttDirective {
   readonly config = model<any>();
   readonly isAdd = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly translate = inject(TranslateService);
   protected readonly typesRef: any = types;
   protected readonly element = inject(ElementRef);
@@ -44,7 +57,6 @@ export class TbExtensionFormMqttDirective {
   // TODO(port): template: 52 × ng-message left in place
   // TODO(port): template: 49 × ng-messages left in place
 
-  protected template: any = $templateCache.get(extensionFormMqttTemplate);
   types: any;
   theForm: any;
   deviceNameExpressions: any = {
@@ -94,7 +106,6 @@ export class TbExtensionFormMqttDirective {
   // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
 
   constructor() {
-    $(this.element.nativeElement).html(this.template);
     this.types = this.typesRef;
     this.theForm = this.$parent.theForm;
     this.$watch('brokers', () => {
@@ -107,7 +118,6 @@ export class TbExtensionFormMqttDirective {
         } else {
             this.brokers = this.config().brokers;
         }
-    $compile($(this.element.nativeElement).contents())(this);
   }
 
   updateValidity(...rest: any[]): any {

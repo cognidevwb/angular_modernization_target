@@ -117,7 +117,7 @@ export class TbJsonObjectEditDirective extends NgModelController {
                         this.object[key] = object[key];
                     });
                 }
-                this.onChange(this.object);
+                this.$setViewValue(this.object);
             }
             this.updateValidity();
       }
@@ -173,7 +173,7 @@ export class TbJsonObjectEditDirective extends NgModelController {
   }
 
   updateValidity(...rest: any[]): any {
-    this.onValidatorChange();
+    this.$setValidity('objectValid', this.objectValid);
   }
 
   showError(error?: any, ...rest: any[]): any {
@@ -181,7 +181,7 @@ export class TbJsonObjectEditDirective extends NgModelController {
     this.toast.showError(error, toastParent, 'bottom left');
   }
 
-  validate(...rest: any[]): any {
+  override validate(...rest: any[]): any {
     if (!this.contentBody || !this.contentBody.length) {
         if (this.required()) {
             this.validationError = 'Json object is required.';

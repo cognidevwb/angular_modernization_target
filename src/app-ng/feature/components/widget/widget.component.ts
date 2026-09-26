@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Injector, Input } from '@angular/core';
 import { AlarmService } from '../../api/services/alarm.service';
 import { DashboardService } from '../../api/services/dashboard.service';
 import { DatasourceService } from '../../api/services/datasource.service';

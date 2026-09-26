@@ -1,12 +1,12 @@
 {
 "summary": {
-"files": 23,
-"uses": 94,
-"names": 51,
+"files": 17,
+"uses": 80,
+"names": 47,
 "by_kind": {
-"angularjs": 34,
+"angularjs": 24,
 "lost": 27,
-"legacy-import": 33
+"legacy-import": 29
 }
 },
 "rows": [
@@ -14,8 +14,6 @@
 "name": "$compile",
 "kind": "angularjs",
 "at": [
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:110",
-"src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts:933",
 "src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:62"
 ]
 },
@@ -58,7 +56,6 @@
 "name": "$templateCache",
 "kind": "angularjs",
 "at": [
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:47",
 "src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:57"
 ]
 },
@@ -165,13 +162,6 @@
 ]
 },
 {
-"name": "custom-action-pretty-editor.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts:10"
-]
-},
-{
 "name": "dashboard",
 "kind": "lost",
 "at": [
@@ -220,25 +210,20 @@
 "name": "element",
 "kind": "angularjs",
 "at": [
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:42",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:234",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:235",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:236",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:237",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:240",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:243",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:55",
 "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:244",
 "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:245",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:248",
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:251",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:246",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:247",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:250",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:253",
 "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:254",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:255",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:258",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:261",
+"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:264",
 "src/app-ng/feature/entity/tb-attribute-table/tb-attribute-table.directive.ts:77",
-"src/app-ng/feature/dashboard/tb-states-component/tb-states-component.directive.ts:30",
-"src/app-ng/feature/dashboard/tb-edit-widget/tb-edit-widget.directive.ts:48",
-"src/app-ng/feature/components/tb-json-content/tb-json-content.directive.ts:50",
-"src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts:51",
 "src/app-ng/feature/components/tb-dashboard-autocomplete/tb-dashboard-autocomplete.directive.ts:41",
-"src/app-ng/feature/rulechain/tb-rule-node/tb-rule-node.directive.ts:45",
 "src/app-ng/feature/device/tb-device/tb-device.directive.ts:56",
 "src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:28"
 ]
@@ -247,7 +232,7 @@
 "name": "entitiesHierarchyDataUpdatedService",
 "kind": "lost",
 "at": [
-"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:85"
+"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:552"
 ]
 },
 {
@@ -279,13 +264,6 @@
 ]
 },
 {
-"name": "extension-form-mqtt.tpl.html?raw",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.ts:10"
-]
-},
-{
 "name": "isEdit",
 "kind": "lost",
 "at": [
@@ -307,20 +285,6 @@
 "src/app-ng/feature/components/widget/widget.component.ts:1021",
 "src/app-ng/feature/components/widget/widget.component.ts:1022",
 "src/app-ng/feature/components/widget/widget.component.ts:1023"
-]
-},
-{
-"name": "json-content.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/components/tb-json-content/tb-json-content.directive.ts:14"
-]
-},
-{
-"name": "led-indicator.tpl.html",
-"kind": "legacy-import",
-"at": [
-"src/app-ng/feature/widget/tb-led-indicator/tb-led-indicator.directive.ts:4"
 ]
 },
 {
@@ -348,8 +312,6 @@
 "name": "scope",
 "kind": "angularjs",
 "at": [
-"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:545",
-"src/app-ng/feature/widget/tb-led-indicator/tb-led-indicator.directive.ts:282",
 "src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:459"
 ]
 },

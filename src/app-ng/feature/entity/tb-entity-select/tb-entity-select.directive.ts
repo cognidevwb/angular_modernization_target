@@ -56,7 +56,7 @@ export class TbEntitySelectDirective extends NgModelController {
         };
   }
 
-  $render(): void {
+  override $render(): void {
     this.destroyWatchers();
     if (this.$viewValue) {
         const value: any = this.$viewValue;

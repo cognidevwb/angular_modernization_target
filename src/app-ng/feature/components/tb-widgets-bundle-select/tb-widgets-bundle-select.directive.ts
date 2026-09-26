@@ -75,7 +75,7 @@ export class TbWidgetsBundleSelectDirective extends NgModelController {
         });
   }
 
-  $render(): void {
+  override $render(): void {
     if (this.$viewValue) {
         this.widgetsBundle = this.$viewValue;
     }

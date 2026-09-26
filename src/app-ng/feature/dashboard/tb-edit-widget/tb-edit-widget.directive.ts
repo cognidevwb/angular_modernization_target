@@ -17,7 +17,6 @@ declare let $compile: any;
 declare let $templateCache: any;
 declare let angular: any;
 declare let scope: any;
-declare let element: any;
 
 /**
  * Ported from the AngularJS directive `tbEditWidget` (module `thingsboard.dashboard`) in src/app/dashboard/index.js:50.

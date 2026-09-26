@@ -29,7 +29,7 @@ declare let $templateCache: any;
   templateUrl: './tb-entity-type-select.directive.html',
   providers: ngModelProviders(TbEntityTypeSelectDirective),
 })
-export class TbEntityTypeSelectDirective extends NgModelController<any> {
+export class TbEntityTypeSelectDirective extends NgModelController {
   readonly theForm = model<any>();
   readonly tbRequired = model<any>();
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });

@@ -1,68 +1,5 @@
 [
 {
-"file": "src/app-ng/feature/components/tb-timewindow/tb-timewindow.directive.ts",
-"line": "79",
-"col": "3",
-"code": "TS4114",
-"message": "This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'."
-},
-{
-"file": "src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts",
-"line": "25",
-"col": "44",
-"code": "TS2315",
-"message": "Type 'NgModelController' is not generic."
-},
-{
-"file": "src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts",
-"line": "69",
-"col": "12",
-"code": "TS4112",
-"message": "This member cannot have an 'override' modifier because its containing class 'TbDatasourceDirective' does not extend another class."
-},
-{
-"file": "src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts",
-"line": "70",
-"col": "14",
-"code": "TS2339",
-"message": "Property '$viewValue' does not exist on type 'TbDatasourceDirective'."
-},
-{
-"file": "src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts",
-"line": "71",
-"col": "27",
-"code": "TS2339",
-"message": "Property '$viewValue' does not exist on type 'TbDatasourceDirective'."
-},
-{
-"file": "src/app-ng/feature/components/tb-datasource/tb-datasource.directive.ts",
-"line": "81",
-"col": "10",
-"code": "TS2339",
-"message": "Property '$setViewValue' does not exist on type 'TbDatasourceDirective'."
-},
-{
-"file": "src/app-ng/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts",
-"line": "19",
-"col": "14",
-"code": "TS2415",
-"message": "Class 'TbEntityAliasSelectDirective' incorrectly extends base class 'NgModelController'.   Property 'onChange' is private in type 'NgModelController' but not in type 'TbEntityAliasSelectDirective'."
-},
-{
-"file": "src/app-ng/feature/components/tb-entity-alias-select/tb-entity-alias-select.directive.ts",
-"line": "35",
-"col": "3",
-"code": "TS4114",
-"message": "This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'."
-},
-{
-"file": "src/app-ng/feature/components/tb-widgets-bundle-select/tb-widgets-bundle-select.directive.ts",
-"line": "78",
-"col": "3",
-"code": "TS4114",
-"message": "This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'."
-},
-{
 "file": "src/app-ng/feature/dashboard/add-widget/add-widget.component.ts",
 "line": "14",
 "col": "44",
@@ -98,62 +35,6 @@
 "message": "Cannot find module '../layouts/select-target-layout/select-target-layout.component' or its corresponding type declarations."
 },
 {
-"file": "src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts",
-"line": "32",
-"col": "50",
-"code": "TS2315",
-"message": "Type 'NgModelController' is not generic."
-},
-{
-"file": "src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts",
-"line": "77",
-"col": "12",
-"code": "TS4112",
-"message": "This member cannot have an 'override' modifier because its containing class 'TbEntityTypeSelectDirective' does not extend another class."
-},
-{
-"file": "src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts",
-"line": "78",
-"col": "14",
-"code": "TS2339",
-"message": "Property '$viewValue' does not exist on type 'TbEntityTypeSelectDirective'."
-},
-{
-"file": "src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts",
-"line": "79",
-"col": "30",
-"code": "TS2339",
-"message": "Property '$viewValue' does not exist on type 'TbEntityTypeSelectDirective'."
-},
-{
-"file": "src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts",
-"line": "88",
-"col": "27",
-"code": "TS2339",
-"message": "Property '$viewValue' does not exist on type 'TbEntityTypeSelectDirective'."
-},
-{
-"file": "src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts",
-"line": "90",
-"col": "10",
-"code": "TS2339",
-"message": "Property '$setValidity' does not exist on type 'TbEntityTypeSelectDirective'."
-},
-{
-"file": "src/app-ng/feature/entity/tb-entity-type-select/tb-entity-type-select.directive.ts",
-"line": "94",
-"col": "10",
-"code": "TS2339",
-"message": "Property '$setViewValue' does not exist on type 'TbEntityTypeSelectDirective'."
-},
-{
-"file": "src/app-ng/feature/entity/tb-entity-select/tb-entity-select.directive.ts",
-"line": "59",
-"col": "3",
-"code": "TS4114",
-"message": "This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'."
-},
-{
 "file": "src/app-ng/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts",
 "line": "51",
 "col": "14",
@@ -175,179 +56,18 @@
 "message": "This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'."
 },
 {
-"file": "src/app-ng/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts",
-"line": "184",
-"col": "3",
-"code": "TS4114",
-"message": "This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'."
-},
-{
-"file": "src/app-ng/feature/rulechain/tb-rule-node-config/tb-rule-node-config.directive.ts",
-"line": "51",
-"col": "3",
-"code": "TS4114",
-"message": "This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'."
-},
-{
-"file": "src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts",
-"line": "23",
-"col": "31",
-"code": "TS2345",
-"message": "Argument of type 'typeof TbRuleNodeLinkDirective' is not assignable to parameter of type 'Type<any>'.   Type 'typeof TbRuleNodeLinkDirective' is missing the following properties from type 'Type<any>': apply, call, bind, length, and 4 more."
-},
-{
-"file": "src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts",
-"line": "25",
-"col": "46",
-"code": "TS2315",
-"message": "Type 'NgModelController' is not generic."
-},
-{
-"file": "src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts",
-"line": "50",
+"file": "src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts",
+"line": "183",
 "col": "12",
-"code": "TS4112",
-"message": "This member cannot have an 'override' modifier because its containing class 'TbRuleNodeLinkDirective' does not extend another class."
-},
-{
-"file": "src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts",
-"line": "61",
-"col": "28",
 "code": "TS2339",
-"message": "Property '$viewValue' does not exist on type 'TbRuleNodeLinkDirective'."
+"message": "Property 'element' does not exist on type 'TbCustomActionPrettyEditorDirective'."
 },
 {
-"file": "src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts",
-"line": "138",
-"col": "14",
+"file": "src/app-ng/feature/components/tb-custom-action-pretty-editor/tb-custom-action-pretty-editor.directive.ts",
+"line": "183",
+"col": "45",
 "code": "TS2339",
-"message": "Property '$viewValue' does not exist on type 'TbRuleNodeLinkDirective'."
-},
-{
-"file": "src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts",
-"line": "143",
-"col": "14",
-"code": "TS2339",
-"message": "Property '$viewValue' does not exist on type 'TbRuleNodeLinkDirective'."
-},
-{
-"file": "src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts",
-"line": "144",
-"col": "14",
-"code": "TS2339",
-"message": "Property '$viewValue' does not exist on type 'TbRuleNodeLinkDirective'."
-},
-{
-"file": "src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts",
-"line": "150",
-"col": "27",
-"code": "TS2339",
-"message": "Property '$viewValue' does not exist on type 'TbRuleNodeLinkDirective'."
-},
-{
-"file": "src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts",
-"line": "151",
-"col": "10",
-"code": "TS2339",
-"message": "Property '$viewValue' does not exist on type 'TbRuleNodeLinkDirective'."
-},
-{
-"file": "src/app-ng/feature/rulechain/tb-rule-node-link/tb-rule-node-link.directive.ts",
-"line": "152",
-"col": "10",
-"code": "TS2339",
-"message": "Property '$setValidity' does not exist on type 'TbRuleNodeLinkDirective'."
-},
-{
-"file": "src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts",
-"line": "162",
-"col": "6",
-"code": "TS2339",
-"message": "Property 'setErrors' does not exist on type 'TbJsFuncDirective'."
-},
-{
-"file": "src/app-ng/feature/components/tb-js-func/tb-js-func.directive.ts",
-"line": "174",
-"col": "3",
-"code": "TS4114",
-"message": "This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'."
-},
-{
-"file": "src/app-ng/feature/components/widget/widget.component.ts",
-"line": "72",
-"col": "4",
-"code": "TS2552",
-"message": "Cannot find name 'Input'. Did you mean 'oninput'?"
-},
-{
-"file": "src/app-ng/feature/components/widget/widget.component.ts",
-"line": "73",
-"col": "4",
-"code": "TS2552",
-"message": "Cannot find name 'Input'. Did you mean 'oninput'?"
-},
-{
-"file": "src/app-ng/feature/components/widget/widget.component.ts",
-"line": "74",
-"col": "4",
-"code": "TS2552",
-"message": "Cannot find name 'Input'. Did you mean 'oninput'?"
-},
-{
-"file": "src/app-ng/feature/components/widget/widget.component.ts",
-"line": "75",
-"col": "4",
-"code": "TS2552",
-"message": "Cannot find name 'Input'. Did you mean 'oninput'?"
-},
-{
-"file": "src/app-ng/feature/components/widget/widget.component.ts",
-"line": "76",
-"col": "4",
-"code": "TS2552",
-"message": "Cannot find name 'Input'. Did you mean 'oninput'?"
-},
-{
-"file": "src/app-ng/feature/components/widget/widget.component.ts",
-"line": "77",
-"col": "4",
-"code": "TS2552",
-"message": "Cannot find name 'Input'. Did you mean 'oninput'?"
-},
-{
-"file": "src/app-ng/feature/components/widget/widget.component.ts",
-"line": "78",
-"col": "4",
-"code": "TS2552",
-"message": "Cannot find name 'Input'. Did you mean 'oninput'?"
-},
-{
-"file": "src/app-ng/feature/components/widget/widget.component.ts",
-"line": "79",
-"col": "4",
-"code": "TS2552",
-"message": "Cannot find name 'Input'. Did you mean 'oninput'?"
-},
-{
-"file": "src/app-ng/feature/components/widget/widget.component.ts",
-"line": "80",
-"col": "4",
-"code": "TS2552",
-"message": "Cannot find name 'Input'. Did you mean 'oninput'?"
-},
-{
-"file": "src/app-ng/feature/components/widget/widget.component.ts",
-"line": "81",
-"col": "4",
-"code": "TS2552",
-"message": "Cannot find name 'Input'. Did you mean 'oninput'?"
-},
-{
-"file": "src/app-ng/feature/components/widget/widget.component.ts",
-"line": "87",
-"col": "27",
-"code": "TS2304",
-"message": "Cannot find name 'Injector'."
+"message": "Property 'template' does not exist on type 'TbCustomActionPrettyEditorDirective'."
 },
 {
 "file": "src/app-ng/feature/components/widget/widget.component.ts",
@@ -420,41 +140,6 @@
 "message": "Cannot find module './dashboard-state-dialog/dashboard-state-dialog.component' or its corresponding type declarations."
 },
 {
-"file": "src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.ts",
-"line": "43",
-"col": "3",
-"code": "TS4114",
-"message": "This member must have an 'override' modifier because it overrides a member in the base class 'NgModelController'."
-},
-{
-"file": "src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts",
-"line": "18",
-"col": "50",
-"code": "TS2315",
-"message": "Type 'NgModelController' is not generic."
-},
-{
-"file": "src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts",
-"line": "33",
-"col": "12",
-"code": "TS4112",
-"message": "This member cannot have an 'override' modifier because its containing class 'TbEntityFilterViewDirective' does not extend another class."
-},
-{
-"file": "src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts",
-"line": "34",
-"col": "14",
-"code": "TS2339",
-"message": "Property '$viewValue' does not exist on type 'TbEntityFilterViewDirective'."
-},
-{
-"file": "src/app-ng/feature/entity/tb-entity-filter-view/tb-entity-filter-view.directive.ts",
-"line": "35",
-"col": "26",
-"code": "TS2339",
-"message": "Property '$viewValue' does not exist on type 'TbEntityFilterViewDirective'."
-},
-{
 "file": "src/app-ng/feature/root/services/global-interceptor.service.ts",
 "line": "6",
 "col": "30",
@@ -483,17 +168,255 @@
 "message": "Cannot find module '../canvas-digital-gauge' or its corresponding type declarations."
 },
 {
-"file": "src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.html",
-"line": "32",
-"col": "125",
-"code": "TS2551",
-"message": "Property 'relationFilterForm' does not exist on type 'TbRelationFiltersDirective'. Did you mean 'relationFilters'?"
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "26",
+"col": "9",
+"code": "NG8001",
+"message": "'v-accordion' is not a known element:"
 },
 {
-"file": "src/app-ng/feature/entity/tb-relation-filters/tb-relation-filters.directive.html",
-"line": "32",
-"col": "125",
-"code": "TS2551",
-"message": "Property 'relationFilterForm' does not exist on type 'TbRelationFiltersDirective'. Did you mean 'relationFilters'?"
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "27",
+"col": "13",
+"code": "NG8001",
+"message": "'v-pane' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "28",
+"col": "17",
+"code": "NG8001",
+"message": "'v-pane-header' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "31",
+"col": "17",
+"code": "NG8001",
+"message": "'v-pane-content' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "190",
+"col": "41",
+"code": "NG8001",
+"message": "'v-accordion' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "191",
+"col": "45",
+"code": "NG8001",
+"message": "'v-pane' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "192",
+"col": "49",
+"code": "NG8001",
+"message": "'v-pane-header' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "195",
+"col": "49",
+"code": "NG8001",
+"message": "'v-pane-content' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "354",
+"col": "75",
+"code": "NG8001",
+"message": "'v-accordion' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "355",
+"col": "77",
+"code": "NG8001",
+"message": "'v-pane' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "356",
+"col": "81",
+"code": "NG8001",
+"message": "'v-pane-header' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "359",
+"col": "81",
+"code": "NG8001",
+"message": "'v-pane-content' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "427",
+"col": "75",
+"code": "NG8001",
+"message": "'v-accordion' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "428",
+"col": "77",
+"code": "NG8001",
+"message": "'v-pane' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "429",
+"col": "81",
+"code": "NG8001",
+"message": "'v-pane-header' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "432",
+"col": "81",
+"code": "NG8001",
+"message": "'v-pane-content' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "516",
+"col": "41",
+"code": "NG8001",
+"message": "'v-accordion' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "517",
+"col": "45",
+"code": "NG8001",
+"message": "'v-pane' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "518",
+"col": "49",
+"code": "NG8001",
+"message": "'v-pane-header' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "521",
+"col": "49",
+"code": "NG8001",
+"message": "'v-pane-content' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "600",
+"col": "41",
+"code": "NG8001",
+"message": "'v-accordion' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "601",
+"col": "45",
+"code": "NG8001",
+"message": "'v-pane' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "602",
+"col": "49",
+"code": "NG8001",
+"message": "'v-pane-header' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "605",
+"col": "49",
+"code": "NG8001",
+"message": "'v-pane-content' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "684",
+"col": "41",
+"code": "NG8001",
+"message": "'v-accordion' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "685",
+"col": "45",
+"code": "NG8001",
+"message": "'v-pane' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "686",
+"col": "49",
+"code": "NG8001",
+"message": "'v-pane-header' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "689",
+"col": "49",
+"code": "NG8001",
+"message": "'v-pane-content' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "875",
+"col": "41",
+"code": "NG8001",
+"message": "'v-accordion' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "876",
+"col": "45",
+"code": "NG8001",
+"message": "'v-pane' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "877",
+"col": "49",
+"code": "NG8001",
+"message": "'v-pane-header' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "880",
+"col": "49",
+"code": "NG8001",
+"message": "'v-pane-content' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "948",
+"col": "41",
+"code": "NG8001",
+"message": "'v-accordion' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "949",
+"col": "45",
+"code": "NG8001",
+"message": "'v-pane' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "950",
+"col": "49",
+"code": "NG8001",
+"message": "'v-pane-header' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
+"line": "953",
+"col": "49",
+"code": "NG8001",
+"message": "'v-pane-content' is not a known element:"
 }
 ]

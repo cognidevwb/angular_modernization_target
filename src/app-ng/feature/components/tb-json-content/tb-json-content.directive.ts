@@ -10,15 +10,12 @@ import { TbExpandFullscreenDirective } from '../tb-expand-fullscreen/tb-expand-f
 import $ from 'jquery';
 import { linkAttrs } from '../../../legacy-link';
 import fixAceEditor from '../../../../app/components/ace-editor-fix';
-// @ts-ignore
-import jsonContentTemplate from '../../../../app/components/json-content.tpl.html';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
 declare let $compile: any;
 declare let $templateCache: any;
 declare let angular: any;
-declare let element: any;
 declare let ngModelCtrl: any;
 
 // Helpers at the legacy file's top level, beside the registration (as written).

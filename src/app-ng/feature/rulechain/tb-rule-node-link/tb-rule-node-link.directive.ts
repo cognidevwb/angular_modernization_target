@@ -22,7 +22,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
   templateUrl: './tb-rule-node-link.directive.html',
   providers: ngModelProviders(TbRuleNodeLinkDirective),
 })
-export class TbRuleNodeLinkDirective extends NgModelController<any> {
+export class TbRuleNodeLinkDirective extends NgModelController {
   protected readonly rootScope = injectRoot(RootState);
   readonly allowedLabels = model<any>();
   readonly allowCustom = model<any>();
