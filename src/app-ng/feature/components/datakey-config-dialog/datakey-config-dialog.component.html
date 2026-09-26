@@ -20,7 +20,7 @@
 	<form name="theForm" (ngSubmit)="save()">
 		<mat-toolbar>
 	      <div class="md-toolbar-tools">
-	        <h2 translate>datakey.configuration</h2>
+	        <h2>{{ 'datakey.configuration' | translate }}</h2>
 	        <span flex></span>
 	        <button mat-icon-button (click)="cancel()">
 	          <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>

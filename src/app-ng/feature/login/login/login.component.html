@@ -27,14 +27,14 @@
                 <div layout="column" class="tb-padding" id="toast-parent">
                     <span style="height: 50px;"></span>
                     <mat-form-field class="md-block">
-                        <mat-label translate>login.username</mat-label>
+                        <mat-label>{{ 'login.username' | translate }}</mat-label>
                         <mat-icon attr.aria-label="{{ 'login.username' | translate }}" class="material-icons">
                             email
                         </mat-icon>
                         <input matInput id="username-input" type="email" autofocus [(ngModel)]="user.name">
                     </mat-form-field>
                     <mat-form-field class="md-block">
-                        <mat-label translate>common.password</mat-label>
+                        <mat-label>{{ 'common.password' | translate }}</mat-label>
                         <mat-icon attr.aria-label="{{ 'common.password' | translate }}" class="material-icons">
                             lock
                         </mat-icon>

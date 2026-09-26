@@ -18,7 +18,7 @@
 -->
 <div class="md-content md-padding tb-link" layout="column">
     <fieldset [disabled]="rootScope?.loading || !isEdit() || isReadOnly()">
-        <label translate class="tb-title no-padding" [ngClass]="{'tb-required': required()}">rulenode.link-labels</label>
+        <label class="tb-title no-padding" [ngClass]="{'tb-required': required()}">{{ 'rulenode.link-labels' | translate }}</label>
         <mat-chip-grid #chipGrid id="link_label_chips" [required]="true" [disabled]="rootScope?.loading || !isEdit() || isReadOnly()">
             @for (chip of labels; track chip) {
               <mat-chip-row (removed)="removeLabel(chip)">
@@ -35,7 +35,7 @@
                 <div class="tb-not-found">
                     @if (!labelSearchText || !labelSearchText?.length) {
                       <div class="tb-no-entries">
-                        <span translate>rulenode.no-link-labels-found</span>
+                        <span>{{ 'rulenode.no-link-labels-found' | translate }}</span>
                     </div>
                     }
                     @if (labelSearchText && labelSearchText?.length) {
@@ -43,7 +43,7 @@
                         <span>{{ 'rulenode.no-link-label-matching' | translate:{ label: truncateLabel(labelSearchText) } }}</span>
                         @if (allowCustom()) {
                           <span>
-                            <a translate (click)="createLinkLabel($event, '#link_label_chips')">rulenode.create-new-link-label</a>
+                            <a (click)="createLinkLabel($event, '#link_label_chips')">{{ 'rulenode.create-new-link-label' | translate }}</a>
                         </span>
                         }
                     </div>
@@ -54,7 +54,7 @@
         <!-- TODO(port): ng-messages has no one-to-one Angular form -->
         <div class="tb-error-messages" ng-messages="ngModelCtrl?.$error" role="alert">
             <!-- TODO(port): ng-message has no one-to-one Angular form -->
-            <div translate ng-message="linkLabels" class="tb-error-message">rulenode.link-labels-required</div>
+            <div ng-message="linkLabels" class="tb-error-message">{{ 'rulenode.link-labels-required' | translate }}</div>
         </div>
     </fieldset>
 </div>

@@ -19,7 +19,7 @@
 <div attr.aria-label="{{ title | translate }}" class="md-dialog">
         <mat-toolbar>
             <div class="md-toolbar-tools">
-                <h2 translate>{{ title }}</h2>
+                <h2>{{ (title) | translate }}</h2>
                 <span flex></span>
                 <button mat-icon-button (click)="close()">
                     <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>

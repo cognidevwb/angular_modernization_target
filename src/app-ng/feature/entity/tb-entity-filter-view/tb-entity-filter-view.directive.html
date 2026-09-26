@@ -18,7 +18,7 @@
 -->
 <div layout='column' class="tb-entity-filter-view">
     @if (!filter || !filter?.type) {
-      <div class="entity-filter-empty" translate>alias.no-entity-filter-specified</div>
+      <div class="entity-filter-empty">{{ 'alias.no-entity-filter-specified' | translate }}</div>
     }
     @if (filter && filter?.type) {
       <div layout="column">

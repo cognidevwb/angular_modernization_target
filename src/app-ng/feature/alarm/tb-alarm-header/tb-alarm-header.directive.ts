@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component, inject } from '@angular/core';
 import { ElementRef } from '@angular/core';
 
@@ -8,6 +9,7 @@ import { ElementRef } from '@angular/core';
 @Component({
   selector: '[tb-alarm-header]',
   standalone: true,
+  imports: [TranslatePipe],
   templateUrl: './tb-alarm-header.directive.html',
 })
 export class TbAlarmHeaderDirective {

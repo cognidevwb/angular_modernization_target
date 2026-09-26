@@ -29,7 +29,7 @@
         <!-- TODO(port): ng-messages has no one-to-one Angular form -->
         <div ng-messages="theForm()?.filterType?.$error">
             <!-- TODO(port): ng-message has no one-to-one Angular form -->
-            <div ng-message="required" translate>alias.filter-type-required</div>
+            <div ng-message="required">{{ 'alias.filter-type-required' | translate }}</div>
         </div>
     </mat-form-field>
     @if (filter?.type == types?.aliasFilterType?.singleEntity?.value) {
@@ -51,12 +51,12 @@
         <tb-entity-type-select [(ngModel)]="filter.entityType" [(theForm)]="theForm" [tbRequired]="true" [(allowedEntityTypes)]="allowedEntityTypes">
         </tb-entity-type-select>
         <mat-form-field class="md-block">
-            <mat-label translate>entity.name-starts-with</mat-label>
+            <mat-label>{{ 'entity.name-starts-with' | translate }}</mat-label>
             <input matInput required name="entityNameFilter" [(ngModel)]="filter.entityNameFilter" attr.aria-label="{{ 'entity.name-starts-with' | translate }}">
             <!-- TODO(port): ng-messages has no one-to-one Angular form -->
             <div ng-messages="theForm()?.entityNameFilter?.$error">
                 <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                <div ng-message="required" translate>entity.entity-name-filter-required</div>
+                <div ng-message="required">{{ 'entity.entity-name-filter-required' | translate }}</div>
             </div>
         </mat-form-field>
     </section>
@@ -64,7 +64,7 @@
     @if (filter?.type == types?.aliasFilterType?.stateEntity?.value) {
       <section layout="column" id="stateEntityFilter">
         <mat-form-field class="md-block">
-            <mat-label translate>alias.state-entity-parameter-name</mat-label>
+            <mat-label>{{ 'alias.state-entity-parameter-name' | translate }}</mat-label>
             <input matInput name="stateEntityParamName" attr.placeholder="{{ 'alias.default-entity-parameter-name' | translate }}" [(ngModel)]="filter.stateEntityParamName" attr.aria-label="{{ 'alias.state-entity-parameter-name' | translate }}">
         </mat-form-field>
         <div layout="column">
@@ -79,7 +79,7 @@
         <tb-entity-subtype-autocomplete [tbRequired]="true" [(theForm)]="theForm" [(ngModel)]="filter.assetType" [(entityType)]="types.entityType.asset">
         </tb-entity-subtype-autocomplete>
         <mat-form-field class="md-block">
-            <mat-label translate>asset.name-starts-with</mat-label>
+            <mat-label>{{ 'asset.name-starts-with' | translate }}</mat-label>
             <input matInput name="assetNameFilter" [(ngModel)]="filter.assetNameFilter" attr.aria-label="{{ 'asset.name-starts-with' | translate }}">
         </mat-form-field>
     </section>
@@ -89,7 +89,7 @@
         <tb-entity-subtype-autocomplete [tbRequired]="true" [(theForm)]="theForm" [(ngModel)]="filter.deviceType" [(entityType)]="types.entityType.device">
         </tb-entity-subtype-autocomplete>
         <mat-form-field class="md-block">
-            <mat-label translate>device.name-starts-with</mat-label>
+            <mat-label>{{ 'device.name-starts-with' | translate }}</mat-label>
             <input matInput name="deviceNameFilter" [(ngModel)]="filter.deviceNameFilter" attr.aria-label="{{ 'device.name-starts-with' | translate }}">
         </mat-form-field>
     </section>
@@ -99,7 +99,7 @@
         <tb-entity-subtype-autocomplete [tbRequired]="true" [(theForm)]="theForm" [(ngModel)]="filter.entityViewType" [(entityType)]="types.entityType.entityView">
         </tb-entity-subtype-autocomplete>
         <mat-form-field class="md-block">
-            <mat-label translate>entity-view.name-starts-with</mat-label>
+            <mat-label>{{ 'entity-view.name-starts-with' | translate }}</mat-label>
             <input matInput name="entityViewNameFilter" [(ngModel)]="filter.entityViewNameFilter" attr.aria-label="{{ 'entity-view.name-starts-with' | translate }}">
         </mat-form-field>
     </section>
@@ -110,7 +110,7 @@
         <section class="tb-root-state-entity-switch" layout="row" layout-align="start center" style="padding-left: 0px;">
             <mat-slide-toggle class="root-state-entity-switch" [(ngModel)]="filter.rootStateEntity" attr.aria-label="{{ 'alias.root-state-entity' | translate }}">
             </mat-slide-toggle>
-            <label class="tb-small root-state-entity-label" translate>alias.root-state-entity</label>
+            <label class="tb-small root-state-entity-label">{{ 'alias.root-state-entity' | translate }}</label>
         </section>
         @if (!filter?.rootStateEntity) {
           <div flex layout="row">
@@ -121,7 +121,7 @@
         @if (filter?.rootStateEntity) {
           <div flex layout="row">
             <mat-form-field class="md-block" style="margin-top: 32px;">
-                <mat-label translate>alias.state-entity-parameter-name</mat-label>
+                <mat-label>{{ 'alias.state-entity-parameter-name' | translate }}</mat-label>
                 <input matInput name="stateEntityParamName" attr.placeholder="{{ 'alias.default-entity-parameter-name' | translate }}" [(ngModel)]="filter.stateEntityParamName" attr.aria-label="{{ 'alias.state-entity-parameter-name' | translate }}">
             </mat-form-field>
             <div flex layout="column">
@@ -135,12 +135,12 @@
             <section class="tb-root-state-entity-switch" layout="row" layout-align="start center" style="padding-left: 0px;">
                 <mat-slide-toggle class="root-state-entity-switch" [(ngModel)]="filter.fetchLastLevelOnly" attr.aria-label="{{ 'alias.last-level-relation' | translate }}">
                 </mat-slide-toggle>
-                <label class="tb-small root-state-entity-label" translate>alias.last-level-relation</label>
+                <label class="tb-small root-state-entity-label">{{ 'alias.last-level-relation' | translate }}</label>
             </section>
         </div>
         <div flex layout="row">
             <mat-form-field class="md-block" style="min-width: 100px;">
-                <mat-label translate>relation.direction</mat-label>
+                <mat-label>{{ 'relation.direction' | translate }}</mat-label>
                 <mat-select required [(ngModel)]="filter.direction">
                     @for (direction of types?.entitySearchDirection; track $index) {
                       <mat-option [value]="direction">
@@ -150,11 +150,11 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field flex class="md-block">
-                <mat-label translate>alias.max-relation-level</mat-label>
+                <mat-label>{{ 'alias.max-relation-level' | translate }}</mat-label>
                 <input matInput name="maxRelationLevel" type="number" min="1" step="1" attr.placeholder="{{ 'alias.unlimited-level' | translate }}" [(ngModel)]="filter.maxLevel" attr.aria-label="{{ 'alias.max-relation-level' | translate }}">
             </mat-form-field>
         </div>
-        <div class="md-caption" style="padding-bottom: 10px; color: rgba(0,0,0,0.57);" translate>relation.relation-filters</div>
+        <div class="md-caption" style="padding-bottom: 10px; color: rgba(0,0,0,0.57);">{{ 'relation.relation-filters' | translate }}</div>
         <tb-relation-filters [(ngModel)]="filter.filters" [(allowedEntityTypes)]="allowedEntityTypes">
         </tb-relation-filters>
     </section>
@@ -165,7 +165,7 @@
         <section class="tb-root-state-entity-switch" layout="row" layout-align="start center" style="padding-left: 0px;">
             <mat-slide-toggle class="root-state-entity-switch" [(ngModel)]="filter.rootStateEntity" attr.aria-label="{{ 'alias.root-state-entity' | translate }}">
             </mat-slide-toggle>
-            <label class="tb-small root-state-entity-label" translate>alias.root-state-entity</label>
+            <label class="tb-small root-state-entity-label">{{ 'alias.root-state-entity' | translate }}</label>
         </section>
         @if (!filter?.rootStateEntity) {
           <div flex layout="row">
@@ -176,7 +176,7 @@
         @if (filter?.rootStateEntity) {
           <div flex layout="row">
             <mat-form-field class="md-block" style="margin-top: 32px;">
-                <mat-label translate>alias.state-entity-parameter-name</mat-label>
+                <mat-label>{{ 'alias.state-entity-parameter-name' | translate }}</mat-label>
                 <input matInput name="stateEntityParamName" attr.placeholder="{{ 'alias.default-entity-parameter-name' | translate }}" [(ngModel)]="filter.stateEntityParamName" attr.aria-label="{{ 'alias.state-entity-parameter-name' | translate }}">
             </mat-form-field>
             <div flex layout="column">
@@ -190,12 +190,12 @@
             <section class="tb-root-state-entity-switch" layout="row" layout-align="start center" style="padding-left: 0px;">
                 <mat-slide-toggle class="root-state-entity-switch" [(ngModel)]="filter.fetchLastLevelOnly" attr.aria-label="{{ 'alias.last-level-relation' | translate }}">
                 </mat-slide-toggle>
-                <label class="tb-small root-state-entity-label" translate>alias.last-level-relation</label>
+                <label class="tb-small root-state-entity-label">{{ 'alias.last-level-relation' | translate }}</label>
             </section>
         </div>
         <div flex layout="row">
             <mat-form-field class="md-block" style="min-width: 100px;">
-                <mat-label translate>relation.direction</mat-label>
+                <mat-label>{{ 'relation.direction' | translate }}</mat-label>
                 <mat-select required [(ngModel)]="filter.direction">
                     @for (direction of types?.entitySearchDirection; track $index) {
                       <mat-option [value]="direction">
@@ -205,14 +205,14 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field flex class="md-block">
-                <mat-label translate>alias.max-relation-level</mat-label>
+                <mat-label>{{ 'alias.max-relation-level' | translate }}</mat-label>
                 <input matInput name="maxRelationLevel" type="number" min="1" step="1" attr.placeholder="{{ 'alias.unlimited-level' | translate }}" [(ngModel)]="filter.maxLevel" attr.aria-label="{{ 'alias.max-relation-level' | translate }}">
             </mat-form-field>
         </div>
-        <div class="md-caption" style="color: rgba(0,0,0,0.57);" translate>relation.relation-type</div>
+        <div class="md-caption" style="color: rgba(0,0,0,0.57);">{{ 'relation.relation-type' | translate }}</div>
         <tb-relation-type-autocomplete flex hide-label [(theForm)]="theForm" [(ngModel)]="filter.relationType" [tbRequired]="false">
         </tb-relation-type-autocomplete>
-        <div class="md-caption tb-required" style="color: rgba(0,0,0,0.57);" translate>asset.asset-types</div>
+        <div class="md-caption tb-required" style="color: rgba(0,0,0,0.57);">{{ 'asset.asset-types' | translate }}</div>
         <tb-entity-subtype-list [tbRequired]="true" [(entityType)]="types.entityType.asset" [(ngModel)]="filter.assetTypes">
         </tb-entity-subtype-list>
     </section>
@@ -223,7 +223,7 @@
         <section class="tb-root-state-entity-switch" layout="row" layout-align="start center" style="padding-left: 0px;">
             <mat-slide-toggle class="root-state-entity-switch" [(ngModel)]="filter.rootStateEntity" attr.aria-label="{{ 'alias.root-state-entity' | translate }}">
             </mat-slide-toggle>
-            <label class="tb-small root-state-entity-label" translate>alias.root-state-entity</label>
+            <label class="tb-small root-state-entity-label">{{ 'alias.root-state-entity' | translate }}</label>
         </section>
         @if (!filter?.rootStateEntity) {
           <div flex layout="row">
@@ -234,7 +234,7 @@
         @if (filter?.rootStateEntity) {
           <div flex layout="row">
             <mat-form-field class="md-block" style="margin-top: 32px;">
-                <mat-label translate>alias.state-entity-parameter-name</mat-label>
+                <mat-label>{{ 'alias.state-entity-parameter-name' | translate }}</mat-label>
                 <input matInput name="stateEntityParamName" attr.placeholder="{{ 'alias.default-entity-parameter-name' | translate }}" [(ngModel)]="filter.stateEntityParamName" attr.aria-label="{{ 'alias.state-entity-parameter-name' | translate }}">
             </mat-form-field>
             <div flex layout="column">
@@ -248,12 +248,12 @@
             <section class="tb-root-state-entity-switch" layout="row" layout-align="start center" style="padding-left: 0px;">
                 <mat-slide-toggle class="root-state-entity-switch" [(ngModel)]="filter.fetchLastLevelOnly" attr.aria-label="{{ 'alias.last-level-relation' | translate }}">
                 </mat-slide-toggle>
-                <label class="tb-small root-state-entity-label" translate>alias.last-level-relation</label>
+                <label class="tb-small root-state-entity-label">{{ 'alias.last-level-relation' | translate }}</label>
             </section>
         </div>
         <div flex layout="row">
             <mat-form-field class="md-block" style="min-width: 100px;">
-                <mat-label translate>relation.direction</mat-label>
+                <mat-label>{{ 'relation.direction' | translate }}</mat-label>
                 <mat-select required [(ngModel)]="filter.direction">
                     @for (direction of types?.entitySearchDirection; track $index) {
                       <mat-option [value]="direction">
@@ -263,14 +263,14 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field flex class="md-block">
-                <mat-label translate>alias.max-relation-level</mat-label>
+                <mat-label>{{ 'alias.max-relation-level' | translate }}</mat-label>
                 <input matInput name="maxRelationLevel" type="number" min="1" step="1" attr.placeholder="{{ 'alias.unlimited-level' | translate }}" [(ngModel)]="filter.maxLevel" attr.aria-label="{{ 'alias.max-relation-level' | translate }}">
             </mat-form-field>
         </div>
-        <div class="md-caption" style="color: rgba(0,0,0,0.57);" translate>relation.relation-type</div>
+        <div class="md-caption" style="color: rgba(0,0,0,0.57);">{{ 'relation.relation-type' | translate }}</div>
         <tb-relation-type-autocomplete flex hide-label [(theForm)]="theForm" [(ngModel)]="filter.relationType" [tbRequired]="false">
         </tb-relation-type-autocomplete>
-        <div class="md-caption tb-required" style="color: rgba(0,0,0,0.57);" translate>device.device-types</div>
+        <div class="md-caption tb-required" style="color: rgba(0,0,0,0.57);">{{ 'device.device-types' | translate }}</div>
         <tb-entity-subtype-list [tbRequired]="true" [(entityType)]="types.entityType.device" [(ngModel)]="filter.deviceTypes">
         </tb-entity-subtype-list>
     </section>
@@ -281,7 +281,7 @@
         <section class="tb-root-state-entity-switch" layout="row" layout-align="start center" style="padding-left: 0px;">
             <mat-slide-toggle class="root-state-entity-switch" [(ngModel)]="filter.rootStateEntity" attr.aria-label="{{ 'alias.root-state-entity' | translate }}">
             </mat-slide-toggle>
-            <label class="tb-small root-state-entity-label" translate>alias.root-state-entity</label>
+            <label class="tb-small root-state-entity-label">{{ 'alias.root-state-entity' | translate }}</label>
         </section>
         @if (!filter?.rootStateEntity) {
           <div flex layout="row">
@@ -292,7 +292,7 @@
         @if (filter?.rootStateEntity) {
           <div flex layout="row">
             <mat-form-field class="md-block" style="margin-top: 32px;">
-                <mat-label translate>alias.state-entity-parameter-name</mat-label>
+                <mat-label>{{ 'alias.state-entity-parameter-name' | translate }}</mat-label>
                 <input matInput name="stateEntityParamName" attr.placeholder="{{ 'alias.default-entity-parameter-name' | translate }}" [(ngModel)]="filter.stateEntityParamName" attr.aria-label="{{ 'alias.state-entity-parameter-name' | translate }}">
             </mat-form-field>
             <div flex layout="column">
@@ -306,12 +306,12 @@
             <section class="tb-root-state-entity-switch" layout="row" layout-align="start center" style="padding-left: 0px;">
                 <mat-slide-toggle class="root-state-entity-switch" [(ngModel)]="filter.fetchLastLevelOnly" attr.aria-label="{{ 'alias.last-level-relation' | translate }}">
                 </mat-slide-toggle>
-                <label class="tb-small root-state-entity-label" translate>alias.last-level-relation</label>
+                <label class="tb-small root-state-entity-label">{{ 'alias.last-level-relation' | translate }}</label>
             </section>
         </div>
         <div flex layout="row">
             <mat-form-field class="md-block" style="min-width: 100px;">
-                <mat-label translate>relation.direction</mat-label>
+                <mat-label>{{ 'relation.direction' | translate }}</mat-label>
                 <mat-select required [(ngModel)]="filter.direction">
                     @for (direction of types?.entitySearchDirection; track $index) {
                       <mat-option [value]="direction">
@@ -321,14 +321,14 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field flex class="md-block">
-                <mat-label translate>alias.max-relation-level</mat-label>
+                <mat-label>{{ 'alias.max-relation-level' | translate }}</mat-label>
                 <input matInput name="maxRelationLevel" type="number" min="1" step="1" attr.placeholder="{{ 'alias.unlimited-level' | translate }}" [(ngModel)]="filter.maxLevel" attr.aria-label="{{ 'alias.max-relation-level' | translate }}">
             </mat-form-field>
         </div>
-        <div class="md-caption" style="color: rgba(0,0,0,0.57);" translate>relation.relation-type</div>
+        <div class="md-caption" style="color: rgba(0,0,0,0.57);">{{ 'relation.relation-type' | translate }}</div>
         <tb-relation-type-autocomplete flex hide-label [(theForm)]="theForm" [(ngModel)]="filter.relationType" [tbRequired]="false">
         </tb-relation-type-autocomplete>
-        <div class="md-caption tb-required" style="color: rgba(0,0,0,0.57);" translate>entity-view.entity-view-types</div>
+        <div class="md-caption tb-required" style="color: rgba(0,0,0,0.57);">{{ 'entity-view.entity-view-types' | translate }}</div>
         <tb-entity-subtype-list [tbRequired]="true" [(entityType)]="types.entityType.entityView" [(ngModel)]="filter.entityViewTypes">
         </tb-entity-subtype-list>
     </section>

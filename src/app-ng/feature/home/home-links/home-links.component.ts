@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component, effect, inject } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MenuService } from '../../services/menu.service';
@@ -15,7 +16,7 @@ import { stateHref } from '../../../state-paths';
 @Component({
   selector: 'home-links',
   standalone: true,
-  imports: [MatIconModule, MatCardModule, MatButtonModule, MatGridListModule, RouterLink],
+  imports: [TranslatePipe, MatIconModule, MatCardModule, MatButtonModule, MatGridListModule, RouterLink],
   templateUrl: './home-links.component.html',
 })
 export class HomeLinksComponent {

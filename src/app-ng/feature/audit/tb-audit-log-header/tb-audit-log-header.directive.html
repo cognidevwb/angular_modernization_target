@@ -16,16 +16,16 @@
     limitations under the License.
 
 -->
-<div translate class="tb-cell" flex="30">audit-log.timestamp</div>
+<div class="tb-cell" flex="30">{{ 'audit-log.timestamp' | translate }}</div>
 @if (auditLogMode != types?.auditLogMode?.entity) {
-  <div translate class="tb-cell" flex="10">audit-log.entity-type</div>
+  <div class="tb-cell" flex="10">{{ 'audit-log.entity-type' | translate }}</div>
 }
 @if (auditLogMode != types?.auditLogMode?.entity) {
-  <div translate class="tb-cell" flex="30">audit-log.entity-name</div>
+  <div class="tb-cell" flex="30">{{ 'audit-log.entity-name' | translate }}</div>
 }
 @if (auditLogMode != types?.auditLogMode?.user) {
-  <div translate class="tb-cell" flex="30">audit-log.user</div>
+  <div class="tb-cell" flex="30">{{ 'audit-log.user' | translate }}</div>
 }
-<div translate class="tb-cell" flex="15">audit-log.type</div>
-<div translate class="tb-cell" flex="15">audit-log.status</div>
-<div translate class="tb-cell" flex="10">audit-log.details</div>
+<div class="tb-cell" flex="15">{{ 'audit-log.type' | translate }}</div>
+<div class="tb-cell" flex="15">{{ 'audit-log.status' | translate }}</div>
+<div class="tb-cell" flex="10">{{ 'audit-log.details' | translate }}</div>

@@ -20,7 +20,7 @@
     <form name="theForm" (ngSubmit)="importFromJson()">
         <mat-toolbar>
             <div class="md-toolbar-tools">
-                <h2 translate>{{ importTitle }}</h2>
+                <h2>{{ (importTitle) | translate }}</h2>
                 <span flex></span>
                 <button mat-icon-button (click)="cancel()">
                     <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
@@ -34,7 +34,7 @@
                 <fieldset [disabled]="rootScope?.loading">
                     <div layout="column" layout-padding>
                         <div class="tb-container">
-                            <label class="tb-label" translate>{{ importFileLabel }}</label>
+                            <label class="tb-label">{{ (importFileLabel) | translate }}</label>
                             <div flow-init="{singleFile:true}" flow-file-added="vm.fileAdded( $file )" class="tb-file-select-container">
                                 <div class="tb-file-clear-container">
                                     <button mat-icon-button color="primary" (click)="clearFile()" class="tb-file-clear-btn" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
@@ -45,13 +45,13 @@
                                     </button>
                                 </div>
                                 <div class="alert tb-flow-drop" flow-drop>
-                                    <label for="select" translate>import.drop-file</label>
+                                    <label for="select">{{ 'import.drop-file' | translate }}</label>
                                     <input class="file-input" flow-btn flow-attrs="{accept:'.json,application/json'}" id="select">
                                 </div>
                             </div>
                         </div>
                         <div>
-                            <div [hidden]="!(!fileName)" translate>import.no-file</div>
+                            <div [hidden]="!(!fileName)">{{ 'import.no-file' | translate }}</div>
                             <div [hidden]="!(fileName)">{{ fileName }}</div>
                         </div>
                     </div>

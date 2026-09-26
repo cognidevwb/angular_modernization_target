@@ -19,7 +19,7 @@
 <div attr.aria-label="{{ importTitle | translate }}" class="md-dialog tb-import-stepper" tbHelp="entitiesImport" help-container-id="help-container">
     <mat-toolbar>
         <div class="md-toolbar-tools">
-            <h2 translate>{{ importTitle }}</h2>
+            <h2>{{ (importTitle) | translate }}</h2>
             <span flex></span>
             <div id="help-container"></div>
             <button mat-icon-button (click)="cancel()" [disabled]="isImportData">
@@ -36,7 +36,7 @@
                         <fieldset [disabled]="rootScope?.loading">
                             <div layout="column" layout-padding>
                                 <div class="tb-container">
-                                    <label class="tb-label" translate>{{ importFileLabel }}</label>
+                                    <label class="tb-label">{{ (importFileLabel) | translate }}</label>
                                     <div flow-init="{singleFile:true}" flow-file-added="vm.fileAdded( $file )" class="tb-file-select-container">
                                         <div class="tb-file-clear-container">
                                             <button mat-icon-button color="primary" (click)="clearFile()" class="tb-file-clear-btn" attr.aria-label="{{ 'action.remove' | translate }}" attr.matTooltip="{{ 'action.remove' | translate }}" matTooltipPosition="above">
@@ -47,13 +47,13 @@
                                             </button>
                                         </div>
                                         <div class="alert tb-flow-drop" flow-drop>
-                                            <label for="select" translate>import.drop-file-csv</label>
+                                            <label for="select">{{ 'import.drop-file-csv' | translate }}</label>
                                             <input class="file-input" flow-btn flow-attrs="{accept:'.csv,application/csv,text/csv'}" id="select">
                                         </div>
                                     </div>
                                 </div>
                                 <div>
-                                    <div [hidden]="!(!fileName)" translate>import.no-file</div>
+                                    <div [hidden]="!(!fileName)">{{ 'import.no-file' | translate }}</div>
                                     <div [hidden]="!(fileName)">{{ fileName }}</div>
                                 </div>
                             </div>
@@ -74,7 +74,7 @@
             <mat-step [label]="'import.stepper-text.configuration' | translate">
                     <div layout="column">
                         <mat-form-field>
-                            <mat-label translate>import.csv-delimiter</mat-label>
+                            <mat-label>{{ 'import.csv-delimiter' | translate }}</mat-label>
                             <mat-select [(ngModel)]="importParameters.delim">
                                 @for (delimiter of delimiters; track $index) {
                                   <mat-option [value]="delimiter?.key">
@@ -128,13 +128,13 @@
                 <div layout="column">
                     <div>
                         @if (statistical?.create && statistical?.create?.entity) {
-                          <p class="md-body-1" translate translate-values="{count: vm.statistical.create.entity}">import.message.create-entities</p>
+                          <p class="md-body-1">{{ 'import.message.create-entities' | translate: {count: statistical.create.entity} }}</p>
                         }
                         @if (statistical?.update && statistical?.update?.entity) {
-                          <p class="md-body-1" translate translate-values="{count: vm.statistical.update.entity}">import.message.update-entities</p>
+                          <p class="md-body-1">{{ 'import.message.update-entities' | translate: {count: statistical.update.entity} }}</p>
                         }
                         @if (statistical?.error && statistical?.error?.entity) {
-                          <p class="md-body-1" translate translate-values="{count: vm.statistical.error.entity}">import.message.error-entities</p>
+                          <p class="md-body-1">{{ 'import.message.error-entities' | translate: {count: statistical.error.entity} }}</p>
                         }
                     </div>
                 </div>

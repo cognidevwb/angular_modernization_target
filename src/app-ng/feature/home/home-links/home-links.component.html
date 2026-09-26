@@ -22,7 +22,7 @@
 		<mat-card style='width: 100%;'>
 			<mat-card-header>
 				<mat-card-title>
-					<span translate class="md-headline">{{ section?.name }}</span>
+					<span class="md-headline">{{ (section?.name) | translate }}</span>
 				</mat-card-title>
 			</mat-card-header>
 			<mat-card-content>
@@ -31,7 +31,7 @@
 					  <mat-grid-tile class="card-tile">
 						<a mat-raised-button color="primary" class="tb-card-button" layout="column" [routerLink]="stateHref(router, place?.state)">
 							<mat-icon class="material-icons tb-md-96" attr.aria-label="{{place?.icon}}">{{place?.icon}}</mat-icon>
-							<span translate>{{place?.name}}</span>
+							<span>{{ (place?.name) | translate }}</span>
 						</a>
 					</mat-grid-tile>
 					}

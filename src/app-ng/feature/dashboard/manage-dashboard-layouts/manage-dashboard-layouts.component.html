@@ -20,7 +20,7 @@
     <form name="theForm" (ngSubmit)="save()">
         <mat-toolbar>
             <div class="md-toolbar-tools">
-                <h2 translate>{{ 'layout.manage' }}</h2>
+                <h2>{{ ('layout.manage') | translate }}</h2>
                 <span flex></span>
                 <button mat-icon-button (click)="cancel()">
                     <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
@@ -40,10 +40,10 @@
                     </div>
                     <div layout="row" layout-align="start center">
                         <button mat-raised-button color="primary" flex [hidden]="!(displayLayouts?.main)" class="tb-layout-button" layout="column" (click)="openLayoutSettings($event, 'main')">
-                            <span translate>layout.main</span>
+                            <span>{{ 'layout.main' | translate }}</span>
                         </button>
                         <button mat-raised-button color="primary" flex [hidden]="!(displayLayouts?.right)" class="tb-layout-button" layout="column" (click)="openLayoutSettings($event, 'right')">
-                            <span translate>layout.right</span>
+                            <span>{{ 'layout.right' | translate }}</span>
                         </button>
                     </div>
                 </fieldset>

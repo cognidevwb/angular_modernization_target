@@ -17,7 +17,7 @@
 
 -->
 <section layout="column" class="tb-kv-map">
-    <label translate class="tb-title no-padding">{{ titleText() }}</label>
+    <label class="tb-title no-padding">{{ (titleText()) | translate }}</label>
     @for (keyVal of kvList; track $index) {
       <div layout="row" style="max-height: 40px;" layout-align="start center">
         <mat-form-field flex class="md-block" style="margin: 10px 0px 0px 0px; max-height: 40px;">
@@ -34,11 +34,11 @@
         </button>
     </div>
     }
-    <span [hidden]="!(!kvList?.length)" layout-align="center center" [ngClass]="{'disabled': disabled()}" class="no-data-found" translate>{{noDataText() ? noDataText() : 'key-val.no-data'}}</span>
+    <span [hidden]="!(!kvList?.length)" layout-align="center center" [ngClass]="{'disabled': disabled()}" class="no-data-found">{{ (noDataText() ? noDataText() : 'key-val.no-data') | translate }}</span>
     <div>
         <button mat-raised-button color="primary" [hidden]="!(!disabled())" [disabled]="rootScope?.loading" (click)="addKeyVal()" attr.aria-label="{{ 'action.add' | translate }}" attr.matTooltip="{{ 'key-val.add-entry' | translate }}" matTooltipPosition="above">
             
-            <span translate>action.add</span>
+            <span>{{ 'action.add' | translate }}</span>
         </button>
     </div>
 </section>

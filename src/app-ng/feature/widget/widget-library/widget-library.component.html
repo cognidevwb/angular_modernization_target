@@ -24,7 +24,7 @@
 	 </button>
 	 }
 	 @if (isReadOnly()) {
-	   <span translate layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill">widgets-bundle.empty</span>
+	   <span layout-align="center center" style="text-transform: uppercase; display: flex;" class="md-headline tb-absolute-fill">{{ 'widgets-bundle.empty' | translate }}</span>
 	 }
 </section>
 <tb-dashboard [(aliasController)]="aliasController" [(widgets)]="widgetTypes" [isEdit]="false" [isEditActionEnabled]="true" [isExportActionEnabled]="true" [isRemoveActionEnabled]="!isReadOnly()" (onEditWidget)="openWidgetType($event.event, $event.widget)" (onExportWidget)="exportWidgetType($event.event, $event.widget)" (onRemoveWidget)="removeWidgetType($event.event, $event.widget)" (loadWidgets)="loadWidgetLibrary()" (onInit)="dashboardInited($event.dashboard)" (onInitFailed)="dashboardInitFailed($event.e)">

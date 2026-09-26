@@ -30,6 +30,6 @@
     <!-- TODO(port): ng-messages has no one-to-one Angular form -->
     <div ng-messages="theForm()?.subType?.$error">
         <!-- TODO(port): ng-message has no one-to-one Angular form -->
-        <div ng-message="required" translate>{{ entitySubtypeRequiredText }}</div>
+        <div ng-message="required">{{ (entitySubtypeRequiredText) | translate }}</div>
     </div>
 </mat-form-field>

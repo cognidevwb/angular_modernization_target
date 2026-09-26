@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component, inject } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { types } from '../../common/constants/types';
@@ -11,6 +12,7 @@ import { linkAttrs } from '../../../legacy-link';
 @Component({
   selector: '[tb-audit-log-header]',
   standalone: true,
+  imports: [TranslatePipe],
   templateUrl: './tb-audit-log-header.directive.html',
 })
 export class TbAuditLogHeaderDirective {

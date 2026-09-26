@@ -33,7 +33,7 @@
                     <div id="top_left_panel" class="tb-split tb-content">
                         <div class="tb-resize-container">
                             <div class="tb-editor-area-title-panel">
-                                <label translate>rulenode.message</label>
+                                <label>{{ 'rulenode.message' | translate }}</label>
                             </div>
                             <ng-form name="payloadForm">
                                 <div layout="column" style="height: 100%;">
@@ -50,7 +50,7 @@
                     <div id="top_right_panel" class="tb-split tb-content">
                         <div class="tb-resize-container" id="metadata-panel">
                             <div class="tb-editor-area-title-panel">
-                                <label translate>rulenode.metadata</label>
+                                <label>{{ 'rulenode.metadata' | translate }}</label>
                             </div>
                             <ng-form name="metadataForm">
                                 <tb-key-val-map titleText="rulenode.metadata" [(ngDisabled)]="rootScope.loading" [(keyValMap)]="inputParams.metadata"></tb-key-val-map>
@@ -73,7 +73,7 @@
                     <div id="bottom_right_panel" class="tb-split tb-content">
                         <div class="tb-resize-container">
                             <div class="tb-editor-area-title-panel">
-                                <label translate>rulenode.output</label>
+                                <label>{{ 'rulenode.output' | translate }}</label>
                             </div>
                             <tb-json-content [(ngModel)]="output" [label]="'rulenode.output' | translate" [(contentType)]="types.contentType.JSON.value" [validateContent]="false" [ngReadonly]="true" [fillHeight]="true">
                             </tb-json-content>

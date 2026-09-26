@@ -51,7 +51,7 @@
     @if (inputTouched && tbRequired()) {
       <div class="tb-error-messages" ng-messages="ngModelCtrl?.$error" role="alert">
         <!-- TODO(port): ng-message has no one-to-one Angular form -->
-        <div translate ng-message="entitySubtypesList" class="tb-error-message">{{subtypeListEmptyText}}</div>
+        <div ng-message="entitySubtypesList" class="tb-error-message">{{ (subtypeListEmptyText) | translate }}</div>
     </div>
     }
 </section>

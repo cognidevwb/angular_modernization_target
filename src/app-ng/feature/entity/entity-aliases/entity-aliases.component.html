@@ -32,9 +32,9 @@
 		<div class="tb-aliases-header" flex layout="row" layout-align="start center">
 			<span flex="5"></span>
 			<div flex layout="row" layout-align="start center">
-				<span class="tb-header-label" translate flex="20" style="min-width: 150px;">alias.name</span>
-				<span class="tb-header-label" translate flex="70" style="padding-left: 10px;">alias.entity-filter</span>
-				<span class="tb-header-label" translate flex="10" style="padding-left: 10px; min-width: 120px;">alias.resolve-multiple</span>
+				<span class="tb-header-label" flex="20" style="min-width: 150px;">{{ 'alias.name' | translate }}</span>
+				<span class="tb-header-label" flex="70" style="padding-left: 10px;">{{ 'alias.entity-filter' | translate }}</span>
+				<span class="tb-header-label" flex="10" style="padding-left: 10px; min-width: 120px;">{{ 'alias.resolve-multiple' | translate }}</span>
 				<span style="min-width: 80px;"></span>
 			</div>
 		</div>
@@ -52,7 +52,7 @@
 								<!-- TODO(port): ng-messages has no one-to-one Angular form -->
 								<div ng-messages="aliasForm?.alias?.$error">
 									<!-- TODO(port): ng-message has no one-to-one Angular form -->
-									<div translate ng-message="required">entity.alias-required</div>
+									<div ng-message="required">{{ 'entity.alias-required' | translate }}</div>
 								</div>
 							</mat-form-field>
 							<tb-entity-filter-view flex="70" style="padding-left: 10px;" [(ngModel)]="entityAlias.filter">
@@ -82,7 +82,7 @@
 		<mat-dialog-actions layout="row">
 			<button mat-raised-button color="primary" [hidden]="!(!disableAdd)" [disabled]="rootScope?.loading" (click)="addAlias($event)" attr.aria-label="{{ 'alias.add' | translate }}" attr.matTooltip="{{ 'alias.add' | translate }}" matTooltipPosition="above">
 				
-				<span translate>alias.add</span>
+				<span>{{ 'alias.add' | translate }}</span>
 			</button>
 			<span flex></span>
 			<button mat-raised-button color="primary" [disabled]="rootScope?.loading || theForm?.$invalid || !theForm?.$dirty" type="submit">

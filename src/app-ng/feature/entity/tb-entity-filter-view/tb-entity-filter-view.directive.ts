@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,6 +13,7 @@ import { NgModelController, ngModelProviders } from '../../../core/ng-model-cont
 @Component({
   selector: 'tb-entity-filter-view',
   standalone: true,
+  imports: [TranslatePipe],
   templateUrl: './tb-entity-filter-view.directive.html',
   providers: ngModelProviders(TbEntityFilterViewDirective),
 })

@@ -20,7 +20,7 @@
     <mat-card class="settings-card">
         <mat-card-header>
             <mat-card-title layout="row">
-                <span translate class="md-headline">admin.security-settings</span>
+                <span class="md-headline">{{ 'admin.security-settings' | translate }}</span>
                 <span flex></span>
                 <div id="help-container"></div>
             </mat-card-title>
@@ -34,94 +34,94 @@
                         <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><mat-expansion-panel id="generalPolicyPanel" [expanded]="true">
                             <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><mat-expansion-panel-header>
                                 <mat-panel-title>
-                                    <div class="tb-panel-title" translate>admin.general-policy</div>
+                                    <div class="tb-panel-title">{{ 'admin.general-policy' | translate }}</div>
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                                     <mat-form-field class="md-block">
-                                        <mat-label translate>admin.max-failed-login-attempts</mat-label>
+                                        <mat-label>{{ 'admin.max-failed-login-attempts' | translate }}</mat-label>
                                         <input matInput type="number" step="1" min="0" name="maxFailedLoginAttempts" [(ngModel)]="securitySettings.maxFailedLoginAttempts">
                                         <!-- TODO(port): ng-messages has no one-to-one Angular form -->
                                         <div ng-messages="settingsForm?.maxFailedLoginAttempts?.$error">
                                             <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                            <div translate ng-message="min">admin.minimum-max-failed-login-attempts-range</div>
+                                            <div ng-message="min">{{ 'admin.minimum-max-failed-login-attempts-range' | translate }}</div>
                                         </div>
                                     </mat-form-field>
                                     <mat-form-field class="md-block">
-                                        <mat-label translate>admin.user-lockout-notification-email</mat-label>
+                                        <mat-label>{{ 'admin.user-lockout-notification-email' | translate }}</mat-label>
                                         <input matInput type="email" name="userLockoutNotificationEmail" [(ngModel)]="securitySettings.userLockoutNotificationEmail">
                                     </mat-form-field>
                         </mat-expansion-panel>
                         <!-- TODO(port): md-expansion-panel: a mat-expansion-panel --><mat-expansion-panel id="passwordPolicyPanel" [expanded]="true">
                             <!-- TODO(port): md-expansion-panel-header: a mat-expansion-panel-header --><mat-expansion-panel-header>
                                 <mat-panel-title>
-                                    <div class="tb-panel-title" translate>admin.password-policy</div>
+                                    <div class="tb-panel-title">{{ 'admin.password-policy' | translate }}</div>
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                                     <mat-form-field class="md-block">
-                                        <mat-label translate>admin.minimum-password-length</mat-label>
+                                        <mat-label>{{ 'admin.minimum-password-length' | translate }}</mat-label>
                                         <input matInput type="number" step="1" min="5" max="50" required name="minimumPasswordLength" [(ngModel)]="securitySettings.passwordPolicy.minimumLength">
                                         <!-- TODO(port): ng-messages has no one-to-one Angular form -->
                                         <div ng-messages="settingsForm?.minimumPasswordLength?.$error">
                                             <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                            <div translate ng-message="required">admin.minimum-password-length-required</div>
+                                            <div ng-message="required">{{ 'admin.minimum-password-length-required' | translate }}</div>
                                             <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                            <div translate ng-message="min">admin.minimum-password-length-range</div>
+                                            <div ng-message="min">{{ 'admin.minimum-password-length-range' | translate }}</div>
                                             <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                            <div translate ng-message="max">admin.minimum-password-length-range</div>
+                                            <div ng-message="max">{{ 'admin.minimum-password-length-range' | translate }}</div>
                                         </div>
                                     </mat-form-field>
                                     <mat-form-field class="md-block">
-                                        <mat-label translate>admin.minimum-uppercase-letters</mat-label>
+                                        <mat-label>{{ 'admin.minimum-uppercase-letters' | translate }}</mat-label>
                                         <input matInput type="number" step="1" min="0" name="minimumUppercaseLetters" [(ngModel)]="securitySettings.passwordPolicy.minimumUppercaseLetters">
                                         <!-- TODO(port): ng-messages has no one-to-one Angular form -->
                                         <div ng-messages="settingsForm?.minimumUppercaseLetters?.$error">
                                             <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                            <div translate ng-message="min">admin.minimum-uppercase-letters-range</div>
+                                            <div ng-message="min">{{ 'admin.minimum-uppercase-letters-range' | translate }}</div>
                                         </div>
                                     </mat-form-field>
                                     <mat-form-field class="md-block">
-                                        <mat-label translate>admin.minimum-lowercase-letters</mat-label>
+                                        <mat-label>{{ 'admin.minimum-lowercase-letters' | translate }}</mat-label>
                                         <input matInput type="number" step="1" min="0" name="minimumLowercaseLetters" [(ngModel)]="securitySettings.passwordPolicy.minimumLowercaseLetters">
                                         <!-- TODO(port): ng-messages has no one-to-one Angular form -->
                                         <div ng-messages="settingsForm?.minimumLowercaseLetters?.$error">
                                             <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                            <div translate ng-message="min">admin.minimum-lowercase-letters-range</div>
+                                            <div ng-message="min">{{ 'admin.minimum-lowercase-letters-range' | translate }}</div>
                                         </div>
                                     </mat-form-field>
                                     <mat-form-field class="md-block">
-                                        <mat-label translate>admin.minimum-digits</mat-label>
+                                        <mat-label>{{ 'admin.minimum-digits' | translate }}</mat-label>
                                         <input matInput type="number" step="1" min="0" name="minimumDigits" [(ngModel)]="securitySettings.passwordPolicy.minimumDigits">
                                         <!-- TODO(port): ng-messages has no one-to-one Angular form -->
                                         <div ng-messages="settingsForm?.minimumDigits?.$error">
                                             <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                            <div translate ng-message="min">admin.minimum-digits-range</div>
+                                            <div ng-message="min">{{ 'admin.minimum-digits-range' | translate }}</div>
                                         </div>
                                     </mat-form-field>
                                     <mat-form-field class="md-block">
-                                        <mat-label translate>admin.minimum-special-characters</mat-label>
+                                        <mat-label>{{ 'admin.minimum-special-characters' | translate }}</mat-label>
                                         <input matInput type="number" step="1" min="0" name="minimumSpecialCharacters" [(ngModel)]="securitySettings.passwordPolicy.minimumSpecialCharacters">
                                         <!-- TODO(port): ng-messages has no one-to-one Angular form -->
                                         <div ng-messages="settingsForm?.minimumSpecialCharacters?.$error">
                                             <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                            <div translate ng-message="min">admin.minimum-special-characters-range</div>
+                                            <div ng-message="min">{{ 'admin.minimum-special-characters-range' | translate }}</div>
                                         </div>
                                     </mat-form-field>
                                     <mat-form-field class="md-block">
-                                        <mat-label translate>admin.password-expiration-period-days</mat-label>
+                                        <mat-label>{{ 'admin.password-expiration-period-days' | translate }}</mat-label>
                                         <input matInput type="number" step="1" min="0" name="passwordExpirationPeriodDays" [(ngModel)]="securitySettings.passwordPolicy.passwordExpirationPeriodDays">
                                         <!-- TODO(port): ng-messages has no one-to-one Angular form -->
                                         <div ng-messages="settingsForm?.passwordExpirationPeriodDays?.$error">
                                             <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                            <div translate ng-message="min">admin.password-expiration-period-days-range</div>
+                                            <div ng-message="min">{{ 'admin.password-expiration-period-days-range' | translate }}</div>
                                         </div>
                                     </mat-form-field>
                                     <mat-form-field class="md-block">
-                                        <mat-label translate>admin.password-reuse-frequency-days</mat-label>
+                                        <mat-label>{{ 'admin.password-reuse-frequency-days' | translate }}</mat-label>
                                         <input matInput type="number" step="1" min="0" name="passwordReuseFrequencyDays" [(ngModel)]="securitySettings.passwordPolicy.passwordReuseFrequencyDays">
                                         <!-- TODO(port): ng-messages has no one-to-one Angular form -->
                                         <div ng-messages="settingsForm?.passwordReuseFrequencyDays?.$error">
                                             <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                            <div translate ng-message="min">admin.password-reuse-frequency-days-range</div>
+                                            <div ng-message="min">{{ 'admin.password-reuse-frequency-days-range' | translate }}</div>
                                         </div>
                                     </mat-form-field>
                         </mat-expansion-panel>

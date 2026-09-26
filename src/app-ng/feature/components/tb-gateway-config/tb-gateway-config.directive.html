@@ -36,7 +36,7 @@
                 <!-- TODO(port): ng-messages has no one-to-one Angular form -->
                 <div ng-messages="theForm()?.connectorType?.$error">
                     <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                    <div ng-message="required" translate>gateway.connector-type-required</div>
+                    <div ng-message="required">{{ 'gateway.connector-type-required' | translate }}</div>
                 </div>
             </mat-form-field>
             <mat-form-field class="md-block" flex>
@@ -45,7 +45,7 @@
                 <!-- TODO(port): ng-messages has no one-to-one Angular form -->
                 <div ng-messages="theForm()?.connectorName?.$error">
                     <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                    <div ng-message="required" translate>gateway.connector-name-required</div>
+                    <div ng-message="required">{{ 'gateway.connector-name-required' | translate }}</div>
                 </div>
             </mat-form-field>
         </div>
@@ -61,11 +61,11 @@
         </div>
     </section>
     }
-    <span [hidden]="!(!gatewayConfig()?.length)" layout-align="center center" [ngClass]="{'disabled': disabled()}" class="no-data-found" translate>{{'gateway.no-connectors'}}</span>
+    <span [hidden]="!(!gatewayConfig()?.length)" layout-align="center center" [ngClass]="{'disabled': disabled()}" class="no-data-found">{{ ('gateway.no-connectors') | translate }}</span>
     <div>
         <button mat-raised-button [hidden]="!(!isReadOnly())" (click)="addNewConnector()" attr.aria-label="{{ 'gateway.connector-add' | translate }}" attr.matTooltip="{{ 'gateway.connector-add' | translate }}" matTooltipPosition="above">
             
-            <span translate>action.add</span>
+            <span>{{ 'action.add' | translate }}</span>
         </button>
     </div>
 </section>

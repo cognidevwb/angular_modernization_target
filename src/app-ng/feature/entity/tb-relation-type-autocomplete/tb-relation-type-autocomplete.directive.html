@@ -24,6 +24,6 @@
     <!-- TODO(port): ng-messages has no one-to-one Angular form -->
     <div ng-messages="theForm()?.relationType?.$error">
         <!-- TODO(port): ng-message has no one-to-one Angular form -->
-        <div translate ng-message="required">relation.relation-type-required</div>
+        <div ng-message="required">{{ 'relation.relation-type-required' | translate }}</div>
     </div>
 </md-autocomplete>

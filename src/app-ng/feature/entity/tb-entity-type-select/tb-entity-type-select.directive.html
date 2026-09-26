@@ -30,6 +30,6 @@
     <!-- TODO(port): ng-messages has no one-to-one Angular form -->
     <div ng-messages="theForm()?.entityType?.$error">
         <!-- TODO(port): ng-message has no one-to-one Angular form -->
-        <div ng-message="required" translate>entity.type-required</div>
+        <div ng-message="required">{{ 'entity.type-required' | translate }}</div>
     </div>
 </mat-form-field>

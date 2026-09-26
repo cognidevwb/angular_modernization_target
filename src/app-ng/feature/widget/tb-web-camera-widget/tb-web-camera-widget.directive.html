@@ -21,7 +21,7 @@
       <div layout-fill>
         <div [hidden]="!(!isShowCamera)" layout="column" layout-align="space-between center" layout-fill>
             <div class="tb-web-camera__last-photo" flex>
-                <span [hidden]="!(!ctx()?.data?.[0]?.data?.[0]?.[1])" class="tb-web-camera__last-photo_text" translate>widgets.input-widgets.no-image</span>
+                <span [hidden]="!(!ctx()?.data?.[0]?.data?.[0]?.[1])" class="tb-web-camera__last-photo_text">{{ 'widgets.input-widgets.no-image' | translate }}</span>
                 <img [hidden]="!(ctx()?.data?.[0]?.data?.[0]?.[1])" class="tb-web-camera__last-photo_img" src="{{ctx()?.data?.[0]?.data?.[0]?.[1]}}">
             </div>
             <button mat-raised-button color="primary" (click)="takePhoto()">{{ "widgets.input-widgets.take-photo" | translate }}</button>

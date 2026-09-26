@@ -20,11 +20,11 @@
     <mat-card flex-gt-sm="60" flex="100" style="height: 100%;">
         <mat-card-header>
             <mat-card-title>
-                <span translate class="md-headline">profile.profile</span>
+                <span class="md-headline">{{ 'profile.profile' | translate }}</span>
                 <span style='opacity: 0.7;'>{{ profileUser?.email }}</span>
             </mat-card-title>
             <mat-card-title>
-                <span translate class="md-subhead">profile.last-login-time</span>
+                <span class="md-subhead">{{ 'profile.last-login-time' | translate }}</span>
                 <span style='opacity: 0.7;'>{{ profileUser?.additionalInfo?.lastLoginTs | date :  'yyyy-MM-dd HH:mm:ss' }}</span>
             </mat-card-title>
         </mat-card-header>
@@ -34,19 +34,19 @@
             <form name="theForm" (ngSubmit)="save()" tb-confirm-on-exit confirm-form="theForm">
                 <fieldset [disabled]="rootScope?.loading">
                     <mat-form-field class="md-block">
-                        <mat-label translate>user.email</mat-label>
+                        <mat-label>{{ 'user.email' | translate }}</mat-label>
                         <input matInput name="email" type="email" [(ngModel)]="profileUser.email">
                     </mat-form-field>
                     <mat-form-field class="md-block">
-                        <mat-label translate>user.first-name</mat-label>
+                        <mat-label>{{ 'user.first-name' | translate }}</mat-label>
                         <input matInput name="firstName" [(ngModel)]="profileUser.firstName">
                     </mat-form-field>
                     <mat-form-field class="md-block">
-                        <mat-label translate>user.last-name</mat-label>
+                        <mat-label>{{ 'user.last-name' | translate }}</mat-label>
                         <input matInput name="lastName" [(ngModel)]="profileUser.lastName">
                     </mat-form-field>
                     <mat-form-field class="md-block">
-                        <mat-label translate>language.language</mat-label>
+                        <mat-label>{{ 'language.language' | translate }}</mat-label>
                         <mat-select name="language" [(ngModel)]="profileUser.additionalInfo.lang">
                             @for (lang of languageList; track $index) {
                               <mat-option [value]="lang">

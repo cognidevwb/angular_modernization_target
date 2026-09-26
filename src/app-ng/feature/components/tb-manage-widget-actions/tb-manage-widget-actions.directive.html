@@ -20,7 +20,7 @@
 <div class="tb-manage-widget-actions md-whiteframe-z1 toolbarsContainer" layout="column">
     <mat-toolbar class="md-table-toolbar md-default" [hidden]="!(query?.search === null)">
         <div class="md-toolbar-tools">
-            <span translate>widget-config.actions</span>
+            <span>{{ 'widget-config.actions' | translate }}</span>
             <span flex></span>
             <button mat-icon-button (click)="addAction($event)" attr.matTooltip="{{ 'widget-config.add-action' | translate }}" matTooltipPosition="above">
                 <mat-icon>add</mat-icon>
@@ -47,21 +47,21 @@
     <!-- TODO(port): md-table-container (angular-material-data-table) ported to mat-table with MatSort -->
     <table mat-table [dataSource]="actions" matSort (matSortChange)="onSortChange($event)" class="mat-elevation-z1">
         <ng-container matColumnDef="actionSourceName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="actionSourceName"><span translate>widget-config.action-source</span></th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="actionSourceName"><span>{{ 'widget-config.action-source' | translate }}</span></th>
             <td mat-cell *matCellDef="let action">{{action?.actionSourceName}}</td>
         </ng-container>
         <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="name"><span translate>widget-config.action-name</span></th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="name"><span>{{ 'widget-config.action-name' | translate }}</span></th>
             <td mat-cell *matCellDef="let action">{{action?.name}}</td>
         </ng-container>
         <ng-container matColumnDef="icon">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="icon"><span translate>widget-config.action-icon</span></th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="icon"><span>{{ 'widget-config.action-icon' | translate }}</span></th>
             <td mat-cell *matCellDef="let action">
                 <mat-icon attr.aria-label="{{ 'widget-config.action-icon' | translate }}" class="material-icons">{{action?.icon}}</mat-icon>
             </td>
         </ng-container>
         <ng-container matColumnDef="typeName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="typeName"><span translate>widget-config.action-type</span></th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="typeName"><span>{{ 'widget-config.action-type' | translate }}</span></th>
             <td mat-cell *matCellDef="let action">{{action?.typeName}}</td>
         </ng-container>
         <ng-container matColumnDef="actions">

@@ -20,7 +20,7 @@
 	<mat-card class="settings-card">
        <mat-card-header>
           <mat-card-title>
-           		<span translate class="md-headline">admin.general-settings</span>
+           		<span class="md-headline">{{ 'admin.general-settings' | translate }}</span>
           </mat-card-title>
         </mat-card-header>	
    	    <mat-progress-bar mode="indeterminate" [style.visibility]="(!rootScope?.loading) ? 'hidden' : 'visible'" [hidden]="!(rootScope?.loading)"></mat-progress-bar>
@@ -29,20 +29,18 @@
 			<form name="vm.settingsForm" (ngSubmit)="save()" tb-confirm-on-exit confirm-form="vm.settingsForm">
 				<fieldset [disabled]="rootScope?.loading">
 					<mat-form-field class="md-block">
-						<mat-label translate>admin.base-url</mat-label>
+						<mat-label>{{ 'admin.base-url' | translate }}</mat-label>
 						<input matInput required name="baseUrl" [(ngModel)]="settings.jsonValue.baseUrl">
 						<!-- TODO(port): ng-messages has no one-to-one Angular form -->
 						<div ng-messages="settingsForm?.baseUrl?.$error">
 	         					<!-- TODO(port): ng-message has no one-to-one Angular form -->
-	         					<div translate ng-message="required">admin.base-url-required</div>
+	         					<div ng-message="required">{{ 'admin.base-url-required' | translate }}</div>
 	       				</div>				
 					</mat-form-field>
 					<mat-checkbox class="md-block" attr.aria-label="{{ 'admin.prohibit-different-url' | translate }}" [(ngModel)]="settings.jsonValue.prohibitDifferentUrl">
 						{{ 'admin.prohibit-different-url' | translate }}
 					</mat-checkbox>
-					<div translate class="tb-hint">
-						admin.prohibit-different-url-hint
-					</div>
+					<div class="tb-hint">{{ 'admin.prohibit-different-url-hint' | translate }}</div>
 					<div layout="row" layout-align="end center" width="100%" layout-wrap>
 						<button mat-raised-button color="primary" [disabled]="rootScope?.loading || settingsForm?.$invalid || !settingsForm?.$dirty" type="submit">{{'action.save' | translate}}</button>
 					</div>

@@ -37,12 +37,12 @@
                 <button mat-button hide-xs hide-sm attr.aria-label="{{ 'widget.run' | translate }}" [disabled]="!iframeWidgetEditModeInited" (click)="applyWidgetScript()" matTooltip="{{ 'widget.run' | translate }} (CTRL + Return)" matTooltipPosition="below">
                     
                     <mat-icon attr.aria-label="{{ 'action.run' | translate }}">play_arrow</mat-icon>
-                    <span translate>action.run</span>
+                    <span>{{ 'action.run' | translate }}</span>
                 </button>
                 <button mat-raised-button hide-xs hide-sm [disabled]="undoDisabled()" attr.aria-label="{{ 'widget.undo' | translate }}" (click)="undoWidget()" matTooltip="{{ 'widget.undo' | translate }} (CTRL + Q)" matTooltipPosition="below">
                     
                     <mat-icon attr.aria-label="{{ 'action.undo' | translate }}">undo</mat-icon>
-                    <span translate>action.undo</span>
+                    <span>{{ 'action.undo' | translate }}</span>
                 </button>
                 @if (!isReadOnly()) {
                   <button mat-raised-button hide-xs hide-sm [disabled]="saveDisabled()" attr.aria-label="{{ 'widget.save' | translate }}" (click)="saveWidget()" matTooltip="{{ 'widget.save' | translate }} (CTRL + S)" matTooltipPosition="below">
@@ -50,7 +50,7 @@
                       <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
                     }
                     <mat-icon attr.aria-label="{{ 'action.save' | translate }}">save</mat-icon>
-                    <span translate>action.save</span>
+                    <span>{{ 'action.save' | translate }}</span>
                 </button>
                 }
                 <button mat-raised-button hide-xs hide-sm [disabled]="saveAsDisabled()" attr.aria-label="{{ 'widget.saveAs' | translate }}" (click)="saveWidgetAs($event)" matTooltip="{{ 'widget.saveAs' | translate }} (Shift + CTRL + S)" matTooltipPosition="below">
@@ -58,7 +58,7 @@
                       <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
                     }
                     <mat-icon attr.aria-label="{{ 'action.saveAs' | translate }}">save</mat-icon>
-                    <span translate>action.saveAs</span>
+                    <span>{{ 'action.saveAs' | translate }}</span>
                 </button>
                 <button mat-button hide-xs hide-sm attr.aria-label="{{ 'widget.toggle-fullscreen' | translate }}" (click)="toggleFullscreen()" matTooltip="{{ 'widget.toggle-fullscreen' | translate }} (Shift + CTRL + F)" matTooltipPosition="below">
                     
@@ -68,7 +68,7 @@
                     <mat-icon [hidden]="!(fullscreen)" attr.aria-label="{{ 'widget.toggle-fullscreen' | translate }}">
                         fullscreen_exit
                     </mat-icon>
-                    <span translate hide-xs hide-sm>widget.toggle-fullscreen</span>
+                    <span hide-xs hide-sm>{{ 'widget.toggle-fullscreen' | translate }}</span>
                 </button>
                 
                     <button mat-icon-button attr.aria-label="{{ 'home.open-user-menu' | translate }}" [matMenuTriggerFor]="menu1">
@@ -78,25 +78,25 @@
                         
                             <button mat-menu-item [disabled]="!iframeWidgetEditModeInited" (click)="applyWidgetScript()">
                                 <mat-icon md-menu-align-target attr.aria-label="{{ 'action.run' | translate }}" class="material-icons">play_arrow</mat-icon>
-                                <span translate>action.run</span>
+                                <span>{{ 'action.run' | translate }}</span>
                             </button>
                         
                         
                             <button mat-menu-item [disabled]="undoDisabled()" (click)="undoWidget()">
                                 <mat-icon md-menu-align-target attr.aria-label="{{ 'action.undo' | translate }}" class="material-icons">undo</mat-icon>
-                                <span translate>action.undo</span>
+                                <span>{{ 'action.undo' | translate }}</span>
                             </button>
                         
                         
                             <button mat-menu-item [disabled]="saveDisabled()" (click)="saveWidget()">
                                 <mat-icon md-menu-align-target attr.aria-label="{{ 'action.save' | translate }}" class="material-icons">save</mat-icon>
-                                <span translate>action.save</span>
+                                <span>{{ 'action.save' | translate }}</span>
                             </button>
                         
                         
                             <button mat-menu-item [disabled]="saveAsDisabled()" (click)="saveWidgetAs($event)">
                                 <mat-icon md-menu-align-target attr.aria-label="{{ 'action.saveAs' | translate }}" class="material-icons">save</mat-icon>
-                                <span translate>action.saveAs</span>
+                                <span>{{ 'action.saveAs' | translate }}</span>
                             </button>
                         
                     </mat-menu>
@@ -127,7 +127,7 @@
                                         <div>
                                             <button mat-raised-button color="primary" [disabled]="rootScope?.loading" (click)="addResource()" attr.aria-label="{{ 'action.add' | translate }}" matTooltip="{{ 'widget.add-resource' | translate }}" matTooltipPosition="above">
                                                 
-                                                <span translate>action.add</span>
+                                                <span>{{ 'action.add' | translate }}</span>
                                             </button>
                                         </div>
                                     </div>
@@ -184,7 +184,7 @@
                     <div id="javascript_panel" class="tb-split tb-content">
                         <div class="tb-resize-container" [class.tb-fullscreen]="expandedPanel === 'javascript'" [style.z-index]="expandedPanel === 'javascript' ? 70 : null">
                             <div class="tb-editor-area-title-panel">
-                                <label translate for="javascript_input">widget.javascript</label>
+                                <label for="javascript_input">{{ 'widget.javascript' | translate }}</label>
                                 <button mat-button attr.aria-label="{{ 'widget.tidy' | translate }}" (click)="beautifyJs()">{{
                                     'widget.tidy' | translate }}
                                 </button>

@@ -19,7 +19,7 @@
 <div attr.aria-label="{{ 'alarm.alarm-details' | translate }}" class="md-dialog">
     <mat-toolbar>
         <div class="md-toolbar-tools">
-            <h2 translate>alarm.alarm-details</h2>
+            <h2>{{ 'alarm.alarm-details' | translate }}</h2>
             <span flex></span>
             <button mat-icon-button (click)="close()">
                 <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
@@ -30,11 +30,11 @@
         <div class="md-dialog-content" layout="column">
             <div layout="row">
                 <mat-form-field class="md-block">
-                    <mat-label translate>alarm.created-time</mat-label>
+                    <mat-label>{{ 'alarm.created-time' | translate }}</mat-label>
                     <input matInput [(ngModel)]="createdTime" readonly>
                 </mat-form-field>
                 <mat-form-field flex class="md-block">
-                    <mat-label translate>alarm.originator</mat-label>
+                    <mat-label>{{ 'alarm.originator' | translate }}</mat-label>
                     <input matInput [(ngModel)]="alarm.originatorName" readonly>
                 </mat-form-field>
             </div>
@@ -42,13 +42,13 @@
               <div layout="row">
                 @if (startTime) {
                   <mat-form-field flex class="md-block">
-                    <mat-label translate>alarm.start-time</mat-label>
+                    <mat-label>{{ 'alarm.start-time' | translate }}</mat-label>
                     <input matInput [(ngModel)]="startTime" readonly>
                 </mat-form-field>
                 }
                 @if (endTime) {
                   <mat-form-field flex class="md-block">
-                    <mat-label translate>alarm.end-time</mat-label>
+                    <mat-label>{{ 'alarm.end-time' | translate }}</mat-label>
                     <input matInput [(ngModel)]="endTime" readonly>
                 </mat-form-field>
                 }
@@ -61,13 +61,13 @@
               <div layout="row">
                 @if (ackTime) {
                   <mat-form-field flex class="md-block">
-                    <mat-label translate>alarm.ack-time</mat-label>
+                    <mat-label>{{ 'alarm.ack-time' | translate }}</mat-label>
                     <input matInput [(ngModel)]="ackTime" readonly>
                 </mat-form-field>
                 }
                 @if (clearTime) {
                   <mat-form-field flex class="md-block">
-                    <mat-label translate>alarm.clear-time</mat-label>
+                    <mat-label>{{ 'alarm.clear-time' | translate }}</mat-label>
                     <input matInput [(ngModel)]="clearTime" readonly>
                 </mat-form-field>
                 }
@@ -78,19 +78,19 @@
             }
             <div layout="row">
                 <mat-form-field flex class="md-block">
-                    <mat-label translate>alarm.type</mat-label>
+                    <mat-label>{{ 'alarm.type' | translate }}</mat-label>
                     <input matInput [(ngModel)]="alarm.type" readonly>
                 </mat-form-field>
                 <mat-form-field flex class="md-block">
-                    <mat-label translate>alarm.severity</mat-label>
+                    <mat-label>{{ 'alarm.severity' | translate }}</mat-label>
                     <input matInput class="tb-severity" [ngClass]="types?.alarmSeverity?.[alarm?.severity]?.class" [(ngModel)]="alarmSeverity" readonly>
                 </mat-form-field>
                 <mat-form-field flex class="md-block">
-                    <mat-label translate>alarm.status</mat-label>
+                    <mat-label>{{ 'alarm.status' | translate }}</mat-label>
                     <input matInput [(ngModel)]="alarmStatus" readonly>
                 </mat-form-field>
             </div>
-            <div [hidden]="!(displayDetails)" class="md-caption" style="padding-left: 3px; padding-bottom: 10px; color: rgba(0,0,0,0.57);" translate>alarm.details</div>
+            <div [hidden]="!(displayDetails)" class="md-caption" style="padding-left: 3px; padding-bottom: 10px; color: rgba(0,0,0,0.57);">{{ 'alarm.details' | translate }}</div>
             <div [hidden]="!(displayDetails)" flex class="tb-alarm-details-panel" layout="column">
                 <div flex id="tb-alarm-details" [readonly]="true" [ui-ace]="alarmDetailsOptions" [(ngModel)]="alarmDetails">
                 </div>

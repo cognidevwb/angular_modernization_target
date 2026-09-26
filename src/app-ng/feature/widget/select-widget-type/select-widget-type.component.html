@@ -20,7 +20,7 @@
     <form name="theForm">
         <mat-toolbar>
             <div class="md-toolbar-tools">
-                <h2 translate>widget.select-widget-type</h2>
+                <h2>{{ 'widget.select-widget-type' | translate }}</h2>
                 <span flex></span>
                 <button mat-icon-button (click)="cancel()">
                     <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
@@ -37,27 +37,27 @@
                             <mat-icon class="material-icons tb-md-96" attr.aria-label="{{ types?.widgetType?.timeseries?.name | translate }}">
                                 timeline
                             </mat-icon>
-                            <span translate>{{types?.widgetType?.timeseries?.name}}</span>
+                            <span>{{ (types?.widgetType?.timeseries?.name) | translate }}</span>
                         </button>
                         <button mat-raised-button color="primary" class="tb-card-button" layout="column" (click)="typeSelected(types.widgetType.latest.value)">
                             <mat-icon class="material-icons tb-md-96" attr.aria-label="{{ types?.widgetType?.latest?.name | translate }}">track_changes
                             </mat-icon>
-                            <span translate>{{types?.widgetType?.latest?.name}}</span>
+                            <span>{{ (types?.widgetType?.latest?.name) | translate }}</span>
                         </button>
                         <button mat-raised-button color="primary" class="tb-card-button" layout="column" (click)="typeSelected(types.widgetType.rpc.value)">
                             <mat-icon class="material-icons tb-md-96" attr.aria-label="{{ types?.widgetType?.rpc?.name | translate }}" svgIcon="mdi:developer-board">
                             </mat-icon>
-                            <span translate>{{types?.widgetType?.rpc?.name}}</span>
+                            <span>{{ (types?.widgetType?.rpc?.name) | translate }}</span>
                         </button>
                         <button mat-raised-button color="primary" class="tb-card-button" layout="column" (click)="typeSelected(types.widgetType.alarm.value)">
                             <mat-icon class="material-icons tb-md-96" attr.aria-label="{{ types?.widgetType?.alarm?.name | translate }}">error
                             </mat-icon>
-                            <span translate>{{types?.widgetType?.alarm?.name}}</span>
+                            <span>{{ (types?.widgetType?.alarm?.name) | translate }}</span>
                         </button>
                         <button mat-raised-button color="primary" class="tb-card-button" layout="column" (click)="typeSelected(types.widgetType.static.value)">
                             <mat-icon class="material-icons tb-md-96" attr.aria-label="{{ types?.widgetType?.static?.name | translate }}">font_download
                             </mat-icon>
-                            <span translate>{{types?.widgetType?.static?.name}}</span>
+                            <span>{{ (types?.widgetType?.static?.name) | translate }}</span>
                         </button>
                     </div>
                 </fieldset>

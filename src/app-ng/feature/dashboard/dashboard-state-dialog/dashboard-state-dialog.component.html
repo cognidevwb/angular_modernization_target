@@ -34,23 +34,23 @@
                 <div class="md-content md-padding" layout="column">
                     <fieldset [disabled]="rootScope?.loading">
                         <mat-form-field class="md-block">
-                            <mat-label translate>dashboard.state-name</mat-label>
+                            <mat-label>{{ 'dashboard.state-name' | translate }}</mat-label>
                             <input matInput name="name" required [(ngModel)]="state.name">
                             <!-- TODO(port): ng-messages has no one-to-one Angular form -->
                             <div ng-messages="theForm?.name?.$error">
                                 <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="required" translate>dashboard.state-name-required</div>
+                                <div ng-message="required">{{ 'dashboard.state-name-required' | translate }}</div>
                             </div>
                         </mat-form-field>
                         <mat-form-field class="md-block">
-                            <mat-label translate>dashboard.state-id</mat-label>
+                            <mat-label>{{ 'dashboard.state-id' | translate }}</mat-label>
                             <input matInput name="stateId" required [(ngModel)]="state.id" (ngModelChange)="stateIdTouched = true">
                             <!-- TODO(port): ng-messages has no one-to-one Angular form -->
                             <div ng-messages="theForm?.stateId?.$error">
                                 <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="required" translate>dashboard.state-id-required</div>
+                                <div ng-message="required">{{ 'dashboard.state-id-required' | translate }}</div>
                                 <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                                <div ng-message="stateExists" translate>dashboard.state-id-exists</div>
+                                <div ng-message="stateExists">{{ 'dashboard.state-id-exists' | translate }}</div>
                             </div>
                         </mat-form-field>
                         <mat-checkbox flex attr.aria-label="{{ 'dashboard.is-root-state' | translate }}" [(ngModel)]="state.root">{{ 'dashboard.is-root-state' | translate }}

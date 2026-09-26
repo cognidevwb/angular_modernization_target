@@ -1,47 +1,6 @@
 {
- "ts_errors": 49,
- "template_errors": 44,
- "files_with_errors": 15,
- "by_code": [
-  [
-   "NG8001",
-   38
-  ],
-  [
-   "TS2339",
-   25
-  ],
-  [
-   "TS2349",
-   11
-  ],
-  [
-   "TS2307",
-   10
-  ],
-  [
-   "TS1138",
-   2
-  ],
-  [
-   "TS4114",
-   2
-  ],
-  [
-   "TS2551",
-   2
-  ],
-  [
-   "TS2540",
-   1
-  ],
-  [
-   "TS2415",
-   1
-  ],
-  [
-   "TS2729",
-   1
-  ]
- ]
+ "ts_errors": 0,
+ "template_errors": 0,
+ "files_with_errors": 0,
+ "by_code": []
 }

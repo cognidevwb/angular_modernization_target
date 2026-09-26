@@ -34,13 +34,13 @@
         </mat-option>
         <mat-option *ngIf="!filteredEntities?.length" disabled>
             <div class="tb-not-found">
-                <span translate translate-values='{ entity: entitySearchText }'>{{ noEntitiesMatchingText | translate:{ entity: entitySearchText } }}</span>
+                <span>{{ (noEntitiesMatchingText | translate:{ entity: entitySearchText }) | translate: { entity: entitySearchText } }}</span>
             </div>
         </mat-option>
     </mat-autocomplete>
     <!-- TODO(port): ng-messages has no one-to-one Angular form -->
     <div ng-messages="theForm()?.entity?.$error">
         <!-- TODO(port): ng-message has no one-to-one Angular form -->
-        <div translate ng-message="required">{{ entityRequiredText }}</div>
+        <div ng-message="required">{{ (entityRequiredText) | translate }}</div>
     </div>
 </mat-form-field>
