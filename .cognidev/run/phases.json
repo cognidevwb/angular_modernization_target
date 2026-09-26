@@ -49,6 +49,11 @@
       "at": 1790440490,
       "reused": false,
       "status": "Ok"
+    },
+    "verify-tasks": {
+      "at": 1790440491,
+      "reused": false,
+      "status": "Ok"
     }
   },
   "playbook": "modernization-angular-v2",
