@@ -16,47 +16,43 @@
     limitations under the License.
 
 -->
-<button mat-raised-button color="primary" (click)="onManageUsers.emit({event: $event})" [hidden]="!(!isEdit())">{{
-    'tenant.manage-tenant-admins' | translate }}
-</button>
-<button mat-raised-button color="primary" (click)="onDeleteTenant.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'tenant.delete'
-    | translate }}
-</button>
+<button mat-raised-button color="primary" type="button" (click)="onManageUsers.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'tenant.manage-tenant-admins' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onDeleteTenant.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'tenant.delete' | translate }}</button>
 
 <div layout="row">
-    <button mat-raised-button ngclipboard data-clipboard-action="copy" ngclipboard-success="onTenantIdCopied(e)" attr.data-clipboard-text="{{tenant()?.id?.id}}" [hidden]="!(!isEdit())">
+    <button mat-raised-button type="button" (click)="copyTenantId($event)" [hidden]="!(!isEdit())">
         <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
-        <span translate>tenant.copyId</span>
+        <span>{{ 'tenant.copyId' | translate }}</span>
     </button>
 </div>
 
 <div class="md-content md-padding" layout="column">
-    <fieldset [disabled]="rootScope?.loading || !isEdit()">
+    @if (tenant(); as t) {
+      <fieldset [disabled]="rootScope.loading || !isEdit()">
         <mat-form-field class="md-block">
-            <mat-label translate>tenant.title</mat-label>
-            <input matInput required name="title" [ngModel]="tenant().title" (ngModelChange)="tenant().title = $event">
-            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-            <div ng-messages="theForm()?.title?.$error">
-                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                <div translate ng-message="required">tenant.title-required</div>
-            </div>
+            <mat-label>{{ 'tenant.title' | translate }}</mat-label>
+            <input matInput required name="title" [(ngModel)]="t.title" #title="ngModel">
+            @if (title.errors?.['required']) {
+              <mat-error>{{ 'tenant.title-required' | translate }}</mat-error>
+            }
         </mat-form-field>
         <mat-form-field class="md-block">
-            <mat-label translate>tenant.description</mat-label>
-            <textarea matInput [ngModel]="tenant().additionalInfo.description" (ngModelChange)="tenant().additionalInfo.description = $event" rows="2"></textarea>
+            <mat-label>{{ 'tenant.description' | translate }}</mat-label>
+            <textarea matInput name="description" [ngModel]="t.additionalInfo?.description" (ngModelChange)="setAdditionalInfo(t, 'description', $event)" rows="2"></textarea>
         </mat-form-field>
-        <tb-contact [(contact)]="tenant" [(theForm)]="theForm" [(isEdit)]="isEdit"></tb-contact>
-        <mat-form-field class="md-block">
-            <mat-checkbox [disabled]="theForm()?.$name != 'theForm'" [ngModel]="tenant().isolatedTbCore" (ngModelChange)="tenant().isolatedTbCore = $event">
+        <tb-contact [contact]="t" [theForm]="theForm()" [isEdit]="isEdit()"></tb-contact>
+        <div class="md-block">
+            <mat-checkbox name="isolatedTbCore" [disabled]="theForm()?.$name != 'theForm'" [(ngModel)]="t.isolatedTbCore">
                 {{'tenant.isolated-tb-core' | translate}}<br>
                 <span style="font-size: 10px">{{'tenant.isolated-tb-core-details' | translate}}</span>
             </mat-checkbox>
-        </mat-form-field>
-        <mat-form-field class="md-block">
-            <mat-checkbox [disabled]="theForm()?.$name != 'theForm'" [ngModel]="tenant().isolatedTbRuleEngine" (ngModelChange)="tenant().isolatedTbRuleEngine = $event">
+        </div>
+        <div class="md-block">
+            <mat-checkbox name="isolatedTbRuleEngine" [disabled]="theForm()?.$name != 'theForm'" [(ngModel)]="t.isolatedTbRuleEngine">
                 {{'tenant.isolated-tb-rule-engine' | translate}}<br>
                 <span style="font-size: 10px">{{'tenant.isolated-tb-rule-engine-details' | translate}}</span>
             </mat-checkbox>
-        </mat-form-field>
-    </fieldset>
+        </div>
+      </fieldset>
+    }
 </div>

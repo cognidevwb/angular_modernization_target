@@ -16,34 +16,34 @@
     limitations under the License.
 
 -->
-<button mat-raised-button color="primary" (click)="onManageUsers.emit({event: $event})" [hidden]="!(!isEdit() && !isPublic)">{{ 'customer.manage-users' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onManageAssets.emit({event: $event})" [hidden]="!(!isEdit() && !isPublic)">{{ 'customer.manage-assets' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onManageDevices.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'customer.manage-devices' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onManageDashboards.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'customer.manage-dashboards' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onDeleteCustomer.emit({event: $event})" [hidden]="!(!isEdit() && !isPublic)">{{ 'customer.delete' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onManageUsers.emit({event: $event})" [hidden]="!(!isEdit() && !isPublic)">{{ 'customer.manage-users' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onManageAssets.emit({event: $event})" [hidden]="!(!isEdit() && !isPublic)">{{ 'customer.manage-assets' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onManageDevices.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'customer.manage-devices' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onManageDashboards.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'customer.manage-dashboards' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onDeleteCustomer.emit({event: $event})" [hidden]="!(!isEdit() && !isPublic)">{{ 'customer.delete' | translate }}</button>
 
 <div layout="row">
-	<button mat-raised-button ngclipboard data-clipboard-action="copy" ngclipboard-success="onCustomerIdCopied(e)" attr.data-clipboard-text="{{customer()?.id?.id}}" [hidden]="!(!isEdit())">
+	<button mat-raised-button type="button" (click)="copyCustomerId($event)" [hidden]="!(!isEdit())">
 		<mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
-		<span translate>customer.copyId</span>
+		<span>{{ 'customer.copyId' | translate }}</span>
 	</button>
 </div>
 
 <div class="md-content md-padding" layout="column">
-	<fieldset [hidden]="!(!isPublic)" [disabled]="rootScope?.loading || !isEdit()">
+	@if (customer(); as c) {
+	  <fieldset [hidden]="!(!isPublic)" [disabled]="rootScope.loading || !isEdit()">
 		<mat-form-field class="md-block">
-			<mat-label translate>customer.title</mat-label>
-			<input matInput required name="title" [ngModel]="customer().title" (ngModelChange)="customer().title = $event">	
-			<!-- TODO(port): ng-messages has no one-to-one Angular form -->
-			<div ng-messages="theForm()?.title?.$error">
-	      		<!-- TODO(port): ng-message has no one-to-one Angular form -->
-	      		<div translate ng-message="required">customer.title-required</div>
-	    	</div>				
+			<mat-label>{{ 'customer.title' | translate }}</mat-label>
+			<input matInput required name="title" [(ngModel)]="c.title" #title="ngModel">
+			@if (title.errors?.['required']) {
+			  <mat-error>{{ 'customer.title-required' | translate }}</mat-error>
+			}
 		</mat-form-field>
 		<mat-form-field class="md-block">
-			<mat-label translate>customer.description</mat-label>
-			<textarea matInput [ngModel]="customer().additionalInfo.description" (ngModelChange)="customer().additionalInfo.description = $event" rows="2"></textarea>
+			<mat-label>{{ 'customer.description' | translate }}</mat-label>
+			<textarea matInput name="description" [ngModel]="c.additionalInfo?.description" (ngModelChange)="setAdditionalInfo(c, 'description', $event)" rows="2"></textarea>
 		</mat-form-field>
-		<tb-contact [(contact)]="customer" [(theForm)]="theForm" [(isEdit)]="isEdit"></tb-contact>
-	</fieldset>
+		<tb-contact [contact]="c" [theForm]="theForm()" [isEdit]="isEdit()"></tb-contact>
+	  </fieldset>
+	}
 </div>

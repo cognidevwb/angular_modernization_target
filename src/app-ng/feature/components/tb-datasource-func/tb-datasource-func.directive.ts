@@ -1,29 +1,39 @@
-import { Component, inject, input, model, effect } from '@angular/core';
-import { GenerateDataKeyFn } from '../tb-datasource/datasource-callbacks';
-import { DOCUMENT } from '@angular/common';
-import { ElementRef } from '@angular/core';
+import { Component, DOCUMENT, inject, input, model } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { TranslatePipe } from '@ngx-translate/core';
+import tinycolor from 'tinycolor2';
+import { firstValueFrom } from 'rxjs';
+
+import { GenerateDataKeyFn } from '../tb-datasource/datasource-callbacks';
 import { UtilsService } from '../../common/services/utils.service';
 import { types } from '../../common/constants/types';
-import tinycolor from 'tinycolor2';
-import $ from 'jquery';
-import { firstValueFrom } from 'rxjs';
 import { DatakeyConfigDialogComponent } from '../datakey-config-dialog/datakey-config-dialog.component';
+import { TruncatePipe } from '../pipes/truncate.pipe';
+import { legacyCopy, legacyEquals } from '../widget/legacy-helpers';
 import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
 
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $templateCache: any;
-declare let $window: any;
-declare let scope: any;
-
 /**
- * Ported from the AngularJS directive `tbDatasourceFunc` (module `thingsboard.directives.datasourceFunc`) in src/app/components/datasource-func.directive.js:34.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbDatasourceFunc` (src/app/components/datasource-func.directive.js):
+ * a function datasource of a widget — its name and its data keys (predefined functions, or alarm fields for
+ * alarm widgets) as chips with a key autocomplete. `[(ngModel)]` is the datasource; like the legacy one it
+ * edits the datasource object in place. The chip drag handle reorders the chips with the CDK drop list.
  */
 @Component({
   selector: 'tb-datasource-func',
   standalone: true,
-  template: '', // TODO(port): no template found
+  imports: [
+    FormsModule, CdkDropList, CdkDrag, CdkDragHandle, MatAutocompleteModule, MatButtonModule, MatChipsModule,
+    MatFormFieldModule, MatIconModule, MatInputModule, TranslatePipe, TruncatePipe,
+  ],
+  templateUrl: './tb-datasource-func.directive.html',
   providers: ngModelProviders(TbDatasourceFuncDirective),
 })
 export class TbDatasourceFuncDirective extends NgModelController {
@@ -33,185 +43,221 @@ export class TbDatasourceFuncDirective extends NgModelController {
   readonly generateDataKey = input<GenerateDataKeyFn | undefined>();
   readonly datakeySettingsSchema = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
   protected readonly document = inject(DOCUMENT);
-  // TODO(port): '$mdColorPicker' — an AngularJS built-in with no Angular counterpart
   protected readonly dialog = inject(MatDialog);
-  // TODO(port): '$templateCache' — templateUrl on the component
-  // TODO(port): '$window' — use window directly, or inject(DOCUMENT).defaultView
-  protected readonly typesRef: any = types;
   protected readonly utils = inject(UtilsService);
-  protected readonly element = inject(ElementRef);
 
-  types: any;
-  functionTypes: any;
-  alarmFields: any = [];
-  selectedDataKey: any = null;
+  readonly types: any = types;
+  functionTypes: string[] = this.utils.getPredefinedFunctionsList();
+  alarmFields: string[] = Object.keys(types.alarmFields);
   dataKeySearchText: any = null;
-  selectedAlarmDataKey: any = null;
   alarmDataKeySearchText: any = null;
-  $watch: any;
-  alarmDataKeys: any;
+  funcDataKeys: any[] = [];
+  alarmDataKeys: any[] = [];
   datasourceName: any;
-  funcDataKeys: any;
-
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
-  constructor() {
-    super();
-    this.types = this.typesRef;
-    this.functionTypes = this.utils.getPredefinedFunctionsList();
-    for (var alarmField in this.typesRef.alarmFields) {
-            this.alarmFields.push(alarmField);
-        }
-    effect(() => {
-            this.updateDataKeys();
-        });
-    this.$watch('alarmDataKeys', () => {
-            this.updateDataKeys();
-        }, true);
-    this.$watch('datasourceName', () => {
-            if (this.$viewValue) {
-                this.$viewValue.name = this.datasourceName;
-                this.updateValidity();
-            }
-        });
-  }
+  /** The autocomplete's current items (`md-items="item in dataKeysSearch(…)"`). */
+  dataKeyItems: string[] = [];
+  alarmDataKeyItems: string[] = [];
 
   override $render(): void {
     if (this.$viewValue) {
-        var funcDataKeys: any = [];
-        var alarmDataKeys: any = [];
-        if (this.$viewValue.dataKeys) {
-            for (var d: any=0;d<this.$viewValue.dataKeys.length;d++) {
-                var dataKey: any = this.$viewValue.dataKeys[d];
-                if (dataKey.type === this.typesRef.dataKeyType.function) {
-                    funcDataKeys.push(dataKey);
-                } else if (dataKey.type === this.typesRef.dataKeyType.alarm) {
-                    alarmDataKeys.push(dataKey);
-                }
-            }
+      const funcDataKeys: any[] = [];
+      const alarmDataKeys: any[] = [];
+      if (this.$viewValue.dataKeys) {
+        for (const dataKey of this.$viewValue.dataKeys) {
+          if (dataKey.type === types.dataKeyType.function) {
+            funcDataKeys.push(dataKey);
+          } else if (dataKey.type === types.dataKeyType.alarm) {
+            alarmDataKeys.push(dataKey);
+          }
         }
-        this.funcDataKeys = funcDataKeys;
-        this.alarmDataKeys = alarmDataKeys;
-        this.datasourceName = this.$viewValue.name;
+      }
+      this.funcDataKeys = funcDataKeys;
+      this.alarmDataKeys = alarmDataKeys;
+      this.datasourceName = this.$viewValue.name;
+      this.updateValidity();
     }
   }
 
-  updateValidity(...rest: any[]): any {
+  updateValidity(): void {
     if (this.$viewValue) {
-        var value: any = this.$viewValue;
-        var dataValid: any = (value !== undefined) && value != null;
-        this.$setValidity('deviceData', dataValid);
-        if (dataValid) {
-            if (this.optDataKeys()) {
-                this.$setValidity('datasourceKeys', true);
-            } else {
-                this.$setValidity('datasourceKeys',
-                    (value.dataKeys !== undefined) &&
-                    value.dataKeys != null &&
-                    value.dataKeys.length > 0);
-            }
+      const value: any = this.$viewValue;
+      const dataValid: any = value !== undefined && value != null;
+      this.$setValidity('deviceData', dataValid);
+      if (dataValid) {
+        if (this.optDataKeys()) {
+          this.$setValidity('datasourceKeys', true);
+        } else {
+          this.$setValidity('datasourceKeys', value.dataKeys !== undefined && value.dataKeys != null && value.dataKeys.length > 0);
         }
+      }
     }
   }
 
-  updateDataKeys(...rest: any[]): any {
+  /** `scope.$watch('datasourceName', …)`: the name goes into the datasource. */
+  onDatasourceNameChange(name: any): void {
+    this.datasourceName = name;
     if (this.$viewValue) {
-        var dataKeys: any = [];
-        dataKeys = dataKeys.concat(this.funcDataKeys);
-        dataKeys = dataKeys.concat(this.alarmDataKeys);
-        if (this.$viewValue.dataKeys != dataKeys)
-        {
-           this.$setDirty();
-           this.$viewValue.dataKeys = dataKeys;
-        }
-        this.updateValidity();
+      this.$viewValue.name = this.datasourceName;
+      this.updateValidity();
     }
   }
 
-  transformFuncDataKeyChip(chip?: any, ...rest: any[]): any {
-    if (this.maxDataKeys() > 0 && this.$viewValue.dataKeys.length >= this.maxDataKeys() ) {
-        return null;
+  /** `scope.$watch('funcDataKeys' / 'alarmDataKeys', …, true)`: the chips go into the datasource. */
+  updateDataKeys(): void {
+    if (this.$viewValue) {
+      const dataKeys: any[] = [].concat(this.funcDataKeys as any, this.alarmDataKeys as any);
+      if (!legacyEquals(this.$viewValue.dataKeys, dataKeys)) {
+        this.$setDirty();
+        this.$viewValue.dataKeys = dataKeys;
+      }
+      this.updateValidity();
+    }
+  }
+
+  transformFuncDataKeyChip(chip?: any): any {
+    if (this.maxDataKeys() > 0 && this.$viewValue.dataKeys.length >= this.maxDataKeys()) {
+      return null;
+    }
+    return this.generateDataKey()?.(chip, types.dataKeyType.function);
+  }
+
+  transformAlarmDataKeyChip(chip?: any): any {
+    return this.generateDataKey()?.(chip, types.dataKeyType.alarm);
+  }
+
+  /** md-chips' append: the transformed chip, or nothing when the transform returned null. */
+  private appendChip(alarm: boolean, chip: any): void {
+    const key = alarm ? this.transformAlarmDataKeyChip(chip) : this.transformFuncDataKeyChip(chip);
+    if (key) {
+      if (alarm) {
+        this.alarmDataKeys = [...this.alarmDataKeys, key];
+        this.alarmDataKeySearchText = '';
+      } else {
+        this.funcDataKeys = [...this.funcDataKeys, key];
+        this.dataKeySearchText = '';
+      }
+      this.updateDataKeys();
+    }
+  }
+
+  onDataKeySelected(event: MatAutocompleteSelectedEvent, alarm: boolean): void {
+    if (event.option.value !== null && event.option.value !== undefined) {
+      this.appendChip(alarm, event.option.value);
+    }
+  }
+
+  /** Typed text + Enter: md-require-match="false" appends it as a key name. */
+  onChipInputEnd(event: MatChipInputEvent, alarm: boolean): void {
+    const text = (event.value || '').trim();
+    if (text) {
+      this.appendChip(alarm, text);
+    }
+    event.chipInput?.clear();
+  }
+
+  removeDataKey(dataKey: any, alarm: boolean): void {
+    if (alarm) {
+      this.alarmDataKeys = this.alarmDataKeys.filter((k) => k !== dataKey);
     } else {
-        return this.generateDataKey()?.(chip, this.typesRef.dataKeyType.function);
+      this.funcDataKeys = this.funcDataKeys.filter((k) => k !== dataKey);
     }
-    return undefined;
+    this.updateDataKeys();
   }
 
-  transformAlarmDataKeyChip(chip?: any, ...rest: any[]): any {
-    return this.generateDataKey()?.(chip, this.typesRef.dataKeyType.alarm);
+  /** The chip drag handle (tb-chip-draggable): moves the key within its list. */
+  dropDataKey(event: CdkDragDrop<any[]>, alarm: boolean): void {
+    const list = alarm ? [...this.alarmDataKeys] : [...this.funcDataKeys];
+    moveItemInArray(list, event.previousIndex, event.currentIndex);
+    if (alarm) {
+      this.alarmDataKeys = list;
+    } else {
+      this.funcDataKeys = list;
+    }
+    this.updateDataKeys();
   }
 
-  // TODO(port): '$mdColorPicker' — an AngularJS Material color-picker add-on with no Angular counterpart; use the browser's native color input instead
-  showColorPicker(event?: any, dataKey?: any, ...rest: any[]): any {
-    const input = this.document.createElement('input');
-    input.type = 'color';
-    input.value = tinycolor(dataKey.color || '#fff').toHexString();
-    input.style.display = 'none';
-    this.document.body.appendChild(input);
-    input.addEventListener('change', () => {
-        dataKey.color = input.value;
-        this.$setDirty();
-        input.remove();
+  /** `$mdColorPicker.show(…)`: the browser's color picker, starting at the key's color. */
+  showColorPicker(event?: any, dataKey?: any): void {
+    event?.stopPropagation();
+    const colorInput = this.document.createElement('input');
+    colorInput.type = 'color';
+    colorInput.value = tinycolor(dataKey.color || '#fff').toHexString();
+    colorInput.style.position = 'fixed';
+    colorInput.style.opacity = '0';
+    colorInput.style.pointerEvents = 'none';
+    this.document.body.appendChild(colorInput);
+    colorInput.addEventListener('change', () => {
+      dataKey.color = colorInput.value;
+      this.$setDirty();
+      this.updateDataKeys();
+      colorInput.remove();
     });
-    input.click();
+    colorInput.addEventListener('blur', () => colorInput.remove());
+    colorInput.click();
   }
 
-  editDataKey(event?: any, dataKey?: any, ...rest: any[]): any {
-    let vm = this;
-
-    firstValueFrom(this.dialog.open(DatakeyConfigDialogComponent, {
-        data: {
-            dataKey: structuredClone(dataKey),
-            dataKeySettingsSchema: this.datakeySettingsSchema(),
-            entityAlias: null,
-            aliasController: null
-        },
-        panelClass: 'tb-dialog'
-    }).afterClosed()).then((newDataKey?: any) => {
-        if (newDataKey === undefined) {
-            return Promise.reject();
-        }
-        return newDataKey;
-    }).then((newDataKey?: any) => {
-        if (newDataKey.type === this.typesRef.dataKeyType.function) {
-            let index: any = this.funcDataKeys.indexOf(dataKey);
-            this.funcDataKeys[index] = newDataKey;
-        } else if (newDataKey.type === this.typesRef.dataKeyType.alarm) {
-            let index: any = this.alarmDataKeys.indexOf(dataKey);
-            this.alarmDataKeys[index] = newDataKey;
-        }
-        this.$setDirty();
-    }, function () {
+  editDataKey(event?: any, dataKey?: any): void {
+    event?.stopPropagation();
+    const ref = this.dialog.open(DatakeyConfigDialogComponent, {
+      data: {
+        dataKey: legacyCopy(dataKey),
+        dataKeySettingsSchema: this.datakeySettingsSchema(),
+        entityAlias: null,
+        aliasController: null,
+      },
+      panelClass: ['tb-fullscreen-dialog'],
+    });
+    ref.afterOpened().subscribe(() => window.dispatchEvent(new Event('resize')));
+    firstValueFrom(ref.afterClosed()).then((newDataKey?: any) => {
+      if (!newDataKey) {
+        return;
+      }
+      if (newDataKey.type === types.dataKeyType.function) {
+        const index = this.funcDataKeys.indexOf(dataKey);
+        this.funcDataKeys = this.funcDataKeys.map((k, i) => (i === index ? newDataKey : k));
+      } else if (newDataKey.type === types.dataKeyType.alarm) {
+        const index = this.alarmDataKeys.indexOf(dataKey);
+        this.alarmDataKeys = this.alarmDataKeys.map((k, i) => (i === index ? newDataKey : k));
+      }
+      this.$setDirty();
+      this.updateDataKeys();
     });
   }
 
-  textIsNotEmpty(text?: any, ...rest: any[]): any {
-    return (text && text != null && text.length > 0) ? true : false;
+  textIsNotEmpty(text?: any): boolean {
+    return !!(text && text.length > 0);
   }
 
-  dataKeysSearch(dataKeySearchText?: any, ...rest: any[]): any {
-    var targetKeys: any = this.widgetType() == this.typesRef.widgetType.alarm.value ? this.alarmFields : this.functionTypes;
-    var dataKeys: any = dataKeySearchText ? targetKeys.filter(
-        this.createFilterForDataKey(dataKeySearchText)) : targetKeys;
-    return dataKeys;
+  /** The key autocomplete's items for the text typed so far (md-min-length="0": also on focus). */
+  onSearchTextChange(text: any, alarm: boolean): void {
+    const items = this.dataKeysSearch(typeof text === 'string' ? text : '');
+    if (alarm) {
+      this.alarmDataKeySearchText = text;
+      this.alarmDataKeyItems = items;
+    } else {
+      this.dataKeySearchText = text;
+      this.dataKeyItems = items;
+    }
   }
 
-  createFilterForDataKey(query?: any, ...rest: any[]): any {
-    var lowercaseQuery: any = query.toLowerCase();
-    return function filterFn(dataKey?: any) {
-        return (dataKey.toLowerCase().indexOf(lowercaseQuery) === 0);
-    };
+  dataKeysSearch(dataKeySearchText?: any): string[] {
+    const targetKeys: string[] = this.widgetType() == types.widgetType.alarm.value ? this.alarmFields : this.functionTypes;
+    return dataKeySearchText ? targetKeys.filter(this.createFilterForDataKey(dataKeySearchText)) : targetKeys;
   }
 
-  createKey(event?: any, chipsId?: any, ...rest: any[]): any {
-    var chipsChild: any = $(chipsId, $(this.element.nativeElement))[0].firstElementChild;
-    var el: any = $(chipsChild);
-    var chipBuffer: any = el.scope().$mdChipsCtrl.getChipBuffer();
+  createFilterForDataKey(query?: any): (dataKey: any) => boolean {
+    const lowercaseQuery: any = query.toLowerCase();
+    return (dataKey: any) => dataKey.toLowerCase().indexOf(lowercaseQuery) === 0;
+  }
+
+  /** "Create new key": the typed text appended as a chip (md-chips' appendChip(chipBuffer)). */
+  createKey(event: any, alarm: boolean): void {
     event.preventDefault();
     event.stopPropagation();
-    el.scope().$mdChipsCtrl.appendChip(chipBuffer.trim());
-    el.scope().$mdChipsCtrl.resetChipBuffer();
+    const text = ((alarm ? this.alarmDataKeySearchText : this.dataKeySearchText) || '').trim();
+    if (text) {
+      this.appendChip(alarm, text);
+    }
   }
 }

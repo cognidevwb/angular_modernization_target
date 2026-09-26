@@ -947,9 +947,9 @@ export class EntityService {
     }
     this.http.get(url, config).toPromise().then(function success(response?: any) {
         var result: any = [];
-        if (response.data) {
+        if (response) {
             if (query) {
-                var dataKeys: any = response.data;
+                var dataKeys: any = response;
                 var lowercaseQuery: any = query.toLowerCase();
                 for (var i: any=0; i<dataKeys.length;i++) {
                     if (dataKeys[i].toLowerCase().indexOf(lowercaseQuery) === 0) {
@@ -957,7 +957,7 @@ export class EntityService {
                     }
                 }
             } else {
-                result = response.data;
+                result = response;
             }
         }
         deferred.resolve(result);

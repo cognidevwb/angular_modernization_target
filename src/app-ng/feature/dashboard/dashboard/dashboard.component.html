@@ -41,7 +41,7 @@
                             [matTooltip]="'dashboard.export' | translate" matTooltipPosition="below">
                         <mat-icon [attr.aria-label]="'action.export' | translate" class="material-icons">file_download</mat-icon>
                     </button>
-                    <tb-timewindow [hidden]="!(isEdit || displayDashboardTimewindow())" is-toolbar direction="left" tooltip-direction="bottom" aggregation="true"
+                    <tb-timewindow [hidden]="!(isEdit || displayDashboardTimewindow())" is-toolbar [isEdit]="isEdit" direction="left" tooltip-direction="bottom" aggregation="true"
                                    [(ngModel)]="dashboardCtx.dashboardTimewindow">
                     </tb-timewindow>
                     <tb-aliases-entity-select [hidden]="!(!isEdit && displayEntitiesSelect())" tooltip-direction="bottom" [aliasController]="dashboardCtx.aliasController">
@@ -122,7 +122,7 @@
                             [isReadOnly]="false" [(isOpen)]="isEditingWidget" [isAlwaysEdit]="true"
                             (onCloseDetails)="onEditWidgetClosed()" (onToggleDetailsEditMode)="onRevertWidgetEdit(widgetForm)"
                             (onApplyDetails)="saveWidget(widgetForm)" [theForm]="widgetForm">
-            <div class="tb-details-buttons" [attr.tb-help]="helpLinkIdForWidgetType()" help-container-id="help-container">
+            <div class="tb-details-buttons" tb-help [tbHelp]="helpLinkIdForWidgetType()" help-container-id="help-container">
                 <div id="help-container"></div>
             </div>
             @if (isEditingWidget) {
@@ -144,6 +144,8 @@
                     </tb-widgets-bundle-select>
                 </div>
               </div>
+            }
+            @if (isAddingWidget) {
               <div>
                 @if (timeseriesWidgetTypes?.length > 0 || latestWidgetTypes?.length > 0 ||
                      rpcWidgetTypes?.length > 0 || alarmWidgetTypes?.length > 0 || staticWidgetTypes?.length > 0) {

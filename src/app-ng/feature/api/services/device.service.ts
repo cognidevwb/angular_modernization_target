@@ -45,17 +45,17 @@ export class DeviceService {
     }
     this.http.get(url, config).toPromise().then((response?: any) => {
         if (applyCustomersInfo) {
-            this.customerService.applyAssignedCustomersInfo(response.data.data).then(
+            this.customerService.applyAssignedCustomersInfo(response.data).then(
                 function success(data?: any) {
-                    response.data.data = data;
-                    deferred.resolve(response.data);
+                    response.data = data;
+                    deferred.resolve(response);
                 },
                 function fail() {
                     deferred.reject();
                 }
             );
         } else {
-            deferred.resolve(response.data);
+            deferred.resolve(response);
         }
     }, function fail() {
         deferred.reject();
@@ -80,17 +80,17 @@ export class DeviceService {
     }
     this.http.get(url, config).toPromise().then((response?: any) => {
         if (applyCustomersInfo) {
-            this.customerService.applyAssignedCustomerInfo(response.data.data, customerId).then(
+            this.customerService.applyAssignedCustomerInfo(response.data, customerId).then(
                 function success(data?: any) {
-                    response.data.data = data;
-                    deferred.resolve(response.data);
+                    response.data = data;
+                    deferred.resolve(response);
                 },
                 function fail() {
                     deferred.reject();
                 }
             );
         } else {
-            deferred.resolve(response.data);
+            deferred.resolve(response);
         }
     }, function fail() {
         deferred.reject();
@@ -107,9 +107,9 @@ export class DeviceService {
     }
     config = Object.assign(config, {ignoreErrors: ignoreErrors});
     this.http.get(url, config).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }
@@ -125,7 +125,7 @@ export class DeviceService {
     }
     var url: any = '/api/devices?deviceIds=' + ids;
     this.http.get(url, config).toPromise().then(function success(response?: any) {
-        var devices: any = response.data;
+        var devices: any = response;
         devices.sort(function (device1?: any, device2?: any) {
             var id1: any = device1.id.id;
             var id2: any = device2.id.id;
@@ -135,7 +135,7 @@ export class DeviceService {
         });
         deferred.resolve(devices);
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }
@@ -145,7 +145,7 @@ export class DeviceService {
     var deferred: any = $q.defer();
     var url: any = '/api/device';
     this.http.post(url, device, config).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -180,7 +180,7 @@ export class DeviceService {
         }
     } else {
         this.http.get(url, config).toPromise().then(function success(response?: any) {
-            deferred.resolve(response.data);
+            deferred.resolve(response);
         }, function fail() {
             deferred.reject();
         });
@@ -193,7 +193,7 @@ export class DeviceService {
     var deferred: any = $q.defer();
     var url: any = '/api/device/credentials';
     this.http.post(url, deviceCredentials, config).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -204,7 +204,7 @@ export class DeviceService {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/' + customerId + '/device/' + deviceId;
     this.http.post(url, null).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -215,7 +215,7 @@ export class DeviceService {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/device/' + deviceId;
     this.http.delete(url).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -226,7 +226,7 @@ export class DeviceService {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/public/device/' + deviceId;
     this.http.post(url, null).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -257,7 +257,7 @@ export class DeviceService {
     var deferred: any = $q.defer();
     var url: any = '/api/plugins/rpc/oneway/' + deviceId;
     this.http.post(url, requestBody).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail(rejection?: any) {
         deferred.reject(rejection);
     });
@@ -268,7 +268,7 @@ export class DeviceService {
     var deferred: any = $q.defer();
     var url: any = '/api/plugins/rpc/twoway/' + deviceId;
     this.http.post(url, requestBody).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail(rejection?: any) {
         deferred.reject(rejection);
     });
@@ -283,7 +283,7 @@ export class DeviceService {
     }
     config = Object.assign(config, {ignoreErrors: ignoreErrors});
     this.http.post(url, query, config).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -294,7 +294,7 @@ export class DeviceService {
     var deferred: any = $q.defer();
     var url: any = '/api/device/types';
     this.http.get(url, config).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -306,7 +306,7 @@ export class DeviceService {
     var deferred: any = $q.defer();
     var url: any = '/api/tenant/devices?deviceName=' + deviceName;
     this.http.get(url, config).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -319,7 +319,7 @@ export class DeviceService {
     const deferred: any = $q.defer();
     const url: any = '/api/customer/device/' + deviceName + '/claim';
     this.http.post(url, deviceSecret, config).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail(rejection?: any) {
         deferred.reject(rejection);
     });
@@ -330,7 +330,7 @@ export class DeviceService {
     const deferred: any = $q.defer();
     const url: any = '/api/customer/device/' + deviceName + '/claim';
     this.http.delete(url).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail(rejection?: any) {
         deferred.reject(rejection);
     });

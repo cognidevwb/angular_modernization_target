@@ -1,9 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { DashboardUtilsService } from '../../common/services/dashboard-utils.service';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialog } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
-import { inject as injectRoot } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormsModule, NgForm } from '@angular/forms';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -14,8 +12,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /**
- * Ported from the AngularJS controller `SelectTargetStateController` (module `thingsboard.dashboard.states`) in src/app/dashboard/states/index.js:22.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Ported from the AngularJS controller `SelectTargetStateController` (module `thingsboard.dashboard.states`) in
+ * src/app/dashboard/states/select-target-state.controller.js: closes with the selected state id (`$mdDialog.hide`),
+ * or with nothing when cancelled (`$mdDialog.cancel`).
  */
 @Component({
   selector: 'select-target-state',
@@ -24,30 +23,27 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './select-target-state.component.html',
 })
 export class SelectTargetStateComponent {
-  protected readonly rootScope = injectRoot(RootState);
-  protected readonly dialog = inject(MatDialog);
+  protected readonly rootScope = inject(RootState);
+  protected readonly dialogRef = inject<MatDialogRef<SelectTargetStateComponent, any>>(MatDialogRef);
   protected readonly dashboardUtils = inject(DashboardUtilsService);
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
 
   states: any;
   stateId: any;
-  theForm: any;
 
   constructor() {
     this.states = this.dialogData.states;
     this.stateId = this.dashboardUtils.getRootStateId(this.states);
-    this.cancel = this.cancel;
-    this.save = this.save;
   }
 
-  cancel = (...rest: any[]): any => {
-    (this.dialog as any).cancel();
-  };
+  cancel(): void {
+    this.dialogRef.close();
+  }
 
-  save = (...rest: any[]): any => {
-    this.theForm.$setPristine();
-    (this.dialog as any).hide(this.stateId);
-  };
+  save(theForm: NgForm): void {
+    theForm.form.markAsPristine();
+    this.dialogRef.close(this.stateId);
+  }
 
   /** The keys of a `(k, v) in obj` repeat, in the object's own order. */
   protected __keys(obj: any): string[] {

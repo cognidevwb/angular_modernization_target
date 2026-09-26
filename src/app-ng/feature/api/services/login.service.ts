@@ -4,7 +4,16 @@ import { RootState } from '../../../root-state';
 import { bindMethods } from '../../../bind-methods';
 
 import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
+
+/** The `$http` response the legacy callers read (`response.data.token`): HttpClient resolves with the body alone. */
+function legacyResponse(body: any): any {
+  return { data: body };
+}
+
+/** The `$http` error response the legacy callers read (`response.data.errorCode`, `response.statusText`). */
+function legacyErrorResponse(error: any): any {
+  return { data: error?.error, status: error?.status, statusText: error?.statusText };
+}
 
 /**
  * Ported from the AngularJS factory `loginService` (module `thingsboard.api.login`) in src/app/api/login.service.js:16.
@@ -31,9 +40,9 @@ export class LoginService {
         password: user.password
     };
 this.http.post('/api/auth/login', loginRequest).toPromise().then(function success(response?: any) {
-    deferred.resolve(response);
+    deferred.resolve(legacyResponse(response));
 }, function fail(response?: any) {
-    deferred.reject(response);
+    deferred.reject(legacyErrorResponse(response));
 });
     return deferred.promise;
   }
@@ -44,9 +53,9 @@ this.http.post('/api/auth/login', loginRequest).toPromise().then(function succes
         publicId: publicId
     };
 this.http.post('/api/auth/login/public', pubilcLoginRequest).toPromise().then(function success(response?: any) {
-    deferred.resolve(response);
+    deferred.resolve(legacyResponse(response));
 }, function fail(response?: any) {
-    deferred.reject(response);
+    deferred.reject(legacyErrorResponse(response));
 });
     return deferred.promise;
   }
@@ -55,7 +64,7 @@ this.http.post('/api/auth/login/public', pubilcLoginRequest).toPromise().then(fu
     var deferred: any = $q.defer();
     var url: any = '/api/noauth/resetPasswordByEmail';
 this.http.post(url, {email: email}).toPromise().then(function success(response?: any) {
-    deferred.resolve(response);
+    deferred.resolve(legacyResponse(response));
 }, function fail() {
     deferred.reject();
 });
@@ -66,7 +75,7 @@ this.http.post(url, {email: email}).toPromise().then(function success(response?:
     var deferred: any = $q.defer();
     var url: any = '/api/noauth/resetPassword';
 this.http.post(url, {resetToken: resetToken, password: password}).toPromise().then(function success(response?: any) {
-    deferred.resolve(response);
+    deferred.resolve(legacyResponse(response));
 }, function fail() {
     deferred.reject();
 });
@@ -80,7 +89,7 @@ this.http.post(url, {resetToken: resetToken, password: password}).toPromise().th
         url += '?sendActivationMail=' + sendActivationMail;
     }
 this.http.post(url, {activateToken: activateToken, password: password}).toPromise().then(function success(response?: any) {
-    deferred.resolve(response);
+    deferred.resolve(legacyResponse(response));
 }, function fail() {
     deferred.reject();
 });
@@ -91,7 +100,7 @@ this.http.post(url, {activateToken: activateToken, password: password}).toPromis
     var deferred: any = $q.defer();
     var url: any = '/api/auth/changePassword';
 this.http.post(url, {currentPassword: currentPassword, newPassword: newPassword}).toPromise().then(function success(response?: any) {
-    deferred.resolve(response);
+    deferred.resolve(legacyResponse(response));
 }, function fail() {
     deferred.reject();
 });
@@ -102,7 +111,7 @@ this.http.post(url, {currentPassword: currentPassword, newPassword: newPassword}
     var deferred: any = $q.defer();
     var url: any = '/api/noauth/oauth2Clients';
 this.http.post(url, {}).toPromise().then((response?: any) => {
-    this.rootScope.oauth2Clients = response.data;
+    this.rootScope.oauth2Clients = response;
     deferred.resolve();
 }, function fail() {
     deferred.reject();

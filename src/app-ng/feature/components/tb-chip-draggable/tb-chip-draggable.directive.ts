@@ -1,208 +1,153 @@
-import { Directive, inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { ElementRef } from '@angular/core';
+import { AfterViewInit, DestroyRef, Directive, DOCUMENT, ElementRef, inject, input, output } from '@angular/core';
+
+/** What `mdChipDraggable:change` carried: the reordered collection, the moved item and its move. */
+export interface ChipDraggableChange {
+  collection: any[];
+  item: any;
+  from: number;
+  to: number | null;
+}
+
+/** The chip list the chip being dragged belongs to (drops only land in the same list). */
+let globalDraggingChipsWrap: Element | null = null;
+
+const CHIP_SELECTOR = 'mat-chip-row, mat-chip, mat-chip-option, md-chip';
+const CHIPS_WRAP_SELECTOR = 'mat-chip-grid, mat-chip-set, mat-chip-listbox, md-chips-wrap';
 
 /**
- * Ported from the AngularJS directive `tbChipDraggable` (module `thingsboard.directives.mdChipDraggable`) in src/app/components/md-chip-draggable.directive.js:20.
- * Scaffolded by the playbook: the shape is final, the body is still the original, carried below.
+ * Ported from the AngularJS directive `tbChipDraggable` (src/app/components/md-chip-draggable.directive.js):
+ * put on a chip's drag handle; the enclosing chip becomes draggable (from the handle only) and can be dropped
+ * before/after another chip of the same chip list. `[chipItems]` is the chips' array (the legacy
+ * `$mdChipsCtrl.items`) and `[chipItem]` this chip's item: a drop moves the item within `chipItems` in place
+ * and emits `chipDraggableChange` (the legacy `$scope.$emit('mdChipDraggable:change', …)`).
  */
 @Directive({
   selector: '[tb-chip-draggable]',
   standalone: true,
 })
-export class TbChipDraggableDirective {
+export class TbChipDraggableDirective implements AfterViewInit {
+  readonly chipItems = input<any[]>([]);
+  readonly chipItem = input<any>();
+  readonly chipDraggableChange = output<ChipDraggableChange>();
+
   protected readonly document = inject(DOCUMENT);
-  // TODO(port): '$scope' — component state: fields and signals on this class
   protected readonly element = inject(ElementRef);
-  // TODO(port): '$timeout' — use setTimeout, or an rxjs timer
+  private readonly destroyRef = inject(DestroyRef);
 
-  // TODO(port): the AngularJS code this class replaces, from src/app/components/md-chip-draggable.directive.js:20. Port it, then delete this block.
-  /* ORIGINAL
-function () {
-    return {
-      restrict: 'A',
-      scope: {},
-      bindToController: true,
-      controllerAs: 'vm',
-      controller: ['$document', '$scope', '$element', '$timeout',
-        function ($document, $scope, $element, $timeout) {
-          var handle = $element[0];
-          var draggingClassName = 'dragging';
-          var droppingClassName = 'dropping';
-          var droppingBeforeClassName = 'dropping-before';
-          var droppingAfterClassName = 'dropping-after';
-          var dragging = false;
-          var preventDrag = false;
-          var dropPosition;
-          var dropTimeout;
-          var counter = 0;
+  private dragging = false;
+  private preventDrag = false;
+  private dropPosition: 'before' | 'after' | null = null;
+  private dropTimeout?: ReturnType<typeof setTimeout>;
+  private counter = 0;
 
-          var move = function (from, to) {
-            this.splice(to, 0, this.splice(from, 1)[0]);
-          };
-
-          $element = angular.element($element[0].closest('md-chip'));
-
-          $element.attr('draggable', true);
-
-          $element.on('mousedown', function (event) {
-            if (event.target !== handle) {
-              preventDrag = true;
-            }
-          });
-
-          $document.on('mouseup', function () {
-            preventDrag = false;
-          });
-
-          $element.on('dragstart', function (event) {
-            if (preventDrag) {
-              event.preventDefault();
-
-            } else {
-              dragging = true;
-
-              globalDraggingChipsWrapId = angular.element($element[0].closest('md-chips-wrap')).attr('id');
-
-              $element.addClass(draggingClassName);
-
-              var dataTransfer = event.dataTransfer || event.originalEvent.dataTransfer;
-
-              dataTransfer.effectAllowed = 'copyMove';
-              dataTransfer.dropEffect = 'move';
-
-              dataTransfer.setData('text/plain', $scope.$parent.$mdChipsCtrl.items.indexOf($scope.$parent.$chip));
-            }
-          });
-
-          $element.on('dragend', function () {
-            dragging = false;
-            globalDraggingChipsWrapId = null;
-
-            $element.removeClass(draggingClassName);
-          });
-
-          var dragOverHandler = function (event) {
-            if (dragging) {
-              return;
-            }
-
-            var targetChipsWrapId = angular.element($element[0].closest('md-chips-wrap')).attr('id');
-
-            event.preventDefault();
-
-            if (globalDraggingChipsWrapId !== targetChipsWrapId) {
-                return;
-            }
-
-            var bounds = $element[0].getBoundingClientRect();
-
-            var props = {
-              width: bounds.right - bounds.left,
-              height: bounds.bottom - bounds.top,
-              x: (event.originalEvent || event).clientX - bounds.left,
-              y: (event.originalEvent || event).clientY - bounds.top,
-            };
-
-            var horizontalOffset = props.x;
-            var horizontalMidPoint = props.width / 2;
-
-            var verticalOffset = props.y;
-            var verticalMidPoint = props.height / 2;
-
-            $element.addClass(droppingClassName);
-
-            $element.removeClass(droppingAfterClassName);
-            $element.removeClass(droppingBeforeClassName);
-
-            if (horizontalOffset >= horizontalMidPoint || verticalOffset >= verticalMidPoint) {
-                dropPosition = 'after';
-                $element.addClass(droppingAfterClassName);
-            } else {
-                dropPosition = 'before';
-                $element.addClass(droppingBeforeClassName);
-            }
-
-          };
-
-          var dropHandler = function (event) {
-            counter = 0;
-            event.preventDefault();
-
-            var targetChipsWrapId = angular.element($element[0].closest('md-chips-wrap')).attr('id');
-            if (globalDraggingChipsWrapId !== targetChipsWrapId) {
-                return;
-            }
-
-            var droppedItemIndex = parseInt((event.dataTransfer || event.originalEvent.dataTransfer).getData('text/plain'), 10);
-            var currentIndex = $scope.$parent.$mdChipsCtrl.items.indexOf($scope.$parent.$chip);
-            var newIndex = null;
-
-            if (dropPosition === 'before') {
-              if (droppedItemIndex < currentIndex) {
-                newIndex = currentIndex - 1;
-              } else {
-                newIndex = currentIndex;
-              }
-            } else {
-              if (droppedItemIndex < currentIndex) {
-                newIndex = currentIndex;
-              } else {
-                newIndex = currentIndex + 1;
-              }
-            }
-
-            // prevent event firing multiple times in firefox
-            $timeout.cancel(dropTimeout);
-            dropTimeout = $timeout(function () {
-              dropPosition = null;
-
-              move.apply($scope.$parent.$mdChipsCtrl.items, [droppedItemIndex, newIndex]);
-
-              $scope.$apply(function () {
-              $scope.$apply(function () {
-                this.chipDraggableChange$Source.next({
-                  collection: $scope.$parent.$mdChipsCtrl.items,
-                  item: $scope.$parent.$mdChipsCtrl.items[droppedItemIndex],
-                  from: droppedItemIndex,
-                  to: newIndex,
-                });
-              });
-              });
-
-              $element.removeClass(droppingClassName);
-              $element.removeClass(droppingAfterClassName);
-              $element.removeClass(droppingBeforeClassName);
-
-              $element.off('drop', dropHandler);
-            }, 1000 / 16);
-          };
-
-          $element.on('dragenter', function () {
-              counter++;
-            if (dragging) {
-              return;
-            }
-
-            $element.off('dragover', dragOverHandler);
-            $element.off('drop', dropHandler);
-
-            $element.on('dragover', dragOverHandler);
-            $element.on('drop', dropHandler);
-          });
-
-          $element.on('dragleave', function () {
-              counter--;
-            if (counter <=0) {
-                counter = 0;
-                $element.removeClass(droppingClassName);
-                $element.removeClass(droppingAfterClassName);
-                $element.removeClass(droppingBeforeClassName);
-            }
-          });
-
-        }],
+  ngAfterViewInit(): void {
+    const handle: HTMLElement = this.element.nativeElement;
+    const chip: HTMLElement = handle.closest(CHIP_SELECTOR) ?? handle;
+    chip.setAttribute('draggable', 'true');
+    const listen = (target: EventTarget, type: string, fn: (event: any) => void) => {
+      target.addEventListener(type, fn);
+      this.destroyRef.onDestroy(() => target.removeEventListener(type, fn));
     };
+
+    listen(chip, 'mousedown', (event: MouseEvent) => {
+      if (event.target !== handle && !handle.contains(event.target as Node)) {
+        this.preventDrag = true;
+      }
+    });
+    listen(this.document, 'mouseup', () => {
+      this.preventDrag = false;
+    });
+    listen(chip, 'dragstart', (event: DragEvent) => {
+      if (this.preventDrag) {
+        event.preventDefault();
+        return;
+      }
+      this.dragging = true;
+      globalDraggingChipsWrap = chip.closest(CHIPS_WRAP_SELECTOR);
+      chip.classList.add('dragging');
+      if (event.dataTransfer) {
+        event.dataTransfer.effectAllowed = 'copyMove';
+        event.dataTransfer.dropEffect = 'move';
+        event.dataTransfer.setData('text/plain', String(this.chipItems().indexOf(this.chipItem())));
+      }
+    });
+    listen(chip, 'dragend', () => {
+      this.dragging = false;
+      globalDraggingChipsWrap = null;
+      chip.classList.remove('dragging');
+    });
+    listen(chip, 'dragenter', () => {
+      this.counter++;
+    });
+    listen(chip, 'dragover', (event: DragEvent) => this.onDragOver(chip, event));
+    listen(chip, 'drop', (event: DragEvent) => this.onDrop(chip, event));
+    listen(chip, 'dragleave', () => {
+      this.counter--;
+      if (this.counter <= 0) {
+        this.counter = 0;
+        this.clearDropClasses(chip);
+      }
+    });
   }
-  */
+
+  private onDragOver(chip: HTMLElement, event: DragEvent): void {
+    if (this.dragging) {
+      return;
+    }
+    event.preventDefault();
+    if (globalDraggingChipsWrap !== chip.closest(CHIPS_WRAP_SELECTOR)) {
+      return;
+    }
+    const bounds = chip.getBoundingClientRect();
+    const x = event.clientX - bounds.left;
+    const y = event.clientY - bounds.top;
+    chip.classList.add('dropping');
+    chip.classList.remove('dropping-after', 'dropping-before');
+    if (x >= (bounds.right - bounds.left) / 2 || y >= (bounds.bottom - bounds.top) / 2) {
+      this.dropPosition = 'after';
+      chip.classList.add('dropping-after');
+    } else {
+      this.dropPosition = 'before';
+      chip.classList.add('dropping-before');
+    }
+  }
+
+  private onDrop(chip: HTMLElement, event: DragEvent): void {
+    if (this.dragging) {
+      return;
+    }
+    this.counter = 0;
+    event.preventDefault();
+    if (globalDraggingChipsWrap !== chip.closest(CHIPS_WRAP_SELECTOR)) {
+      return;
+    }
+    const items = this.chipItems();
+    const droppedItemIndex = parseInt(event.dataTransfer?.getData('text/plain') ?? '', 10);
+    const currentIndex = items.indexOf(this.chipItem());
+    let newIndex: number;
+    if (this.dropPosition === 'before') {
+      newIndex = droppedItemIndex < currentIndex ? currentIndex - 1 : currentIndex;
+    } else {
+      newIndex = droppedItemIndex < currentIndex ? currentIndex : currentIndex + 1;
+    }
+    // prevent the event firing multiple times in firefox
+    clearTimeout(this.dropTimeout);
+    this.dropTimeout = setTimeout(() => {
+      this.dropPosition = null;
+      if (!isNaN(droppedItemIndex)) {
+        items.splice(newIndex, 0, items.splice(droppedItemIndex, 1)[0]);
+        this.chipDraggableChange.emit({
+          collection: items,
+          item: items[droppedItemIndex],
+          from: droppedItemIndex,
+          to: newIndex,
+        });
+      }
+      this.clearDropClasses(chip);
+    }, 1000 / 16);
+  }
+
+  private clearDropClasses(chip: HTMLElement): void {
+    chip.classList.remove('dropping', 'dropping-after', 'dropping-before');
+  }
 }

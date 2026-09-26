@@ -1,258 +1,244 @@
-import { Component, inject, model } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { ElementRef } from '@angular/core';
+import { Component, DOCUMENT, effect, inject, model, untracked, ViewEncapsulation } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-
 import tinycolor from 'tinycolor2';
 import inspector from 'schema-inspector';
-import { isEqual } from 'lodash-es';
+import { cloneDeep, isEqual } from 'lodash-es';
 import { firstValueFrom } from 'rxjs';
-import { utils } from 'react-schema-form';
 import { MaterialIconsDialogComponent } from '../material-icons-dialog/material-icons-dialog.component';
+import { TbExpandFullscreenDirective } from '../tb-expand-fullscreen/tb-expand-fullscreen.directive';
+import { TbJsonFormFieldComponent } from './tb-json-form-field.component';
+import { JsonFormContext } from './json-form-context';
+import { FormKey, JsonFormItem, JsonFormOptions, mergeSchemaForm, setModelValue, validateBySchema } from './json-form-schema';
 
-// Helpers at the legacy file's top level, beside the registration (as written).
-function selectOrSet(this: any, projection?: any, obj?: any, valueToSet?: any) {
-    var numRe: any = /^\d+$/;
-
-    if (!obj) {
-        obj = this;
-    }
-
-    if (!obj) {
-        return false;
-    }
-
-    var parts: any = projection.split('.');
-
-    if (parts.length === 1) {
-        return setValue(obj, parts[0], valueToSet);
-    }
-
-    if (obj[parts[0]] === undefined) {
-        obj[parts[0]] = parts.length > 2 && numRe.test(parts[1]) ? [] : {};
-    }
-
-    var value: any = obj[parts[0]];
-    for (var i: any = 1; i < parts.length; i++) {
-        if (parts[i] === '') {
-            return false;
-        }
-        if (i === parts.length - 1) {
-            return setValue(value, parts[i], valueToSet);
-        } else {
-            var tmp: any = value[parts[i]];
-            if (tmp === undefined || tmp === null) {
-                tmp = numRe.test(parts[i + 1]) ? [] : {};
-                value[parts[i]] = tmp;
-            }
-            value = tmp;
-        }
-    }
-    return value;
-}
-
-function setValue(obj?: any, key?: any, val?: any) {
-    var changed: any = false;
-    if (obj) {
-        if (val === undefined) {
-            if (obj[key] !== undefined) {
-                delete obj[key];
-                changed = true;
-            }
-        } else {
-            changed = !isEqual(obj[key], val);
-            obj[key] = val;
-        }
-    }
-    return changed;
+/** A settings group of the legacy form (`groupInfoes`): a titled, collapsible section over `form[formIndex]`. */
+interface JsonFormGroup {
+  info: any;
+  items: JsonFormItem[];
+  show: boolean;
 }
 
 /**
- * Ported from the AngularJS directive `tbJsonForm` (module `thingsboard.directives.jsonForm`) in src/app/components/json-form.directive.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbJsonForm` (src/app/components/json-form.directive.js), which rendered
+ * react-schema-form through ngReact. Renders the JSON-schema form in Angular: `schema` + `form` (+ `groupInfoes`)
+ * become fields (tb-json-form-field); every edit is written into `model` in place (the legacy `onModelChange`),
+ * the model is validated against the schema and `formControl` gets `$setDirty` / `$setValidity('jsonForm', …)`.
  */
 @Component({
   selector: 'tb-json-form',
   standalone: true,
-  template: '', // TODO(port): no template found
+  imports: [NgTemplateOutlet, TbExpandFullscreenDirective, TbJsonFormFieldComponent],
+  encapsulation: ViewEncapsulation.None,
+  styles: [`
+    tb-json-form .SchemaForm.SchemaFormFullscreen { position: absolute; top: 0; right: 0; bottom: 0; left: 0; }
+    tb-json-form .SchemaForm.SchemaFormFullscreen > div:not(.fullscreen-form-field) { display: none !important; }
+    tb-json-form .SchemaForm.SchemaFormFullscreen > div.fullscreen-form-field { position: relative; width: 100%; height: 100%; }
+    tb-json-form .SchemaForm.SchemaFormFullscreen .fullscreen-form-field .tb-container.fullscreen-form-field,
+    tb-json-form .SchemaForm.SchemaFormFullscreen .fullscreen-form-field .json-form-ace-editor { height: 100%; }
+    tb-json-form .json-form-error { position: relative; bottom: -5px; font-size: 12px; line-height: 12px; color: rgb(244, 67, 54); }
+    tb-json-form .tb-container { position: relative; padding: 10px 0; margin-top: 32px; }
+    tb-json-form label.tb-label { position: absolute; bottom: 100%; left: 0; color: rgba(0, 0, 0, .54);
+      transform: translate3d(0, 6px, 0) scale(.75); transform-origin: left top; }
+    tb-json-form label.tb-label.tb-focused { color: rgb(96, 125, 139); }
+    tb-json-form label.tb-label.tb-required::after { font-size: 13px; color: rgba(0, 0, 0, .54); vertical-align: top; content: " *"; }
+    tb-json-form .tb-head-label { color: rgba(0, 0, 0, .54); }
+    tb-json-form .SchemaGroupname { padding: 10px 20px; background-color: #f1f1f1; cursor: pointer; }
+    tb-json-form .invisible { display: none; }
+    tb-json-form .json-form-ace-editor .title-panel { display: flex; align-items: center; }
+    tb-json-form .tb-dropzone { display: block; cursor: pointer; padding: 10px; border: 2px dashed rgba(0, 0, 0, .27); }
+  `],
+  template: `
+    <div style="background: #fff;" tb-expand-fullscreen [tbExpandFullscreen]="isFullscreen" [hideExpandButton]="true" [fullscreenZindex]="100">
+      <div name="ReactSchemaForm">
+        @if (groups.length) {
+          <div>
+            @for (group of groups; track $index) {
+              <section class="md-whiteframe-z1" style="margin-top: 10px;">
+                <div class="SchemaGroupname md-button-toggle" (click)="group.show = !group.show">
+                  {{ group.info.GroupTitle }}<span class="pull-right fa fa-chevron-down md-toggle-icon" [class.tb-toggled]="!group.show"></span>
+                </div>
+                <div style="padding: 20px;" [class.invisible]="!group.show">
+                  <ng-container [ngTemplateOutlet]="schemaForm" [ngTemplateOutletContext]="{ $implicit: group.items }"></ng-container>
+                </div>
+              </section>
+            }
+          </div>
+        } @else if (hasForm) {
+          <ng-container [ngTemplateOutlet]="schemaForm" [ngTemplateOutletContext]="{ $implicit: items }"></ng-container>
+        }
+      </div>
+    </div>
+    <ng-template #schemaForm let-formItems>
+      <div style="width: 100%;" class="SchemaForm" [class.SchemaFormFullscreen]="isFullscreen">
+        @for (item of formItems; track item) {
+          <div [class.fullscreen-form-field]="context.fullscreenRoot === item">
+            <tb-json-form-field [form]="item" [model]="formModel" [ctx]="context" [root]="item"></tb-json-form-field>
+          </div>
+        }
+      </div>
+    </ng-template>
+  `,
 })
 export class TbJsonFormDirective {
   readonly schema = model<any>();
   readonly form = model<any>();
   readonly model = model<any>();
+  /** The enclosing form: a legacy-shaped `{ $setDirty(), $setValidity(key, valid) }` or an Angular NgForm / AbstractControl. */
   readonly formControl = model<any>();
   readonly groupInfoes = model<any>();
   readonly readonly = model<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
   protected readonly document = inject(DOCUMENT);
-  // TODO(port): '$mdColorPicker' — an AngularJS built-in with no Angular counterpart
   protected readonly dialog = inject(MatDialog);
-  // TODO(port): '$templateCache' — templateUrl on the component
-  protected readonly element = inject(ElementRef);
 
-  protected childScope: any;
-  isFullscreen: any = false;
-  formProps: any;
-  $new: any;
-  $watch: any;
-  icon: any;
-  modelRefWatchHandle: any;
-  modelWatchHandle: any;
+  isFullscreen = false;
+  hasForm = false;
+  items: JsonFormItem[] = [];
+  groups: JsonFormGroup[] = [];
+  /** The model the fields read and write (the legacy `formProps.model`). */
+  formModel: any = {};
+  private options: JsonFormOptions = { formDefaults: { startEmpty: true } };
+  private lastInputs?: any[];
+  private modelSnapshot: any;
+  private watching = false;
 
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  readonly context: JsonFormContext = {
+    options: this.options,
+    fullscreenRoot: null,
+    onChange: (key: FormKey, value: any) => this.onModelChange(key, value),
+    onColorClick: (event: Event, color: any, done: (color: any) => void) => this.showColorPicker(event, color, done),
+    onIconClick: (event: Event, icon: any, done: (icon: any) => void) => this.openIconDialog(event, icon, done),
+    onToggleFullscreen: (root: JsonFormItem | undefined) => {
+      this.isFullscreen = !this.isFullscreen;
+      this.context.fullscreenRoot = this.isFullscreen && root ? root : null;
+    },
+  };
 
   constructor() {
-    this.formProps = {
-            isFullscreen: false,
-            option: {
-                formDefaults: {
-                    startEmpty: true
-                }
-            },
-            onModelChange: (key?: any, val?: any, ...rest: any[]) => {
-                if ((typeof val === 'string') && val === '') {
-                    val = undefined;
-                }
-                selectOrSet(key, this.model(), val);
-                this.formProps.model = this.model();
-            },
-            onColorClick: (event?: any, key?: any, val?: any, ...rest: any[]) => {
-                this.showColorPicker(event, val);
-            },
-            onIconClick: (event?: any, ...rest: any[]) => {
-                this.openIconDialog(event);
-            },
-            onToggleFullscreen: (...rest: any[]) => {
-                this.isFullscreen = !this.isFullscreen;
-                this.formProps.isFullscreen = this.isFullscreen;
-            }
-        };
-    this.updateValues(true);
-    this.$watch('readonly',() => {
-            this.updateValues();
-        });
-    this.$watch('schema',(newValue?: any, prevValue?: any) => {
-            if (newValue && newValue != prevValue) {
-                this.updateValues();
-                this.validate();
-            }
-        });
-    this.$watch('form',(newValue?: any, prevValue?: any) => {
-            if (newValue && newValue != prevValue) {
-                this.updateValues();
-            }
-        });
-    this.$watch('groupInfoes',(newValue?: any, prevValue?: any) => {
-            if (newValue && newValue != prevValue) {
-                this.updateValues();
-            }
-        });
-    this.validate();
-    this.recompile();
-  }
-
-  destroyModelChangeWatches(...rest: any[]): any {
-    if (this.modelWatchHandle) {
-        this.modelWatchHandle();
-    }
-    if (this.modelRefWatchHandle) {
-        this.modelRefWatchHandle();
-    }
-  }
-
-  initModelChangeWatches(...rest: any[]): any {
-    this.modelWatchHandle = this.$watch('model',(newValue?: any, prevValue?: any) => {
-        if (newValue && prevValue && !isEqual(newValue,prevValue)) {
-            this.validate();
-            if (this.formControl()) {
-                this.formControl().$setDirty();
-            }
+    /** The legacy `$watch`es on readonly / schema / form / groupInfoes and the model reference: rebuild the form. */
+    effect(() => {
+      const inputs = [this.readonly(), this.schema(), this.form(), this.groupInfoes(), this.model()];
+      untracked(() => {
+        if (!this.lastInputs || inputs.some((value, i) => value !== this.lastInputs?.[i])) {
+          this.updateValues();
+          this.lastInputs = [this.readonly(), this.schema(), this.form(), this.groupInfoes(), this.model()];
         }
-    }, true);
-    this.modelRefWatchHandle = this.$watch('model',(newValue?: any, prevValue?: any) => {
-        if (newValue && newValue != prevValue) {
-            this.updateValues();
-        }
+      });
     });
   }
 
-  recompile(...rest: any[]): any {
-    if (this.childScope) {
-        this.childScope.$destroy();
+  /** `formProps.onModelChange(key, val)`: the value goes into the model; the deep model `$watch` validates and marks dirty. */
+  private onModelChange(key: FormKey, val: any): void {
+    if (typeof val === 'string' && val === '') {
+      val = undefined;
     }
-    this.childScope = this.$new();
-  }
-
-  showColorPicker(event?: any, color?: any, ...rest: any[]): any {
-    (window as any).$mdColorPicker.show({
-        value: tinycolor(color).toRgbString(),
-        defaultValue: '#fff',
-        random: tinycolor.random(),
-        clickOutsideToClose: false,
-        hasBackdrop: false,
-        multiple: true,
-        preserveScope: false,
-
-        mdColorAlphaChannel: true,
-        mdColorSpectrum: true,
-        mdColorSliders: true,
-        mdColorGenericPalette: false,
-        mdColorMaterialPalette: true,
-        mdColorHistory: false,
-        mdColorDefaultTab: 2,
-
-        $event: event
-
-    }).then(function (color?: any) {
-        if (event.data && event.data.onValueChanged) {
-            event.data.onValueChanged(tinycolor(color).toRgb());
-        }
-    });
-  }
-
-  openIconDialog(event?: any, ...rest: any[]): any {
-    firstValueFrom(this.dialog.open(MaterialIconsDialogComponent, {
-        data: {icon: this.icon},
-        panelClass: 'tb-dialog'
-    }).afterClosed()).then((icon?: any) => {
-        if (event.data && event.data.onValueChanged) {
-            event.data.onValueChanged(icon);
-        }
-    });
-  }
-
-  onFullscreenChanged(...rest: any[]): any {}
-
-  validate(...rest: any[]): any {
-    if (this.schema() && this.model()) {
-        var result: any = utils.validateBySchema(this.schema(), this.model());
-        if (this.formControl()) {
-            this.formControl().$setValidity('jsonForm', result.valid);
-        }
+    setModelValue(key, this.model(), val);
+    this.formModel = this.model();
+    if (this.watching && !isEqual(this.model(), this.modelSnapshot)) {
+      this.modelSnapshot = cloneDeep(this.model());
+      this.validate();
+      this.setDirty();
     }
   }
 
-  updateValues(skipRerender?: any, ...rest: any[]): any {
-    this.destroyModelChangeWatches();
-    var readonly: any = (this.readonly() && this.readonly() === true) ? true : false;
-    var schema: any = this.schema() ? structuredClone(this.schema()) : {
-            type: 'object'
-        };
+  updateValues(): void {
+    this.watching = false;
+    const readonly = this.readonly() === true;
+    const schema: any = this.schema() ? cloneDeep(this.schema()) : { type: 'object' };
     schema.strict = true;
-    var form: any = this.form() ? structuredClone(this.form()) : [ "*" ];
-    var groupInfoes: any = this.groupInfoes() ? structuredClone(this.groupInfoes()) : [];
-    var model: any = this.model() || {};
-    this.model.set(inspector.sanitize(schema, model).data);
-    this.formProps.option.formDefaults.readonly = readonly;
-    this.formProps.schema = schema;
-    this.formProps.form = form;
-    this.formProps.groupInfoes = groupInfoes;
-    this.formProps.model = structuredClone(this.model());
-    if (!skipRerender) {
-        this.recompile();
+    const form: any[] = this.form() ? cloneDeep(this.form()) : ['*'];
+    const groupInfoes: any[] = this.groupInfoes() ? cloneDeep(this.groupInfoes()) : [];
+    const sanitized = inspector.sanitize(schema, this.model() || {}).data;
+    if (sanitized !== this.model()) {
+      this.model.set(sanitized);
     }
-    this.initModelChangeWatches();
+    this.options.formDefaults = { startEmpty: true, readonly };
+    this.formModel = sanitized;
+    this.hasForm = form.length > 0;
+    this.isFullscreen = false;
+    this.context.fullscreenRoot = null;
+    if (groupInfoes.length > 0) {
+      this.items = [];
+      this.groups = groupInfoes.map((info: any) => ({ info, items: mergeSchemaForm(schema, form[info.formIndex], this.options), show: true }));
+    } else {
+      this.groups = [];
+      this.items = this.hasForm ? mergeSchemaForm(schema, form, this.options) : [];
+    }
+    // The fields write their defaults while they initialise; the model watch starts after that.
+    setTimeout(() => {
+      this.modelSnapshot = cloneDeep(this.model());
+      this.watching = true;
+      this.validate();
+    });
+  }
+
+  validate(): void {
+    if (this.schema() && this.model()) {
+      const result = validateBySchema(this.schema(), this.model());
+      this.setValidity('jsonForm', result.valid);
+    }
+  }
+
+  private setDirty(): void {
+    const formControl = this.formControl();
+    if (!formControl) {
+      return;
+    }
+    if (typeof formControl.$setDirty === 'function') {
+      formControl.$setDirty();
+    } else {
+      (formControl.form ?? formControl).markAsDirty?.();
+    }
+  }
+
+  private setValidity(key: string, valid: boolean): void {
+    const formControl = this.formControl();
+    if (!formControl) {
+      return;
+    }
+    if (typeof formControl.$setValidity === 'function') {
+      formControl.$setValidity(key, valid);
+      return;
+    }
+    const control = formControl.form ?? formControl;
+    if (typeof control.setErrors === 'function') {
+      const errors = { ...(control.errors || {}) };
+      if (valid) {
+        delete errors[key];
+      } else {
+        errors[key] = true;
+      }
+      control.setErrors(Object.keys(errors).length ? errors : null);
+    }
+  }
+
+  /** `$mdColorPicker.show(…)`: the browser's color picker, starting at the field's color. */
+  showColorPicker(event: Event, color: any, done: (color: any) => void): void {
+    event?.stopPropagation();
+    const colorInput = this.document.createElement('input');
+    colorInput.type = 'color';
+    colorInput.value = tinycolor(color || '#fff').toHexString();
+    colorInput.style.position = 'fixed';
+    colorInput.style.opacity = '0';
+    colorInput.style.pointerEvents = 'none';
+    this.document.body.appendChild(colorInput);
+    colorInput.addEventListener('change', () => {
+      done(tinycolor(colorInput.value).toRgb());
+      colorInput.remove();
+    });
+    colorInput.addEventListener('blur', () => colorInput.remove());
+    colorInput.click();
+  }
+
+  openIconDialog(event: Event, icon: any, done: (icon: any) => void): void {
+    event?.stopPropagation();
+    firstValueFrom(this.dialog.open(MaterialIconsDialogComponent, {
+      data: { icon },
+      panelClass: 'tb-dialog',
+    }).afterClosed()).then((selected?: any) => {
+      if (selected !== undefined) {
+        done(selected);
+      }
+    });
   }
 }

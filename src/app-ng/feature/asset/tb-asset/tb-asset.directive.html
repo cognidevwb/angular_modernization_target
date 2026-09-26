@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/asset/asset-fieldset.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/asset/asset-fieldset.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -16,45 +16,45 @@
     limitations under the License.
 
 -->
-<button mat-raised-button color="primary" (click)="onMakePublic.emit({event: $event})" [hidden]="!(!isEdit() && assetScope() === 'tenant' && !isAssignedToCustomer && !isPublic)">{{ 'asset.make-public' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onAssignToCustomer.emit({event: $event})" [hidden]="!(!isEdit() && assetScope() === 'tenant' && !isAssignedToCustomer)">{{ 'asset.assign-to-customer' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onUnassignFromCustomer.emit({event: $event, isPublic: isPublic})" [hidden]="!(!isEdit() && (assetScope() === 'customer' || assetScope() === 'tenant') && isAssignedToCustomer)">{{ isPublic ? 'asset.make-private' : 'asset.unassign-from-customer' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onDeleteAsset.emit({event: $event})" [hidden]="!(!isEdit() && assetScope() === 'tenant')">{{ 'asset.delete' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onMakePublic.emit({event: $event})" [hidden]="!(!isEdit() && assetScope() === 'tenant' && !isAssignedToCustomer && !isPublic)">{{ 'asset.make-public' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onAssignToCustomer.emit({event: $event})" [hidden]="!(!isEdit() && assetScope() === 'tenant' && !isAssignedToCustomer)">{{ 'asset.assign-to-customer' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onUnassignFromCustomer.emit({event: $event, isPublic: isPublic})" [hidden]="!(!isEdit() && (assetScope() === 'customer' || assetScope() === 'tenant') && isAssignedToCustomer)">{{ (isPublic ? 'asset.make-private' : 'asset.unassign-from-customer') | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onDeleteAsset.emit({event: $event})" [hidden]="!(!isEdit() && assetScope() === 'tenant')">{{ 'asset.delete' | translate }}</button>
 
 <div layout="row">
-    <button mat-raised-button ngclipboard data-clipboard-action="copy" ngclipboard-success="onAssetIdCopied(e)" attr.data-clipboard-text="{{asset()?.id?.id}}" [hidden]="!(!isEdit())">
+    <button mat-raised-button type="button" (click)="copyAssetId($event)" [hidden]="!(!isEdit())">
         <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
-        <span translate>asset.copyId</span>
+        <span>{{ 'asset.copyId' | translate }}</span>
     </button>
 </div>
 
 <div class="md-content md-padding" layout="column">
     <mat-form-field class="md-block" [hidden]="!(!isEdit() && isAssignedToCustomer && !isPublic && assetScope() === 'tenant')">
-        <mat-label translate>asset.assignedToCustomer</mat-label>
-        <input matInput [(ngModel)]="assignedCustomer.title" disabled>
+        <mat-label>{{ 'asset.assignedToCustomer' | translate }}</mat-label>
+        <input matInput [value]="assignedCustomer?.title ?? ''" disabled>
     </mat-form-field>
     <div class="tb-small" style="padding-bottom: 10px; padding-left: 2px;" [hidden]="!(!isEdit() && isPublic && (assetScope() === 'customer' || assetScope() === 'tenant'))">
         {{ 'asset.asset-public' | translate }}
     </div>
-    <fieldset [disabled]="rootScope?.loading || !isEdit()">
+    @if (asset(); as a) {
+      <fieldset [disabled]="rootScope.loading || !isEdit()">
         <mat-form-field class="md-block">
-            <mat-label translate>asset.name</mat-label>
-            <input matInput required name="name" [ngModel]="asset().name" (ngModelChange)="asset().name = $event">
-            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-            <div ng-messages="theForm()?.name?.$error">
-                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                <div translate ng-message="required">asset.name-required</div>
-            </div>
+            <mat-label>{{ 'asset.name' | translate }}</mat-label>
+            <input matInput required name="name" [(ngModel)]="a.name" #name="ngModel">
+            @if (name.errors?.['required']) {
+              <mat-error>{{ 'asset.name-required' | translate }}</mat-error>
+            }
         </mat-form-field>
-        <tb-entity-subtype-autocomplete [ngDisabled]="rootScope?.loading || !isEdit()" [tbRequired]="true" [(theForm)]="theForm" [ngModel]="asset().type" (ngModelChange)="asset().type = $event" [(entityType)]="types.entityType.asset">
+        <tb-entity-subtype-autocomplete name="type" [ngDisabled]="rootScope.loading || !isEdit()" [tbRequired]="true" [theForm]="theForm()" [(ngModel)]="a.type" [entityType]="types.entityType.asset">
         </tb-entity-subtype-autocomplete>
         <mat-form-field class="md-block">
-            <mat-label translate>asset.label</mat-label>
-            <input matInput name="label" [ngModel]="asset().label" (ngModelChange)="asset().label = $event">
+            <mat-label>{{ 'asset.label' | translate }}</mat-label>
+            <input matInput name="label" [(ngModel)]="a.label">
         </mat-form-field>
         <mat-form-field class="md-block">
-            <mat-label translate>asset.description</mat-label>
-            <textarea matInput [ngModel]="asset().additionalInfo.description" (ngModelChange)="asset().additionalInfo.description = $event" rows="2"></textarea>
+            <mat-label>{{ 'asset.description' | translate }}</mat-label>
+            <textarea matInput name="description" [ngModel]="a.additionalInfo?.description" (ngModelChange)="setAdditionalInfo(a, 'description', $event)" rows="2"></textarea>
         </mat-form-field>
-    </fieldset>
+      </fieldset>
+    }
 </div>

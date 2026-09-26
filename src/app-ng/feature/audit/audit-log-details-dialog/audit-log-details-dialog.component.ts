@@ -1,113 +1,106 @@
-import { Component, inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { types } from '../../common/constants/types';
+import { AfterViewInit, Component, ElementRef, inject, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import $ from 'jquery';
-import { inject as injectRoot } from '@angular/core';
-import { RootState } from '../../../root-state';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let scope: any;
+import 'brace/mode/java';
+import { types } from '../../common/constants/types';
+import { RootState } from '../../../root-state';
+import { UiAceDirective, UiAceOptions } from '../../components/ui-ace/ui-ace.directive';
 
 /**
- * Ported from the AngularJS controller `AuditLogDetailsDialogController` (module `thingsboard.auditLog`) in src/app/audit/index.js:23.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Ported from the AngularJS controller `AuditLogDetailsDialogController` (src/app/audit/audit-log-details-dialog.controller.js)
+ * with its template. Shows the audit log's action data (and failure details for a failed action) in read-only ace editors,
+ * sized to their content once the dialog is shown (the legacy `onShowing`).
  */
 @Component({
   selector: 'audit-log-details-dialog',
   standalone: true,
-  imports: [TranslatePipe, MatToolbarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule],
+  imports: [TranslatePipe, MatToolbarModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, UiAceDirective],
   templateUrl: './audit-log-details-dialog.component.html',
 })
-export class AuditLogDetailsDialogComponent {
-  protected readonly rootScope = injectRoot(RootState);
-  protected readonly dialog = inject(MatDialog);
-  private readonly dialogRef = inject(MatDialogRef);
-  protected readonly typesRef: any = types;
+export class AuditLogDetailsDialogComponent implements AfterViewInit {
+  protected readonly rootScope = inject(RootState);
+  private readonly dialogRef = inject(MatDialogRef<AuditLogDetailsDialogComponent>);
   protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
+  private readonly actionDataElement = viewChild<ElementRef<HTMLElement>>('actionDataEditorElement');
+  private readonly failureDetailsElement = viewChild<ElementRef<HTMLElement>>('failureDetailsEditorElement');
 
-  types: any;
-  auditLog: any;
-  displayFailureDetails: any;
-  actionData: any;
-  actionFailureDetails: any;
-  actionDataContentOptions: any;
-  failureDetailsContentOptions: any;
+  readonly types: any = types;
+  auditLog: any = this.dialogData.auditLog;
+  displayFailureDetails: boolean = this.auditLog.actionStatus == types.auditLogActionStatus.FAILURE.value;
+  actionData: any = this.auditLog.actionDataText;
+  actionFailureDetails: any = this.auditLog.actionFailureDetails;
   actionDataEditor: any;
   failureDetailsEditor: any;
 
-  constructor() {
-    this.dialogData.showingCallback.onShowing = function(_scope?: any, element?: any) {
-        this.updateEditorSize(element, this.actionData, 'tb-audit-log-action-data');
-        this.actionDataEditor.resize();
-        if (this.displayFailureDetails) {
-            this.updateEditorSize(element, this.actionFailureDetails, 'tb-audit-log-failure-details');
-            this.failureDetailsEditor.resize();
-        }
-    };
-    this.types = this.typesRef;
-    this.auditLog = this.dialogData.auditLog;
-    this.displayFailureDetails = this.dialogData.auditLog.actionStatus == this.typesRef.auditLogActionStatus.FAILURE.value;
-    this.actionData = this.dialogData.auditLog.actionDataText;
-    this.actionFailureDetails = this.dialogData.auditLog.actionFailureDetails;
-    this.actionDataContentOptions = {
-        useWrapMode: false,
-        mode: 'java',
-        showGutter: false,
-        showPrintMargin: false,
-        theme: 'github',
-        advanced: {
-            enableSnippets: false,
-            enableBasicAutocompletion: false,
-            enableLiveAutocompletion: false
-        },
-        onLoad: (_ace?: any, ...rest: any[]) => {
-            this.actionDataEditor = _ace;
-        }
-    };
-    this.failureDetailsContentOptions = {
-        useWrapMode: false,
-        mode: 'java',
-        showGutter: false,
-        showPrintMargin: false,
-        theme: 'github',
-        advanced: {
-            enableSnippets: false,
-            enableBasicAutocompletion: false,
-            enableLiveAutocompletion: false
-        },
-        onLoad: (_ace?: any, ...rest: any[]) => {
-            this.failureDetailsEditor = _ace;
-        }
-    };
-    this.close = this.close;
-  }
-
-  updateEditorSize(element?: any, content?: any, editorId?: any, ...rest: any[]): any {
-    var newHeight: any = 200;
-    var newWidth: any = 600;
-    if (content && content.length > 0) {
-        var lines: any = content.split('\n');
-        newHeight = 16 * lines.length + 16;
-        var maxLineLength: any = 0;
-        for (var i in lines) {
-            var line: any = lines[i].replace(/\t/g, '    ').replace(/\n/g, '');
-            var lineLength: any = line.length;
-            maxLineLength = Math.max(maxLineLength, lineLength);
-        }
-        newWidth = 8 * maxLineLength + 16;
-    }
-    $('#'+editorId, element).height(newHeight.toString() + "px").css('min-height', newHeight.toString() + "px")
-        .width(newWidth.toString() + "px");
-  }
-
-  close = (...rest: any[]): any => {
-    this.dialogRef.close();
+  readonly actionDataContentOptions: UiAceOptions = {
+    useWrapMode: false,
+    mode: 'java',
+    showGutter: false,
+    showPrintMargin: false,
+    theme: 'github',
+    advanced: {
+      enableSnippets: false,
+      enableBasicAutocompletion: false,
+      enableLiveAutocompletion: false,
+    },
+    onLoad: (editor: any) => {
+      this.actionDataEditor = editor;
+    },
   };
+
+  readonly failureDetailsContentOptions: UiAceOptions = {
+    useWrapMode: false,
+    mode: 'java',
+    showGutter: false,
+    showPrintMargin: false,
+    theme: 'github',
+    advanced: {
+      enableSnippets: false,
+      enableBasicAutocompletion: false,
+      enableLiveAutocompletion: false,
+    },
+    onLoad: (editor: any) => {
+      this.failureDetailsEditor = editor;
+    },
+  };
+
+  /** The legacy `$mdDialog` `onShowing`: size the editors to their content. */
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.updateEditorSize(this.actionDataElement()?.nativeElement, this.actionData);
+      this.actionDataEditor?.resize();
+      if (this.displayFailureDetails) {
+        this.updateEditorSize(this.failureDetailsElement()?.nativeElement, this.actionFailureDetails);
+        this.failureDetailsEditor?.resize();
+      }
+    });
+  }
+
+  updateEditorSize(editorElement: HTMLElement | undefined, content?: any): void {
+    if (!editorElement) {
+      return;
+    }
+    let newHeight = 200;
+    let newWidth = 600;
+    if (content && content.length > 0) {
+      const lines: string[] = content.split('\n');
+      newHeight = 16 * lines.length + 16;
+      let maxLineLength = 0;
+      for (const line of lines) {
+        maxLineLength = Math.max(maxLineLength, line.replace(/\t/g, '    ').replace(/\n/g, '').length);
+      }
+      newWidth = 8 * maxLineLength + 16;
+    }
+    editorElement.style.height = newHeight + 'px';
+    editorElement.style.minHeight = newHeight + 'px';
+    editorElement.style.width = newWidth + 'px';
+  }
+
+  close(): void {
+    this.dialogRef.close();
+  }
 }

@@ -1,7 +1,8 @@
-import { Component, Injector, effect, forwardRef, inject, model } from '@angular/core';
+import { Component, effect, forwardRef, inject, model } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { TbRuleNodeDefinedConfigDirective } from '../tb-rule-node-defined-config/tb-rule-node-defined-config.directive';
+import { RuleNodeConfigRegistry } from '../tb-rule-node-defined-config/rule-node-config-registry';
 import { TbJsonObjectEditDirective } from '../../components/tb-json-object-edit/tb-json-object-edit.directive';
 import { isEqual } from 'lodash-es';
 import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
@@ -9,7 +10,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 /**
  * Ported from the AngularJS directive `tbRuleNodeConfig` (module `thingsboard.ruleChain`) in src/app/rulechain/index.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ * The node definition's `configDirective` renders through tb-rule-node-defined-config when RuleNodeConfigRegistry knows it; otherwise the configuration is edited as JSON.
  */
 @Component({
   selector: 'tb-rule-node-config',
@@ -25,7 +26,7 @@ export class TbRuleNodeConfigDirective extends NgModelController {
   readonly readonly = model<any>(undefined, { alias: 'ngReadonly' });
 
   protected readonly translate = inject(TranslateService);
-  private readonly injector = inject(Injector);
+  private readonly ruleNodeConfigRegistry = inject(RuleNodeConfigRegistry);
 
   configuration: any;
   definedDirectiveError: any;
@@ -63,7 +64,7 @@ export class TbRuleNodeConfigDirective extends NgModelController {
     } else {
         var definedDirective: any = this.nodeDefinition().configDirective;
         if (definedDirective && definedDirective.length) {
-            if (!this.injector.get(definedDirective + 'Directive' as any, null)) {
+            if (!this.ruleNodeConfigRegistry.isDefined(definedDirective)) {
                 this.definedDirectiveError = this.translate.instant('rulenode.directive-is-not-loaded', {directiveName: definedDirective});
             }
         }

@@ -1,5 +1,7 @@
 import { Component, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
+import { joinParentForm } from '../tb-grid/legacy-form';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -12,7 +14,8 @@ import { MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'tb-contact',
   standalone: true,
-  imports: [MatSelectModule, MatInputModule, MatFormFieldModule, FormsModule],
+  imports: [TranslatePipe, MatSelectModule, MatInputModule, MatFormFieldModule, FormsModule],
+  viewProviders: joinParentForm,
   templateUrl: './tb-contact.directive.html',
 })
 export class TbContactDirective {
@@ -20,8 +23,6 @@ export class TbContactDirective {
   readonly isEdit = model<any>();
   readonly theForm = model<any>();
 
-  // TODO(port): template: 1 × ng-message left in place
-  // TODO(port): template: 1 × ng-messages left in place
 
   protected readonly countries: string[] = [
     'Afghanistan',

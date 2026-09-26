@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@import "~compass-sass-mixins/lib/compass";
+@import "compass-sass-mixins/lib/compass";
 
-@import "../../scss/constants";
+@import "scss/constants";
 
 $toolbar-height: 50px !default;
 $fullscreen-toolbar-height: 64px !default;

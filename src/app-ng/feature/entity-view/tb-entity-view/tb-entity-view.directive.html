@@ -16,145 +16,173 @@
     limitations under the License.
 
 -->
-<button mat-raised-button color="primary" (click)="onMakePublic.emit({event: $event})" [hidden]="!(!isEdit() && entityViewScope() === 'tenant' && !isAssignedToCustomer && !isPublic)">{{ 'entity-view.make-public' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onAssignToCustomer.emit({event: $event})" [hidden]="!(!isEdit() && entityViewScope() === 'tenant' && !isAssignedToCustomer)">{{ 'entity-view.assign-to-customer' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onUnassignFromCustomer.emit({event: $event})" [hidden]="!(!isEdit() && (entityViewScope() === 'customer' || entityViewScope() === 'tenant') && isAssignedToCustomer)">{{'entity-view.unassign-from-customer' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onDeleteEntityView.emit({event: $event})" [hidden]="!(!isEdit() && entityViewScope() === 'tenant')">{{ 'entity-view.delete' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onMakePublic.emit({event: $event})" [hidden]="!(!isEdit() && entityViewScope() === 'tenant' && !isAssignedToCustomer && !isPublic)">{{ 'entity-view.make-public' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onAssignToCustomer.emit({event: $event})" [hidden]="!(!isEdit() && entityViewScope() === 'tenant' && !isAssignedToCustomer)">{{ 'entity-view.assign-to-customer' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onUnassignFromCustomer.emit({event: $event})" [hidden]="!(!isEdit() && (entityViewScope() === 'customer' || entityViewScope() === 'tenant') && isAssignedToCustomer)">{{ 'entity-view.unassign-from-customer' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onDeleteEntityView.emit({event: $event})" [hidden]="!(!isEdit() && entityViewScope() === 'tenant')">{{ 'entity-view.delete' | translate }}</button>
 
 <div layout="row">
-	<button mat-raised-button ngclipboard data-clipboard-action="copy" ngclipboard-success="onEntityViewIdCopied(e)" attr.data-clipboard-text="{{entityView()?.id?.id}}" [hidden]="!(!isEdit())">
+    <button mat-raised-button type="button" (click)="copyEntityViewId($event)" [hidden]="!(!isEdit())">
         <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
-        <span translate>entity-view.copyId</span>
+        <span>{{ 'entity-view.copyId' | translate }}</span>
     </button>
 </div>
 
 <div class="md-content md-padding" layout="column">
     <mat-form-field class="md-block" [hidden]="!(!isEdit() && isAssignedToCustomer && entityViewScope() === 'tenant')">
-        <mat-label translate>entity-view.assignedToCustomer</mat-label>
-        <input matInput [(ngModel)]="assignedCustomer.title" disabled>
+        <mat-label>{{ 'entity-view.assignedToCustomer' | translate }}</mat-label>
+        <input matInput [value]="assignedCustomer?.title ?? ''" disabled>
     </mat-form-field>
-	<fieldset [disabled]="rootScope?.loading || !isEdit()">
-		<mat-form-field class="md-block">
-			<mat-label translate>entity-view.name</mat-label>
-			<input matInput required name="name" [ngModel]="entityView().name" (ngModelChange)="entityView().name = $event">
-			<!-- TODO(port): ng-messages has no one-to-one Angular form -->
-			<div ng-messages="theForm()?.name?.$error">
-	      		<!-- TODO(port): ng-message has no one-to-one Angular form -->
-	      		<div translate ng-message="required">entity-view.name-required</div>
-	    	</div>				
-		</mat-form-field>
-        <tb-entity-subtype-autocomplete [ngDisabled]="rootScope?.loading || !isEdit()" [tbRequired]="true" [(theForm)]="theForm" [ngModel]="entityView().type" (ngModelChange)="entityView().type = $event" [(entityType)]="types.entityType.entityView">
+    @if (entityView(); as ev) {
+      <fieldset [disabled]="rootScope.loading || !isEdit()">
+        <mat-form-field class="md-block">
+            <mat-label>{{ 'entity-view.name' | translate }}</mat-label>
+            <input matInput required name="name" [(ngModel)]="ev.name" #name="ngModel">
+            @if (name.errors?.['required']) {
+              <mat-error>{{ 'entity-view.name-required' | translate }}</mat-error>
+            }
+        </mat-form-field>
+        <tb-entity-subtype-autocomplete name="type" [ngDisabled]="rootScope.loading || !isEdit()" [tbRequired]="true" [theForm]="theForm()" [(ngModel)]="ev.type" [entityType]="types.entityType.entityView">
         </tb-entity-subtype-autocomplete>
         <section layout="column">
-            <label translate class="tb-title no-padding">entity-view.target-entity</label>
-            <tb-entity-select flex [ngDisabled]="!isEdit()" [(theForm)]="theForm" [tbRequired]="true" [(allowedEntityTypes)]="allowedEntityTypes" [ngModel]="entityView().entityId" (ngModelChange)="entityView().entityId = $event">
+            <label class="tb-title no-padding">{{ 'entity-view.target-entity' | translate }}</label>
+            <tb-entity-select flex name="entityId" [ngDisabled]="!isEdit()" [theForm]="theForm()" [tbRequired]="true" [allowedEntityTypes]="allowedEntityTypes" [(ngModel)]="ev.entityId">
             </tb-entity-select>
         </section>
-        <mat-accordion class="tb-entity-view-panel-group" [ngClass]="{'disabled': rootScope?.loading || !isEdit()}" multi>
-            <mat-expansion-panel [expanded]="true" [disabled]="rootScope?.loading || !isEdit()">
+        <mat-accordion class="tb-entity-view-panel-group" [ngClass]="{'disabled': rootScope.loading || !isEdit()}" multi>
+            <mat-expansion-panel [expanded]="true">
                 <mat-expansion-panel-header>
-                    <mat-panel-title>{{ 'entity-view.attributes-propagation' | translate }}</mat-panel-title>
+                    <mat-panel-title class="tb-panel-title">{{ 'entity-view.attributes-propagation' | translate }}</mat-panel-title>
                 </mat-expansion-panel-header>
-                <div translate class="tb-hint">entity-view.attributes-propagation-hint</div>
-                <label translate class="tb-title no-padding">entity-view.client-attributes</label>
+                <div class="tb-hint">{{ 'entity-view.attributes-propagation-hint' | translate }}</div>
+                <label class="tb-title no-padding">{{ 'entity-view.client-attributes' | translate }}</label>
                 <mat-form-field class="md-block" style="padding-bottom: 15px;">
                     <mat-chip-grid #csChipGrid [disabled]="!isEdit()">
-                        @for (item of entityView().keys.attributes.cs; track item) {
-                            <mat-chip-row (removed)="removeAttributeKey('cs', item)">{{item}}</mat-chip-row>
+                        @for (item of ev.keys.attributes.cs; track item) {
+                            <mat-chip-row [removable]="!!isEdit()" (removed)="removeAttributeKey('cs', item)">
+                                {{item}}
+                                @if (isEdit()) {
+                                    <button matChipRemove type="button"><mat-icon>cancel</mat-icon></button>
+                                }
+                            </mat-chip-row>
                         }
                         <input [placeholder]="'entity-view.client-attributes-placeholder' | translate"
                                [matChipInputFor]="csChipGrid"
                                [matChipInputSeparatorKeyCodes]="separatorKeys"
                                [matAutocomplete]="csAuto"
                                (matChipInputTokenEnd)="addAttributeKeyFromInput('cs', $event)"
-                               [ngModel]="attributeDataKeySearchText"
-                               (ngModelChange)="searchAttributeDataKeys($event)">
+                               [ngModel]="attributeSearchText.cs" [ngModelOptions]="{standalone: true}"
+                               (ngModelChange)="searchAttributeDataKeys('cs', $event)"
+                               (focus)="searchAttributeDataKeys('cs', attributeSearchText.cs)">
                     </mat-chip-grid>
-                    <mat-autocomplete #csAuto="matAutocomplete" (optionSelected)="addAttributeKey('cs', $event.option.value)">
-                        @for (item of attributeDataKeys; track item) {
-                            <mat-option [value]="item">{{item.name}}</mat-option>
+                    <mat-autocomplete #csAuto="matAutocomplete" class="tb-attribute-datakey-autocomplete" (optionSelected)="addAttributeKey('cs', $event.option.value)">
+                        @for (item of attributeDataKeys; track $index) {
+                            <mat-option [value]="item">{{item}}</mat-option>
                         }
                     </mat-autocomplete>
                 </mat-form-field>
-                <label translate class="tb-title no-padding">entity-view.shared-attributes</label>
+                <label class="tb-title no-padding">{{ 'entity-view.shared-attributes' | translate }}</label>
                 <mat-form-field class="md-block" style="padding-bottom: 15px;">
                     <mat-chip-grid #shChipGrid [disabled]="!isEdit()">
-                        @for (item of entityView().keys.attributes.sh; track item) {
-                            <mat-chip-row (removed)="removeAttributeKey('sh', item)">{{item}}</mat-chip-row>
+                        @for (item of ev.keys.attributes.sh; track item) {
+                            <mat-chip-row [removable]="!!isEdit()" (removed)="removeAttributeKey('sh', item)">
+                                {{item}}
+                                @if (isEdit()) {
+                                    <button matChipRemove type="button"><mat-icon>cancel</mat-icon></button>
+                                }
+                            </mat-chip-row>
                         }
                         <input [placeholder]="'entity-view.shared-attributes-placeholder' | translate"
                                [matChipInputFor]="shChipGrid"
                                [matChipInputSeparatorKeyCodes]="separatorKeys"
                                [matAutocomplete]="shAuto"
                                (matChipInputTokenEnd)="addAttributeKeyFromInput('sh', $event)"
-                               [ngModel]="attributeDataKeySearchText"
-                               (ngModelChange)="searchAttributeDataKeys($event)">
+                               [ngModel]="attributeSearchText.sh" [ngModelOptions]="{standalone: true}"
+                               (ngModelChange)="searchAttributeDataKeys('sh', $event)"
+                               (focus)="searchAttributeDataKeys('sh', attributeSearchText.sh)">
                     </mat-chip-grid>
-                    <mat-autocomplete #shAuto="matAutocomplete" (optionSelected)="addAttributeKey('sh', $event.option.value)">
-                        @for (item of attributeDataKeys; track item) {
-                            <mat-option [value]="item">{{item.name}}</mat-option>
+                    <mat-autocomplete #shAuto="matAutocomplete" class="tb-attribute-datakey-autocomplete" (optionSelected)="addAttributeKey('sh', $event.option.value)">
+                        @for (item of attributeDataKeys; track $index) {
+                            <mat-option [value]="item">{{item}}</mat-option>
                         }
                     </mat-autocomplete>
                 </mat-form-field>
-                <label translate class="tb-title no-padding">entity-view.server-attributes</label>
+                <label class="tb-title no-padding">{{ 'entity-view.server-attributes' | translate }}</label>
                 <mat-form-field class="md-block" style="padding-bottom: 15px;">
                     <mat-chip-grid #ssChipGrid [disabled]="!isEdit()">
-                        @for (item of entityView().keys.attributes.ss; track item) {
-                            <mat-chip-row (removed)="removeAttributeKey('ss', item)">{{item}}</mat-chip-row>
+                        @for (item of ev.keys.attributes.ss; track item) {
+                            <mat-chip-row [removable]="!!isEdit()" (removed)="removeAttributeKey('ss', item)">
+                                {{item}}
+                                @if (isEdit()) {
+                                    <button matChipRemove type="button"><mat-icon>cancel</mat-icon></button>
+                                }
+                            </mat-chip-row>
                         }
                         <input [placeholder]="'entity-view.server-attributes-placeholder' | translate"
                                [matChipInputFor]="ssChipGrid"
                                [matChipInputSeparatorKeyCodes]="separatorKeys"
                                [matAutocomplete]="ssAuto"
                                (matChipInputTokenEnd)="addAttributeKeyFromInput('ss', $event)"
-                               [ngModel]="attributeDataKeySearchText"
-                               (ngModelChange)="searchAttributeDataKeys($event)">
+                               [ngModel]="attributeSearchText.ss" [ngModelOptions]="{standalone: true}"
+                               (ngModelChange)="searchAttributeDataKeys('ss', $event)"
+                               (focus)="searchAttributeDataKeys('ss', attributeSearchText.ss)">
                     </mat-chip-grid>
-                    <mat-autocomplete #ssAuto="matAutocomplete" (optionSelected)="addAttributeKey('ss', $event.option.value)">
-                        @for (item of attributeDataKeys; track item) {
-                            <mat-option [value]="item">{{item.name}}</mat-option>
+                    <mat-autocomplete #ssAuto="matAutocomplete" class="tb-attribute-datakey-autocomplete" (optionSelected)="addAttributeKey('ss', $event.option.value)">
+                        @for (item of attributeDataKeys; track $index) {
+                            <mat-option [value]="item">{{item}}</mat-option>
                         }
                     </mat-autocomplete>
                 </mat-form-field>
             </mat-expansion-panel>
-            <mat-expansion-panel [expanded]="true" [disabled]="rootScope?.loading || !isEdit()">
+            <mat-expansion-panel [expanded]="true">
                 <mat-expansion-panel-header>
-                    <mat-panel-title>{{ 'entity-view.timeseries-data' | translate }}</mat-panel-title>
+                    <mat-panel-title class="tb-panel-title">{{ 'entity-view.timeseries-data' | translate }}</mat-panel-title>
                 </mat-expansion-panel-header>
-                <div translate class="tb-hint">entity-view.timeseries-data-hint</div>
-                <label translate class="tb-title no-padding">entity-view.timeseries</label>
+                <div class="tb-hint">{{ 'entity-view.timeseries-data-hint' | translate }}</div>
+                <label class="tb-title no-padding">{{ 'entity-view.timeseries' | translate }}</label>
                 <mat-form-field class="md-block">
                     <mat-chip-grid #tsChipGrid [disabled]="!isEdit()">
-                        @for (item of entityView().keys.timeseries; track item) {
-                            <mat-chip-row (removed)="removeTimeseriesKey(item)">{{item}}</mat-chip-row>
+                        @for (item of ev.keys.timeseries; track item) {
+                            <mat-chip-row [removable]="!!isEdit()" (removed)="removeTimeseriesKey(item)">
+                                {{item}}
+                                @if (isEdit()) {
+                                    <button matChipRemove type="button"><mat-icon>cancel</mat-icon></button>
+                                }
+                            </mat-chip-row>
                         }
                         <input [placeholder]="'entity-view.timeseries-placeholder' | translate"
                                [matChipInputFor]="tsChipGrid"
                                [matChipInputSeparatorKeyCodes]="separatorKeys"
                                [matAutocomplete]="tsAuto"
                                (matChipInputTokenEnd)="addTimeseriesKeyFromInput($event)"
-                               [ngModel]="timeseriesDataKeySearchText"
-                               (ngModelChange)="searchTimeseriesDataKeys($event)">
+                               [ngModel]="timeseriesDataKeySearchText" [ngModelOptions]="{standalone: true}"
+                               (ngModelChange)="searchTimeseriesDataKeys($event)"
+                               (focus)="searchTimeseriesDataKeys(timeseriesDataKeySearchText)">
                     </mat-chip-grid>
-                    <mat-autocomplete #tsAuto="matAutocomplete" (optionSelected)="addTimeseriesKey($event.option.value)">
-                        @for (item of timeseriesDataKeys; track item) {
-                            <mat-option [value]="item">{{item.name}}</mat-option>
+                    <mat-autocomplete #tsAuto="matAutocomplete" class="tb-timeseries-datakey-autocomplete" (optionSelected)="addTimeseriesKey($event.option.value)">
+                        @for (item of timeseriesDataKeys; track $index) {
+                            <mat-option [value]="item">{{item}}</mat-option>
                         }
                     </mat-autocomplete>
                 </mat-form-field>
             </mat-expansion-panel>
         </mat-accordion>
         <section layout="row" layout-align="start start">
-            <mdp-date-picker [(ngModel)]="startTimeMs" mdp-max-date="maxStartTimeMs" attr.mdp-placeholder="{{ 'entity-view.start-date' | translate }}"></mdp-date-picker>
-            <mdp-time-picker [(ngModel)]="startTimeMs" mdp-max-date="maxStartTimeMs" attr.mdp-placeholder="{{ 'entity-view.start-ts' | translate }}" mdp-auto-switch="true"></mdp-time-picker>
+            <mat-form-field>
+                <mat-label>{{ 'entity-view.start-date' | translate }} / {{ 'entity-view.start-ts' | translate }}</mat-label>
+                <input matInput type="datetime-local" name="startTimeMs" [ngModel]="toLocal(startTimeMs)" (ngModelChange)="setStartTime($event)" [max]="toLocal(maxStartTimeMs)">
+            </mat-form-field>
         </section>
         <section layout="row" layout-align="start start">
-            <mdp-date-picker [(ngModel)]="endTimeMs" mdp-min-date="minEndTimeMs" attr.mdp-placeholder="{{ 'entity-view.end-date' | translate }}"></mdp-date-picker>
-            <mdp-time-picker [(ngModel)]="endTimeMs" mdp-min-date="minEndTimeMs" attr.mdp-placeholder="{{ 'entity-view.end-ts' | translate }}" mdp-auto-switch="true"></mdp-time-picker>
+            <mat-form-field>
+                <mat-label>{{ 'entity-view.end-date' | translate }} / {{ 'entity-view.end-ts' | translate }}</mat-label>
+                <input matInput type="datetime-local" name="endTimeMs" [ngModel]="toLocal(endTimeMs)" (ngModelChange)="setEndTime($event)" [min]="toLocal(minEndTimeMs)">
+            </mat-form-field>
         </section>
         <mat-form-field class="md-block">
-            <mat-label translate>entity-view.description</mat-label>
-            <textarea matInput [ngModel]="entityView().additionalInfo.description" (ngModelChange)="entityView().additionalInfo.description = $event" rows="2"></textarea>
+            <mat-label>{{ 'entity-view.description' | translate }}</mat-label>
+            <textarea matInput name="description" [ngModel]="ev.additionalInfo?.description" (ngModelChange)="setAdditionalInfo(ev, 'description', $event)" rows="2"></textarea>
         </mat-form-field>
-	</fieldset>
+      </fieldset>
+    }
 </div>

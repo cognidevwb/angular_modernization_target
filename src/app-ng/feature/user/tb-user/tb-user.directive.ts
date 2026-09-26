@@ -1,30 +1,33 @@
-import { Component, forwardRef, inject, model, output } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { UserService } from '../../api/services/user.service';
-import { CommonModule } from '@angular/common';
+import { Component, inject, model, output } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TbDashboardAutocompleteDirective } from '../../components/tb-dashboard-autocomplete/tb-dashboard-autocomplete.directive';
-
-import { inject as injectRoot } from '@angular/core';
-import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';
+import { UserService } from '../../api/services/user.service';
+import { TbDashboardAutocompleteDirective } from '../../components/tb-dashboard-autocomplete/tb-dashboard-autocomplete.directive';
+import { RootState } from '../../../root-state';
+import { joinParentForm } from '../../components/tb-grid/legacy-form';
+
+/** The legacy `ng-pattern` of the user's email. */
+const EMAIL_PATTERN = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\_\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /**
- * Ported from the AngularJS directive `tbUser` (module `thingsboard.user`) in src/app/user/index.js:27.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbUser` (module `thingsboard.user`) in src/app/user/user.directive.js
+ * (template src/app/user/user-fieldset.tpl.html). Its inputs join the form of the page that hosts it:
+ * the grid's details form, or the add-user dialog's form.
  */
 @Component({
   selector: 'tb-user',
   standalone: true,
-  imports: [TranslatePipe, MatInputModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbDashboardAutocompleteDirective)],
+  imports: [TranslatePipe, NgClass, MatInputModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule, FormsModule, TbDashboardAutocompleteDirective],
+  viewProviders: joinParentForm,
   templateUrl: './tb-user.directive.html',
 })
 export class TbUserDirective {
-  protected readonly rootScope = injectRoot(RootState);
+  protected readonly rootScope = inject(RootState);
   readonly user = model<any>();
   readonly isEdit = model<any>();
   readonly theForm = model<any>();
@@ -34,35 +37,30 @@ export class TbUserDirective {
   readonly onDeleteUser = output<any>();
   readonly onSetUserCredentialsEnabled = output<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly userService = inject(UserService);
-  protected readonly element = inject(ElementRef);
-  // TODO(port): template: 2 × ng-message left in place
-  // TODO(port): template: 1 × ng-messages left in place
+  protected readonly emailPattern = EMAIL_PATTERN;
 
-  loginAsUserEnabled: any;
+  loginAsUserEnabled: any = this.userService.isUserTokenAccessEnabled();
 
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
-  constructor() {
-    this.loginAsUserEnabled = this.userService.isUserTokenAccessEnabled();
+  isTenantAdmin(): boolean {
+    return !!this.user() && this.user().authority === 'TENANT_ADMIN';
   }
 
-  isTenantAdmin(...rest: any[]): any {
-    return this.user() && this.user().authority === 'TENANT_ADMIN';
+  isCustomerUser(): boolean {
+    return !!this.user() && this.user().authority === 'CUSTOMER_USER';
   }
 
-  isCustomerUser(...rest: any[]): any {
-    return this.user() && this.user().authority === 'CUSTOMER_USER';
-  }
-
-  isUserCredentialsEnabled(...rest: any[]): any {
-    if (this.user() == null || (this.user === undefined) ||
-        this.user().additionalInfo == null || (this.user().additionalInfo === undefined) ||
-        this.user().additionalInfo.userCredentialsEnabled == null || (this.user().additionalInfo.userCredentialsEnabled === undefined))  {
-        return true;
+  isUserCredentialsEnabled(): boolean {
+    const user = this.user();
+    if (user == null || user.additionalInfo == null || user.additionalInfo.userCredentialsEnabled == null) {
+      return true;
     }
-    return this.user().additionalInfo.userCredentialsEnabled === true;
+    return user.additionalInfo.userCredentialsEnabled === true;
+  }
+
+  /** `ng-model="user.additionalInfo.x"`: creates `additionalInfo` on first write, as AngularJS did. */
+  setAdditionalInfo(user: any, key: string, value: any): void {
+    user.additionalInfo = user.additionalInfo || {};
+    user.additionalInfo[key] = value;
   }
 }

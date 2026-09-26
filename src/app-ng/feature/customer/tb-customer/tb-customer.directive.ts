@@ -1,34 +1,30 @@
-import { Component, forwardRef, inject, model, output } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { ToastService } from '../../services/toast.service';
-import { TranslateService } from '@ngx-translate/core';
+import { Component, ElementRef, effect, inject, model, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TbContactDirective } from '../../components/tb-contact/tb-contact.directive';
-
-import $ from 'jquery';
-import { inject as injectRoot } from '@angular/core';
-import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ClipboardService } from '../../services/clipboard.service';
+import { ToastService } from '../../services/toast.service';
+import { TbContactDirective } from '../../components/tb-contact/tb-contact.directive';
+import { RootState } from '../../../root-state';
+import { joinParentForm } from '../../components/tb-grid/legacy-form';
 
 /**
- * Ported from the AngularJS directive `tbCustomer` (module `thingsboard.customer`) in src/app/customer/index.js:26.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbCustomer` (module `thingsboard.customer`) in src/app/customer/customer.directive.js
+ * (template src/app/customer/customer-fieldset.tpl.html). Its inputs join the form of the page that hosts it:
+ * the grid's details form, or the add-customer dialog's form.
  */
 @Component({
   selector: 'tb-customer',
   standalone: true,
-  imports: [TranslatePipe, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, FormsModule, forwardRef(() => TbContactDirective)],
+  imports: [TranslatePipe, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, FormsModule, TbContactDirective],
+  viewProviders: joinParentForm,
   templateUrl: './tb-customer.directive.html',
 })
 export class TbCustomerDirective {
-  protected readonly rootScope = injectRoot(RootState);
+  protected readonly rootScope = inject(RootState);
   readonly customer = model<any>();
   readonly isEdit = model<any>();
   readonly theForm = model<any>();
@@ -38,32 +34,34 @@ export class TbCustomerDirective {
   readonly onManageDashboards = output<any>();
   readonly onDeleteCustomer = output<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly translate = inject(TranslateService);
   protected readonly toast = inject(ToastService);
+  protected readonly clipboardService = inject(ClipboardService);
   protected readonly element = inject(ElementRef);
-  // TODO(port): template: 1 × ng-message left in place
-  // TODO(port): template: 1 × ng-messages left in place
 
-  isPublic: any = false;
-  $watch: any;
-
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  isPublic = false;
 
   constructor() {
-    this.$watch('customer', (newVal?: any) => {
-            if (newVal) {
-                if (this.customer().additionalInfo) {
-                    this.isPublic = this.customer().additionalInfo.isPublic;
-                } else {
-                    this.isPublic = false;
-                }
-            }
-        });
+    effect(() => {
+      const customer = this.customer();
+      if (customer) {
+        this.isPublic = customer.additionalInfo ? customer.additionalInfo.isPublic : false;
+      }
+    });
   }
 
-  onCustomerIdCopied(...rest: any[]): any {
-    this.toast.showSuccess(this.translate.instant('customer.idCopiedMessage'), 750, $($(this.element.nativeElement)).parent().parent(), 'bottom left');
+  /** `ng-model="customer.additionalInfo.x"`: creates `additionalInfo` on first write, as AngularJS did. */
+  setAdditionalInfo(customer: any, key: string, value: any): void {
+    customer.additionalInfo = customer.additionalInfo || {};
+    customer.additionalInfo[key] = value;
+  }
+
+  onCustomerIdCopied(): void {
+    this.toast.showSuccess(this.translate.instant('customer.idCopiedMessage'), 750, this.element.nativeElement.parentElement?.parentElement, 'bottom left');
+  }
+
+  copyCustomerId(e: any): void {
+    const trigger: any = e.delegateTarget || e.currentTarget;
+    this.clipboardService.copyToClipboard(trigger, this.customer()?.id?.id).then(() => this.onCustomerIdCopied());
   }
 }

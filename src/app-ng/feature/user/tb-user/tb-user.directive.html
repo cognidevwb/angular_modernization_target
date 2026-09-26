@@ -16,67 +16,55 @@
     limitations under the License.
 
 -->
-<button mat-raised-button color="primary" (click)="onSetUserCredentialsEnabled.emit({userCredentialsEnabled: false})" [hidden]="!(!isEdit() && isUserCredentialsEnabled())">{{ 'user.disable-account' |
-    translate }}
-</button>
-<button mat-raised-button color="primary" (click)="onSetUserCredentialsEnabled.emit({userCredentialsEnabled: true})" [hidden]="!(!isEdit() && !isUserCredentialsEnabled())">{{ 'user.enable-account' |
-    translate }}
-</button>
-<button mat-raised-button color="primary" (click)="onDisplayActivationLink.emit({event: $event})" [hidden]="!(!isEdit())">{{
-    'user.display-activation-link' | translate }}
-</button>
-<button mat-raised-button color="primary" (click)="onResendActivation.emit({event: $event})" [hidden]="!(!isEdit())">{{
-    'user.resend-activation' | translate }}
-</button>
-<button mat-raised-button color="primary" (click)="onLoginAsUser.emit({event: $event})" [hidden]="!(!isEdit() && loginAsUserEnabled)">{{
-    (isTenantAdmin() ? 'user.login-as-tenant-admin' : 'user.login-as-customer-user') | translate }}
-</button>
-<button mat-raised-button color="primary" (click)="onDeleteUser.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'user.delete' |
-    translate }}
-</button>
+<button mat-raised-button color="primary" type="button" (click)="onSetUserCredentialsEnabled.emit({userCredentialsEnabled: false})" [hidden]="!(!isEdit() && isUserCredentialsEnabled())">{{ 'user.disable-account' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onSetUserCredentialsEnabled.emit({userCredentialsEnabled: true})" [hidden]="!(!isEdit() && !isUserCredentialsEnabled())">{{ 'user.enable-account' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onDisplayActivationLink.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'user.display-activation-link' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onResendActivation.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'user.resend-activation' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onLoginAsUser.emit({event: $event})" [hidden]="!(!isEdit() && loginAsUserEnabled)">{{ (isTenantAdmin() ? 'user.login-as-tenant-admin' : 'user.login-as-customer-user') | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onDeleteUser.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'user.delete' | translate }}</button>
 
 <div class="md-content md-padding" layout="column">
-    <fieldset [disabled]="rootScope?.loading || !isEdit()">
+    @if (user(); as u) {
+      <fieldset [disabled]="rootScope.loading || !isEdit()">
         <mat-form-field class="md-block">
-            <mat-label translate>user.email</mat-label>
-            <!-- TODO(port): expression not parsed: `/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\_\-0-9]+\.)+[a-zA-Z]{2,}))$/` -->
-            <input matInput required name="email" [pattern]='/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\_\-0-9]+\.)+[a-zA-Z]{2,}))$/' [ngModel]="user().email" (ngModelChange)="user().email = $event">
-            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-            <div ng-messages="theForm()?.email?.$error">
-                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                <div translate ng-message="required">user.email-required</div>
-                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                <div translate ng-message="pattern">user.invalid-email-format</div>
-            </div>
+            <mat-label>{{ 'user.email' | translate }}</mat-label>
+            <input matInput required name="email" [pattern]="emailPattern" [(ngModel)]="u.email" #email="ngModel">
+            @if (email.errors?.['required']) {
+              <mat-error>{{ 'user.email-required' | translate }}</mat-error>
+            }
+            @if (email.errors?.['pattern']) {
+              <mat-error>{{ 'user.invalid-email-format' | translate }}</mat-error>
+            }
         </mat-form-field>
         <mat-form-field class="md-block">
-            <mat-label translate>user.first-name</mat-label>
-            <input matInput name="firstname" [ngModel]="user().firstName" (ngModelChange)="user().firstName = $event">
+            <mat-label>{{ 'user.first-name' | translate }}</mat-label>
+            <input matInput name="firstname" [(ngModel)]="u.firstName">
         </mat-form-field>
         <mat-form-field class="md-block">
-            <mat-label translate>user.last-name</mat-label>
-            <input matInput name="lastname" [ngModel]="user().lastName" (ngModelChange)="user().lastName = $event">
+            <mat-label>{{ 'user.last-name' | translate }}</mat-label>
+            <input matInput name="lastname" [(ngModel)]="u.lastName">
         </mat-form-field>
         <mat-form-field class="md-block">
-            <mat-label translate>user.description</mat-label>
-            <textarea matInput [ngModel]="user().additionalInfo.description" (ngModelChange)="user().additionalInfo.description = $event" rows="2"></textarea>
+            <mat-label>{{ 'user.description' | translate }}</mat-label>
+            <textarea matInput name="description" [ngModel]="u.additionalInfo?.description" (ngModelChange)="setAdditionalInfo(u, 'description', $event)" rows="2"></textarea>
         </mat-form-field>
-        @if (user()?.id) {
+        @if (u.id) {
           <section class="tb-default-dashboard" flex layout="column">
-            <span class="tb-default-dashboard-label" [ngClass]="{'tb-disabled-label': rootScope?.loading || !isEdit()}" translate>user.default-dashboard</span>
+            <span class="tb-default-dashboard-label" [ngClass]="{'tb-disabled-label': rootScope.loading || !isEdit()}">{{ 'user.default-dashboard' | translate }}</span>
             <section flex layout="column" layout-gt-sm="row">
                 @if (isTenantAdmin()) {
-                  <tb-dashboard-autocomplete flex [ngDisabled]="rootScope?.loading || !isEdit()" [(theForm)]="theForm" [ngModel]="user().additionalInfo.defaultDashboardId" (ngModelChange)="user().additionalInfo.defaultDashboardId = $event" [tenantId]="user().tenantId.id" (tenantIdChange)="user().tenantId.id = $event" [selectFirstDashboard]="false">
-                </tb-dashboard-autocomplete>
+                  <tb-dashboard-autocomplete flex name="defaultDashboardId" [ngDisabled]="rootScope.loading || !isEdit()" [theForm]="theForm()" [ngModel]="u.additionalInfo?.defaultDashboardId" (ngModelChange)="setAdditionalInfo(u, 'defaultDashboardId', $event)" [tenantId]="u.tenantId?.id" [selectFirstDashboard]="false">
+                  </tb-dashboard-autocomplete>
                 }
                 @if (isCustomerUser()) {
-                  <tb-dashboard-autocomplete flex [ngDisabled]="rootScope?.loading || !isEdit()" [(theForm)]="theForm" [ngModel]="user().additionalInfo.defaultDashboardId" (ngModelChange)="user().additionalInfo.defaultDashboardId = $event" dashboardsScope="customer" [customerId]="user().customerId.id" (customerIdChange)="user().customerId.id = $event" [selectFirstDashboard]="false">
-                </tb-dashboard-autocomplete>
+                  <tb-dashboard-autocomplete flex name="defaultDashboardId" [ngDisabled]="rootScope.loading || !isEdit()" [theForm]="theForm()" [ngModel]="u.additionalInfo?.defaultDashboardId" (ngModelChange)="setAdditionalInfo(u, 'defaultDashboardId', $event)" dashboardsScope="customer" [customerId]="u.customerId?.id" [selectFirstDashboard]="false">
+                  </tb-dashboard-autocomplete>
                 }
-                <mat-checkbox [disabled]="rootScope?.loading || !isEdit()" flex attr.aria-label="{{ 'user.always-fullscreen' | translate }}" [ngModel]="user().additionalInfo.defaultDashboardFullscreen" (ngModelChange)="user().additionalInfo.defaultDashboardFullscreen = $event">{{ 'user.always-fullscreen' | translate }}
+                <mat-checkbox name="defaultDashboardFullscreen" [disabled]="rootScope.loading || !isEdit()" flex [attr.aria-label]="'user.always-fullscreen' | translate" [ngModel]="u.additionalInfo?.defaultDashboardFullscreen" (ngModelChange)="setAdditionalInfo(u, 'defaultDashboardFullscreen', $event)">{{ 'user.always-fullscreen' | translate }}
                 </mat-checkbox>
             </section>
-        </section>
+          </section>
         }
-    </fieldset>
+      </fieldset>
+    }
 </div>

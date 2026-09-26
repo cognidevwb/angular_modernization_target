@@ -29,7 +29,7 @@ export class ComponentDescriptorService {
     } else {
         var url: any = '/api/components/' + componentType;
         this.http.get(url, null).toPromise().then((response?: any) => {
-            this.componentsByType[componentType] = response.data;
+            this.componentsByType[componentType] = response;
             for (var i: any = 0; i < this.componentsByType[componentType].length; i++) {
                 var component: any = this.componentsByType[componentType][i];
                 this.componentsByClazz[component.clazz] = component;
@@ -58,7 +58,7 @@ export class ComponentDescriptorService {
     } else {
         var url: any = '/api/components?componentTypes=' + componentTypes.join(',');
         this.http.get(url, null).toPromise().then((response?: any) => {
-            var components: any = response.data;
+            var components: any = response;
             for (var i: any = 0; i < components.length; i++) {
                 var component: any = components[i];
                 var componentsList: any = this.componentsByType[component.type];
@@ -85,7 +85,7 @@ export class ComponentDescriptorService {
     } else {
         var url: any = '/api/component/' + componentDescriptorClazz;
         this.http.get(url, null).toPromise().then((response?: any) => {
-            this.componentsByClazz[componentDescriptorClazz] = response.data;
+            this.componentsByClazz[componentDescriptorClazz] = response;
             deferred.resolve(this.componentsByClazz[componentDescriptorClazz]);
         }, function fail() {
             deferred.reject();
@@ -101,7 +101,7 @@ export class ComponentDescriptorService {
     } else {
         var url: any = '/api/components/actions/' + pluginClazz;
         this.http.get(url, null).toPromise().then((response?: any) => {
-            this.actionsByPlugin[pluginClazz] = response.data;
+            this.actionsByPlugin[pluginClazz] = response;
             deferred.resolve(this.actionsByPlugin[pluginClazz]);
         }, function fail() {
             deferred.reject();

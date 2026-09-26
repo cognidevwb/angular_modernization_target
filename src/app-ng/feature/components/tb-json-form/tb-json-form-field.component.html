@@ -1,0 +1,209 @@
+<!-- Ported from the React fields in src/app/components/react (json-form-*.jsx) and react-schema-form's Select / Radios / Help -->
+@if (visible()) {
+@switch (type) {
+  @case ('fieldset') {
+    <div style="padding-top: 20px;">
+      <div class="tb-head-label">{{ form().title }}</div>
+      <div>
+        @for (item of form().items; track $index) {
+          <tb-json-form-field [form]="item" [model]="model()" [ctx]="ctx()" [root]="root()"></tb-json-form-field>
+        }
+      </div>
+    </div>
+  }
+  @case ('help') {
+    <div [class]="form()['htmlClass'] || ''" [innerHTML]="form().description"></div>
+  }
+  @case ('array') {
+    <div>
+      <div class="tb-container">
+        <div class="tb-head-label">{{ form().title }}</div>
+        <ol class="list-group">
+          @for (row of arrayRows; track row.id; let i = $index) {
+            <li class="list-group-item">
+              @if (!form().readonly) {
+                <button mat-icon-button type="button" matTooltip="Remove" (click)="onDelete(i)">
+                  <mat-icon>clear</mat-icon>
+                </button>
+              }
+              @for (item of row.forms; track $index) {
+                <tb-json-form-field [form]="item" [model]="model()" [ctx]="ctx()" [root]="root()"></tb-json-form-field>
+              }
+            </li>
+          }
+        </ol>
+      </div>
+      @if (!form().readonly) {
+        <button mat-raised-button color="primary" type="button" (click)="onAppend()">
+          <mat-icon>add</mat-icon>
+          {{ form()['add'] || 'New' }}
+        </button>
+      }
+    </div>
+  }
+  @case ('checkbox') {
+    <div style="padding-top: 14px;">
+      <mat-checkbox [name]="lastKey()" [checked]="value || false" [disabled]="!!form().readonly"
+                    (change)="onChangeValidate($event.checked)">{{ form().title }}</mat-checkbox>
+    </div>
+  }
+  @case ('number') {
+    <mat-form-field [ngClass]="fieldClass()" [style]="form()['style'] || 'width: 100%'" subscriptSizing="dynamic">
+      <mat-label>{{ form().title }}</mat-label>
+      <input matInput type="number" [value]="value ?? ''" [placeholder]="form().placeholder || ''" [disabled]="!!form().readonly"
+             (input)="onNumberInput($any($event.target).value)" (focus)="focused = true" (blur)="focused = false">
+      @if (error) {
+        <mat-hint class="json-form-error">{{ error }}</mat-hint>
+      }
+    </mat-form-field>
+  }
+  @case ('textarea') {
+    <mat-form-field [ngClass]="fieldClass()" [style]="form()['style'] || 'width: 100%'" subscriptSizing="dynamic">
+      <mat-label>{{ form().title }}</mat-label>
+      <textarea matInput [value]="value ?? ''" [placeholder]="form().placeholder || ''" [disabled]="!!form().readonly"
+                [rows]="form()['rows'] || 2" (input)="onChangeValidate($any($event.target).value)"
+                (focus)="focused = true" (blur)="focused = false"></textarea>
+      @if (error) {
+        <mat-hint class="json-form-error">{{ error }}</mat-hint>
+      }
+    </mat-form-field>
+  }
+  @case ('select') {
+    <mat-form-field style="width: 100%;" subscriptSizing="dynamic">
+      <mat-label>{{ form().title }}</mat-label>
+      <mat-select [value]="value" [disabled]="!!form().readonly" (selectionChange)="onChangeValidate($event.value)">
+        @for (item of form().titleMap || []; track $index) {
+          <mat-option [value]="item.value">{{ item.name }}</mat-option>
+        }
+      </mat-select>
+      @if (error) {
+        <mat-hint class="json-form-error">{{ error }}</mat-hint>
+      }
+    </mat-form-field>
+  }
+  @case ('radios') {
+    <div class="tb-container">
+      <label class="tb-label">{{ form().title }}</label>
+      <mat-radio-group [value]="value" [disabled]="!!form().readonly" (change)="onChangeValidate($event.value)">
+        @for (item of form().titleMap || []; track $index) {
+          <mat-radio-button [value]="item.value">{{ item.name }}</mat-radio-button>
+        }
+      </mat-radio-group>
+    </div>
+  }
+  @case ('rc-select') {
+    <div class="tb-container">
+      <label [ngClass]="fieldClass('tb-label')">{{ form().title }}</label>
+      <mat-form-field [ngClass]="form()['className'] || ''" style="width: 100%;" subscriptSizing="dynamic">
+        <mat-select [value]="value" [multiple]="rcSelectMultiple()" [disabled]="!!form().readonly"
+                    (selectionChange)="onRcSelectChange($event.value)" (openedChange)="focused = $event">
+          @for (item of form().items || []; track $index) {
+            <mat-option [value]="item.value">{{ item.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <div class="json-form-error" [style.opacity]="valid ? '0' : '1'" style="bottom: -5px;">{{ error }}</div>
+    </div>
+  }
+  @case ('date') {
+    <div style="width: 100%; display: block;">
+      <mat-form-field [ngClass]="fieldClass('tb-date-field')" [style]="form()['style'] || 'width: 100%'" subscriptSizing="dynamic">
+        <mat-label>{{ form().title }}</mat-label>
+        <input matInput type="date" [value]="dateText()" [disabled]="!!form().readonly" (change)="onDateInput($any($event.target).value)">
+      </mat-form-field>
+    </div>
+  }
+  @case ('image') {
+    <div class="tb-container">
+      <label [ngClass]="fieldClass('tb-label')">{{ form().title }}</label>
+      <div class="tb-image-select-container">
+        <div class="tb-image-preview-container">
+          @if (value) {
+            <img class="tb-image-preview" [src]="value">
+          } @else {
+            <div>No image selected</div>
+          }
+        </div>
+        <div class="tb-image-clear-container">
+          <button mat-icon-button type="button" class="tb-image-clear-btn" matTooltip="Clear" (click)="onClearImage($event)">
+            <mat-icon>clear</mat-icon>
+          </button>
+        </div>
+        <label class="tb-dropzone" (dragover)="$event.preventDefault()" (drop)="onImageDrop($event)">
+          <div>Drop an image or click to select a file to upload.</div>
+          <input type="file" accept="image/*" style="display: none;" (change)="onImageFile($event)">
+        </label>
+      </div>
+    </div>
+  }
+  @case ('color') {
+    <div style="display: flex;">
+      <div style="display: flex; width: 100%;" (click)="onColorSwatchClick($event)">
+        <div class="tb-color-preview" style="display: inline-block; margin-right: 10px; margin-top: auto; margin-bottom: auto; cursor: pointer;"
+             [style.opacity]="form().readonly ? '0.6' : '1'">
+          <div class="tb-color-result" [style.background]="colorBackground()"></div>
+        </div>
+        <mat-form-field [ngClass]="fieldClass()" style="display: inline-block; width: 100%;" subscriptSizing="dynamic">
+          <mat-label>{{ form().title }}</mat-label>
+          <input matInput readonly [value]="colorText()" [placeholder]="form().placeholder || ''" [disabled]="!!form().readonly">
+          @if (error) {
+            <mat-hint class="json-form-error">{{ error }}</mat-hint>
+          }
+        </mat-form-field>
+      </div>
+      <button mat-icon-button type="button" matTooltip="Clear" (click)="onClearColor($event)">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
+  }
+  @case ('icon') {
+    <div style="display: flex;">
+      <div style="display: flex; width: 100%;" (click)="onIconContainerClick($event)">
+        <button mat-icon-button type="button" style="display: inline-block; margin-right: 10px; margin-top: 16px; margin-bottom: auto; cursor: pointer; border: solid 1px rgba(0, 0, 0, .27);">
+          <mat-icon>{{ icon || 'more_horiz' }}</mat-icon>
+        </button>
+        <mat-form-field [ngClass]="fieldClass()" style="display: inline-block; width: 100%;" subscriptSizing="dynamic">
+          <mat-label>{{ form().title }}</mat-label>
+          <input matInput readonly [value]="icon" [placeholder]="form().placeholder || ''" [disabled]="!!form().readonly">
+        </mat-form-field>
+      </div>
+      <button mat-icon-button type="button" style="margin-top: 15px;" matTooltip="Clear" (click)="onClearIcon($event)">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
+  }
+  @case ('javascript') { <ng-container [ngTemplateOutlet]="aceField"></ng-container> }
+  @case ('json') { <ng-container [ngTemplateOutlet]="aceField"></ng-container> }
+  @case ('html') { <ng-container [ngTemplateOutlet]="aceField"></ng-container> }
+  @case ('css') { <ng-container [ngTemplateOutlet]="aceField"></ng-container> }
+  @default {
+    <mat-form-field [ngClass]="fieldClass()" [style]="form()['style'] || 'width: 100%'" subscriptSizing="dynamic">
+      <mat-label>{{ form().title }}</mat-label>
+      <input matInput [type]="type === 'password' ? 'password' : 'text'" [value]="value ?? ''" [placeholder]="form().placeholder || ''"
+             [disabled]="!!form().readonly" (input)="onChangeValidate($any($event.target).value)"
+             (focus)="focused = true" (blur)="focused = false">
+      @if (error) {
+        <mat-hint class="json-form-error">{{ error }}</mat-hint>
+      }
+    </mat-form-field>
+  }
+}
+}
+
+<ng-template #aceField>
+  <div class="tb-container" [class.fullscreen-form-field]="isFull">
+    <label [ngClass]="fieldClass('tb-label')">{{ form().title }}</label>
+    <div class="json-form-ace-editor">
+      <div class="title-panel">
+        <label>{{ aceOptions.mode }}</label>
+        <button mat-button type="button" class="tidy-button" (click)="onTidy()">Tidy</button>
+        <button mat-button type="button" class="tidy-button" (click)="onToggleFull()">{{ isFull ? 'Exit fullscreen' : 'Fullscreen' }}</button>
+      </div>
+      <div [ui-ace]="aceOptions" [readonly]="!!form().readonly"
+           [ngModel]="value" (ngModelChange)="onChangeValidate($event)"
+           style="width: 100%;" [ngStyle]="form()['style'] || {}" [style.height]="isFull ? '100%' : '150px'"
+           (focusin)="focused = true" (focusout)="focused = false"></div>
+    </div>
+    <div class="json-form-error" [style.opacity]="valid ? '0' : '1'">{{ error }}</div>
+  </div>
+</ng-template>

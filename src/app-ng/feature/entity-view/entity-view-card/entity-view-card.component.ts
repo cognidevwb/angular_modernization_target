@@ -1,38 +1,35 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { types } from '../../common/constants/types';
 
 /**
- * Ported from the AngularJS controller `EntityViewCardController` (module `thingsboard.entityView`) in src/app/entity-view/index.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Ported from the AngularJS controller `EntityViewCardController` (module `thingsboard.entityView`) in src/app/entity-view/index.js:28,
+ * with its card template src/app/entity-view/entity-view-card.tpl.html. Rendered by tb-grid for each entity view.
  */
 @Component({
   selector: 'entity-view-card',
   standalone: true,
-  template: '', // TODO(port): this controller's screen template is the templateUrl of its route in the legacy router
+  imports: [TranslatePipe],
+  template: `
+    <div flex layout="column" style="margin-top: -10px;">
+      <div style="text-transform: uppercase; padding-bottom: 5px;">{{ item()?.type }}</div>
+      <div class="tb-card-description">{{ item()?.additionalInfo?.description }}</div>
+      <div style="padding-top: 5px;" class="tb-small" [hidden]="!isAssignedToCustomer()">{{ 'entity-view.assignedToCustomer' | translate }} '{{ item()?.assignedCustomer?.title }}'</div>
+    </div>
+  `,
 })
 export class EntityViewCardComponent {
-  protected readonly typesRef: any = types;
+  readonly item = input<any>();
+  readonly parentCtl = input<any>();
 
-  types: any;
-  item: any;
-  parentCtl: any;
-
-  constructor() {
-    this.types = this.typesRef;
+  isAssignedToCustomer(): boolean {
+    const item = this.item();
+    return !!(item && item.customerId && this.parentCtl()?.entityViewsScope === 'tenant' &&
+      item.customerId.id != types.id.nullUid && !item.assignedCustomer?.isPublic);
   }
 
-  isAssignedToCustomer(...rest: any[]): any {
-    if (this.item && this.item.customerId && this.parentCtl.entityViewsScope === 'tenant' &&
-        this.item.customerId.id != this.types.id.nullUid && !this.item.assignedCustomer.isPublic) {
-        return true;
-    }
-    return false;
-  }
-
-  isPublic(...rest: any[]): any {
-    if (this.item && this.item.assignedCustomer && this.parentCtl.entityViewsScope === 'tenant' && this.item.assignedCustomer.isPublic) {
-        return true;
-    }
-    return false;
+  isPublic(): boolean {
+    const item = this.item();
+    return !!(item && item.assignedCustomer && this.parentCtl()?.entityViewsScope === 'tenant' && item.assignedCustomer.isPublic);
   }
 }

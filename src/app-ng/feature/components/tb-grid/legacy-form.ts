@@ -11,13 +11,15 @@ export interface LegacyForm {
   readonly $valid: boolean;
   readonly $dirty: boolean;
   readonly $pristine: boolean;
+  /** The legacy `<form name="…">` (the add dialogs' `theForm`), when the wrapper was given one. */
+  readonly $name: string | undefined;
   $setPristine(): void;
   $setDirty(): void;
   readonly [control: string]: any;
 }
 
-/** Wraps `form` so code written against `FormController` keeps working. */
-export function legacyForm(form: NgForm): LegacyForm {
+/** Wraps `form` so code written against `FormController` keeps working; `name` is its legacy `$name`. */
+export function legacyForm(form: NgForm, name?: string): LegacyForm {
   const control = (name: string) => {
     const c = form.controls[name];
     return c ? { $error: c.errors ?? {}, $invalid: c.invalid, $valid: c.valid, $dirty: c.dirty, $touched: c.touched } : undefined;
@@ -33,6 +35,8 @@ export function legacyForm(form: NgForm): LegacyForm {
           return !!form.dirty;
         case '$pristine':
           return !!form.pristine;
+        case '$name':
+          return name;
         case '$setPristine':
           return () => form.form.markAsPristine();
         case '$setDirty':

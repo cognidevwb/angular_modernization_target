@@ -14,8 +14,18 @@ import { LegacyTranslateCompiler } from './core/translate-compiler';
 // The legacy app.config, as Angular providers: html5 URLs (the Router's
 // default), the global interceptor, the static-file translations with en_US as
 // the fallback (angular-translate's useStaticFilesLoader / fallbackLanguage),
-// and the `mdi` icon set ($mdIconProvider.iconSet). Every route passes the
-// guard that app.run's $stateChangeStart handler was.
+// the `mdi` icon set ($mdIconProvider.iconSet) and the two extra shapes
+// (ngMdIconServiceProvider.addShape). Every route passes the guard that
+// app.run's $stateChangeStart handler was.
+
+/** app.config's `ngMdIconServiceProvider.addShape(...)`: icons the datasource key chips show (`svgIcon="alpha-a-circle-outline"`). */
+const EXTRA_ICON_SHAPES: Record<string, string> = {
+  'alpha-a-circle-outline':
+    '<path d="M11,7H13A2,2 0 0,1 15,9V17H13V13H11V17H9V9A2,2 0 0,1 11,7M11,9V11H13V9H11M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2Z" />',
+  'alpha-e-circle-outline':
+    '<path d="M9,7H15V9H11V11H15V13H11V15H15V17H9V7M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4Z" />',
+};
+
 function preferredLanguage(): string {
   const stored = localStorage.getItem('NG_TRANSLATE_LANG_KEY');
   if (stored) {
@@ -41,9 +51,13 @@ export const appConfig: ApplicationConfig = {
       lang: preferredLanguage(),
     }),
     provideAppInitializer(() => {
-      inject(MatIconRegistry)
+      const sanitizer = inject(DomSanitizer);
+      const icons = inject(MatIconRegistry)
         .setDefaultFontSetClass('material-icons')
-        .addSvgIconSet(inject(DomSanitizer).bypassSecurityTrustResourceUrl(PUBLIC_PATH + 'svg/mdi.svg'));
+        .addSvgIconSet(sanitizer.bypassSecurityTrustResourceUrl(PUBLIC_PATH + 'svg/mdi.svg'));
+      for (const [name, path] of Object.entries(EXTRA_ICON_SHAPES)) {
+        icons.addSvgIconLiteral(name, sanitizer.bypassSecurityTrustHtml(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">${path}</svg>`));
+      }
     }),
   ],
 };

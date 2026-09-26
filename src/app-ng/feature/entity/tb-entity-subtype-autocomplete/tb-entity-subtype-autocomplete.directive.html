@@ -16,23 +16,28 @@
     limitations under the License.
 
 -->
-<mat-form-field class="tb-entity-subtype-autocomplete-form-field">
+
+<mat-form-field class="tb-entity-subtype-autocomplete-form-field" style="width: 100%;">
+    <mat-label>{{ entitySubtypeText | translate }}</mat-label>
     <input matInput
            type="text"
            name="subType"
-           [required]="tbRequired()"
-           [disabled]="disabled()"
-           [(ngModel)]="subTypeSearchText"
+           [required]="!!tbRequired()"
+           [disabled]="!!disabled()"
+           [ngModel]="subTypeSearchText"
            [placeholder]="selectEntitySubtypeText | translate"
            [matAutocomplete]="subTypeAuto"
            (ngModelChange)="subTypeSearchTextChanged($event)"
-           (blur)="subType = subTypeSearchText">
-    <mat-autocomplete #subTypeAuto="matAutocomplete" class="tb-entity-subtype-autocomplete" (optionSelected)="subType = $event.option.value">
-        <mat-option *ngFor="let item of subTypeOptions" [value]="item">
+           (focus)="subTypeSearchTextChanged(subTypeSearchText)"
+           (blur)="setSubType(subTypeSearchText)">
+    <mat-autocomplete #subTypeAuto="matAutocomplete" class="tb-entity-subtype-autocomplete" (optionSelected)="setSubType($event.option.value)">
+        @for (item of subTypeOptions; track $index) {
+          <mat-option [value]="item">
             <div class="tb-entity-subtype-item">
-                <span [innerHTML]="item"></span>
+                <span>{{ item }}</span>
             </div>
-        </mat-option>
+          </mat-option>
+        }
     </mat-autocomplete>
-    <mat-error *ngIf="theForm()?.subType?.errors?.required">{{ entitySubtypeRequiredText | translate }}</mat-error>
+    <mat-error>{{ entitySubtypeRequiredText | translate }}</mat-error>
 </mat-form-field>

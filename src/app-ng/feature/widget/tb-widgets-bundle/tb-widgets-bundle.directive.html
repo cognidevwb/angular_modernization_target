@@ -16,19 +16,19 @@
     limitations under the License.
 
 -->
-<button mat-raised-button color="primary" (click)="onExportWidgetsBundle.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'widgets-bundle.export' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onDeleteWidgetsBundle.emit({event: $event})" [hidden]="!(!isEdit() && !isReadOnly())">{{ 'widgets-bundle.delete' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onExportWidgetsBundle.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'widgets-bundle.export' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onDeleteWidgetsBundle.emit({event: $event})" [hidden]="!(!isEdit() && !isReadOnly())">{{ 'widgets-bundle.delete' | translate }}</button>
 
 <div class="md-content md-padding" layout="column">
-    <fieldset [disabled]="rootScope?.loading || !isEdit()">
+    @if (widgetsBundle(); as wb) {
+      <fieldset [disabled]="rootScope.loading || !isEdit()">
         <mat-form-field class="md-block">
-            <mat-label translate>widgets-bundle.title</mat-label>
-            <input matInput required name="title" [ngModel]="widgetsBundle().title" (ngModelChange)="widgetsBundle().title = $event">
-            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-            <div ng-messages="theForm()?.title?.$error">
-                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                <div translate ng-message="required">widgets-bundle.title-required</div>
-            </div>
+            <mat-label>{{ 'widgets-bundle.title' | translate }}</mat-label>
+            <input matInput required name="title" [(ngModel)]="wb.title" #title="ngModel">
+            @if (title.errors?.['required']) {
+              <mat-error>{{ 'widgets-bundle.title-required' | translate }}</mat-error>
+            }
         </mat-form-field>
-    </fieldset>
+      </fieldset>
+    }
 </div>

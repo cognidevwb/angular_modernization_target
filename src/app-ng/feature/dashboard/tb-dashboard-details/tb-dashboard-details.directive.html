@@ -16,46 +16,45 @@
     limitations under the License.
 
 -->
-<button mat-raised-button color="primary" (click)="onExportDashboard.emit({event: $event})" [hidden]="!(!isEdit() && dashboardScope() === 'tenant')">{{ 'dashboard.export' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onMakePublic.emit({event: $event})" [hidden]="!(!isEdit() && dashboardScope() === 'tenant' && !dashboard()?.publicCustomerId)">{{ 'dashboard.make-public' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onMakePrivate.emit({event: $event})" [hidden]="!(!isEdit() && ((dashboardScope() === 'tenant' && dashboard()?.publicCustomerId ||
+<button mat-raised-button color="primary" type="button" (click)="onExportDashboard.emit({event: $event})" [hidden]="!(!isEdit() && dashboardScope() === 'tenant')">{{ 'dashboard.export' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onMakePublic.emit({event: $event})" [hidden]="!(!isEdit() && dashboardScope() === 'tenant' && !dashboard()?.publicCustomerId)">{{ 'dashboard.make-public' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onMakePrivate.emit({event: $event})" [hidden]="!(!isEdit() && ((dashboardScope() === 'tenant' && dashboard()?.publicCustomerId ||
 		   						dashboardScope() === 'customer' && customerId() == dashboard()?.publicCustomerId)))">{{ 'dashboard.make-private' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onManageAssignedCustomers.emit({event: $event})" [hidden]="!(!isEdit() && dashboardScope() === 'tenant')">{{ 'dashboard.manage-assigned-customers' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onUnassignFromCustomer.emit({event: $event})" [hidden]="!(!isEdit() && dashboardScope() === 'customer' && customerId() != dashboard()?.publicCustomerId)">{{ 'dashboard.unassign-from-customer' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onDeleteDashboard.emit({event: $event})" [hidden]="!(!isEdit() && dashboardScope() === 'tenant')">{{ 'dashboard.delete' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onManageAssignedCustomers.emit({event: $event})" [hidden]="!(!isEdit() && dashboardScope() === 'tenant')">{{ 'dashboard.manage-assigned-customers' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onUnassignFromCustomer.emit({event: $event})" [hidden]="!(!isEdit() && dashboardScope() === 'customer' && customerId() != dashboard()?.publicCustomerId)">{{ 'dashboard.unassign-from-customer' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onDeleteDashboard.emit({event: $event})" [hidden]="!(!isEdit() && dashboardScope() === 'tenant')">{{ 'dashboard.delete' | translate }}</button>
 <div class="md-content md-padding" layout="column">
 	<mat-form-field class="md-block" [hidden]="!(!isEdit() && dashboard()?.assignedCustomersText && dashboardScope() === 'tenant')">
-		<mat-label translate>dashboard.assignedToCustomers</mat-label>
-		<input matInput [ngModel]="dashboard().assignedCustomersText" (ngModelChange)="dashboard().assignedCustomersText = $event" disabled>
+		<mat-label>{{ 'dashboard.assignedToCustomers' | translate }}</mat-label>
+		<input matInput [value]="dashboard()?.assignedCustomersText ?? ''" disabled>
 	</mat-form-field>
 	<div layout="column" [hidden]="!(!isEdit() && ((dashboardScope() === 'tenant' && dashboard()?.publicCustomerId ||
 		   						               dashboardScope() === 'customer' && customerId() == dashboard()?.publicCustomerId)))">
-		<tb-social-share-panel style="padding-bottom: 10px;" shareTitle="{{ 'dashboard.socialshare-title' | translate:{dashboardTitle: dashboard()?.title} }}" shareText="{{ 'dashboard.socialshare-text' | translate:{dashboardTitle: dashboard()?.title} }}" shareLink="{{ publicLink }}" shareHashTags="thingsboard, iot">
+		<tb-social-share-panel style="padding-bottom: 10px;" [shareTitle]="'dashboard.socialshare-title' | translate:{dashboardTitle: dashboard()?.title}" [shareText]="'dashboard.socialshare-text' | translate:{dashboardTitle: dashboard()?.title}" [shareLink]="publicLink" shareHashTags="thingsboard, iot">
 		</tb-social-share-panel>
 		<div layout="row">
 			<mat-form-field class="md-block" flex>
-				<mat-label translate>dashboard.public-link</mat-label>
-				<input matInput [(ngModel)]="publicLink" disabled>
+				<mat-label>{{ 'dashboard.public-link' | translate }}</mat-label>
+				<input matInput [value]="publicLink ?? ''" disabled>
 			</mat-form-field>
-			<button mat-icon-button style="margin-top: 14px;" ngclipboard attr.data-clipboard-text="{{ publicLink }}" ngclipboard-success="onPublicLinkCopied(e)" attr.matTooltip="{{ 'dashboard.copy-public-link' | translate }}" matTooltipPosition="above">
+			<button mat-icon-button type="button" style="margin-top: 14px;" (click)="copyPublicLink($event)" [matTooltip]="'dashboard.copy-public-link' | translate" matTooltipPosition="above">
 				<mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
-				
 			</button>
 		</div>
 	</div>
-	<fieldset [disabled]="rootScope?.loading || !isEdit()">
+	@if (dashboard(); as d) {
+	  <fieldset [disabled]="rootScope.loading || !isEdit()">
 		<mat-form-field class="md-block">
-			<mat-label translate>dashboard.title</mat-label>
-			<input matInput required name="title" [ngModel]="dashboard().title" (ngModelChange)="dashboard().title = $event">	
-			<!-- TODO(port): ng-messages has no one-to-one Angular form -->
-			<div ng-messages="theForm()?.title?.$error">
-	      		<!-- TODO(port): ng-message has no one-to-one Angular form -->
-	      		<div translate ng-message="required">dashboard.title-required</div>
-	    	</div>				
+			<mat-label>{{ 'dashboard.title' | translate }}</mat-label>
+			<input matInput required name="title" [(ngModel)]="d.title" #title="ngModel">
+			@if (title.errors?.['required']) {
+			  <mat-error>{{ 'dashboard.title-required' | translate }}</mat-error>
+			}
 		</mat-form-field>
 		<mat-form-field class="md-block">
-			<mat-label translate>dashboard.description</mat-label>
-			<textarea matInput [ngModel]="dashboard().configuration.description" (ngModelChange)="dashboard().configuration.description = $event" rows="2"></textarea>
+			<mat-label>{{ 'dashboard.description' | translate }}</mat-label>
+			<textarea matInput name="description" [ngModel]="d.configuration?.description" (ngModelChange)="setDescription(d, $event)" rows="2"></textarea>
 		</mat-form-field>
-	</fieldset>
+	  </fieldset>
+	}
 </div>

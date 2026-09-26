@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
-import { inject as injectRoot } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { FormsModule, NgForm } from '@angular/forms';
 import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -11,8 +10,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /**
- * Ported from the AngularJS controller `SelectTargetLayoutController` (module `thingsboard.dashboard.layouts`) in src/app/dashboard/layouts/index.js:20.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Ported from the AngularJS controller `SelectTargetLayoutController` (module `thingsboard.dashboard.layouts`) in
+ * src/app/dashboard/layouts/select-target-layout.controller.js: closes with the chosen layout id ('main' / 'right'),
+ * or with nothing when cancelled.
  */
 @Component({
   selector: 'select-target-layout',
@@ -21,25 +21,15 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './select-target-layout.component.html',
 })
 export class SelectTargetLayoutComponent {
-  protected readonly rootScope = injectRoot(RootState);
-  protected readonly dialog = inject(MatDialog);
+  protected readonly rootScope = inject(RootState);
+  protected readonly dialogRef = inject<MatDialogRef<SelectTargetLayoutComponent, any>>(MatDialogRef);
 
-  theForm: any;
-
-  constructor() {
-    this.cancel = this.cancel;
-    this.selectLayout = this.selectLayout;
+  cancel(): void {
+    this.dialogRef.close();
   }
 
-  cancel = (...rest: any[]): any => {
-    (this.dialog as any).cancel();
-  };
-
-  selectLayout = ($event?: any, layoutId?: any, ...rest: any[]): any => {
-    this.theForm.$setPristine();
-    (this.dialog as any).hide(layoutId);
-  };
-
-  save = (...rest: any[]): any => {
-  };
+  selectLayout(theForm: NgForm, layoutId: string): void {
+    theForm.form.markAsPristine();
+    this.dialogRef.close(layoutId);
+  }
 }

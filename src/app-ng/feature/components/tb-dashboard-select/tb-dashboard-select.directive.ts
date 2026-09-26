@@ -1,134 +1,116 @@
-import { Component, inject, input, model } from '@angular/core';
-import { BreakpointObserver } from '@angular/cdk/layout';
-import { DOCUMENT } from '@angular/common';
-import { DashboardService } from '../../api/services/dashboard.service';
-import { ElementRef } from '@angular/core';
+import { Component, ElementRef, inject, Injector, input, model, OnInit } from '@angular/core';
 import { Overlay } from '@angular/cdk/overlay';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslatePipe } from '@ngx-translate/core';
+import { DashboardService } from '../../api/services/dashboard.service';
 import { UserService } from '../../api/services/user.service';
 import { types } from '../../common/constants/types';
-
-import $ from 'jquery';
 import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
+import { DashboardSelectPanelComponent } from '../dashboard-select-panel/dashboard-select-panel.component';
+import { MdPanelRef, mdPanelPlacement, openMdPanel } from '../md-panel/md-panel';
 
 /**
- * Ported from the AngularJS directive `tbDashboardSelect` (module `thingsboard.directives.dashboardSelect`) in src/app/components/dashboard-select.directive.js:31.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbDashboardSelect` (src/app/components/dashboard-select.directive.js)
+ * with its template dashboard-select.tpl.html: a select of the tenant's (or the customer's) dashboards on wide
+ * screens, a button opening the dashboard select panel on narrow ones. `[(ngModel)]` is the dashboard id.
  */
 @Component({
   selector: 'tb-dashboard-select',
   standalone: true,
-  template: '', // TODO(port): no template found
+  imports: [MatButtonModule, MatIconModule, MatSelectModule, MatTooltipModule, TranslatePipe],
+  template: `
+    <mat-select hide-xs hide-sm hide-md [required]="!!tbRequired()" [disabled]="!!disabled()"
+                [value]="dashboardId" (selectionChange)="onDashboardIdChange($event.value)"
+                [attr.aria-label]="'dashboard.dashboard' | translate">
+      @for (dashboard of dashboards; track dashboard.id.id) {
+        <mat-option [value]="dashboard.id.id">{{ dashboard.title }}</mat-option>
+      }
+    </mat-select>
+    <section hide-gt-md class="tb-dashboard-select">
+      <button mat-icon-button type="button" [attr.aria-label]="'dashboard.select-dashboard' | translate"
+              (click)="openDashboardSelectPanel($event)"
+              [matTooltip]="'dashboard.select-dashboard' | translate" matTooltipPosition="above">
+        <mat-icon [attr.aria-label]="'dashboard.select-dashboard' | translate" class="material-icons">dashboards</mat-icon>
+      </button>
+    </section>
+  `,
   providers: ngModelProviders(TbDashboardSelectDirective),
 })
-export class TbDashboardSelectDirective extends NgModelController {
+export class TbDashboardSelectDirective extends NgModelController implements OnInit {
   readonly dashboardsScope = input<any>();
   readonly customerId = model<any>();
-  readonly tbRequired = model<any>();
+  readonly tbRequired = model<any>(false);
   readonly disabled = model<any>(undefined, { alias: 'ngDisabled' });
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  protected readonly document = inject(DOCUMENT);
-  protected readonly breakpoints = inject(BreakpointObserver);
   protected readonly overlay = inject(Overlay);
-  // TODO(port): '$templateCache' — templateUrl on the component
+  protected readonly injector = inject(Injector);
   protected readonly dashboardService = inject(DashboardService);
   protected readonly userService = inject(UserService);
   protected readonly element = inject(ElementRef);
 
   dashboardId: any = null;
-  protected pageLink: any = {limit: 100};
-  protected promise: any;
-  $watch: any;
-  dashboards: any;
-  panelRef: any;
+  dashboards: any[] = [];
+  private readonly pageLink: any = { limit: 100 };
+  private panelRef?: MdPanelRef;
 
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
-
-  constructor() {
-    super();
-    this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
+  /** The legacy link loaded the dashboards once the scope's bindings were set. */
+  ngOnInit(): void {
+    let promise: Promise<any>;
     if (this.dashboardsScope() === 'customer' || this.userService.getAuthority() === 'CUSTOMER_USER') {
-            if (this.customerId() && this.customerId() != types.id.nullUid) {
-                this.promise = this.dashboardService.getCustomerDashboards(this.customerId(), this.pageLink, {ignoreLoading: true});
-            } else {
-                this.promise = Promise.resolve({data: []});
-            }
-        } else {
-            this.promise = this.dashboardService.getTenantDashboards(this.pageLink, {ignoreLoading: true});
-        }
-    this.promise.then((result?: any) => {
-            this.dashboards = result.data;
-        }, () => {
-            this.dashboards = [];
-        });
-    this.$watch('dashboardId', () => {
-            this.updateView();
-        });
+      const customerId = this.customerId();
+      if (customerId && customerId != types.id.nullUid) {
+        promise = this.dashboardService.getCustomerDashboards(customerId, this.pageLink, { ignoreLoading: true });
+      } else {
+        promise = Promise.resolve({ data: [] });
+      }
+    } else {
+      promise = this.dashboardService.getTenantDashboards(this.pageLink, { ignoreLoading: true });
+    }
+    promise.then((result: any) => {
+      this.dashboards = result.data;
+    }, () => {
+      this.dashboards = [];
+    });
   }
 
   override $render(): void {
-    if (this.$viewValue) {
-        this.dashboardId = this.$viewValue;
-    } else {
-        this.dashboardId = null;
+    this.dashboardId = this.$viewValue ? this.$viewValue : null;
+  }
+
+  /** `scope.$watch('dashboardId', …)`. */
+  onDashboardIdChange(dashboardId: any): void {
+    if (dashboardId !== this.dashboardId) {
+      this.dashboardId = dashboardId;
+      this.updateView();
     }
   }
 
-  updateView(...rest: any[]): any {
+  updateView(): void {
     this.$setViewValue(this.dashboardId);
   }
 
-  openDashboardSelectPanel(event?: any, ...rest: any[]): any {
-    let vm = this;
+  openDashboardSelectPanel(_event?: any): void {
     if (this.disabled()) {
-        return;
+      return;
     }
-    var position: any;
-    var panelHeight: any = window.matchMedia('min-height: 350px').matches ? 250 : 150;
-    var panelWidth: any = 300;
-    var offset: any = this.element.nativeElement.getBoundingClientRect();
-    var bottomY: any = offset.bottom - $(window).scrollTop(); //eslint-disable-line
-    var leftX: any = offset.left - $(window).scrollLeft(); //eslint-disable-line
-    var yPosition: any;
-    var xPosition: any;
-    if (bottomY + panelHeight > $( window ).height()) { //eslint-disable-line
-        yPosition = (this.overlay as any).yPosition.ABOVE;
-    } else {
-        yPosition = (this.overlay as any).yPosition.BELOW;
-    }
-    if (leftX + panelWidth > $( window ).width()) { //eslint-disable-line
-        xPosition = (this.overlay as any).xPosition.CENTER;
-    } else {
-        xPosition = (this.overlay as any).xPosition.ALIGN_START;
-    }
-    position = (this.overlay as any).newPanelPosition()
-        .relativeTo($(this.element.nativeElement))
-        .addPanelPosition(xPosition, yPosition);
-    var config: any = {
-        attachTo: $(this.document.body),
-        controller: 'DashboardSelectPanelController',
-        controllerAs: 'vm',
-        templateUrl: '',
-        panelClass: 'tb-dashboard-select-panel',
-        position: position,
-        fullscreen: false,
-        locals: {
-            dashboards: this.dashboards,
-            dashboardId: this.dashboardId,
-            onDashboardSelected: (dashboardId?: any, ...rest: any[]) => {
-                if (this.panelRef) {
-                    this.panelRef.close();
-                }
-                this.dashboardId = dashboardId;
-            }
+    const host: HTMLElement = this.element.nativeElement;
+    const panelHeight = window.matchMedia('(min-height: 350px)').matches ? 250 : 150;
+    this.panelRef = openMdPanel(this.overlay, this.injector, {
+      origin: host,
+      component: DashboardSelectPanelComponent,
+      panelClass: 'tb-dashboard-select-panel',
+      ...mdPanelPlacement(host, 300, panelHeight, 'CENTER'),
+      locals: {
+        dashboards: this.dashboards,
+        dashboardId: this.dashboardId,
+        onDashboardSelected: (dashboardId: any) => {
+          this.panelRef?.close();
+          this.onDashboardIdChange(dashboardId);
         },
-        openFrom: event,
-        clickOutsideToClose: true,
-        escapeToClose: true,
-        focusOnOpen: false
-    };
-    (this.overlay as any).open(config).then((result?: any) => {
-        this.panelRef = result;
+      },
     });
   }
 }

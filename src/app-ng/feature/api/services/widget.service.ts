@@ -284,7 +284,7 @@ export class WidgetService {
     if (!this.allWidgetsBundles) {
         var url: any = '/api/widgetsBundles';
         firstValueFrom(this.http.get(url, config)).then((response?: any) => {
-            this.allWidgetsBundles = response.data;
+            this.allWidgetsBundles = response;
             this.systemWidgetsBundles = [];
             this.tenantWidgetsBundles = [];
             this.allWidgetsBundles = [...this.allWidgetsBundles].sort((a: any, b: any) => {
@@ -415,7 +415,7 @@ export class WidgetService {
         this.invalidateWidgetsBundleCache();
         deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }
@@ -427,7 +427,7 @@ export class WidgetService {
     firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response);
+        deferred.reject(response?.error);
     });
 
     return deferred.promise;
@@ -446,7 +446,7 @@ export class WidgetService {
                     widgetsBundle.tenantId.id === types.id.nullUid);
                 deferred.resolve();
             }, function fail(response?: any) {
-                deferred.reject(response);
+                deferred.reject(response?.error);
             });
         },
         function fail() {
@@ -462,9 +462,9 @@ export class WidgetService {
     var url: any = '/api/widgetTypes?isSystem=' + (isSystem ? 'true' : 'false') +
                 '&bundleAlias='+bundleAlias;
     firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }

@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/jsonform/jsonform.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/jsonform/jsonform.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -20,27 +20,26 @@
 
     <div layout="column" flex="45">
         <h3>The Generated Form</h3>
-        <form name="ngform" layout="column" layout-padding>
-            <tb-json-form [(schema)]="schema" [(form)]="form" [(model)]="model" [readonly]="isFormReadonly === 'true'" [(formControl)]="ngform">
+        <form #ngform="ngForm" layout="column" layout-padding>
+            <tb-json-form [(schema)]="schema" [(form)]="form" [(model)]="model" [readonly]="isFormReadonly === 'true'" [formControl]="ngform">
             </tb-json-form>
         </form>
-        <!-- TODO(port): ng-true-value has no one-to-one Angular form; ng-false-value has no one-to-one Angular form -->
-        <mat-checkbox ng-true-value="'true'" ng-false-value="'false'" [(ngModel)]="isFormReadonly">Readonly</mat-checkbox>
+        <mat-checkbox [ngModel]="isFormReadonly === 'true'" (ngModelChange)="isFormReadonly = $event ? 'true' : 'false'">Readonly</mat-checkbox>
         <div flex layout="column">
-            <div [hidden]="!(ngform?.$valid)"><em>Form is valid</em></div>
-            <div [hidden]="!(ngform?.$invalid)"><em>Form is not valid</em></div>
-            <div [hidden]="!(ngform?.$dirty)"><em>Form is dirty</em></div>
+            <div [hidden]="!ngform.valid"><em>Form is valid</em></div>
+            <div [hidden]="!ngform.invalid"><em>Form is not valid</em></div>
+            <div [hidden]="!ngform.dirty"><em>Form is dirty</em></div>
             <h3>Model</h3>
-            <button mat-button (click)="resetModel()">Reset model</button>
+            <button mat-button type="button" (click)="resetModel()">Reset model</button>
             <pre>{{pretty()}}</pre>
         </div>
     </div>
 
     <div layout="column" flex>
         <h3>Form</h3>
-        <div ui-ace="{ mode:'json'}" [ngClass]="{red: !itParsesForm}" [(ngModel)]="formJson" class="form-control form"></div>
+        <div [ui-ace]="aceJsonOptions" [ngClass]="{red: !itParsesForm}" [(ngModel)]="formJson" class="form-control form"></div>
         <h3>Schema</h3>
-        <div ui-ace="{ mode:'json'}" [ngClass]="{red: !itParses}" [(ngModel)]="schemaJson" class="form-control schema"></div>
+        <div [ui-ace]="aceJsonOptions" [ngClass]="{red: !itParses}" [(ngModel)]="schemaJson" class="form-control schema"></div>
 
     </div>
 

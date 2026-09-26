@@ -1,22 +1,22 @@
-import { Component, inject, model } from '@angular/core';
-import { ElementRef } from '@angular/core';
-
-import $ from 'jquery';
+import { Component, ComponentRef, DestroyRef, effect, ElementRef, inject, model, reflectComponentType, untracked, viewChild,
+  ViewContainerRef } from '@angular/core';
 import { isEqual } from 'lodash-es';
 import { linkAttrs } from '../../../legacy-link';
 import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
-
-// Helpers at the legacy file's top level, beside the registration (as written).
-const SNAKE_CASE_REGEXP: any = /[A-Z]/g;
+import { RuleNodeConfigRegistry } from './rule-node-config-registry';
 
 /**
- * Ported from the AngularJS directive `tbRuleNodeDefinedConfig` (module `thingsboard.ruleChain`) in src/app/rulechain/index.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbRuleNodeDefinedConfig` (src/app/rulechain/rulenode-defined-config.directive.js).
+ * The legacy link `$compile`d `<config-directive rule-node-id ng-model="configuration" ng-required ng-readonly>` for the
+ * node definition's `configDirective` (the `rule-node-directive` attribute); here that name resolves through
+ * RuleNodeConfigRegistry to a registered component (a form control: `writeValue` / `registerOnChange`, or a
+ * `configuration` model) or to a custom element (`configuration` property, `change` / `configurationChange` events).
+ * `[(ngModel)]` is the node configuration.
  */
 @Component({
   selector: 'tb-rule-node-defined-config',
   standalone: true,
-  template: '', // TODO(port): no template found
+  template: '<ng-container #outlet></ng-container>',
   providers: ngModelProviders(TbRuleNodeDefinedConfigDirective),
 })
 export class TbRuleNodeDefinedConfigDirective extends NgModelController {
@@ -24,49 +24,112 @@ export class TbRuleNodeDefinedConfigDirective extends NgModelController {
   readonly required = model<any>(undefined, { alias: 'ngRequired' });
   readonly readonly = model<any>(undefined, { alias: 'ngReadonly' });
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
   protected readonly element = inject(ElementRef);
+  private readonly registry = inject(RuleNodeConfigRegistry);
+  private readonly outlet = viewChild('outlet', { read: ViewContainerRef });
 
-  $new: any;
-  $watch: any;
   configuration: any;
-  ruleNodeConfigScope: any;
-
-  // TODO(port): angular.equals — angular.equals: a deep comparison; write one or use a library
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  private componentRef?: ComponentRef<any>;
+  private customElement?: HTMLElement & Record<string, any>;
+  private loadedDirective?: string;
 
   constructor() {
     super();
-    this.attrs.$observe('ruleNodeDirective', () => {
-            this.loadTemplate();
-        });
-    this.$watch('configuration', (newVal?: any, prevVal?: any) => {
-            if (!isEqual(newVal, prevVal)) {
-                this.$setViewValue(this.configuration);
-            }
-        });
+    const stopObserving = this.attrs.$observe('ruleNodeDirective', () => this.loadTemplate());
+    inject(DestroyRef).onDestroy(() => {
+      stopObserving();
+      this.destroyConfig();
+    });
+    effect(() => {
+      if (this.outlet()) {
+        untracked(() => this.loadTemplate());
+      }
+    });
+    effect(() => {
+      const bound = { ruleNodeId: this.ruleNodeId(), required: this.required(), readonly: this.readonly() };
+      untracked(() => {
+        for (const [name, value] of Object.entries(bound)) {
+          this.setConfigProperty(name, value);
+        }
+      });
+    });
   }
 
   override $render(): void {
     this.configuration = this.$viewValue;
+    this.writeConfiguration();
   }
 
-  loadTemplate(...rest: any[]): any {
-    if (this.ruleNodeConfigScope) {
-        this.ruleNodeConfigScope.$destroy();
+  /** `scope.$watch('configuration', …)`: an edit in the config UI goes out through ngModel. */
+  private onConfigurationChange(configuration: any): void {
+    if (!isEqual(configuration, this.configuration)) {
+      this.configuration = configuration;
+      this.$setViewValue(this.configuration);
     }
-    var directive: any = this.snake_case(this.attrs.ruleNodeDirective, '-');
-    var template: any = `<${directive} rule-node-id="ruleNodeId" ng-model="configuration" ng-required="required" ng-readonly="readonly"></${directive}>`;
-    $(this.element.nativeElement).html(template);
-    this.ruleNodeConfigScope = this.$new();
-    // TODO(port): $compile has no Angular equivalent — compose with the matching Angular component instead
   }
 
-  snake_case(name?: any, separator?: any, ...rest: any[]): any {
-    separator = separator || '_';
-    return name.replace(SNAKE_CASE_REGEXP, function(letter?: any, pos?: any) {
-        return (pos ? separator : '') + letter.toLowerCase();
-    });
+  loadTemplate(): void {
+    const outlet = this.outlet();
+    const directive: string | undefined = this.attrs.ruleNodeDirective;
+    if (!outlet || !directive || directive === this.loadedDirective) {
+      return;
+    }
+    this.destroyConfig();
+    this.loadedDirective = directive;
+    const component = this.registry.component(directive);
+    if (component) {
+      this.componentRef = outlet.createComponent(component);
+      const instance = this.componentRef.instance;
+      if (typeof instance.registerOnChange === 'function') {
+        instance.registerOnChange((value: any) => this.onConfigurationChange(value));
+      } else if (instance.configurationChange?.subscribe) {
+        instance.configurationChange.subscribe((value: any) => this.onConfigurationChange(value));
+      }
+    } else {
+      const tag = this.registry.customElementTag(directive);
+      if (tag) {
+        const el = document.createElement(tag) as HTMLElement & Record<string, any>;
+        const listener = (event: Event) => this.onConfigurationChange((event as CustomEvent).detail ?? el['configuration']);
+        el.addEventListener('change', listener);
+        el.addEventListener('configurationChange', listener);
+        this.element.nativeElement.appendChild(el);
+        this.customElement = el;
+      }
+    }
+    this.setConfigProperty('ruleNodeId', this.ruleNodeId());
+    this.setConfigProperty('required', this.required());
+    this.setConfigProperty('readonly', this.readonly());
+    this.writeConfiguration();
+  }
+
+  private writeConfiguration(): void {
+    const instance = this.componentRef?.instance;
+    if (instance && typeof instance.writeValue === 'function') {
+      instance.writeValue(this.configuration);
+    } else {
+      this.setConfigProperty('configuration', this.configuration);
+    }
+  }
+
+  private setConfigProperty(name: string, value: any): void {
+    if (this.componentRef) {
+      const mirror = reflectComponentType(this.componentRef.componentType);
+      if (mirror && mirror.inputs.some((i) => i.templateName === name)) {
+        this.componentRef.setInput(name, value);
+      } else {
+        this.componentRef.instance[name] = value;
+      }
+    } else if (this.customElement) {
+      this.customElement[name] = value;
+    }
+  }
+
+  private destroyConfig(): void {
+    this.componentRef?.destroy();
+    this.componentRef = undefined;
+    this.customElement?.remove();
+    this.customElement = undefined;
+    this.loadedDirective = undefined;
   }
 
   /** The link's `attrs`: the host element's attributes, read live. */

@@ -37,9 +37,9 @@ export class AttributeService {
     }
     this.http.get(url, config).toPromise().then(function success(response?: any) {
         var result: any = [];
-        if (response.data) {
+        if (response) {
             if (query) {
-                var dataKeys: any = response.data;
+                var dataKeys: any = response;
                 var lowercaseQuery: any = query.toLowerCase();
                 for (var i: any=0; i<dataKeys.length;i++) {
                     if (dataKeys[i].toLowerCase().indexOf(lowercaseQuery) === 0) {
@@ -47,12 +47,12 @@ export class AttributeService {
                     }
                 }
             } else {
-                result = response.data;
+                result = response;
             }
         }
         deferred.resolve(result);
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }
@@ -67,9 +67,9 @@ export class AttributeService {
         url += '&limit=' + limit;
     }
     this.http.get(url, null).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }
@@ -81,7 +81,7 @@ export class AttributeService {
         url += '?keys=' + keys;
     }
     this.http.get(url, config).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -146,7 +146,7 @@ export class AttributeService {
     } else {
         var url: any = '/api/plugins/telemetry/' + entityType + '/' + entityId + '/values/attributes/' + attributeScope;
     this.http.get(url, config).toPromise().then((response?: any) => {
-        this.processAttributes(response.data, query, deferred, successCallback);
+        this.processAttributes(response, query, deferred, successCallback);
     }, function fail() {
         deferred.reject();
     });
@@ -247,14 +247,14 @@ export class AttributeService {
         if (deleteEntityAttributesPromise) {
             deleteEntityAttributesPromise.then(
                 function success() {
-                    deferred.resolve(response.data);
+                    deferred.resolve(response);
                 },
                 function fail() {
                     deferred.reject();
                 }
             )
         } else {
-            deferred.resolve(response.data);
+            deferred.resolve(response);
         }
     }, function fail() {
         deferred.reject();
@@ -296,14 +296,14 @@ export class AttributeService {
         if (deleteEntityTimeseriesPromise) {
             deleteEntityTimeseriesPromise.then(
                 function success() {
-                    deferred.resolve(response.data);
+                    deferred.resolve(response);
                 },
                 function fail() {
                     deferred.reject();
                 }
             )
         } else {
-            deferred.resolve(response.data);
+            deferred.resolve(response);
         }
     }, function fail() {
         deferred.reject();

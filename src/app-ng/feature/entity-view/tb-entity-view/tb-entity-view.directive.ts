@@ -1,45 +1,46 @@
-import { Component, forwardRef, inject, model, output } from '@angular/core';
-import { ClipboardService } from '../../services/clipboard.service';
-import { CustomerService } from '../../api/services/customer.service';
-import { ElementRef } from '@angular/core';
-import { EntityService } from '../../api/services/entity.service';
-import { EntityViewService } from '../../api/services/entity-view.service';
-import { ToastService } from '../../services/toast.service';
-import { TranslateService } from '@ngx-translate/core';
-import { types } from '../../common/constants/types';
-import { CommonModule } from '@angular/common';
+import { Component, ElementRef, effect, inject, model, output } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TbEntitySubtypeAutocompleteDirective } from '../../entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive';
-import { TbEntitySelectDirective } from '../../entity/tb-entity-select/tb-entity-select.directive';
-
-import $ from 'jquery';
-import { inject as injectRoot } from '@angular/core';
-import { RootState } from '../../../root-state';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { TranslatePipe } from '@ngx-translate/core';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatChipsModule, MatChipInputEvent } from '@angular/material/chips';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { $q } from '../../../core/q';
-import { ENTER, COMMA } from '@angular/cdk/keycodes';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $templateCache: any;
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ClipboardService } from '../../services/clipboard.service';
+import { CustomerService } from '../../api/services/customer.service';
+import { EntityService } from '../../api/services/entity.service';
+import { ToastService } from '../../services/toast.service';
+import { types } from '../../common/constants/types';
+import { TbEntitySubtypeAutocompleteDirective } from '../../entity/tb-entity-subtype-autocomplete/tb-entity-subtype-autocomplete.directive';
+import { TbEntitySelectDirective } from '../../entity/tb-entity-select/tb-entity-select.directive';
+import { RootState } from '../../../root-state';
+import { joinParentForm } from '../../components/tb-grid/legacy-form';
+
+type AttributeScope = 'cs' | 'sh' | 'ss';
+
+/** `;` — the third chip separator of the legacy `separatorKeys`. */
+const SEMICOLON = 186;
 
 /**
- * Ported from the AngularJS directive `tbEntityView` (module `thingsboard.entityView`) in src/app/entity-view/index.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbEntityView` (module `thingsboard.entityView`) in src/app/entity-view/entity-view.directive.js
+ * (template src/app/entity-view/entity-view-fieldset.tpl.html). Its inputs join the form of the page that hosts it:
+ * the grid's details form, or the add-entity-view dialog's form. The md-chips key lists are mat-chip-grids (a change marks
+ * the form dirty, as md-chips' ng-model did); the mdp date + time pickers of the start / end are `datetime-local` inputs
+ * keeping the legacy clamping (start ≤ end).
  */
 @Component({
   selector: 'tb-entity-view',
   standalone: true,
-  imports: [TranslatePipe, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, MatExpansionModule, MatChipsModule, MatAutocompleteModule, CommonModule, FormsModule, forwardRef(() => TbEntitySubtypeAutocompleteDirective), forwardRef(() => TbEntitySelectDirective)],
+  imports: [TranslatePipe, NgClass, MatInputModule, MatIconModule, MatFormFieldModule, MatButtonModule, MatExpansionModule, MatChipsModule, MatAutocompleteModule, FormsModule, TbEntitySubtypeAutocompleteDirective, TbEntitySelectDirective],
+  viewProviders: joinParentForm,
   templateUrl: './tb-entity-view.directive.html',
 })
 export class TbEntityViewDirective {
-  protected readonly rootScope = injectRoot(RootState);
+  protected readonly rootScope = inject(RootState);
   readonly entityView = model<any>();
   readonly isEdit = model<any>();
   readonly entityViewScope = model<any>();
@@ -49,209 +50,194 @@ export class TbEntityViewDirective {
   readonly onUnassignFromCustomer = output<any>();
   readonly onDeleteEntityView = output<any>();
 
-  // TODO(port): '$q' — use Promise, or an Observable
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly toast = inject(ToastService);
   protected readonly translate = inject(TranslateService);
-  // TODO(port): '$mdConstant' — key codes: @angular/cdk/keycodes
-  // TODO(port): '$mdExpansionPanel' — a mat-expansion-panel, reached with viewChild
-  protected readonly typesRef: any = types;
   protected readonly clipboardService = inject(ClipboardService);
-  protected readonly entityViewService = inject(EntityViewService);
   protected readonly customerService = inject(CustomerService);
   protected readonly entityService = inject(EntityService);
   protected readonly element = inject(ElementRef);
-  // TODO(port): elements not resolved to a component: md-expansion-panel-group, md-expansion-panel, md-expansion-panel-collapsed, md-expansion-panel-icon, md-expansion-panel-expanded, md-expansion-panel-header, md-expansion-panel-content, md-chips, md-autocomplete, mdp-date-picker, mdp-time-picker
-  // TODO(port): template: 4 × md-autocomplete left in place
-  // TODO(port): template: 4 × md-chips left in place
-  // TODO(port): template: 2 × md-expansion-panel left in place
-  // TODO(port): template: 2 × md-expansion-panel-collapsed left in place
-  // TODO(port): template: 2 × md-expansion-panel-content left in place
-  // TODO(port): template: 2 × md-expansion-panel-expanded left in place
-  // TODO(port): template: 1 × md-expansion-panel-group left in place
-  // TODO(port): template: 2 × md-expansion-panel-header left in place
-  // TODO(port): template: 4 × md-expansion-panel-icon left in place
-  // TODO(port): template: 1 × ng-message left in place
-  // TODO(port): template: 1 × ng-messages left in place
 
-  attributesPanelId: any = (Math.random()*1000).toFixed(0);
-  timeseriesPanelId: any = (Math.random()*1000).toFixed(0);
-  types: any;
-  isAssignedToCustomer: any = false;
-  isPublic: any = false;
+  types: any = types;
+  isAssignedToCustomer = false;
+  isPublic = false;
   assignedCustomer: any = null;
-  allowedEntityTypes: any;
-  protected semicolon: any = 186;
-  separatorKeys: any;
-  protected attributeDataKeySearchText: string = '';
-  protected selectedAttributeDataKey: any = null;
+  allowedEntityTypes: any = [types.entityType.device, types.entityType.asset];
+  separatorKeys: number[] = [ENTER, COMMA, SEMICOLON];
+  protected attributeSearchText: Record<AttributeScope, string> = { cs: '', sh: '', ss: '' };
   protected attributeDataKeys: any[] = [];
-  protected timeseriesDataKeySearchText: string = '';
-  protected selectedTimeseriesDataKey: any = null;
+  protected timeseriesDataKeySearchText = '';
   protected timeseriesDataKeys: any[] = [];
-  $watch: any;
-  endTimeMs: any;
-  maxStartTimeMs: any;
-  minEndTimeMs: any;
-  startTimeMs: any;
-
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  startTimeMs: Date | null = null;
+  endTimeMs: Date | null = null;
+  maxStartTimeMs: Date | null = null;
+  minEndTimeMs: Date | null = null;
 
   constructor() {
-    this.types = this.typesRef;
-    this.allowedEntityTypes = [this.typesRef.entityType.device, this.typesRef.entityType.asset];
-    this.separatorKeys = [ENTER, COMMA, this.semicolon];
-    this.$watch('entityView', (newVal?: any) => {
-            if (newVal) {
-                if (this.entityView().customerId && this.entityView().customerId.id !== this.typesRef.id.nullUid) {
-                    this.isAssignedToCustomer = true;
-                    this.customerService.getShortCustomerInfo(this.entityView().customerId.id).then(
-                        (customer?: any) => {
-                            this.assignedCustomer = customer;
-                            this.isPublic = customer.isPublic;
-                        }
-                    );
-                } else {
-                    this.isAssignedToCustomer = false;
-                    this.isPublic = false;
-                    this.assignedCustomer = null;
-                }
-                if (this.entityView().startTimeMs > 0) {
-                    this.startTimeMs = new Date(this.entityView().startTimeMs);
-                } else {
-                    this.startTimeMs = null;
-                }
-                if (this.entityView().endTimeMs > 0) {
-                    this.endTimeMs = new Date(this.entityView().endTimeMs);
-                } else {
-                    this.endTimeMs = null;
-                }
-                if (!this.entityView().keys) {
-                    this.entityView().keys = {};
-                    this.entityView().keys.timeseries = [];
-                    this.entityView().keys.attributes = {};
-                    this.entityView().keys.attributes.ss = [];
-                    this.entityView().keys.attributes.cs = [];
-                    this.entityView().keys.attributes.sh = [];
-                }
-            }
-        });
-    this.$watch('startTimeMs', (newDate?: any) => {
-            if (newDate) {
-                if (newDate.getTime() > this.maxStartTimeMs) {
-                    this.startTimeMs = structuredClone(this.maxStartTimeMs);
-                }
-            }
-            this.updateMinMaxDates();
-        });
-    this.$watch('endTimeMs', (newDate?: any) => {
-            if (newDate) {
-                if (newDate.getTime() < this.minEndTimeMs) {
-                    this.endTimeMs = structuredClone(this.minEndTimeMs);
-                }
-            }
-            this.updateMinMaxDates();
-        });
-  }
-
-  dataKeysSearch(searchText?: any, type?: any, ...rest: any[]): any {
-    var deferred: any = $q.defer();
-    this.entityService.getEntityKeys(this.entityView().entityId.entityType, this.entityView().entityId.id, searchText, type, {ignoreLoading: true}).then(
-        function success(keys?: any) {
-            deferred.resolve(keys);
-        },
-        function fail() {
-            deferred.resolve([]);
-        }
-    );
-    return deferred.promise;
-
-  }
-
-  searchAttributeDataKeys(searchText: string): void {
-    this.attributeDataKeySearchText = searchText;
-    this.dataKeysSearch(searchText, this.types.dataKeyType.attribute).then((keys: any) => {
-      this.attributeDataKeys = keys;
+    effect(() => {
+      const entityView = this.entityView();
+      if (entityView) {
+        this.entityViewChanged(entityView);
+      }
     });
+  }
+
+  /** The legacy `scope.$watch('entityView', …)`. */
+  private entityViewChanged(entityView: any): void {
+    if (entityView.customerId && entityView.customerId.id !== types.id.nullUid) {
+      this.isAssignedToCustomer = true;
+      this.customerService.getShortCustomerInfo(entityView.customerId.id).then((customer?: any) => {
+        this.assignedCustomer = customer;
+        this.isPublic = customer.isPublic;
+      });
+    } else {
+      this.isAssignedToCustomer = false;
+      this.isPublic = false;
+      this.assignedCustomer = null;
+    }
+    this.startTimeMs = entityView.startTimeMs > 0 ? new Date(entityView.startTimeMs) : null;
+    this.endTimeMs = entityView.endTimeMs > 0 ? new Date(entityView.endTimeMs) : null;
+    if (!entityView.keys) {
+      entityView.keys = { timeseries: [], attributes: { ss: [], cs: [], sh: [] } };
+    }
+    this.updateMinMaxDates();
+  }
+
+  dataKeysSearch(searchText: string, type: any): Promise<any[]> {
+    const entityView = this.entityView();
+    if (!entityView?.entityId) {
+      return Promise.resolve([]);
+    }
+    return Promise.resolve(
+      this.entityService.getEntityKeys(entityView.entityId.entityType, entityView.entityId.id, searchText, type, { ignoreLoading: true }),
+    ).then(
+      (keys: any) => keys,
+      () => [],
+    );
+  }
+
+  searchAttributeDataKeys(target: AttributeScope, searchText: string): void {
+    this.attributeSearchText[target] = searchText;
+    this.dataKeysSearch(searchText, types.dataKeyType.attribute).then((keys) => (this.attributeDataKeys = keys));
   }
 
   searchTimeseriesDataKeys(searchText: string): void {
     this.timeseriesDataKeySearchText = searchText;
-    this.dataKeysSearch(searchText, this.types.dataKeyType.timeseries).then((keys: any) => {
-      this.timeseriesDataKeys = keys;
-    });
+    this.dataKeysSearch(searchText, types.dataKeyType.timeseries).then((keys) => (this.timeseriesDataKeys = keys));
   }
 
-  addAttributeKey(target: 'cs' | 'sh' | 'ss', item: any): void {
-    const name = item && item.name !== undefined ? item.name : item;
-    if (name) {
-      this.entityView().keys.attributes[target].push(name);
-    }
-    this.attributeDataKeySearchText = '';
+  addAttributeKey(target: AttributeScope, item: any): void {
+    this.pushKey(this.entityView().keys.attributes[target], item && item.name !== undefined ? item.name : item);
+    this.attributeSearchText[target] = '';
   }
 
-  removeAttributeKey(target: 'cs' | 'sh' | 'ss', item: any): void {
-    const keys = this.entityView().keys.attributes[target];
-    const index = keys.indexOf(item);
-    if (index >= 0) {
-      keys.splice(index, 1);
-    }
-  }
-
-  addAttributeKeyFromInput(target: 'cs' | 'sh' | 'ss', event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value) {
-      this.entityView().keys.attributes[target].push(value);
-    }
+  addAttributeKeyFromInput(target: AttributeScope, event: MatChipInputEvent): void {
+    this.pushKey(this.entityView().keys.attributes[target], (event.value || '').trim());
     event.chipInput?.clear();
-    this.attributeDataKeySearchText = '';
+    this.attributeSearchText[target] = '';
+  }
+
+  removeAttributeKey(target: AttributeScope, item: any): void {
+    this.removeKey(this.entityView().keys.attributes[target], item);
   }
 
   addTimeseriesKey(item: any): void {
-    const name = item && item.name !== undefined ? item.name : item;
-    if (name) {
-      this.entityView().keys.timeseries.push(name);
-    }
+    this.pushKey(this.entityView().keys.timeseries, item && item.name !== undefined ? item.name : item);
+    this.timeseriesDataKeySearchText = '';
+  }
+
+  addTimeseriesKeyFromInput(event: MatChipInputEvent): void {
+    this.pushKey(this.entityView().keys.timeseries, (event.value || '').trim());
+    event.chipInput?.clear();
     this.timeseriesDataKeySearchText = '';
   }
 
   removeTimeseriesKey(item: any): void {
-    const keys = this.entityView().keys.timeseries;
+    this.removeKey(this.entityView().keys.timeseries, item);
+  }
+
+  /** md-chips kept its list unique and marked the form dirty on a change. */
+  private pushKey(keys: any[], name: any): void {
+    if (name && keys.indexOf(name) === -1) {
+      keys.push(name);
+      this.theForm()?.$setDirty();
+    }
+  }
+
+  private removeKey(keys: any[], item: any): void {
     const index = keys.indexOf(item);
     if (index >= 0) {
       keys.splice(index, 1);
+      this.theForm()?.$setDirty();
     }
   }
 
-  addTimeseriesKeyFromInput(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value) {
-      this.entityView().keys.timeseries.push(value);
+  /** The legacy `scope.$watch('startTimeMs', …)`: a start after the end is moved to the end. */
+  setStartTime(value: string): void {
+    let date = this.fromLocal(value);
+    if (date && this.maxStartTimeMs && date.getTime() > this.maxStartTimeMs.getTime()) {
+      date = new Date(this.maxStartTimeMs.getTime());
     }
-    event.chipInput?.clear();
-    this.timeseriesDataKeySearchText = '';
+    this.startTimeMs = date;
+    this.updateMinMaxDates();
   }
 
-  updateMinMaxDates(...rest: any[]): any {
-    if (this.entityView()) {
-        if (this.endTimeMs) {
-            this.maxStartTimeMs = structuredClone(new Date(this.endTimeMs.getTime()));
-            this.entityView().endTimeMs = this.endTimeMs.getTime();
-        } else {
-            this.entityView().endTimeMs = 0;
-        }
-        if (this.startTimeMs) {
-            this.minEndTimeMs = structuredClone(new Date(this.startTimeMs.getTime()));
-            this.entityView().startTimeMs = this.startTimeMs.getTime();
-        } else {
-            this.entityView().startTimeMs = 0;
-        }
+  /** The legacy `scope.$watch('endTimeMs', …)`: an end before the start is moved to the start. */
+  setEndTime(value: string): void {
+    let date = this.fromLocal(value);
+    if (date && this.minEndTimeMs && date.getTime() < this.minEndTimeMs.getTime()) {
+      date = new Date(this.minEndTimeMs.getTime());
+    }
+    this.endTimeMs = date;
+    this.updateMinMaxDates();
+  }
+
+  updateMinMaxDates(): void {
+    const entityView = this.entityView();
+    if (entityView) {
+      if (this.endTimeMs) {
+        this.maxStartTimeMs = new Date(this.endTimeMs.getTime());
+        entityView.endTimeMs = this.endTimeMs.getTime();
+      } else {
+        entityView.endTimeMs = 0;
+      }
+      if (this.startTimeMs) {
+        this.minEndTimeMs = new Date(this.startTimeMs.getTime());
+        entityView.startTimeMs = this.startTimeMs.getTime();
+      } else {
+        entityView.startTimeMs = 0;
+      }
     }
   }
 
-  onEntityViewIdCopied(...rest: any[]): any {
-    this.toast.showSuccess(this.translate.instant('entity-view.idCopiedMessage'), 750, $($(this.element.nativeElement)).parent().parent(), 'bottom left');
+  /** A Date as a `datetime-local` value (local time, minutes precision), '' for none. */
+  toLocal(date: Date | null): string {
+    if (!date) {
+      return '';
+    }
+    const pad = (n: number): string => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  private fromLocal(value: string): Date | null {
+    if (!value) {
+      return null;
+    }
+    const date = new Date(value);
+    return isNaN(date.getTime()) ? null : date;
+  }
+
+  /** `ng-model="entityView.additionalInfo.x"`: creates `additionalInfo` on first write, as AngularJS did. */
+  setAdditionalInfo(entityView: any, key: string, value: any): void {
+    entityView.additionalInfo = entityView.additionalInfo || {};
+    entityView.additionalInfo[key] = value;
+  }
+
+  onEntityViewIdCopied(): void {
+    this.toast.showSuccess(this.translate.instant('entity-view.idCopiedMessage'), 750, this.element.nativeElement.parentElement?.parentElement, 'bottom left');
+  }
+
+  copyEntityViewId(e: any): void {
+    const trigger: any = e.delegateTarget || e.currentTarget;
+    this.clipboardService.copyToClipboard(trigger, this.entityView()?.id?.id).then(() => this.onEntityViewIdCopied());
   }
 }

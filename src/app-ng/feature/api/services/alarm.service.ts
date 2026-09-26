@@ -1,3 +1,4 @@
+import { firstValueFrom } from 'rxjs';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UtilsService } from '../../common/services/utils.service';
@@ -50,8 +51,8 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    (this.http.get(url, config) as any).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.get(url, config)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -65,8 +66,8 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    (this.http.get(url, config) as any).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.get(url, config)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -80,8 +81,8 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    (this.http.post(url, alarm, config) as any).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.post(url, alarm, config)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -95,8 +96,8 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    (this.http.post(url, null, config) as any).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.post(url, null, config)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -110,8 +111,8 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    (this.http.post(url, null, config) as any).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.post(url, null, config)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -125,8 +126,8 @@ export class AlarmService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    (this.http.delete(url, config) as any).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.delete(url, config)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -159,8 +160,8 @@ export class AlarmService {
         url += '&ascOrder=' + (ascOrder ? 'true' : 'false');
     }
 
-    (this.http.get(url, config) as any).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.get(url, config)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -176,8 +177,8 @@ export class AlarmService {
     } else if (alarmStatus) {
         url += '?status=' + alarmStatus;
     }
-    (this.http.get(url, config) as any).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.get(url, config)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });

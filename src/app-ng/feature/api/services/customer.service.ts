@@ -45,7 +45,7 @@ export class CustomerService {
     this.http.get(url, config).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }
@@ -56,7 +56,7 @@ export class CustomerService {
     this.http.get(url, null).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }
@@ -139,7 +139,7 @@ export class CustomerService {
     this.http.post(url, customer).toPromise().then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }
@@ -150,7 +150,7 @@ export class CustomerService {
     this.http.delete(url).toPromise().then(function success() {
         deferred.resolve();
     }, function fail(response?: any) {
-        deferred.reject(response);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }

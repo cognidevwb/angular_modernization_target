@@ -1,46 +1,37 @@
-import { Component, forwardRef, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { CustomerService } from '../../api/services/customer.service';
-import { DOCUMENT } from '@angular/common';
-import { EntityViewService } from '../../api/services/entity-view.service';
+import { Component, Type, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgClass } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { RootState } from '../../../root-state';
-import { Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { MatTabsModule } from '@angular/material/tabs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
+import { CustomerService } from '../../api/services/customer.service';
+import { EntityViewService } from '../../api/services/entity-view.service';
 import { UserService } from '../../api/services/user.service';
 import { types } from '../../common/constants/types';
-import { CommonModule } from '@angular/common';
-import { TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
-import { TbHelpDirective } from '../../help/tb-help/tb-help.directive';
+import { RootState } from '../../../root-state';
+import { GridConfig, TbGridDirective } from '../../components/tb-grid/tb-grid.directive';
+import { TbGridHelpButtonComponent } from '../../components/tb-grid/grid-help-button.component';
+import { showConfirm } from '../../rulechain/confirm-dialog/confirm-dialog.component';
 import { TbEntityViewDirective } from '../tb-entity-view/tb-entity-view.directive';
 import { TbAttributeTableDirective } from '../../entity/tb-attribute-table/tb-attribute-table.directive';
 import { TbAlarmTableDirective } from '../../alarm/tb-alarm-table/tb-alarm-table.directive';
 import { TbEventTableDirective } from '../../event/tb-event-table/tb-event-table.directive';
 import { TbRelationTableDirective } from '../../entity/tb-relation-table/tb-relation-table.directive';
 import { TbAuditLogTableDirective } from '../../audit/tb-audit-log-table/tb-audit-log-table.directive';
-
-import $ from 'jquery';
-// TODO(port): 'addEntityViewTemplate' — the add-entity-view dialog needs porting to its own component; kept as an untyped placeholder
-declare let addEntityViewTemplate: any;
-// TODO(port): 'entityViewCard' — the entity-view card template needs porting to its own component; kept as an untyped placeholder
-declare let entityViewCard: any;
-// TODO(port): 'assignToCustomerTemplate' — the assign-to-customer dialog needs porting to its own component; kept as an untyped placeholder
-declare let assignToCustomerTemplate: any;
-// TODO(port): 'addEntityViewsToCustomerTemplate' — the add-entity-views-to-customer dialog needs porting to its own component; kept as an untyped placeholder
-declare let addEntityViewsToCustomerTemplate: any;
-import { MatTabsModule } from '@angular/material/tabs';
-import { TranslatePipe } from '@ngx-translate/core';
-import { $q } from '../../../core/q';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
+import { EntityViewCardComponent } from '../entity-view-card/entity-view-card.component';
+import { AssignEntityViewToCustomerComponent } from '../assign-entity-view-to-customer/assign-entity-view-to-customer.component';
+import { AddEntityViewsToCustomerComponent } from '../add-entity-views-to-customer/add-entity-views-to-customer.component';
+import { AddEntityViewDialogComponent } from './add-entity-view-dialog.component';
 
 /**
- * Ported from the AngularJS controller `EntityViewController` (module `thingsboard.entityView`) in src/app/entity-view/index.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 4 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS controller `EntityViewController` (module `thingsboard.entityView`) in src/app/entity-view/entity-view.controller.js
+ * (template src/app/entity-view/entity-views.tpl.html): the tenant's / a customer's entity views in tb-grid.
  */
 @Component({
   selector: 'entity-view',
   standalone: true,
-  imports: [TranslatePipe, MatTabsModule, CommonModule, forwardRef(() => TbGridDirective), forwardRef(() => TbHelpDirective), forwardRef(() => TbEntityViewDirective), forwardRef(() => TbAttributeTableDirective), forwardRef(() => TbAlarmTableDirective), forwardRef(() => TbEventTableDirective), forwardRef(() => TbRelationTableDirective), forwardRef(() => TbAuditLogTableDirective)],
+  imports: [TranslatePipe, NgClass, MatTabsModule, TbGridDirective, TbGridHelpButtonComponent, TbEntityViewDirective, TbAttributeTableDirective, TbAlarmTableDirective, TbEventTableDirective, TbRelationTableDirective, TbAuditLogTableDirective],
   templateUrl: './entity-view.component.html',
 })
 export class EntityViewComponent {
@@ -50,459 +41,305 @@ export class EntityViewComponent {
   protected readonly customerService = inject(CustomerService);
   protected readonly router = inject(Router);
   protected readonly route = inject(ActivatedRoute);
-  protected readonly document = inject(DOCUMENT);
   protected readonly dialog = inject(MatDialog);
-  // TODO(port): '$q' — use Promise, or an Observable
   protected readonly translate = inject(TranslateService);
-  protected readonly typesRef: any = types;
-  // TODO(port): elements not resolved to a component: details-buttons
+
+  readonly entityViewCard: Type<unknown> = EntityViewCardComponent;
+  readonly addEntityViewDialog: Type<unknown> = AddEntityViewDialogComponent;
 
   protected customerId: any;
-  protected entityViewActionsList: any = [];
-  protected entityViewGroupActionsList: any = [];
-  types: any;
-  entityViewGridConfig: any;
+  protected entityViewActionsList: any[] = [];
+  protected entityViewGroupActionsList: any[] = [];
+  types: any = types;
+  entityViewGridConfig: GridConfig;
   entityViewsScope: any;
   customerEntityViewsTitle: any;
-  grid: any;
+  grid!: TbGridDirective;
   topIndex: any;
 
-  // TODO(port): $q.defer — $q.defer: return new Promise((resolve, reject) => …) instead
-  // TODO(port): $rootScope.$broadcast — a root scope event: call the service that listens
-  // TODO(port): $stateParams — $stateParams: this.route.snapshot.params
-  // TODO(port): `success` — a named function expression that calls itself; as an arrow it has no name: name it as a method
-
   constructor() {
-    this.customerId = this.route.snapshot.params['customerId'];
-    this.types = this.typesRef;
+    const snapshot = this.route.snapshot;
+    this.customerId = snapshot.params['customerId'];
     this.entityViewGridConfig = {
-        deleteItemTitleFunc: this.deleteEntityViewTitle,
-        deleteItemContentFunc: this.deleteEntityViewText,
-        deleteItemsTitleFunc: this.deleteEntityViewsTitle,
-        deleteItemsActionTitleFunc: this.deleteEntityViewsActionTitle,
-        deleteItemsContentFunc: this.deleteEntityViewsText,
+      deleteItemTitleFunc: this.deleteEntityViewTitle,
+      deleteItemContentFunc: this.deleteEntityViewText,
+      deleteItemsTitleFunc: this.deleteEntityViewsTitle,
+      deleteItemsActionTitleFunc: this.deleteEntityViewsActionTitle,
+      deleteItemsContentFunc: this.deleteEntityViewsText,
 
-        saveItemFunc: this.saveEntityView,
+      saveItemFunc: this.saveEntityView,
 
-        getItemTitleFunc: this.getEntityViewTitle,
+      getItemTitleFunc: this.getEntityViewTitle,
 
-        itemCardController: 'EntityViewCardController',
-        itemCardTemplateUrl: '',
-        parentCtl: this,
+      parentCtl: this,
 
-        actionsList: this.entityViewActionsList,
-        groupActionsList: this.entityViewGroupActionsList,
+      actionsList: this.entityViewActionsList,
+      groupActionsList: this.entityViewGroupActionsList,
 
-        onGridInited: this.gridInited,
+      onGridInited: this.gridInited,
 
-        addItemTemplateUrl: '',
-
-        addItemText: (...rest: any[]) => { return this.translate.instant('entity-view.add-entity-view-text') },
-        noItemsText: (...rest: any[]) => { return this.translate.instant('entity-view.no-entity-views-text') },
-        itemDetailsText: (...rest: any[]) => { return this.translate.instant('entity-view.entity-view-details') },
-        isDetailsReadOnly: this.isCustomerUser,
-        isSelectionEnabled: (...rest: any[]) => {
-            return !this.isCustomerUser();
-        }
+      addItemText: () => this.translate.instant('entity-view.add-entity-view-text'),
+      noItemsText: () => this.translate.instant('entity-view.no-entity-views-text'),
+      itemDetailsText: () => this.translate.instant('entity-view.entity-view-details'),
+      isDetailsReadOnly: this.isCustomerUser,
+      isSelectionEnabled: () => !this.isCustomerUser(),
     };
-    if ((this.route.snapshot.params['items'] !== undefined) && this.route.snapshot.params['items'] !== null) {
-        this.entityViewGridConfig.items = this.route.snapshot.params['items'];
+    const items = this.router.getCurrentNavigation()?.extras.state?.['items'];
+    if (items !== undefined && items !== null) {
+      this.entityViewGridConfig.items = items;
     }
-    if ((this.route.snapshot.params['topIndex'] !== undefined) && this.route.snapshot.params['topIndex'] > 0) {
-        this.entityViewGridConfig.topIndex = this.route.snapshot.params['topIndex'];
+    const topIndex = Number(snapshot.queryParams['topIndex']);
+    if (topIndex > 0) {
+      this.entityViewGridConfig.topIndex = topIndex;
     }
-    this.entityViewsScope = (this.router as any).$current.data.entityViewsType;
-    this.assignToCustomer = this.assignToCustomer;
-    this.makePublic = this.makePublic;
-    this.unassignFromCustomer = this.unassignFromCustomer;
+    this.entityViewsScope = snapshot.data['entityViewsType'];
     this.initController();
   }
 
-  initController(...rest: any[]): any {
-    var fetchEntityViewsFunction: any = null;
-    var deleteEntityViewFunction: any = null;
-    var refreshEntityViewsParamsFunction: any = null;
+  initController(): void {
+    let fetchEntityViewsFunction: any = null;
+    let deleteEntityViewFunction: any = null;
+    let refreshEntityViewsParamsFunction: any = null;
 
-    var user: any = this.userService.getCurrentUser();
+    const user: any = this.userService.getCurrentUser();
 
     if (user.authority === 'CUSTOMER_USER') {
-        this.entityViewsScope = 'customer_user';
-        this.customerId = user.customerId;
+      this.entityViewsScope = 'customer_user';
+      this.customerId = user.customerId;
     }
     if (this.customerId) {
-        this.customerEntityViewsTitle = this.translate.instant('customer.entity-views');
-        this.customerService.getShortCustomerInfo(this.customerId).then(
-            (info?: any) => {
-                if (info.isPublic) {
-                    this.customerEntityViewsTitle = this.translate.instant('customer.public-entity-views');
-                }
-            }
-        );
+      this.customerEntityViewsTitle = this.translate.instant('customer.entity-views');
+      this.customerService.getShortCustomerInfo(this.customerId).then((info?: any) => {
+        if (info.isPublic) {
+          this.customerEntityViewsTitle = this.translate.instant('customer.public-entity-views');
+        }
+      });
     }
 
     if (this.entityViewsScope === 'tenant') {
-        fetchEntityViewsFunction = (pageLink?: any, entityViewType?: any) => {
-            return this.entityViewService.getTenantEntityViews(pageLink, true, null, entityViewType);
-        };
-        deleteEntityViewFunction = (entityViewId?: any) => {
-            return this.entityViewService.deleteEntityView(entityViewId);
-        };
-        refreshEntityViewsParamsFunction = () => {
-            return {"topIndex": this.topIndex};
-        };
+      fetchEntityViewsFunction = (pageLink?: any, entityViewType?: any) => this.entityViewService.getTenantEntityViews(pageLink, true, null, entityViewType);
+      deleteEntityViewFunction = (entityViewId?: any) => this.entityViewService.deleteEntityView(entityViewId);
+      refreshEntityViewsParamsFunction = () => ({ topIndex: this.topIndex });
 
-        this.entityViewActionsList.push({
-            onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                this.makePublic($event, item);
-            },
-            name: (...rest: any[]) => { return this.translate.instant('action.share') },
-            details: (...rest: any[]) => { return this.translate.instant('entity-view.make-public') },
-            icon: "share",
-            isEnabled: (entityView?: any, ...rest: any[]) => {
-                return entityView && (!entityView.customerId || entityView.customerId.id === this.typesRef.id.nullUid);
-            }
-        });
+      this.entityViewActionsList.push({
+        onAction: ($event?: any, item?: any) => this.makePublic($event, item),
+        name: () => this.translate.instant('action.share'),
+        details: () => this.translate.instant('entity-view.make-public'),
+        icon: 'share',
+        isEnabled: (entityView?: any) => entityView && (!entityView.customerId || entityView.customerId.id === types.id.nullUid),
+      });
+      this.entityViewActionsList.push({
+        onAction: ($event?: any, item?: any) => this.assignToCustomer($event, [item.id.id]),
+        name: () => this.translate.instant('action.assign'),
+        details: () => this.translate.instant('entity-view.assign-to-customer'),
+        icon: 'assignment_ind',
+        isEnabled: (entityView?: any) => entityView && (!entityView.customerId || entityView.customerId.id === types.id.nullUid),
+      });
+      this.entityViewActionsList.push({
+        onAction: ($event?: any, item?: any) => this.unassignFromCustomer($event, item, false),
+        name: () => this.translate.instant('action.unassign'),
+        details: () => this.translate.instant('entity-view.unassign-from-customer'),
+        icon: 'assignment_return',
+        isEnabled: (entityView?: any) =>
+          entityView && entityView.customerId && entityView.customerId.id !== types.id.nullUid && !entityView.assignedCustomer.isPublic,
+      });
+      this.entityViewActionsList.push({
+        onAction: ($event?: any, item?: any) => this.unassignFromCustomer($event, item, true),
+        name: () => this.translate.instant('action.make-private'),
+        details: () => this.translate.instant('entity-view.make-private'),
+        icon: 'reply',
+        isEnabled: (entityView?: any) =>
+          entityView && entityView.customerId && entityView.customerId.id !== types.id.nullUid && entityView.assignedCustomer.isPublic,
+      });
+      this.entityViewActionsList.push({
+        onAction: ($event?: any, item?: any) => this.grid.deleteItem($event, item),
+        name: () => this.translate.instant('action.delete'),
+        details: () => this.translate.instant('entity-view.delete'),
+        icon: 'delete',
+      });
 
-        this.entityViewActionsList.push(
-            {
-                onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                    this.assignToCustomer($event, [ item.id.id ]);
-                },
-                name: (...rest: any[]) => { return this.translate.instant('action.assign') },
-                details: (...rest: any[]) => { return this.translate.instant('entity-view.assign-to-customer') },
-                icon: "assignment_ind",
-                isEnabled: (entityView?: any, ...rest: any[]) => {
-                    return entityView && (!entityView.customerId || entityView.customerId.id === this.typesRef.id.nullUid);
-                }
-            }
-        );
-
-        this.entityViewActionsList.push(
-            {
-                onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                    this.unassignFromCustomer($event, item, false);
-                },
-                name: (...rest: any[]) => { return this.translate.instant('action.unassign') },
-                details: (...rest: any[]) => { return this.translate.instant('entity-view.unassign-from-customer') },
-                icon: "assignment_return",
-                isEnabled: (entityView?: any, ...rest: any[]) => {
-                    return entityView && entityView.customerId && entityView.customerId.id !== this.typesRef.id.nullUid && !entityView.assignedCustomer.isPublic;
-                }
-            }
-        );
-
-        this.entityViewActionsList.push({
-            onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                this.unassignFromCustomer($event, item, true);
-            },
-            name: (...rest: any[]) => { return this.translate.instant('action.make-private') },
-            details: (...rest: any[]) => { return this.translate.instant('entity-view.make-private') },
-            icon: "reply",
-            isEnabled: (entityView?: any, ...rest: any[]) => {
-                return entityView && entityView.customerId && entityView.customerId.id !== this.typesRef.id.nullUid && entityView.assignedCustomer.isPublic;
-            }
-        });
-
-        this.entityViewActionsList.push(
-            {
-                onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                    this.grid.deleteItem($event, item);
-                },
-                name: (...rest: any[]) => { return this.translate.instant('action.delete') },
-                details: (...rest: any[]) => { return this.translate.instant('entity-view.delete') },
-                icon: "delete"
-            }
-        );
-
-        this.entityViewGroupActionsList.push(
-            {
-                onAction: ($event?: any, items?: any, ...rest: any[]) => {
-                    this.assignEntityViewsToCustomer($event, items);
-                },
-                name: (...rest: any[]) => { return this.translate.instant('entity-view.assign-entity-views') },
-                details: (selectedCount?: any, ...rest: any[]) => {
-                    return this.translate.instant('entity-view.assign-entity-views-text', {count: selectedCount}, "messageformat");
-                },
-                icon: "assignment_ind"
-            }
-        );
-
-        this.entityViewGroupActionsList.push(
-            {
-                onAction: ($event?: any, ...rest: any[]) => {
-                    this.grid.deleteItems($event);
-                },
-                name: (...rest: any[]) => { return this.translate.instant('entity-view.delete-entity-views') },
-                details: this.deleteEntityViewsActionTitle,
-                icon: "delete"
-            }
-        );
-
-
-
+      this.entityViewGroupActionsList.push({
+        onAction: ($event?: any, items?: any) => this.assignEntityViewsToCustomer($event, items),
+        name: () => this.translate.instant('entity-view.assign-entity-views'),
+        details: (selectedCount?: any) => this.translate.instant('entity-view.assign-entity-views-text', { count: selectedCount }),
+        icon: 'assignment_ind',
+      });
+      this.entityViewGroupActionsList.push({
+        onAction: ($event?: any) => this.grid.deleteItems($event),
+        name: () => this.translate.instant('entity-view.delete-entity-views'),
+        details: this.deleteEntityViewsActionTitle,
+        icon: 'delete',
+      });
     } else if (this.entityViewsScope === 'customer' || this.entityViewsScope === 'customer_user') {
-        fetchEntityViewsFunction = (pageLink?: any, entityViewType?: any) => {
-            return this.entityViewService.getCustomerEntityViews(this.customerId, pageLink, true, null, entityViewType);
+      fetchEntityViewsFunction = (pageLink?: any, entityViewType?: any) =>
+        this.entityViewService.getCustomerEntityViews(this.customerId, pageLink, true, null, entityViewType);
+      deleteEntityViewFunction = (entityViewId?: any) => this.entityViewService.unassignEntityViewFromCustomer(entityViewId);
+      refreshEntityViewsParamsFunction = () => ({ customerId: this.customerId, topIndex: this.topIndex });
+
+      if (this.entityViewsScope === 'customer') {
+        this.entityViewActionsList.push({
+          onAction: ($event?: any, item?: any) => this.unassignFromCustomer($event, item, false),
+          name: () => this.translate.instant('action.unassign'),
+          details: () => this.translate.instant('entity-view.unassign-from-customer'),
+          icon: 'assignment_return',
+          isEnabled: (entityView?: any) => entityView && !entityView.assignedCustomer.isPublic,
+        });
+        this.entityViewGroupActionsList.push({
+          onAction: ($event?: any, items?: any) => this.unassignEntityViewsFromCustomer($event, items),
+          name: () => this.translate.instant('entity-view.unassign-entity-views'),
+          details: (selectedCount?: any) => this.translate.instant('entity-view.unassign-entity-views-action-title', { count: selectedCount }),
+          icon: 'assignment_return',
+        });
+        this.entityViewGridConfig.addItemAction = {
+          onAction: ($event?: any) => this.addEntityViewsToCustomer($event),
+          name: () => this.translate.instant('entity-view.assign-entity-views'),
+          details: () => this.translate.instant('entity-view.assign-new-entity-view'),
+          icon: 'add',
         };
-        deleteEntityViewFunction = (entityViewId?: any) => {
-            return this.entityViewService.unassignEntityViewFromCustomer(entityViewId);
-        };
-        refreshEntityViewsParamsFunction = () => {
-            return {"customerId": this.customerId, "topIndex": this.topIndex};
-        };
-
-        if (this.entityViewsScope === 'customer') {
-            this.entityViewActionsList.push(
-                {
-                    onAction: ($event?: any, item?: any, ...rest: any[]) => {
-                        this.unassignFromCustomer($event, item, false);
-                    },
-                    name: (...rest: any[]) => { return this.translate.instant('action.unassign') },
-                    details: (...rest: any[]) => { return this.translate.instant('entity-view.unassign-from-customer') },
-                    icon: "assignment_return",
-                    isEnabled: function(entityView?: any, ...rest: any[]) {
-                        return entityView && !entityView.assignedCustomer.isPublic;
-                    }
-                }
-            );
-
-            this.entityViewGroupActionsList.push(
-                {
-                    onAction: ($event?: any, items?: any, ...rest: any[]) => {
-                        this.unassignEntityViewsFromCustomer($event, items);
-                    },
-                    name: (...rest: any[]) => { return this.translate.instant('entity-view.unassign-entity-views') },
-                    details: (selectedCount?: any, ...rest: any[]) => {
-                        return this.translate.instant('entity-view.unassign-entity-views-action-title', {count: selectedCount}, "messageformat");
-                    },
-                    icon: "assignment_return"
-                }
-            );
-
-            this.entityViewGridConfig.addItemAction = {
-                onAction: ($event?: any, ...rest: any[]) => {
-                    this.addEntityViewsToCustomer($event);
-                },
-                name: (...rest: any[]) => { return this.translate.instant('entity-view.assign-entity-views') },
-                details: (...rest: any[]) => { return this.translate.instant('entity-view.assign-new-entity-view') },
-                icon: "add"
-            };
-
-
-        } else if (this.entityViewsScope === 'customer_user') {
-            this.entityViewGridConfig.addItemAction = {};
-        }
+      } else if (this.entityViewsScope === 'customer_user') {
+        this.entityViewGridConfig.addItemAction = {};
+      }
     }
 
     this.entityViewGridConfig.refreshParamsFunc = refreshEntityViewsParamsFunction;
     this.entityViewGridConfig.fetchItemsFunc = fetchEntityViewsFunction;
     this.entityViewGridConfig.deleteItemFunc = deleteEntityViewFunction;
-
   }
 
-  deleteEntityViewTitle = (entityView?: any, ...rest: any[]): any => {
-    return this.translate.instant('entity-view.delete-entity-view-title', {entityViewName: entityView.name});
-  };
+  deleteEntityViewTitle = (entityView?: any): any => this.translate.instant('entity-view.delete-entity-view-title', { entityViewName: entityView.name });
 
-  deleteEntityViewText = (...rest: any[]): any => {
-    return this.translate.instant('entity-view.delete-entity-view-text');
-  };
+  deleteEntityViewText = (): any => this.translate.instant('entity-view.delete-entity-view-text');
 
-  deleteEntityViewsTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('entity-view.delete-entity-views-title', {count: selectedCount}, 'messageformat');
-  };
+  deleteEntityViewsTitle = (selectedCount?: any): any => this.translate.instant('entity-view.delete-entity-views-title', { count: selectedCount });
 
-  deleteEntityViewsActionTitle = (selectedCount?: any, ...rest: any[]): any => {
-    return this.translate.instant('entity-view.delete-entity-views-action-title', {count: selectedCount}, 'messageformat');
-  };
+  deleteEntityViewsActionTitle = (selectedCount?: any): any =>
+    this.translate.instant('entity-view.delete-entity-views-action-title', { count: selectedCount });
 
-  deleteEntityViewsText = (...rest: any[]): any => {
-    return this.translate.instant('entity-view.delete-entity-views-text');
-  };
+  deleteEntityViewsText = (): any => this.translate.instant('entity-view.delete-entity-views-text');
 
-  gridInited = (grid?: any, ...rest: any[]): any => {
+  gridInited = (grid: TbGridDirective): void => {
     this.grid = grid;
   };
 
-  getEntityViewTitle = (entityView?: any, ...rest: any[]): any => {
-    return entityView ? entityView.name : '';
+  getEntityViewTitle = (entityView?: any): any => (entityView ? entityView.name : '');
+
+  saveEntityView = (entityView?: any): Promise<any> => {
+    return Promise.resolve(this.entityViewService.saveEntityView(entityView)).then((savedEntityView?: any) => {
+      this.rootScope.$broadcast('entityViewSaved');
+      return Promise.resolve(this.customerService.applyAssignedCustomersInfo([savedEntityView])).then((items?: any) =>
+        items && items.length == 1 ? items[0] : Promise.reject(),
+      );
+    });
   };
 
-  saveEntityView = (entityView?: any, ...rest: any[]): any => {
-    var deferred: any = $q.defer();
-    this.entityViewService.saveEntityView(entityView).then(
-        (savedEntityView?: any) => {
-            this.rootScope.$broadcast('entityViewSaved');
-            var entityViews: any = [ savedEntityView ];
-            this.customerService.applyAssignedCustomersInfo(entityViews).then(
-                function success(items?: any) {
-                    if (items && items.length == 1) {
-                        deferred.resolve(items[0]);
-                    } else {
-                        deferred.reject();
-                    }
-                },
-                function fail() {
-                    deferred.reject();
-                }
-            );
-        },
-        function fail() {
-            deferred.reject();
+  isCustomerUser = (): boolean => this.entityViewsScope === 'customer_user';
+
+  assignToCustomer = ($event?: any, entityViewIds?: any): void => {
+    $event?.stopPropagation?.();
+    const pageSize = 10;
+    this.customerService.getCustomers({ limit: pageSize, textSearch: '' }).then(
+      (_customers?: any) => {
+        const customers: any = {
+          pageSize: pageSize,
+          data: _customers.data,
+          nextPageLink: _customers.nextPageLink,
+          selection: null,
+          hasNext: _customers.hasNext,
+          pending: false,
+        };
+        if (customers.hasNext) {
+          customers.nextPageLink.limit = pageSize;
         }
+        this.openThenRefresh(AssignEntityViewToCustomerComponent, { entityViewIds, customers });
+      },
+      () => undefined,
     );
-    return deferred.promise;
   };
 
-  isCustomerUser = (...rest: any[]): any => {
-    return this.entityViewsScope === 'customer_user';
-  };
-
-  assignToCustomer = ($event?: any, entityViewIds?: any, ...rest: any[]): any => {
-    let vm = this;
-    if ($event) {
-        $event.stopPropagation();
-    }
-    var pageSize: any = 10;
-    this.customerService.getCustomers({limit: pageSize, textSearch: ''}).then(
-        (_customers?: any) => {
-            var customers: any = {
-                pageSize: pageSize,
-                data: _customers.data,
-                nextPageLink: _customers.nextPageLink,
-                selection: null,
-                hasNext: _customers.hasNext,
-                pending: false
-            };
-            if (customers.hasNext) {
-                customers.nextPageLink.limit = pageSize;
-            }
-            (this.dialog as any).show({
-                controller: 'AssignEntityViewToCustomerController',
-                controllerAs: 'vm',
-                templateUrl: '',
-                locals: {entityViewIds: entityViewIds, customers: customers},
-                parent: $(this.document.body),
-                fullscreen: true,
-                targetEvent: $event
-            }).then(() => {
-                this.grid.refreshList();
-            }, function () {
-            });
-        },
-        function fail() {
-        });
-  };
-
-  addEntityViewsToCustomer($event?: any, ...rest: any[]): any {
-    let vm = this;
-    if ($event) {
-        $event.stopPropagation();
-    }
-    var pageSize: any = 10;
-    this.entityViewService.getTenantEntityViews({limit: pageSize, textSearch: ''}, false).then(
-        (_entityViews?: any) => {
-            var entityViews: any = {
-                pageSize: pageSize,
-                data: _entityViews.data,
-                nextPageLink: _entityViews.nextPageLink,
-                selections: {},
-                selectedCount: 0,
-                hasNext: _entityViews.hasNext,
-                pending: false
-            };
-            if (entityViews.hasNext) {
-                entityViews.nextPageLink.limit = pageSize;
-            }
-            (this.dialog as any).show({
-                controller: 'AddEntityViewsToCustomerController',
-                controllerAs: 'vm',
-                templateUrl: '',
-                locals: {customerId: this.customerId, entityViews: entityViews},
-                parent: $(this.document.body),
-                fullscreen: true,
-                targetEvent: $event
-            }).then(() => {
-                this.grid.refreshList();
-            }, function () {
-            });
-        },
-        function fail() {
-        });
-  }
-
-  assignEntityViewsToCustomer($event?: any, items?: any, ...rest: any[]): any {
-    var entityViewIds: any = [];
-    for (var id in items.selections) {
-        entityViewIds.push(id);
-    }
-    this.assignToCustomer($event, entityViewIds);
-  }
-
-  unassignFromCustomer = ($event?: any, entityView?: any, isPublic?: any, ...rest: any[]): any => {
-    if ($event) {
-        $event.stopPropagation();
-    }
-    var title: any;
-    var content: any;
-    var label: any;
-    if (isPublic) {
-        title = this.translate.instant('entity-view.make-private-entity-view-title', {entityViewName: entityView.name});
-        content = this.translate.instant('entity-view.make-private-entity-view-text');
-        label = this.translate.instant('entity-view.make-private');
-    } else {
-        title = this.translate.instant('entity-view.unassign-entity-view-title', {entityViewName: entityView.name});
-        content = this.translate.instant('entity-view.unassign-entity-view-text');
-        label = this.translate.instant('entity-view.unassign-entity-view');
-    }
-    var confirm: any = (this.dialog as any).confirm()
-        .targetEvent($event)
-        .title(title)
-        .htmlContent(content)
-        .ariaLabel(label)
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
-        this.entityViewService.unassignEntityViewFromCustomer(entityView.id.id).then(() => {
-            this.grid.refreshList();
-        });
-    });
-  };
-
-  unassignEntityViewsFromCustomer($event?: any, items?: any, ...rest: any[]): any {
-    var confirm: any = (this.dialog as any).confirm()
-        .targetEvent($event)
-        .title(this.translate.instant('entity-view.unassign-entity-views-title', {count: items.selectedCount}, 'messageformat'))
-        .htmlContent(this.translate.instant('entity-view.unassign-entity-views-text'))
-        .ariaLabel(this.translate.instant('entity-view.unassign-entity-view'))
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
-        var tasks: any = [];
-        for (var id in items.selections) {
-            tasks.push(this.entityViewService.unassignEntityViewFromCustomer(id));
+  addEntityViewsToCustomer($event?: any): void {
+    $event?.stopPropagation?.();
+    const pageSize = 10;
+    this.entityViewService.getTenantEntityViews({ limit: pageSize, textSearch: '' }, false).then(
+      (_entityViews?: any) => {
+        const entityViews: any = {
+          pageSize: pageSize,
+          data: _entityViews.data,
+          nextPageLink: _entityViews.nextPageLink,
+          selections: {},
+          selectedCount: 0,
+          hasNext: _entityViews.hasNext,
+          pending: false,
+        };
+        if (entityViews.hasNext) {
+          entityViews.nextPageLink.limit = pageSize;
         }
-        Promise.all(tasks).then(() => {
-            this.grid.refreshList();
-        });
+        this.openThenRefresh(AddEntityViewsToCustomerComponent, { customerId: this.customerId, entityViews });
+      },
+      () => undefined,
+    );
+  }
+
+  /** Opens `component` with `data`; refreshes the grid when it closes with a result. */
+  private openThenRefresh(component: Type<unknown>, data: any): void {
+    firstValueFrom(this.dialog.open(component, { data }).afterClosed()).then((result) => {
+      if (result) {
+        this.grid.refreshList();
+      }
     });
   }
 
-  makePublic = ($event?: any, entityView?: any, ...rest: any[]): any => {
-    if ($event) {
-        $event.stopPropagation();
+  assignEntityViewsToCustomer($event?: any, items?: any): void {
+    this.assignToCustomer($event, Object.keys(items.selections));
+  }
+
+  unassignFromCustomer = ($event?: any, entityView?: any, isPublic?: any): void => {
+    $event?.stopPropagation?.();
+    let title: any;
+    let content: any;
+    if (isPublic) {
+      title = this.translate.instant('entity-view.make-private-entity-view-title', { entityViewName: entityView.name });
+      content = this.translate.instant('entity-view.make-private-entity-view-text');
+    } else {
+      title = this.translate.instant('entity-view.unassign-entity-view-title', { entityViewName: entityView.name });
+      content = this.translate.instant('entity-view.unassign-entity-view-text');
     }
-    var confirm: any = (this.dialog as any).confirm()
-        .targetEvent($event)
-        .title(this.translate.instant('entity-view.make-public-entity-view-title', {entityViewName: entityView.name}))
-        .htmlContent(this.translate.instant('entity-view.make-public-entity-view-text'))
-        .ariaLabel(this.translate.instant('entity-view.make-public'))
-        .cancel(this.translate.instant('action.no'))
-        .ok(this.translate.instant('action.yes'));
-    (this.dialog as any).show(confirm).then(() => {
-        this.entityViewService.makeEntityViewPublic(entityView.id.id).then(() => {
-            this.grid.refreshList();
-        });
-    });
+    this.confirm(title, content).then(
+      () => this.entityViewService.unassignEntityViewFromCustomer(entityView.id.id).then(() => this.grid.refreshList()),
+      () => undefined,
+    );
   };
+
+  unassignEntityViewsFromCustomer($event?: any, items?: any): void {
+    this.confirm(
+      this.translate.instant('entity-view.unassign-entity-views-title', { count: items.selectedCount }),
+      this.translate.instant('entity-view.unassign-entity-views-text'),
+    ).then(
+      () => {
+        const tasks = Object.keys(items.selections).map((id) => this.entityViewService.unassignEntityViewFromCustomer(id));
+        Promise.all(tasks).then(() => this.grid.refreshList());
+      },
+      () => undefined,
+    );
+  }
+
+  makePublic = ($event?: any, entityView?: any): void => {
+    $event?.stopPropagation?.();
+    this.confirm(
+      this.translate.instant('entity-view.make-public-entity-view-title', { entityViewName: entityView.name }),
+      this.translate.instant('entity-view.make-public-entity-view-text'),
+    ).then(
+      () => this.entityViewService.makeEntityViewPublic(entityView.id.id).then(() => this.grid.refreshList()),
+      () => undefined,
+    );
+  };
+
+  /** The legacy confirm dialog, with the page's yes / no buttons. */
+  private confirm(title: string, htmlContent: string): Promise<void> {
+    return showConfirm(this.dialog, {
+      title,
+      htmlContent,
+      cancel: this.translate.instant('action.no'),
+      ok: this.translate.instant('action.yes'),
+    });
+  }
 }

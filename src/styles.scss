@@ -62,8 +62,8 @@ body { font-family: Roboto, 'Helvetica Neue', sans-serif; }
 @import 'app-ng/legacy-lib/dashboard/dashboard-toolbar';
 @import 'app-ng/legacy-lib/dashboard/dashboard-card';
 @import 'app-ng/legacy-lib/dashboard/dashboard';
-@import 'app-ng/legacy-lib/dashboard/states/default-state-controller';
-@import 'app-ng/legacy-lib/dashboard/states/entity-state-controller';
+@import 'app-ng/feature/dashboard/default-state-controller/default-state-controller';
+@import 'app-ng/feature/dashboard/entity-state-controller/entity-state-controller';
 @import 'app-ng/legacy-lib/dashboard/states/manage-dashboard-states';
 @import 'app-ng/legacy-lib/entity-view/entity-view';
 @import 'app-ng/legacy-lib/entity/alias/aliases-entity-select';

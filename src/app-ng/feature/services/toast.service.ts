@@ -1,16 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig, MatSnackBarHorizontalPosition, MatSnackBarRef, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 
-import $ from 'jquery';
 import { bindMethods } from '../../bind-methods';
-const infoToast = 'app/services/info-toast.tpl.html';
-const successToast = 'app/services/success-toast.tpl.html';
-const errorToast = 'app/services/error-toast.tpl.html';
+import { ToastComponent, ToastData } from './toast/toast.component';
 
 /**
- * Ported from the AngularJS factory `toast` (module `thingsboard.toast`) in src/app/services/toast.js:21.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Ported from the AngularJS factory `toast` (module `thingsboard.toast`) in src/app/services/toast.service.js:
+ * `$mdToast.show({templateUrl, locals: {message}, hideDelay, position, parent})` is `MatSnackBar.openFromComponent`
+ * with the toast component (the legacy templates' look), the same delay (0 = stays until closed), the same
+ * `'top left'`-style position, laid out inside `parent` (default `#toast-parent`) as `$mdToast` did.
  */
 @Injectable({ providedIn: 'root' })
 export class ToastService {
@@ -21,61 +20,89 @@ export class ToastService {
   private showing: any = false;
 
   showInfo(infoMessage?: any, delay?: any, toastParent?: any, position?: any, ...rest: any[]): any {
-    this.showMessage(infoToast, infoMessage, delay, toastParent, position);
+    this.showMessage('info', infoMessage, delay, toastParent, position);
   }
 
   showSuccess(successMessage?: any, delay?: any, toastParent?: any, position?: any, ...rest: any[]): any {
-    this.showMessage(successToast, successMessage, delay, toastParent, position);
+    this.showMessage('success', successMessage, delay, toastParent, position);
   }
 
-  showMessage(templateUrl?: any, message?: any, delay?: any, toastParent?: any, position?: any, ...rest: any[]): any {
-    let vm = this;
-    if (!toastParent) {
-        toastParent = $(this.document.getElementById('toast-parent'));
-    }
-    if (!position) {
-        position = 'top left';
-    }
-    (this.snackBar as any).show({
-        hideDelay: delay || 0,
-        position: position,
-        controller: 'ToastController',
-        controllerAs: 'vm',
-        templateUrl: templateUrl,
-        locals: {message: message},
-        parent: toastParent
-    });
+  showMessage(kind?: any, message?: any, delay?: any, toastParent?: any, position?: any, ...rest: any[]): any {
+    return this.open(kind || 'info', message, delay || 0, toastParent, position);
   }
 
   showError(errorMessage?: any, toastParent?: any, position?: any, ...rest: any[]): any {
-    let vm = this;
     if (!this.showing) {
-        if (!toastParent) {
-            toastParent = $(this.document.getElementById('toast-parent'));
-        }
-        if (!position) {
-            position = 'top left';
-        }
-        this.showing = true;
-        (this.snackBar as any).show({
-            hideDelay: 0,
-            position: position,
-            controller: 'ToastController',
-            controllerAs: 'vm',
-            templateUrl: errorToast,
-            locals: {message: errorMessage},
-            parent: toastParent
-        }).then(() => {
-            this.showing = false;
-        }, () => {
-            this.showing = false;
-        });
+      this.showing = true;
+      const ref = this.open('error', errorMessage, 0, toastParent, position);
+      ref.afterDismissed().subscribe(() => {
+        this.showing = false;
+      });
     }
   }
 
   hide(...rest: any[]): any {
     if (this.showing) {
-        (this.snackBar as any).hide();
+      this.snackBar.dismiss();
+    }
+  }
+
+  private open(kind: ToastData['kind'], message: any, delay: number, toastParent: any, position: any): MatSnackBarRef<ToastComponent> {
+    const [vertical, horizontal] = this.toPosition(position || 'top left');
+    const config: MatSnackBarConfig<ToastData> = {
+      data: { message, kind },
+      duration: delay > 0 ? delay : undefined,
+      verticalPosition: vertical,
+      horizontalPosition: horizontal,
+      panelClass: ['tb-toast-panel', `tb-${kind}-toast`],
+    };
+    const ref = this.snackBar.openFromComponent(ToastComponent, config);
+    this.placeInParent(ref, this.parentElement(toastParent));
+    return ref;
+  }
+
+  /** `'top left'`, `'bottom right'`, `'top'`… → the snack bar's vertical / horizontal positions. */
+  private toPosition(position: string): [MatSnackBarVerticalPosition, MatSnackBarHorizontalPosition] {
+    const parts = String(position).split(/\s+/);
+    const vertical: MatSnackBarVerticalPosition = parts.includes('bottom') ? 'bottom' : 'top';
+    const horizontal: MatSnackBarHorizontalPosition = parts.includes('left')
+      ? 'left'
+      : parts.includes('right')
+        ? 'right'
+        : parts.includes('start')
+          ? 'start'
+          : parts.includes('end')
+            ? 'end'
+            : 'center';
+    return [vertical, horizontal];
+  }
+
+  /** The toast's parent: a jQuery collection or an element as the callers pass it, else `#toast-parent`. */
+  private parentElement(toastParent: any): HTMLElement | null {
+    const parent = toastParent && toastParent.jquery ? toastParent[0] : toastParent;
+    if (parent instanceof HTMLElement) {
+      return parent;
+    }
+    return this.document.getElementById('toast-parent');
+  }
+
+  /** `$mdToast` laid the toast out inside `parent`: bound the overlay's wrapper to the parent's box. */
+  private placeInParent(ref: MatSnackBarRef<ToastComponent>, parent: HTMLElement | null): void {
+    if (!parent || !parent.isConnected) {
+      return;
+    }
+    const rect = parent.getBoundingClientRect();
+    if (!rect.width || !rect.height) {
+      return;
+    }
+    const host: HTMLElement | undefined = (ref.containerInstance as any)?._elementRef?.nativeElement;
+    const wrapper = host?.closest('.cdk-global-overlay-wrapper') as HTMLElement | null;
+    if (wrapper) {
+      wrapper.style.position = 'fixed';
+      wrapper.style.top = `${rect.top}px`;
+      wrapper.style.left = `${rect.left}px`;
+      wrapper.style.width = `${rect.width}px`;
+      wrapper.style.height = `${rect.height}px`;
     }
   }
 }

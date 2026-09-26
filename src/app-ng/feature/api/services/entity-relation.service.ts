@@ -22,7 +22,7 @@ export class EntityRelationService {
     var deferred: any = $q.defer();
     var url: any = '/api/relation';
     (this.http.post(url, relation) as any).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -64,7 +64,7 @@ export class EntityRelationService {
     url += '&toId=' + toId;
     url += '&toType=' + toType;
     (this.http.get(url) as any).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -76,7 +76,7 @@ export class EntityRelationService {
     var url: any = '/api/relations?fromId=' + fromId;
     url += '&fromType=' + fromType;
     (this.http.get(url, null) as any).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -88,7 +88,7 @@ export class EntityRelationService {
     var url: any = '/api/relations/info?fromId=' + fromId;
     url += '&fromType=' + fromType;
     (this.http.get(url, null) as any).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -101,7 +101,7 @@ export class EntityRelationService {
     url += '&fromType=' + fromType;
     url += '&relationType=' + relationType;
     (this.http.get(url, null) as any).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -113,7 +113,7 @@ export class EntityRelationService {
     var url: any = '/api/relations?toId=' + toId;
     url += '&toType=' + toType;
     (this.http.get(url, null) as any).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -125,7 +125,7 @@ export class EntityRelationService {
     var url: any = '/api/relations/info?toId=' + toId;
     url += '&toType=' + toType;
     (this.http.get(url, null) as any).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -138,7 +138,7 @@ export class EntityRelationService {
     url += '&toType=' + toType;
     url += '&relationType=' + relationType;
     (this.http.get(url, null) as any).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -149,7 +149,7 @@ export class EntityRelationService {
     var deferred: any = $q.defer();
     var url: any = '/api/relations';
     (this.http.post(url, query, config) as any).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail(e?: any) {
         deferred.reject(e);
     });
@@ -160,7 +160,7 @@ export class EntityRelationService {
     var deferred: any = $q.defer();
     var url: any = '/api/relations/info';
     (this.http.post(url, query, config) as any).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });

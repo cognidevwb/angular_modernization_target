@@ -1,0 +1,50 @@
+<!-- Ported from src/app/components/material-icons-dialog.tpl.html -->
+<div class="tb-material-icons-dialog" [attr.aria-label]="'icon.material-icons' | translate" style="min-width: 600px;">
+    <form>
+        <mat-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>{{ 'icon.select-icon' | translate }}</h2>
+                <span flex></span>
+                <section layout="row" layout-align="start center">
+                    <mat-slide-toggle [(ngModel)]="showAll" name="showAll" [attr.aria-label]="'icon.show-all' | translate">
+                    </mat-slide-toggle>
+                    <label>{{ 'icon.show-all' | translate }}</label>
+                </section>
+                <button mat-icon-button type="button" (click)="cancel()">
+                    <mat-icon [attr.aria-label]="'action.close' | translate">close</mat-icon>
+                </button>
+            </div>
+        </mat-toolbar>
+        @if (rootScope['loading']) {
+        <mat-progress-bar color="warn" mode="indeterminate"></mat-progress-bar>
+        } @else {
+        <span style="min-height: 5px;" flex=""></span>
+        }
+        <div class="tb-absolute-fill tb-icons-load" [hidden]="!loadingIcons" layout="column" layout-align="center center">
+            <mat-progress-spinner color="accent" mode="indeterminate" diameter="40"></mat-progress-spinner>
+        </div>
+        <mat-dialog-content>
+            <div class="md-dialog-content">
+                <div class="md-padding" layout="column">
+                    <fieldset [disabled]="rootScope['loading']">
+                        @for (icon of icons; track $index) {
+                        <button mat-icon-button type="button" class="tb-select-icon-button"
+                                [ngClass]="{'md-primary md-raised': icon == selectedIcon}"
+                                (click)="selectIcon($event, icon)"
+                                tb-on-finish-render="iconsLoadFinished" [tbLast]="$last" (finishRender)="loadingIcons = false"
+                                [matTooltip]="icon" matTooltipPosition="below">
+                            <mat-icon class="material-icons">{{ icon }}</mat-icon>
+                        </button>
+                        }
+                    </fieldset>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions layout="row">
+            <span flex></span>
+            <button mat-button type="button" [disabled]="rootScope['loading']" (click)="cancel()">
+                {{ 'action.cancel' | translate }}
+            </button>
+        </mat-dialog-actions>
+    </form>
+</div>

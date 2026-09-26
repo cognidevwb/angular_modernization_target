@@ -1,37 +1,30 @@
-import { Component, inject, model, output } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { ElementRef } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { ToastService } from '../../services/toast.service';
-import { TranslateService } from '@ngx-translate/core';
-import { types } from '../../common/constants/types';
+import { Component, ElementRef, inject, model, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
-import $ from 'jquery';
-import { inject as injectRoot } from '@angular/core';
-import { RootState } from '../../../root-state';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { TranslatePipe } from '@ngx-translate/core';
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
-declare let $templateCache: any;
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ClipboardService } from '../../services/clipboard.service';
+import { ToastService } from '../../services/toast.service';
+import { RootState } from '../../../root-state';
+import { joinParentForm } from '../../components/tb-grid/legacy-form';
 
 /**
- * Ported from the AngularJS directive `tbRuleChain` (module `thingsboard.ruleChain`) in src/app/rulechain/index.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbRuleChain` (module `thingsboard.ruleChain`) in src/app/rulechain/rulechain.directive.js
+ * (template src/app/rulechain/rulechain-fieldset.tpl.html). Its inputs join the form of the page that hosts it:
+ * the grid's details form, or the add-rule-chain dialog's form.
  */
 @Component({
   selector: 'tb-rule-chain',
   standalone: true,
   imports: [TranslatePipe, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule, FormsModule],
+  viewProviders: joinParentForm,
   templateUrl: './tb-rule-chain.directive.html',
 })
 export class TbRuleChainDirective {
-  protected readonly rootScope = injectRoot(RootState);
+  protected readonly rootScope = inject(RootState);
   readonly ruleChain = model<any>();
   readonly isEdit = model<any>();
   readonly isReadOnly = model<any>();
@@ -40,15 +33,23 @@ export class TbRuleChainDirective {
   readonly onExportRuleChain = output<any>();
   readonly onDeleteRuleChain = output<any>();
 
-  protected readonly dialog = inject(MatDialog);
-  protected readonly document = inject(DOCUMENT);
   protected readonly translate = inject(TranslateService);
   protected readonly toast = inject(ToastService);
+  protected readonly clipboardService = inject(ClipboardService);
   protected readonly element = inject(ElementRef);
-  // TODO(port): template: 1 × ng-message left in place
-  // TODO(port): template: 1 × ng-messages left in place
 
-  onRuleChainIdCopied(...rest: any[]): any {
-    this.toast.showSuccess(this.translate.instant('rulechain.idCopiedMessage'), 750, $($(this.element.nativeElement)).parent().parent(), 'bottom left');
+  /** `ng-model="ruleChain.additionalInfo.x"`: creates `additionalInfo` on first write, as AngularJS did. */
+  setAdditionalInfo(ruleChain: any, key: string, value: any): void {
+    ruleChain.additionalInfo = ruleChain.additionalInfo || {};
+    ruleChain.additionalInfo[key] = value;
+  }
+
+  onRuleChainIdCopied(): void {
+    this.toast.showSuccess(this.translate.instant('rulechain.idCopiedMessage'), 750, this.element.nativeElement.parentElement?.parentElement, 'bottom left');
+  }
+
+  copyRuleChainId(e: any): void {
+    const trigger: any = e.delegateTarget || e.currentTarget;
+    this.clipboardService.copyToClipboard(trigger, this.ruleChain()?.id?.id).then(() => this.onRuleChainIdCopied());
   }
 }

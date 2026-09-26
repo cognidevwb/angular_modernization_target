@@ -21,8 +21,7 @@ import TbImageMap from './image-map';
 import TbTencentMap from './tencent-map';
 
 import {processPattern, arraysEqual, toLabelValueMap, fillPattern, fillPatternWithActions} from './widget-utils';
-import addEntityPanelTemplate from './add-entity-panel.tpl.html';
-import './add-entity-panel.scss';
+import {openAddEntityPanel} from './add-entity-panel';
 
 export default class TbMapWidgetV2 {
 
@@ -314,13 +313,6 @@ export default class TbMapWidgetV2 {
 			);
 		}
 
-		const element = angular.element($event.target);
-		const $mdPanel = this.ctx.$scope.$injector.get('$mdPanel');
-		const $document = this.ctx.$scope.$injector.get('$document');
-		let position = $mdPanel.newPanelPosition()
-			.relativeTo(element)
-			.addPanelPosition($mdPanel.xPosition.ALIGN_END, $mdPanel.yPosition.BELOW);
-
 		let locationsWithoutMarker = this.locations.filter((location) => !location.marker);
 		let entitiesWithoutPosition = [];
 		for (let i = 0; i < locationsWithoutMarker.length; i++) {
@@ -330,24 +322,7 @@ export default class TbMapWidgetV2 {
 		if(entitiesWithoutPosition.length === 1){
 			setDefaultPosition(entitiesWithoutPosition[0]);
 		} else {
-			let config = {
-				attachTo: angular.element($document[0].body),
-				controller: addEntityPanelController,
-				controllerAs: 'vm',
-				templateUrl: addEntityPanelTemplate,
-				panelClass: 'tb-add-entity-panel',
-				position: position,
-				fullscreen: false,
-				locals: {
-					'entities': entitiesWithoutPosition,
-					'onClose': setDefaultPosition
-				},
-				openFrom: $event,
-				clickOutsideToClose: true,
-				escapeToClose: true,
-				focusOnOpen: false
-			};
-			$mdPanel.open(config);
+			openAddEntityPanel($event.target, entitiesWithoutPosition, setDefaultPosition);
 		}
 	}
 
@@ -1767,16 +1742,3 @@ const imageMapSettingsSchema =
 			}
 		]
 	};
-
-/*@ngInject*/
-function addEntityPanelController(mdPanelRef, entities) {
-	var vm = this;
-	vm.entities = entities;
-	vm.selectEntity = selectEntity;
-
-	function selectEntity(entity) {
-		mdPanelRef.close().then(() => {
-			this.onClose(entity);
-		});
-	}
-}

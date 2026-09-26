@@ -1,129 +1,184 @@
-import { Component, inject, input, model } from '@angular/core';
-import { CreateEntityAliasFn } from '../tb-datasource/datasource-callbacks';
-import { ElementRef } from '@angular/core';
+import { Component, effect, inject, input, model, untracked } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ENTER } from '@angular/cdk/keycodes';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { TranslatePipe } from '@ngx-translate/core';
+import { CreateEntityAliasFn } from '../tb-datasource/datasource-callbacks';
 import { EntityService } from '../../api/services/entity.service';
+import { TruncatePipe } from '../pipes/truncate.pipe';
 import { NgModelController, ngModelProviders } from '../../../core/ng-model-controller';
-import $ from 'jquery';
-const entityAliasSelectTemplate: string = '';
 
 /**
- * Ported from the AngularJS directive `tbEntityAliasSelect` (module `thingsboard.directives.entityAliasSelect`) in src/app/components/entity-alias-select.directive.js:29.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbEntityAliasSelect` (src/app/components/entity-alias-select.directive.js)
+ * with its template entity-alias-select.tpl.html: an autocomplete over the alias controller's entity aliases
+ * (optionally only those resolving to `allowedEntityTypes`). `[(ngModel)]` is the chosen entity alias;
+ * "create a new one!" (or Enter on an unknown name) calls `onCreateEntityAlias(event, alias, allowedEntityTypes)`.
  */
 @Component({
   selector: 'tb-entity-alias-select',
   standalone: true,
-  template: '', // TODO(port): no template found
+  imports: [FormsModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, TranslatePipe, TruncatePipe],
+  template: `
+    <section layout="column">
+      <mat-form-field id="entity-autocomplete" subscriptSizing="dynamic">
+        <input matInput name="entity_alias" [required]="!!tbRequired()"
+               [placeholder]="'entity.entity-alias' | translate"
+               [matAutocomplete]="aliasAuto" #trigger="matAutocompleteTrigger"
+               [ngModel]="entityAliasSearchText" (ngModelChange)="onSearchTextChange($event)"
+               [ngModelOptions]="{standalone: true}"
+               (keydown)="entityAliasEnter($event, trigger)">
+        <mat-autocomplete #aliasAuto="matAutocomplete" class="tb-entity-alias-autocomplete"
+                          [displayWith]="displayAlias" (optionSelected)="onAliasSelected($event)">
+          @for (item of entityAliasSearch(searchQuery()); track item.id) {
+            <mat-option [value]="item"><span>{{ item.alias }}</span></mat-option>
+          }
+          @if (!entityAliasSearch(searchQuery()).length) {
+            <mat-option disabled class="tb-not-found">
+              @if (!textIsNotEmpty(searchQuery())) {
+                <div class="tb-no-entries"><span>{{ 'entity.no-aliases-found' | translate }}</span></div>
+              } @else {
+                <div>
+                  <span>{{ 'entity.no-alias-matching' | translate: { alias: (searchQuery() | truncate: true: 6: '...') } }}</span>
+                  <span>
+                    <a style="pointer-events: all; cursor: pointer;" (mousedown)="createEntityAlias($event, searchQuery(), trigger)">{{ 'entity.create-new-alias' | translate }}</a>
+                  </span>
+                </div>
+              }
+            </mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+      @if ($error['entityAlias']) {
+        <div class="tb-error-messages" role="alert">
+          <div class="tb-error-message">{{ 'entity.alias-required' | translate }}</div>
+        </div>
+      }
+    </section>
+  `,
   providers: ngModelProviders(TbEntityAliasSelectDirective),
 })
 export class TbEntityAliasSelectDirective extends NgModelController {
-  readonly tbRequired = model<any>();
+  readonly tbRequired = model<any>(false);
   readonly aliasController = model<any>();
   readonly allowedEntityTypes = model<any>();
   readonly onCreateEntityAlias = input<CreateEntityAliasFn | undefined>();
 
-  // TODO(port): '$templateCache' — templateUrl on the component
   protected readonly entityService = inject(EntityService);
-  protected readonly element = inject(ElementRef);
 
-protected template: any = entityAliasSelectTemplate;
-  entityAliasList: any = [];
+  entityAliasList: any[] = [];
   entityAlias: any = null;
-  $watch: any;
-  entityAliasSearchText: any;
-  ngControl: any;
-
-  // TODO(port): link(scope, element, attrs, ngModelCtrl) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  /** The input's text, or the selected alias (md-autocomplete's `md-search-text`). */
+  entityAliasSearchText: any = '';
 
   constructor() {
     super();
-    this.tbRequired.set((this.tbRequired !== undefined) ? this.tbRequired() : false);
-    this.$watch('aliasController', () => {
-            this.entityAliasList = [];
-            var entityAliases: any = this.aliasController().getEntityAliases();
-            for (var aliasId in entityAliases) {
-                if (this.allowedEntityTypes()) {
-                    if (!this.entityService.filterAliasByEntityTypes(entityAliases[aliasId], this.allowedEntityTypes())) {
-                        continue;
-                    }
-                }
-                this.entityAliasList.push(entityAliases[aliasId]);
-            }
-        });
-    this.$watch('entityAlias', () => {
-            this.updateView();
-        });
+    /** `scope.$watch('aliasController', …)`. */
+    effect(() => {
+      const aliasController = this.aliasController();
+      const allowedEntityTypes = this.allowedEntityTypes();
+      untracked(() => {
+        this.entityAliasList = [];
+        if (!aliasController) {
+          return;
+        }
+        const entityAliases: any = aliasController.getEntityAliases();
+        for (const aliasId in entityAliases) {
+          if (allowedEntityTypes && !this.entityService.filterAliasByEntityTypes(entityAliases[aliasId], allowedEntityTypes)) {
+            continue;
+          }
+          this.entityAliasList.push(entityAliases[aliasId]);
+        }
+      });
+    });
   }
 
   override $render(): void {
     if (this.$viewValue) {
       this.entityAlias = this.$viewValue;
+      this.entityAliasSearchText = this.entityAlias;
+    }
+    this.updateValidity();
+  }
+
+  /** The typed text (a selected alias shows as its name). */
+  searchQuery(): string {
+    const text = this.entityAliasSearchText;
+    return typeof text === 'string' ? text : (text?.alias ?? '');
+  }
+
+  updateValidity(): void {
+    const value: any = this.$viewValue;
+    const valid = (value !== undefined && value != null) || !this.tbRequired();
+    this.$setValidity('entityAlias', valid);
+  }
+
+  entityAliasSearch(entityAliasSearchText?: any): any[] {
+    return entityAliasSearchText ? this.entityAliasList.filter(this.createFilterForEntityAlias(entityAliasSearchText)) : this.entityAliasList;
+  }
+
+  createFilterForEntityAlias(query: string): (entityAlias: any) => boolean {
+    const lowercaseQuery = query.toLowerCase();
+    return (entityAlias: any) => entityAlias.alias.toLowerCase().indexOf(lowercaseQuery) === 0;
+  }
+
+  /** `scope.$watch('entityAlias', …)`: the selection goes out through ngModel. */
+  private setEntityAlias(entityAlias: any): void {
+    if (entityAlias !== this.entityAlias) {
+      this.entityAlias = entityAlias;
+      this.updateView();
     }
   }
 
-  updateValidity(...rest: any[]): any {
-    var value: any = this.$viewValue;
-    var valid: any = (value !== undefined) && value != null || !this.tbRequired();
-    this.ngControl?.control?.setErrors(valid ? null : { entityAlias: true });
-  }
-
-  entityAliasSearch(entityAliasSearchText?: any, ...rest: any[]): any {
-    return entityAliasSearchText ? this.entityAliasList.filter(
-        this.createFilterForEntityAlias(entityAliasSearchText)) : this.entityAliasList;
-  }
-
-  createFilterForEntityAlias(query?: any, ...rest: any[]): any {
-    var lowercaseQuery: any = query.toLowerCase();
-    return function filterFn(entityAlias?: any) {
-        return (entityAlias.alias.toLowerCase().indexOf(lowercaseQuery) === 0);
-    };
-  }
-
-  updateView(...rest: any[]): any {
+  updateView(): void {
     this.$setViewValue(this.entityAlias);
     this.updateValidity();
   }
 
-  textIsNotEmpty(text?: any, ...rest: any[]): any {
-    return (text && text != null && text.length > 0) ? true : false;
+  /** Typing over a selected alias clears the selection (md-autocomplete's `md-selected-item`). */
+  onSearchTextChange(text: any): void {
+    this.entityAliasSearchText = text;
+    if (typeof text === 'string' && (!this.entityAlias || this.entityAlias.alias !== text)) {
+      this.setEntityAlias(null);
+    }
   }
 
-  entityAliasEnter($event?: any, ...rest: any[]): any {
+  onAliasSelected(event: MatAutocompleteSelectedEvent): void {
+    this.entityAliasSearchText = event.option.value;
+    this.setEntityAlias(event.option.value);
+  }
+
+  textIsNotEmpty(text?: any): boolean {
+    return !!(text && text.length > 0);
+  }
+
+  entityAliasEnter($event: KeyboardEvent, trigger: MatAutocompleteTrigger): void {
     if ($event.keyCode === ENTER) {
-        $event.preventDefault();
-        if (!this.entityAlias) {
-            var found: any = this.entityAliasSearch(this.entityAliasSearchText);
-            found = found.length > 0;
-            if (!found) {
-                this.createEntityAlias($event, this.entityAliasSearchText);
-            }
+      $event.preventDefault();
+      if (!this.entityAlias) {
+        const found = this.entityAliasSearch(this.searchQuery()).length > 0;
+        if (!found) {
+          this.createEntityAlias($event, this.searchQuery(), trigger);
         }
+      }
     }
   }
 
-  createEntityAlias(event?: any, alias?: any, ...rest: any[]): any {
-    var autoChild: any = $('#entity-autocomplete', $(this.element.nativeElement))[0].firstElementChild;
-    var el: any = $(autoChild);
-    el.scope().$mdAutocompleteCtrl.hidden = true;
-    el.scope().$mdAutocompleteCtrl.hasNotFound = false;
+  createEntityAlias(event: Event, alias: string, trigger: MatAutocompleteTrigger): void {
     event.preventDefault();
-    var promise: any = this.onCreateEntityAlias()?.(event, alias, this.allowedEntityTypes());
+    trigger.closePanel();
+    const promise = this.onCreateEntityAlias()?.(event, alias, this.allowedEntityTypes());
     if (promise) {
-        promise.then(
-            (newAlias?: any) => {
-                el.scope().$mdAutocompleteCtrl.hasNotFound = true;
-                if (newAlias) {
-                    this.entityAliasList.push(newAlias);
-                    this.entityAlias = newAlias;
-                }
-            },
-            function fail() {
-                el.scope().$mdAutocompleteCtrl.hasNotFound = true;
-            }
-        );
-    } else {
-        el.scope().$mdAutocompleteCtrl.hasNotFound = true;
+      promise.then((newAlias?: any) => {
+        if (newAlias) {
+          this.entityAliasList.push(newAlias);
+          this.entityAliasSearchText = newAlias;
+          this.setEntityAlias(newAlias);
+        }
+      }, () => {});
     }
   }
+
+  readonly displayAlias = (item: any): string => (item && typeof item === 'object' ? item.alias : item ?? '');
 }

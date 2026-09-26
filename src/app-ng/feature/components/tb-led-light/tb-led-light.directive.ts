@@ -1,100 +1,88 @@
-import { Component, inject, model } from '@angular/core';
-import { ElementRef } from '@angular/core';
+import { Component, effect, ElementRef, input, untracked, viewChild } from '@angular/core';
 import Raphael from 'raphael';
 import tinycolor from 'tinycolor2';
-import $ from 'jquery';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $compile: any;
 
 /**
- * Ported from the AngularJS directive `tbLedLight` (module `thingsboard.directives.ledLight`) in src/app/components/led-light.directive.js:22.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * Ported from the AngularJS directive `tbLedLight` (src/app/components/led-light.directive.js):
+ * a Raphael-drawn LED of `size` px that glows in `colorOn` while `tbEnabled`, and shows `colorOff`
+ * at `offOpacity` otherwise. The canvas is redrawn when `size` changes, the light when `tbEnabled` does.
  */
 @Component({
   selector: 'tb-led-light',
   standalone: true,
-  template: '', // TODO(port): no template found
+  template: `<div #canvasContainer id="canvas_container" [style.width.px]="canvasSize()" [style.height.px]="canvasSize()"></div>`,
 })
 export class TbLedLightDirective {
-  readonly size = model<any>();
-  readonly colorOn = model<any>();
-  readonly colorOff = model<any>();
-  readonly offOpacity = model<any>();
-  readonly tbEnabled = model<any>();
+  readonly size = input<any>();
+  readonly colorOn = input<any>();
+  readonly colorOff = input<any>();
+  readonly offOpacity = input<any>();
+  readonly tbEnabled = input<any>();
 
-  // TODO(port): '$compile' — not in Angular: compose with components instead
-  protected readonly element = inject(ElementRef);
+  private readonly canvasContainer = viewChild<ElementRef<HTMLElement>>('canvasContainer');
 
-  glowColor: any;
-  $watch: any;
-  canvasSize: any;
-  circleElement: any;
-  glowSize: any;
-  paper: any;
-  radius: any;
-
-  // TODO(port): link(scope, element) — `element` is the element (ElementRef.nativeElement) and `attrs` the attributes (inputs); a link function's DOM work moves to ngAfterViewInit
+  private paper: any;
+  private circleElement: any;
+  private radius = 0;
+  private glowSize = 0;
 
   constructor() {
-    this.offOpacity.set(this.offOpacity() || "0.4");
-    this.glowColor = tinycolor(this.colorOn()).lighten().toHexString();
-    this.$watch('tbEnabled',() => {
-            this.draw();
-        });
-    this.$watch('size',() => {
-            this.update();
-        });
-    this.update();
+    /** `scope.$watch('size', update)`. */
+    effect(() => {
+      const container = this.canvasContainer();
+      const size = this.canvasSize();
+      if (container) {
+        untracked(() => this.update(container.nativeElement, size));
+      }
+    });
+    /** `scope.$watch('tbEnabled', draw)`. */
+    effect(() => {
+      this.tbEnabled();
+      this.colorOn();
+      this.colorOff();
+      this.offOpacity();
+      untracked(() => this.draw());
+    });
   }
 
-  draw(...rest: any[]): any {
+  canvasSize(): number {
+    return this.size() || 50;
+  }
+
+  draw(): void {
+    if (!this.circleElement) {
+      return;
+    }
+    if (this.circleElement.theGlow) {
+      this.circleElement.theGlow.remove();
+      this.circleElement.theGlow = null;
+    }
     if (this.tbEnabled()) {
-        this.circleElement.attr("fill", this.colorOn());
-        this.circleElement.attr("stroke", this.colorOn());
-        this.circleElement.attr("opacity", "1");
-
-        if (this.circleElement.theGlow) {
-            this.circleElement.theGlow.remove();
-        }
-
-        this.circleElement.theGlow = this.circleElement.glow(
-            {
-                color: this.glowColor,
-                width: this.radius + this.glowSize,
-                opacity: 0.8,
-                fill: true
-            });
+      this.circleElement.attr('fill', this.colorOn());
+      this.circleElement.attr('stroke', this.colorOn());
+      this.circleElement.attr('opacity', '1');
+      this.circleElement.theGlow = this.circleElement.glow({
+        color: tinycolor(this.colorOn()).lighten().toHexString(),
+        width: this.radius + this.glowSize,
+        opacity: 0.8,
+        fill: true,
+      });
     } else {
-        if (this.circleElement.theGlow) {
-            this.circleElement.theGlow.remove();
-        }
-
-        /*scope.circleElement.theGlow = scope.circleElement.glow(
-         {
-         color: scope.glowColor,
-         width: scope.radius + scope.glowSize,
-         opacity: 0.4,
-         fill: true
-         });*/
-
-        this.circleElement.attr("fill", this.colorOff());
-        this.circleElement.attr("stroke", this.colorOff());
-        this.circleElement.attr("opacity", this.offOpacity());
+      this.circleElement.attr('fill', this.colorOff());
+      this.circleElement.attr('stroke', this.colorOff());
+      this.circleElement.attr('opacity', this.offOpacity() || '0.4');
     }
   }
 
-  update(...rest: any[]): any {
-    this.size.set(this.size() || 50);
-    this.canvasSize = this.size();
-    this.radius = this.canvasSize / 4;
+  update(container: HTMLElement, canvasSize: number): void {
+    this.radius = canvasSize / 4;
     this.glowSize = this.radius / 5;
-
-    var template: any = '<div id="canvas_container" style="width: ' + this.size() + 'px; height: ' + this.size() + 'px;"></div>';
-    $(this.element.nativeElement).html(template);
-    this.element.nativeElement.querySelector('#canvas_container');
-    this.paper = new Raphael($('#canvas_container', $(this.element.nativeElement))[0], this.canvasSize, this.canvasSize);
-    var center: any = this.canvasSize / 2;
+    if (this.paper) {
+      this.paper.remove();
+    }
+    container.innerHTML = '';
+    this.paper = new (Raphael as any)(container, canvasSize, canvasSize);
+    const center = canvasSize / 2;
     this.circleElement = this.paper.circle(center, center, this.radius);
     this.draw();
   }

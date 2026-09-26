@@ -32,7 +32,7 @@ export class AuditLogService {
         url += '&offset=' + pageLink.idOffset;
     }
 this.http.get(url, null).toPromise().then(function success(response?: any) {
-    deferred.resolve(response.data);
+    deferred.resolve(response);
 }, function fail() {
     deferred.reject();
 });
@@ -53,7 +53,7 @@ this.http.get(url, null).toPromise().then(function success(response?: any) {
         url += '&offset=' + pageLink.idOffset;
     }
 this.http.get(url, null).toPromise().then(function success(response?: any) {
-    deferred.resolve(response.data);
+    deferred.resolve(response);
 }, function fail() {
     deferred.reject();
 });
@@ -74,7 +74,7 @@ this.http.get(url, null).toPromise().then(function success(response?: any) {
         url += '&offset=' + pageLink.idOffset;
     }
 this.http.get(url, null).toPromise().then(function success(response?: any) {
-    deferred.resolve(response.data);
+    deferred.resolve(response);
 }, function fail() {
     deferred.reject();
 });
@@ -95,7 +95,7 @@ this.http.get(url, null).toPromise().then(function success(response?: any) {
         url += '&offset=' + pageLink.idOffset;
     }
 this.http.get(url, null).toPromise().then(function success(response?: any) {
-    deferred.resolve(response.data);
+    deferred.resolve(response);
 }, function fail() {
     deferred.reject();
 });

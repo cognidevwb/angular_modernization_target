@@ -1,4 +1,4 @@
-<!-- Scaffolded by the playbook from src/app/audit/audit-log-details-dialog.tpl.html; the AngularJS directives that map one to one are converted, the rest carry a TODO(port) -->
+<!-- Ported from src/app/audit/audit-log-details-dialog.tpl.html -->
 <!--
 
     Copyright © 2016-2020 The Thingsboard Authors
@@ -16,30 +16,30 @@
     limitations under the License.
 
 -->
-<div attr.aria-label="{{ 'audit-log.audit-log-details' | translate }}" class="md-dialog">
+<div [attr.aria-label]="'audit-log.audit-log-details' | translate" class="md-dialog">
     <mat-toolbar>
         <div class="md-toolbar-tools">
-            <h2 translate>audit-log.audit-log-details</h2>
+            <h2>{{ 'audit-log.audit-log-details' | translate }}</h2>
             <span flex></span>
-            <button mat-icon-button (click)="close()">
-                <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
+            <button mat-icon-button type="button" (click)="close()">
+                <mat-icon [attr.aria-label]="'dialog.close' | translate">close</mat-icon>
             </button>
         </div>
     </mat-toolbar>
     <mat-dialog-content>
         <div class="md-dialog-content" layout="column">
-            <label translate class="tb-title no-padding">audit-log.action-data</label>
-            <div flex id="tb-audit-log-action-data" readonly ui-ace="vm.actionDataContentOptions" [(ngModel)]="actionData">
+            <label class="tb-title no-padding">{{ 'audit-log.action-data' | translate }}</label>
+            <div flex id="tb-audit-log-action-data" #actionDataEditorElement [readonly]="true" [ui-ace]="actionDataContentOptions" [(ngModel)]="actionData">
             </div>
             <span style="height: 30px;"></span>
-            <label [hidden]="!(displayFailureDetails)" translate class="tb-title no-padding">audit-log.failure-details</label>
-            <div [hidden]="!(displayFailureDetails)" flex id="tb-audit-log-failure-details" readonly ui-ace="vm.failureDetailsContentOptions" [(ngModel)]="actionFailureDetails">
+            <label [hidden]="!displayFailureDetails" class="tb-title no-padding">{{ 'audit-log.failure-details' | translate }}</label>
+            <div [hidden]="!displayFailureDetails" flex id="tb-audit-log-failure-details" #failureDetailsEditorElement [readonly]="true" [ui-ace]="failureDetailsContentOptions" [(ngModel)]="actionFailureDetails">
             </div>
         </div>
     </mat-dialog-content>
     <mat-dialog-actions layout="row">
         <span flex></span>
-        <button mat-button [disabled]="rootScope?.loading" (click)="close()" style="margin-right:20px;">{{ 'action.close' |
+        <button mat-button type="button" [disabled]="rootScope['loading']" (click)="close()" style="margin-right:20px;">{{ 'action.close' |
             translate }}
         </button>
     </mat-dialog-actions>

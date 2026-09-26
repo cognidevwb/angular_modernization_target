@@ -31,7 +31,7 @@ export class TenantService {
         url += '&textOffset=' + pageLink.textOffset;
     }
     this.http.get(url, config).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -42,9 +42,9 @@ export class TenantService {
     var deferred: any = $q.defer();
     var url: any = '/api/tenant/' + tenantId;
     this.http.get(url, config).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }
@@ -53,9 +53,9 @@ export class TenantService {
     var deferred: any = $q.defer();
     var url: any = '/api/tenant';
     this.http.post(url, tenant).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }
@@ -66,7 +66,7 @@ export class TenantService {
     this.http.delete(url).toPromise().then(function success() {
         deferred.resolve();
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }

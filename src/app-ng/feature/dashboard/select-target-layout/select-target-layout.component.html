@@ -17,12 +17,12 @@
 
 -->
 <div attr.aria-label="{{ 'layout.select' | translate }}" class="md-dialog">
-    <form name="theForm" (ngSubmit)="save()">
+    <form name="theForm" #theForm="ngForm">
         <mat-toolbar>
             <div class="md-toolbar-tools">
-                <h2 translate>{{ 'layout.select' }}</h2>
+                <h2>{{ 'layout.select' | translate }}</h2>
                 <span flex></span>
-                <button mat-icon-button (click)="cancel()">
+                <button mat-icon-button type="button" (click)="cancel()">
                     <mat-icon attr.aria-label="{{ 'dialog.close' | translate }}">close</mat-icon>
                 </button>
             </div>
@@ -33,11 +33,11 @@
             <div class="md-dialog-content">
                 <fieldset [disabled]="rootScope?.loading">
                     <div layout="row" layout-align="start center">
-                        <button mat-raised-button color="primary" flex class="tb-layout-button" layout="column" (click)="selectLayout($event, 'main')">
-                            <span translate>layout.main</span>
+                        <button mat-raised-button color="primary" flex class="tb-layout-button" layout="column" type="button" (click)="selectLayout(theForm, 'main')">
+                            <span>{{ 'layout.main' | translate }}</span>
                         </button>
-                        <button mat-raised-button color="primary" flex class="tb-layout-button" layout="column" (click)="selectLayout($event, 'right')">
-                            <span translate>layout.right</span>
+                        <button mat-raised-button color="primary" flex class="tb-layout-button" layout="column" type="button" (click)="selectLayout(theForm, 'right')">
+                            <span>{{ 'layout.right' | translate }}</span>
                         </button>
                     </div>
                 </fieldset>

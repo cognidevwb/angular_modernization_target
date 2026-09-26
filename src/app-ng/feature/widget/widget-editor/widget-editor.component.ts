@@ -40,6 +40,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
+import { WIDGET_EDITOR_EVENT } from '../../dashboard/widget-editor-frame';
 
 // Helpers at the legacy file's top level, beside the registration (as written).
 const js_beautify: any = (beautify as any).js;
@@ -297,7 +298,26 @@ export class WidgetEditorComponent implements DoCheck {
     this.destroyRef.onDestroy(() => {
         this.eventDeregistrations.forEach((deregister) => deregister());
     });
+    this.listenToPreviewFrame();
     this.initWidgetEditor();
+  }
+
+  /**
+   * The preview iframe's dashboard reports `widgetEditModeInited`, `widgetEditUpdated` and `widgetException`
+   * as a `WIDGET_EDITOR_EVENT` on its iframe element (see widget-editor-frame.ts); they are broadcast here on
+   * the RootState, as the legacy dashboard broadcast them on this page's root scope. The event does not
+   * bubble, so it is caught on the way down (capture) at this component's element.
+   */
+  private listenToPreviewFrame(): void {
+    const host: HTMLElement = this.element.nativeElement;
+    const listener = (event: Event): void => {
+      if (event.target instanceof HTMLIFrameElement) {
+        const detail: { name: string; args?: any[] } = (event as CustomEvent).detail;
+        this.rootScope.$broadcast(detail.name, ...(detail.args ?? []));
+      }
+    };
+    host.addEventListener(WIDGET_EDITOR_EVENT, listener, true);
+    this.eventDeregistrations.push(() => host.removeEventListener(WIDGET_EDITOR_EVENT, listener, true));
   }
 
   private removeAceEditor(editor: any): void {

@@ -1,0 +1,141 @@
+<!-- Ported from src/app/components/datasource-func.tpl.html (md-chips + md-autocomplete: mat-chip-grid + mat-autocomplete) -->
+<section class="tb-datasource-func" flex layout="column"
+         layout-align="center" layout-gt-sm="row" layout-align-gt-sm="start center">
+    <mat-form-field [hidden]="widgetType() == types.widgetType.alarm.value"
+                    class="tb-datasource-name" style="min-width: 200px;" subscriptSizing="dynamic">
+        <input matInput name="datasourceName"
+               [placeholder]="'datasource.name' | translate"
+               [ngModel]="datasourceName" (ngModelChange)="onDatasourceNameChange($event)"
+               [ngModelOptions]="{standalone: true}"
+               [attr.aria-label]="'datasource.name' | translate">
+    </mat-form-field>
+    <section flex layout="column" style="padding-left: 4px;">
+        @if (widgetType() != types.widgetType.alarm.value) {
+        <mat-form-field flex subscriptSizing="dynamic">
+            <mat-chip-grid #funcKeyGrid id="function_datakey_chips" [required]="true" cdkDropList cdkDropListOrientation="mixed"
+                           (cdkDropListDropped)="dropDataKey($event, false)">
+                @for (chip of funcDataKeys; track $index) {
+                <mat-chip-row cdkDrag (removed)="removeDataKey(chip, false)">
+                    <div layout="row" layout-align="start center" class="tb-attribute-chip">
+                        <div class="tb-chip-drag-handle" style="margin-right: 5px; cursor: move;" cdkDragHandle>
+                            <mat-icon style="font-size: 20px; width: 20px; height: 20px;">drag_handle</mat-icon>
+                        </div>
+                        <div class="tb-color-preview" (click)="showColorPicker($event, chip)" style="margin-right: 5px;">
+                            <div class="tb-color-result" [style.background]="chip.color"></div>
+                        </div>
+                        <div layout="row" flex>
+                            <div class="tb-chip-label">{{ chip.label }}</div>
+                            <div class="tb-chip-separator">: </div>
+                            <div class="tb-chip-label"><strong>{{ chip.name }}</strong></div>
+                        </div>
+                        <button mat-icon-button type="button" class="tb-md-32" (click)="editDataKey($event, chip)">
+                            <mat-icon aria-label="edit" class="material-icons tb-md-20">edit</mat-icon>
+                        </button>
+                    </div>
+                    <button matChipRemove type="button" aria-label="remove"><mat-icon>close</mat-icon></button>
+                </mat-chip-row>
+                }
+                <input id="dataKey" [placeholder]="'datakey.function-types' | translate"
+                       [matChipInputFor]="funcKeyGrid" [matAutocomplete]="funcKeyAuto"
+                       [ngModel]="dataKeySearchText" (ngModelChange)="onSearchTextChange($event, false)"
+                       [ngModelOptions]="{standalone: true}"
+                       (focus)="onSearchTextChange(dataKeySearchText, false)"
+                       (matChipInputTokenEnd)="onChipInputEnd($event, false)">
+            </mat-chip-grid>
+            <mat-autocomplete #funcKeyAuto="matAutocomplete" class="tb-func-datakey-autocomplete"
+                              (optionSelected)="onDataKeySelected($event, false)">
+                @for (item of dataKeyItems; track $index) {
+                <mat-option [value]="item"><span>{{ item }}</span></mat-option>
+                }
+                @if (!dataKeyItems.length) {
+                <mat-option disabled class="tb-not-found">
+                    @if (!textIsNotEmpty(dataKeySearchText)) {
+                    <div class="tb-no-entries"><span>{{ 'device.no-keys-found' | translate }}</span></div>
+                    } @else {
+                    <div>
+                        <span>{{ 'entity.no-key-matching' | translate: { key: (dataKeySearchText | truncate: true: 6: '...') } }}</span>
+                        <span>
+                            <a style="pointer-events: all; cursor: pointer;" (mousedown)="createKey($event, false)">{{ 'entity.create-new-key' | translate }}</a>
+                        </span>
+                    </div>
+                    }
+                </mat-option>
+                }
+            </mat-autocomplete>
+        </mat-form-field>
+        }
+        @if (widgetType() == types.widgetType.alarm.value) {
+        <mat-form-field flex subscriptSizing="dynamic">
+            <mat-chip-grid #alarmKeyGrid id="alarm_datakey_chips" [required]="true" cdkDropList cdkDropListOrientation="mixed"
+                           (cdkDropListDropped)="dropDataKey($event, true)">
+                @for (chip of alarmDataKeys; track $index) {
+                <mat-chip-row cdkDrag (removed)="removeDataKey(chip, true)">
+                    <div layout="row" layout-align="start center" class="tb-attribute-chip">
+                        <div class="tb-chip-drag-handle" style="margin-right: 5px; cursor: move;" cdkDragHandle>
+                            <mat-icon style="font-size: 20px; width: 20px; height: 20px;">drag_handle</mat-icon>
+                        </div>
+                        <div class="tb-color-preview" (click)="showColorPicker($event, chip)" style="margin-right: 5px;">
+                            <div class="tb-color-result" [style.background]="chip.color"></div>
+                        </div>
+                        <div layout="row" flex>
+                            <div class="tb-chip-label">{{ chip.label }}</div>
+                            <div class="tb-chip-separator">: </div>
+                            <div class="tb-chip-label">
+                                @if (!chip.postFuncBody) {
+                                <strong>{{ chip.name }}</strong>
+                                } @else {
+                                <strong>f({{ chip.name }})</strong>
+                                }
+                            </div>
+                        </div>
+                        <button mat-icon-button type="button" class="tb-md-32" (click)="editDataKey($event, chip)">
+                            <mat-icon aria-label="edit" class="material-icons tb-md-20">edit</mat-icon>
+                        </button>
+                    </div>
+                    <button matChipRemove type="button" aria-label="remove"><mat-icon>close</mat-icon></button>
+                </mat-chip-row>
+                }
+                <input id="alarm_datakey" [placeholder]="'datakey.alarm' | translate"
+                       [matChipInputFor]="alarmKeyGrid" [matAutocomplete]="alarmKeyAuto"
+                       [ngModel]="alarmDataKeySearchText" (ngModelChange)="onSearchTextChange($event, true)"
+                       [ngModelOptions]="{standalone: true}"
+                       (focus)="onSearchTextChange(alarmDataKeySearchText, true)"
+                       (matChipInputTokenEnd)="onChipInputEnd($event, true)">
+            </mat-chip-grid>
+            <mat-autocomplete #alarmKeyAuto="matAutocomplete" class="tb-alarm-datakey-autocomplete"
+                              (optionSelected)="onDataKeySelected($event, true)">
+                @for (item of alarmDataKeyItems; track $index) {
+                <mat-option [value]="item"><span>{{ item }}</span></mat-option>
+                }
+                @if (!alarmDataKeyItems.length) {
+                <mat-option disabled class="tb-not-found">
+                    @if (!textIsNotEmpty(alarmDataKeySearchText)) {
+                    <div class="tb-no-entries"><span>{{ 'entity.no-keys-found' | translate }}</span></div>
+                    } @else {
+                    <div>
+                        <span>{{ 'entity.no-key-matching' | translate: { key: (alarmDataKeySearchText | truncate: true: 6: '...') } }}</span>
+                        <span>
+                            <a style="pointer-events: all; cursor: pointer;" (mousedown)="createKey($event, true)">{{ 'entity.create-new-key' | translate }}</a>
+                        </span>
+                    </div>
+                    }
+                </mat-option>
+                }
+            </mat-autocomplete>
+        </mat-form-field>
+        }
+        @if ($error['datasourceKeys']) {
+        <div class="tb-error-messages" role="alert">
+            @if (widgetType() !== types.widgetType.alarm.value) {
+            <div class="tb-error-message">{{ 'datakey.function-types-required' | translate }}</div>
+            }
+            @if (widgetType() === types.widgetType.alarm.value) {
+            <div class="tb-error-message">{{ 'datakey.alarm-fields-required' | translate }}</div>
+            }
+        </div>
+        }
+        @if (maxDataKeys() > -1) {
+        <div class="md-caption" style="color: rgba(0,0,0,0.57);">{{ 'datakey.maximum-function-types' | translate: { count: maxDataKeys() } }}</div>
+        }
+    </section>
+</section>

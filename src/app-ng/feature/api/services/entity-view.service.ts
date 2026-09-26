@@ -43,17 +43,17 @@ export class EntityViewService {
     }
     this.http.get(url, config).toPromise().then((response?: any) => {
         if (applyCustomersInfo) {
-            this.customerService.applyAssignedCustomersInfo(response.data.data).then(
+            this.customerService.applyAssignedCustomersInfo(response.data).then(
                 function success(data?: any) {
-                    response.data.data = data;
-                    deferred.resolve(response.data);
+                    response.data = data;
+                    deferred.resolve(response);
                 },
                 function fail() {
                     deferred.reject();
                 }
             );
         } else {
-            deferred.resolve(response.data);
+            deferred.resolve(response);
         }
     }, function fail() {
         deferred.reject();
@@ -78,17 +78,17 @@ export class EntityViewService {
     }
     this.http.get(url, config).toPromise().then((response?: any) => {
         if (applyCustomersInfo) {
-            this.customerService.applyAssignedCustomerInfo(response.data.data, customerId).then(
+            this.customerService.applyAssignedCustomerInfo(response.data, customerId).then(
                 function success(data?: any) {
-                    response.data.data = data;
-                    deferred.resolve(response.data);
+                    response.data = data;
+                    deferred.resolve(response);
                 },
                 function fail() {
                     deferred.reject();
                 }
             );
         } else {
-            deferred.resolve(response.data);
+            deferred.resolve(response);
         }
     }, function fail() {
         deferred.reject();
@@ -105,9 +105,9 @@ export class EntityViewService {
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
     this.http.get(url, config).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail(response?: any) {
-        deferred.reject(response.data);
+        deferred.reject(response?.error);
     });
     return deferred.promise;
   }
@@ -117,7 +117,7 @@ export class EntityViewService {
     var url: any = '/api/entityView';
 
     this.http.post(url, entityView).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -139,7 +139,7 @@ export class EntityViewService {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/' + customerId + '/entityView/' + entityViewId;
     this.http.post(url, null).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -150,7 +150,7 @@ export class EntityViewService {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/entityView/' + entityViewId;
     this.http.delete(url).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -177,7 +177,7 @@ export class EntityViewService {
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
     this.http.post(url, query, config).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -188,7 +188,7 @@ export class EntityViewService {
     var deferred: any = $q.defer();
     var url: any = '/api/entityView/types';
     this.http.get(url, config).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -199,7 +199,7 @@ export class EntityViewService {
     var deferred: any = $q.defer();
     var url: any = '/api/customer/public/entityView/' + entityViewId;
     this.http.post(url, null).toPromise().then(function success(response?: any) {
-        deferred.resolve(response.data);
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });

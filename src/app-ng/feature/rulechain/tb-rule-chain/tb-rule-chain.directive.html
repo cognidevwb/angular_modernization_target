@@ -16,35 +16,35 @@
     limitations under the License.
 
 -->
-<button mat-raised-button color="primary" (click)="onExportRuleChain.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'rulechain.export' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onSetRootRuleChain.emit({event: $event})" [hidden]="!(!isEdit() && !ruleChain()?.root)">{{ 'rulechain.set-root' | translate }}</button>
-<button mat-raised-button color="primary" (click)="onDeleteRuleChain.emit({event: $event})" [hidden]="!(!isEdit() && !ruleChain()?.root)">{{ 'rulechain.delete' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onExportRuleChain.emit({event: $event})" [hidden]="!(!isEdit())">{{ 'rulechain.export' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onSetRootRuleChain.emit({event: $event})" [hidden]="!(!isEdit() && !ruleChain()?.root)">{{ 'rulechain.set-root' | translate }}</button>
+<button mat-raised-button color="primary" type="button" (click)="onDeleteRuleChain.emit({event: $event})" [hidden]="!(!isEdit() && !ruleChain()?.root)">{{ 'rulechain.delete' | translate }}</button>
 
 <div layout="row">
-    <button mat-raised-button ngclipboard data-clipboard-action="copy" ngclipboard-success="onRuleChainIdCopied(e)" attr.data-clipboard-text="{{ruleChain()?.id?.id}}" [hidden]="!(!isEdit())">
+    <button mat-raised-button type="button" (click)="copyRuleChainId($event)" [hidden]="!(!isEdit())">
         <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
-        <span translate>rulechain.copyId</span>
+        <span>{{ 'rulechain.copyId' | translate }}</span>
     </button>
 </div>
 
 <div class="md-content md-padding tb-rulechain-fieldset" layout="column">
-    <fieldset [disabled]="rootScope?.loading || !isEdit() || isReadOnly()">
+    @if (ruleChain(); as rc) {
+      <fieldset [disabled]="rootScope.loading || !isEdit() || isReadOnly()">
         <mat-form-field class="md-block">
-            <mat-label translate>rulechain.name</mat-label>
-            <input matInput required name="name" [ngModel]="ruleChain().name" (ngModelChange)="ruleChain().name = $event">
-            <!-- TODO(port): ng-messages has no one-to-one Angular form -->
-            <div ng-messages="theForm()?.name?.$error">
-                <!-- TODO(port): ng-message has no one-to-one Angular form -->
-                <div translate ng-message="required">rulechain.name-required</div>
-            </div>
+            <mat-label>{{ 'rulechain.name' | translate }}</mat-label>
+            <input matInput required name="name" [(ngModel)]="rc.name" #name="ngModel">
+            @if (name.errors?.['required']) {
+              <mat-error>{{ 'rulechain.name-required' | translate }}</mat-error>
+            }
         </mat-form-field>
-        <mat-form-field class="md-block">
-            <mat-checkbox [disabled]="rootScope?.loading || !isEdit()" attr.aria-label="{{ 'rulechain.debug-mode' | translate }}" [ngModel]="ruleChain().debugMode" (ngModelChange)="ruleChain().debugMode = $event">{{ 'rulechain.debug-mode' | translate }}
+        <div class="md-block">
+            <mat-checkbox name="debugMode" [disabled]="rootScope.loading || !isEdit()" [attr.aria-label]="'rulechain.debug-mode' | translate" [(ngModel)]="rc.debugMode">{{ 'rulechain.debug-mode' | translate }}
             </mat-checkbox>
-        </mat-form-field>
+        </div>
         <mat-form-field class="md-block">
-            <mat-label translate>rulechain.description</mat-label>
-            <textarea matInput [ngModel]="ruleChain().additionalInfo.description" (ngModelChange)="ruleChain().additionalInfo.description = $event" rows="2"></textarea>
+            <mat-label>{{ 'rulechain.description' | translate }}</mat-label>
+            <textarea matInput name="description" [ngModel]="rc.additionalInfo?.description" (ngModelChange)="setAdditionalInfo(rc, 'description', $event)" rows="2"></textarea>
         </mat-form-field>
-    </fieldset>
+      </fieldset>
+    }
 </div>

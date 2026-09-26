@@ -1,27 +1,24 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
+import { UiAceDirective, UiAceOptions } from '../../components/ui-ace/ui-ace.directive';
 import { TbJsonFormDirective } from '../../components/tb-json-form/tb-json-form.directive';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let $scope: any;
-
 /**
  * Ported from the AngularJS controller `JsonFormController` (module `thingsboard.jsonform`) in src/app/jsonform/index.js:24.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * With its template src/app/jsonform/jsonform.tpl.html: a playground for tb-json-form.
  */
 @Component({
   selector: 'json-form',
   standalone: true,
-  imports: [MatCheckboxModule, MatButtonModule, CommonModule, FormsModule, forwardRef(() => TbJsonFormDirective)],
+  imports: [MatCheckboxModule, MatButtonModule, CommonModule, FormsModule, UiAceDirective, forwardRef(() => TbJsonFormDirective)],
   templateUrl: './json-form.component.html',
 })
 export class JsonFormComponent {
-  // TODO(port): '$scope' — component state: fields and signals on this class
-  // TODO(port): template: 1 × ng-false-value left in place
-  // TODO(port): template: 1 × ng-true-value left in place
+  private readonly ngform = viewChild<NgForm>('ngform');
+  readonly aceJsonOptions: UiAceOptions = { mode: 'json' };
 
   itParses: any = true;
   itParsesForm: any = true;
@@ -68,7 +65,6 @@ export class JsonFormComponent {
   schema: any;
   form: any;
   model: any = { name: '#ccc' };
-  ngform: any;
   isFormReadonly: any = 'false';
 
   get formJson(): any {
@@ -118,7 +114,7 @@ export class JsonFormComponent {
   };
 
   resetModel = (...rest: any[]): any => {
-    this.ngform.$setPristine();
+    this.ngform()?.form.markAsPristine();
     this.model = { name: 'New hello world!' };
   };
 }

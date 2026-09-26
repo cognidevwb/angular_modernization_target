@@ -35,7 +35,7 @@ this.http.get(url, null).toPromise().then(function success(response?: any) {
 this.http.post(url, settings).toPromise().then(function success(response?: any) {
     deferred.resolve(response);
 }, function fail(response?: any) {
-    deferred.reject(response);
+    deferred.reject(response?.error);
 });
     return deferred.promise;
   }
@@ -57,7 +57,7 @@ this.http.get(url, null).toPromise().then(function success(response?: any) {
 this.http.post(url, securitySettings).toPromise().then(function success(response?: any) {
     deferred.resolve(response);
 }, function fail(response?: any) {
-    deferred.reject(response);
+    deferred.reject(response?.error);
 });
     return deferred.promise;
   }
@@ -68,7 +68,7 @@ this.http.post(url, securitySettings).toPromise().then(function success(response
 this.http.post(url, settings).toPromise().then(function success() {
     deferred.resolve();
 }, function fail(response?: any) {
-    deferred.reject(response);
+    deferred.reject(response?.error);
 });
     return deferred.promise;
   }

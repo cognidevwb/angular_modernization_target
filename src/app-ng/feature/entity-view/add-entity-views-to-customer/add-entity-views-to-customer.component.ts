@@ -1,14 +1,8 @@
-import { Component, forwardRef, inject } from '@angular/core';
-import { EntityViewService } from '../../api/services/entity-view.service';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TbScopeElementDirective } from '../../components/tb-scope-element/tb-scope-element.directive';
-import { inject as injectRoot } from '@angular/core';
-import { RootState } from '../../../root-state';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -17,128 +11,72 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { TranslatePipe } from '@ngx-translate/core';
+import { RootState } from '../../../root-state';
+import { PagedListState, fetchMorePage, newPagedList, onPagedListScrolled } from '../../components/tb-grid/paged-list';
+import { EntityViewService } from '../../api/services/entity-view.service';
+
+/** What the customer's entityViews page opens the dialog with: the customer and the first page of tenant entityViews. */
+export interface AddEntityViewsToCustomerData {
+  customerId: string;
+  entityViews: PagedListState;
+}
 
 /**
- * Ported from the AngularJS controller `AddEntityViewsToCustomerController` (module `thingsboard.entityView`) in src/app/entity-view/index.js:28.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Ported from the AngularJS controller `AddEntityViewsToCustomerController` (module `thingsboard.entityView`)
+ * with its template src/app/entity-view/add-entity-views-to-customer.tpl.html. Closes with `true` once the selected entityViews are assigned.
  */
 @Component({
   selector: 'add-entity-views-to-customer',
   standalone: true,
-  imports: [TranslatePipe, MatToolbarModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatDialogModule, MatCheckboxModule, MatButtonModule, FormsModule, ScrollingModule, forwardRef(() => TbScopeElementDirective)],
+  imports: [TranslatePipe, FormsModule, ScrollingModule, MatDialogModule, MatToolbarModule, MatProgressBarModule, MatListModule, MatInputModule, MatIconModule, MatFormFieldModule, MatCheckboxModule, MatButtonModule],
   templateUrl: './add-entity-views-to-customer.component.html',
 })
 export class AddEntityViewsToCustomerComponent {
-  protected readonly rootScope = injectRoot(RootState);
+  protected readonly rootScope = inject(RootState);
   protected readonly entityViewService = inject(EntityViewService);
-  protected readonly dialog = inject(MatDialog);
-  protected readonly dialogData: any = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
-  // TODO(port): elements not resolved to a component: md-virtual-repeat-container
-  // TODO(port): template: 1 × md-virtual-repeat-container left in place
+  protected readonly dialogRef = inject(MatDialogRef<AddEntityViewsToCustomerComponent, boolean>);
+  protected readonly dialogData: AddEntityViewsToCustomerData = inject(MAT_DIALOG_DATA);
 
-  entityViews: any;
-  searchText: any = '';
-  theEntityViews: any;
+  entityViews: PagedListState = this.dialogData.entityViews;
+  searchText = '';
 
-  constructor() {
-    this.entityViews = this.dialogData.entityViews;
-    this.assign = this.assign;
-    this.cancel = this.cancel;
-    this.hasData = this.hasData;
-    this.noData = this.noData;
-    this.searchEntityViewTextUpdated = this.searchEntityViewTextUpdated;
-    this.toggleEntityViewSelection = this.toggleEntityViewSelection;
-    this.theEntityViews = {
-        getItemAtIndex: (index?: any, ...rest: any[]) => {
-            if (index > this.entityViews.data.length) {
-                this.theEntityViews.fetchMoreItems_(index);
-                return null;
-            }
-            var item: any = this.entityViews.data[index];
-            if (item) {
-                item.indexNumber = index + 1;
-            }
-            return item;
-        },
+  private readonly fetchEntityViews = (pageLink: any) => this.entityViewService.getTenantEntityViews(pageLink, false);
 
-        getLength: (...rest: any[]) => {
-            if (this.entityViews.hasNext) {
-                return this.entityViews.data.length + this.entityViews.nextPageLink.limit;
-            } else {
-                return this.entityViews.data.length;
-            }
-            return undefined;
-        },
-
-        fetchMoreItems_: (...rest: any[]) => {
-            if (this.entityViews.hasNext && !this.entityViews.pending) {
-                this.entityViews.pending = true;
-                this.entityViewService.getTenantEntityViews(this.entityViews.nextPageLink, false).then(
-                    (entityViews?: any) => {
-                        this.entityViews.data = this.entityViews.data.concat(entityViews.data);
-                        this.entityViews.nextPageLink = entityViews.nextPageLink;
-                        this.entityViews.hasNext = entityViews.hasNext;
-                        if (this.entityViews.hasNext) {
-                            this.entityViews.nextPageLink.limit = this.entityViews.pageSize;
-                        }
-                        this.entityViews.pending = false;
-                    },
-                    () => {
-                        this.entityViews.hasNext = false;
-                        this.entityViews.pending = false;
-                    });
-            }
-        }
-    };
+  cancel(): void {
+    this.dialogRef.close();
   }
 
-  cancel = (...rest: any[]): any => {
-(this.dialog as any).cancel();
-  };
+  assign(): void {
+    const tasks = Object.keys(this.entityViews['selections']).map((id) => this.entityViewService.assignEntityViewToCustomer(this.dialogData.customerId, id));
+    Promise.all(tasks).then(() => this.dialogRef.close(true));
+  }
 
-  assign = (...rest: any[]): any => {
-    var tasks: any = [];
-    for (var entityViewId in this.entityViews.selections) {
-        tasks.push(this.entityViewService.assignEntityViewToCustomer(this.dialogData.customerId, entityViewId));
-    }
-    Promise.all(tasks).then(() => {
-(this.dialog as any).hide();
-    });
-  };
-
-  noData = (...rest: any[]): any => {
+  noData(): boolean {
     return this.entityViews.data.length == 0 && !this.entityViews.hasNext;
-  };
+  }
 
-  hasData = (...rest: any[]): any => {
+  hasData(): boolean {
     return this.entityViews.data.length > 0;
-  };
+  }
 
-  toggleEntityViewSelection = ($event?: any, entityView?: any, ...rest: any[]): any => {
-    $event.stopPropagation();
-    var selected: any = (entityView.selected !== undefined) && entityView.selected;
+  onScrolled(index: number): void {
+    onPagedListScrolled(this.entityViews, index, this.fetchEntityViews);
+  }
+
+  toggleEntityViewSelection(entityView: any): void {
+    const selected = entityView.selected !== undefined && entityView.selected;
     entityView.selected = !selected;
     if (entityView.selected) {
-        this.entityViews.selections[entityView.id.id] = true;
-        this.entityViews.selectedCount++;
+      this.entityViews['selections'][entityView.id.id] = true;
+      this.entityViews['selectedCount']++;
     } else {
-        delete this.entityViews.selections[entityView.id.id];
-        this.entityViews.selectedCount--;
+      delete this.entityViews['selections'][entityView.id.id];
+      this.entityViews['selectedCount']--;
     }
-  };
+  }
 
-  searchEntityViewTextUpdated = (...rest: any[]): any => {
-    this.entityViews = {
-        pageSize: this.entityViews.pageSize,
-        data: [],
-        nextPageLink: {
-            limit: this.entityViews.pageSize,
-            textSearch: this.searchText
-        },
-        selections: {},
-        selectedCount: 0,
-        hasNext: true,
-        pending: false
-    };
-  };
+  searchEntityViewTextUpdated(): void {
+    this.entityViews = newPagedList(this.entityViews.pageSize, this.searchText, { selections: {}, selectedCount: 0 });
+    fetchMorePage(this.entityViews, this.fetchEntityViews);
+  }
 }

@@ -29,7 +29,7 @@ export abstract class AddItemComponent {
   /** The same form as the entity details components read it (`theForm.$invalid`, …). */
   protected readonly theFormCtl = computed<LegacyForm | undefined>(() => {
     const form = this.ngForm();
-    return form ? legacyForm(form) : undefined;
+    return form ? legacyForm(form, 'theForm') : undefined;
   });
 
   item: any = {};

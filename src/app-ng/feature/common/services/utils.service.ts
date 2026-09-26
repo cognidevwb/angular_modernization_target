@@ -3,8 +3,7 @@ import { RootState } from '../../../root-state';
 import { TranslateService } from '@ngx-translate/core';
 import { types } from '../constants/types';
 import { bindMethods } from '../../../bind-methods';
-// @ts-ignore
-import materialIconsCodepoints from 'raw-loader!material-design-icons/iconfont/codepoints';
+import { materialIconsCodepoints } from './material-icon-codepoints';
 import tinycolor from 'tinycolor2';
 import jsonSchemaDefaults from 'json-schema-defaults';
 import base64js from 'base64-js';

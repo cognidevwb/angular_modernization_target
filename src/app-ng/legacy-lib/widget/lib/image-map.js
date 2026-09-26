@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import 'leaflet/dist/leaflet.css';
 import * as L from 'leaflet';
 
 const maxZoom = 4;

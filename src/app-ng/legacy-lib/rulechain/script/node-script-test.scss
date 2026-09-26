@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@import "../../../scss/constants";
+@import "scss/constants";
 
-@import "~compass-sass-mixins/lib/compass";
+@import "compass-sass-mixins/lib/compass";
 
 md-dialog.tb-node-script-test-dialog {
   &.md-dialog-fullscreen {
@@ -53,12 +53,12 @@ md-dialog.tb-node-script-test-dialog {
 
   .gutter.gutter-horizontal {
     cursor: col-resize;
-    background-image: url("../../../../node_modules/split.js/grips/vertical.png");
+    background-image: url("../../../../../node_modules/split.js/grips/vertical.png");
   }
 
   .gutter.gutter-vertical {
     cursor: row-resize;
-    background-image: url("../../../../node_modules/split.js/grips/horizontal.png");
+    background-image: url("../../../../../node_modules/split.js/grips/horizontal.png");
   }
 
   .tb-split.tb-split-horizontal,

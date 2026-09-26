@@ -1,3 +1,4 @@
+import { firstValueFrom } from 'rxjs';
 import { inject, Injectable } from '@angular/core';
 import { AdminService } from './admin.service';
 import { DashboardService } from './dashboard.service';
@@ -140,7 +141,7 @@ export class UserService {
   }
 
   logout(...rest: any[]): any {
-    (this.http.post('/api/auth/logout', null, {ignoreErrors: true} as any) as any).then(() => {
+    firstValueFrom(this.http.post('/api/auth/logout', null, {ignoreErrors: true} as any)).then(() => {
         this.clearJwtToken(true);
     }, () => {
         this.clearJwtToken(true);
@@ -210,11 +211,11 @@ export class UserService {
             var refreshTokenRequest: any = {
                 refreshToken: refreshToken
             };
-            (this.http.post('/api/auth/token', refreshTokenRequest) as any).then((response?: any) => {
-                var token: any = response.data.token;
-                var refreshToken: any = response.data.refreshToken;
+            firstValueFrom(this.http.post('/api/auth/token', refreshTokenRequest)).then((response?: any) => {
+                var token: any = response.token;
+                var refreshToken: any = response.refreshToken;
                 this.setUserFromJwtToken(token, refreshToken, false);
-                this.resolveRefreshTokenQueue(response.data);
+                this.resolveRefreshTokenQueue(response);
             }, () => {
                 this.clearJwtToken(false);
                 this.rejectRefreshTokenQueue(this.translate.instant('access.refresh-token-failed'));
@@ -435,9 +436,9 @@ export class UserService {
     var deferred: any = $q.defer();
     if (this.currentUser.authority === 'SYS_ADMIN' || this.currentUser.authority === 'TENANT_ADMIN') {
         var url: any = '/api/user/tokenAccessEnabled';
-        (this.http.get(url) as any).then((response?: any) => {
-            this.userTokenAccessEnabled = response.data;
-            deferred.resolve(response.data);
+        firstValueFrom(this.http.get(url)).then((response?: any) => {
+            this.userTokenAccessEnabled = response;
+            deferred.resolve(response);
         }, () => {
             this.userTokenAccessEnabled = false;
             deferred.reject();
@@ -491,8 +492,8 @@ export class UserService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-    (this.http.get(url, null) as any).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -511,8 +512,8 @@ export class UserService {
     if ((pageLink.textOffset !== undefined)) {
         url += '&textOffset=' + pageLink.textOffset;
     }
-    (this.http.get(url, null) as any).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.get(url, null)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -525,8 +526,8 @@ export class UserService {
     if ((sendActivationMail !== undefined)) {
         url += '?sendActivationMail=' + sendActivationMail;
     }
-    (this.http.post(url, user) as any).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.post(url, user)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -539,7 +540,7 @@ export class UserService {
     if ((userCredentialsEnabled !== undefined)) {
         url += '?userCredentialsEnabled=' + userCredentialsEnabled;
     }
-    (this.http.post(url, null) as any).then(function success() {
+    firstValueFrom(this.http.post(url, null)).then(function success() {
         deferred.resolve();
     }, function fail() {
         deferred.reject();
@@ -554,8 +555,8 @@ export class UserService {
         config = {};
     }
     config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    (this.http.get(url, config) as any).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.get(url, config)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -565,7 +566,7 @@ export class UserService {
   deleteUser(userId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/user/' + userId;
-    (this.http.delete(url) as any).then(function success() {
+    firstValueFrom(this.http.delete(url)).then(function success() {
         deferred.resolve();
     }, function fail() {
         deferred.reject();
@@ -576,7 +577,7 @@ export class UserService {
   sendActivationEmail(email?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = '/api/user/sendActivationMail?email=' + email;
-    (this.http.post(url, null) as any).then(function success(response?: any) {
+    firstValueFrom(this.http.post(url, null)).then(function success(response?: any) {
         deferred.resolve(response);
     }, function fail() {
         deferred.reject();
@@ -587,8 +588,8 @@ export class UserService {
   getActivationLink(userId?: any, ...rest: any[]): any {
     var deferred: any = $q.defer();
     var url: any = `/api/user/${userId}/activationLink`;
-    (this.http.get(url) as any).then(function success(response?: any) {
-        deferred.resolve(response.data);
+    firstValueFrom(this.http.get(url)).then(function success(response?: any) {
+        deferred.resolve(response);
     }, function fail() {
         deferred.reject();
     });
@@ -678,9 +679,9 @@ export class UserService {
 
   loginAsUser(userId?: any, ...rest: any[]): any {
     var url: any = '/api/user/' + userId + '/token';
-    (this.http.get(url) as any).then((response?: any) => {
-        var token: any = response.data.token;
-        var refreshToken: any = response.data.refreshToken;
+    firstValueFrom(this.http.get(url)).then((response?: any) => {
+        var token: any = response.token;
+        var refreshToken: any = response.refreshToken;
         this.setUserFromJwtToken(token, refreshToken, true);
     }, function fail() {
     });

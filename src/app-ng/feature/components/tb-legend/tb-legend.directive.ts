@@ -7,7 +7,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 /**
  * Ported from the AngularJS directive `tbLegend` (module `thingsboard.directives.legend`) in src/app/components/legend.directive.js:25.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
+ * With its template src/app/components/legend.tpl.html.
  */
 @Component({
   selector: 'tb-legend',
@@ -21,20 +21,23 @@ export class TbLegendDirective {
 
   protected readonly element = inject(ElementRef);
 
-  isHorizontal: any;
-  isRowDirection: any;
-
-  constructor() {
-    this.isHorizontal = this.legendConfig().position === types.position.bottom.value ||
-            this.legendConfig().position === types.position.top.value;
-    this.isRowDirection = this.legendConfig().direction === types.direction.row.value;
+  /** Read from the inputs (the legacy link read them once the scope was bound). */
+  get isHorizontal(): boolean {
+    const legendConfig = this.legendConfig();
+    return !!legendConfig && (legendConfig.position === types.position.bottom.value ||
+      legendConfig.position === types.position.top.value);
   }
 
-  displayHeader(...rest: any[]): any {
-    return this.legendConfig().showMin === true ||
-           this.legendConfig().showMax === true ||
-           this.legendConfig().showAvg === true ||
-           this.legendConfig().showTotal === true;
+  get isRowDirection(): boolean {
+    return this.legendConfig()?.direction === types.direction.row.value;
+  }
+
+  displayHeader(): boolean {
+    const legendConfig = this.legendConfig();
+    return !!legendConfig && (legendConfig.showMin === true ||
+           legendConfig.showMax === true ||
+           legendConfig.showAvg === true ||
+           legendConfig.showTotal === true);
   }
 
   toggleHideData(index?: any, ...rest: any[]): any {
