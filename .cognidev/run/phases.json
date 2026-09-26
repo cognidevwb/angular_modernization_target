@@ -44,6 +44,11 @@
       "at": 1790440479,
       "reused": false,
       "status": "Ok"
+    },
+    "typecheck": {
+      "at": 1790440490,
+      "reused": false,
+      "status": "Ok"
     }
   },
   "playbook": "modernization-angular-v2",
