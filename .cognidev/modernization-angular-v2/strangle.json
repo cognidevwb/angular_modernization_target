@@ -1,0 +1,1360 @@
+{
+  "batch_size": 1,
+  "gate": "build-and-suite",
+  "router_ownership": "modern-owns",
+  "exemplar": null,
+  "fix_forward_first": true,
+  "handover": {
+    "why": "the modern half is to own the URL, and no Angular Router is wired under the modern root; a route moved before this has nowhere to land",
+    "modern_routes_file": null,
+    "legacy_router": "ui-router",
+    "legacy_router_file": "src/app/admin/admin.routes.js",
+    "bootstrap_files": [],
+    "location_sync": false,
+    "bootstraps": [],
+    "root_module_files": [],
+    "upgrade_module_files": []
+  },
+  "tasks": [
+    {
+      "order": 1,
+      "route": "dashboard",
+      "router": "ui-router",
+      "file": "src/app/dashboard/dashboard.routes.js",
+      "line": 89,
+      "files": [
+        "src/app/dashboard/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 2,
+      "route": "home",
+      "router": "ui-router",
+      "file": "src/app/layout/home.routes.js",
+      "line": 32,
+      "files": [
+        "src/app/layout/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 3,
+      "route": "home.assets",
+      "router": "ui-router",
+      "file": "src/app/asset/asset.routes.js",
+      "line": 25,
+      "files": [
+        "src/app/asset/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 4,
+      "route": "home.auditLogs",
+      "router": "ui-router",
+      "file": "src/app/audit/audit-log.routes.js",
+      "line": 25,
+      "files": [
+        "src/app/audit/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 5,
+      "route": "home.customers",
+      "router": "ui-router",
+      "file": "src/app/customer/customer.routes.js",
+      "line": 26,
+      "files": [
+        "src/app/customer/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 6,
+      "route": "home.customers.assets",
+      "router": "ui-router",
+      "file": "src/app/asset/asset.routes.js",
+      "line": 48,
+      "files": [
+        "src/app/asset/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 7,
+      "route": "home.customers.dashboards",
+      "router": "ui-router",
+      "file": "src/app/dashboard/dashboard.routes.js",
+      "line": 47,
+      "files": [
+        "src/app/dashboard/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 8,
+      "route": "home.customers.dashboards.dashboard",
+      "router": "ui-router",
+      "file": "src/app/dashboard/dashboard.routes.js",
+      "line": 107,
+      "files": [
+        "src/app/dashboard/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 9,
+      "route": "home.customers.devices",
+      "router": "ui-router",
+      "file": "src/app/device/device.routes.js",
+      "line": 48,
+      "files": [
+        "src/app/device/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 10,
+      "route": "home.customers.entityViews",
+      "router": "ui-router",
+      "file": "src/app/entity-view/entity-view.routes.js",
+      "line": 48,
+      "files": [
+        "src/app/entity-view/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 11,
+      "route": "home.customers.users",
+      "router": "ui-router",
+      "file": "src/app/user/user.routes.js",
+      "line": 47,
+      "files": [
+        "src/app/user/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 12,
+      "route": "home.dashboards",
+      "router": "ui-router",
+      "file": "src/app/dashboard/dashboard.routes.js",
+      "line": 26,
+      "files": [
+        "src/app/dashboard/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 13,
+      "route": "home.dashboards.dashboard",
+      "router": "ui-router",
+      "file": "src/app/dashboard/dashboard.routes.js",
+      "line": 68,
+      "files": [
+        "src/app/dashboard/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 14,
+      "route": "home.devices",
+      "router": "ui-router",
+      "file": "src/app/device/device.routes.js",
+      "line": 25,
+      "files": [
+        "src/app/device/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 15,
+      "route": "home.entityViews",
+      "router": "ui-router",
+      "file": "src/app/entity-view/entity-view.routes.js",
+      "line": 25,
+      "files": [
+        "src/app/entity-view/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 16,
+      "route": "home.jsonform",
+      "router": "ui-router",
+      "file": "src/app/jsonform/jsonform.routes.js",
+      "line": 25,
+      "files": [
+        "src/app/jsonform/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 17,
+      "route": "home.links",
+      "router": "ui-router",
+      "file": "src/app/home/home-links.routes.js",
+      "line": 26,
+      "files": [
+        "src/app/home/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 18,
+      "route": "home.profile",
+      "router": "ui-router",
+      "file": "src/app/profile/profile.routes.js",
+      "line": 26,
+      "files": [
+        "src/app/profile/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 19,
+      "route": "home.ruleChains",
+      "router": "ui-router",
+      "file": "src/app/rulechain/rulechain.routes.js",
+      "line": 30,
+      "files": [
+        "src/app/rulechain/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 20,
+      "route": "home.ruleChains.importRuleChain",
+      "router": "ui-router",
+      "file": "src/app/rulechain/rulechain.routes.js",
+      "line": 86,
+      "files": [
+        "src/app/rulechain/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 21,
+      "route": "home.ruleChains.ruleChain",
+      "router": "ui-router",
+      "file": "src/app/rulechain/rulechain.routes.js",
+      "line": 49,
+      "files": [
+        "src/app/rulechain/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 22,
+      "route": "home.settings.general",
+      "router": "ui-router",
+      "file": "src/app/admin/admin.routes.js",
+      "line": 36,
+      "files": [
+        "src/app/admin/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 23,
+      "route": "home.settings.outgoing-mail",
+      "router": "ui-router",
+      "file": "src/app/admin/admin.routes.js",
+      "line": 55,
+      "files": [
+        "src/app/admin/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 24,
+      "route": "home.settings.security-settings",
+      "router": "ui-router",
+      "file": "src/app/admin/admin.routes.js",
+      "line": 74,
+      "files": [
+        "src/app/admin/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 25,
+      "route": "home.tenants",
+      "router": "ui-router",
+      "file": "src/app/tenant/tenant.routes.js",
+      "line": 26,
+      "files": [
+        "src/app/tenant/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 26,
+      "route": "home.tenants.users",
+      "router": "ui-router",
+      "file": "src/app/user/user.routes.js",
+      "line": 26,
+      "files": [
+        "src/app/user/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 27,
+      "route": "home.widgets-bundles",
+      "router": "ui-router",
+      "file": "src/app/widget/widget-library.routes.js",
+      "line": 28,
+      "files": [
+        "src/app/widget/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 28,
+      "route": "home.widgets-bundles.widget-types",
+      "router": "ui-router",
+      "file": "src/app/widget/widget-library.routes.js",
+      "line": 48,
+      "files": [
+        "src/app/widget/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 29,
+      "route": "home.widgets-bundles.widget-types.widget-type",
+      "router": "ui-router",
+      "file": "src/app/widget/widget-library.routes.js",
+      "line": 68,
+      "files": [
+        "src/app/widget/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 30,
+      "route": "login",
+      "router": "ui-router",
+      "file": "src/app/login/login.routes.js",
+      "line": 27,
+      "files": [
+        "src/app/login/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 31,
+      "route": "login.createPassword",
+      "router": "ui-router",
+      "file": "src/app/login/login.routes.js",
+      "line": 80,
+      "files": [
+        "src/app/login/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 32,
+      "route": "login.resetExpiredPassword",
+      "router": "ui-router",
+      "file": "src/app/login/login.routes.js",
+      "line": 66,
+      "files": [
+        "src/app/login/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 33,
+      "route": "login.resetPassword",
+      "router": "ui-router",
+      "file": "src/app/login/login.routes.js",
+      "line": 53,
+      "files": [
+        "src/app/login/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 34,
+      "route": "login.resetPasswordRequest",
+      "router": "ui-router",
+      "file": "src/app/login/login.routes.js",
+      "line": 40,
+      "files": [
+        "src/app/login/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    },
+    {
+      "order": 35,
+      "route": "widgetEditor",
+      "router": "ui-router",
+      "file": "src/app/widget/widget-library.routes.js",
+      "line": 90,
+      "files": [
+        "src/app/dashboard/index.js"
+      ],
+      "legacy_units": 1,
+      "modern_units": 0,
+      "signals": 0,
+      "unresolved": 0,
+      "gate": "build-and-suite",
+      "note": ""
+    }
+  ],
+  "dynamic": [],
+  "no_static_closure": [
+    "home.settings"
+  ],
+  "unreached": [
+    {
+      "file": "src/app/api/admin.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/alarm.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/asset.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/attribute.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/audit-log.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/component-descriptor.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/customer.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/dashboard.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/datasource.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/device.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/entity-relation.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/entity-view.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/entity.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/event.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/login.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/queue.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/rule-chain.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/telemetry-websocket.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/tenant.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/time.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/user.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/api/widget.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/common/dashboard-utils.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/common/raf.provider.js",
+      "units": 1,
+      "kinds": {
+        "provider": 1
+      }
+    },
+    {
+      "file": "src/app/common/types.constant.js",
+      "units": 1,
+      "kinds": {
+        "constant": 1
+      }
+    },
+    {
+      "file": "src/app/common/utils.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/components/circular-progress.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/confirm-on-exit.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/contact-short.filter.js",
+      "units": 1,
+      "kinds": {
+        "filter": 1
+      }
+    },
+    {
+      "file": "src/app/components/contact.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/dashboard-autocomplete.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/dashboard.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/datakey-config-dialog.controller.js",
+      "units": 1,
+      "kinds": {
+        "controller": 1
+      }
+    },
+    {
+      "file": "src/app/components/datakey-config.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/datasource-entity.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/datasource-func.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/datasource.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/datetime-period.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/details-sidenav.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/entity-alias-select.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/expand-fullscreen.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/finish-render.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/gateway/gateway-config-select.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/gateway/gateway-config.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/gateway/gateway-form.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/js-func.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/json-content.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/json-object-edit.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/keyboard-shortcut.filter.js",
+      "units": 1,
+      "kinds": {
+        "filter": 1
+      }
+    },
+    {
+      "file": "src/app/components/kv-map.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/led-light.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/legend.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/md-chip-draggable.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/mousepoint-menu.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/nav-tree.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/no-animate.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/queue/index.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/related-entity-autocomplete.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/scope-element.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/side-menu.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/socialshare-panel.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/tb-event-directives.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/tb-json-to-string.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/timeinterval.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/truncate.filter.js",
+      "units": 1,
+      "kinds": {
+        "filter": 1
+      }
+    },
+    {
+      "file": "src/app/components/widget/action/custom-action-pretty-editor.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/widget/widget-config.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/widgets-bundle-select.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/help/help-links.constant.js",
+      "units": 1,
+      "kinds": {
+        "constant": 1
+      }
+    },
+    {
+      "file": "src/app/help/help.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/layout/user-menu.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/locale/translate-handler.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/services/clipboard.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/services/menu.service.js",
+      "units": 1,
+      "kinds": {
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/widget/lib/alarms-table-widget.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/widget/lib/date-range-navigator/date-range-navigator.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/widget/lib/entities-hierarchy-widget.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/widget/lib/entities-table-widget.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/widget/lib/extensions-table-widget.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/widget/lib/multiple-input-widget.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/widget/lib/rpc/knob.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/widget/lib/rpc/led-indicator.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/widget/lib/rpc/round-switch.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/widget/lib/rpc/switch.directive.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/widget/lib/timeseries-table-widget.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/widget/lib/web-camera-input-widget.js",
+      "units": 1,
+      "kinds": {
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/dashboard-select.directive.js",
+      "units": 2,
+      "kinds": {
+        "controller": 1,
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/legend-config.directive.js",
+      "units": 2,
+      "kinds": {
+        "controller": 1,
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/material-icon-select.directive.js",
+      "units": 2,
+      "kinds": {
+        "controller": 1,
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/menu-link.directive.js",
+      "units": 2,
+      "kinds": {
+        "directive": 1,
+        "filter": 1
+      }
+    },
+    {
+      "file": "src/app/components/widget/action/manage-widget-actions.directive.js",
+      "units": 2,
+      "kinds": {
+        "controller": 1,
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/components/widget/widget.directive.js",
+      "units": 2,
+      "kinds": {
+        "controller": 1,
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/services/item-buffer.service.js",
+      "units": 2,
+      "kinds": {
+        "factory": 2
+      }
+    },
+    {
+      "file": "src/app/services/toast.js",
+      "units": 2,
+      "kinds": {
+        "controller": 1,
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/widget/lib/tripAnimation/trip-animation-widget.js",
+      "units": 2,
+      "kinds": {
+        "directive": 1,
+        "filter": 1
+      }
+    },
+    {
+      "file": "src/app/app.js",
+      "units": 3,
+      "kinds": {
+        "config": 1,
+        "factory": 1,
+        "run": 1
+      }
+    },
+    {
+      "file": "src/app/components/json-form.directive.js",
+      "units": 3,
+      "kinds": {
+        "controller": 1,
+        "directive": 1,
+        "value": 1
+      }
+    },
+    {
+      "file": "src/app/components/timewindow.directive.js",
+      "units": 3,
+      "kinds": {
+        "controller": 1,
+        "directive": 1,
+        "filter": 1
+      }
+    },
+    {
+      "file": "src/app/dashboard/layouts/index.js",
+      "units": 3,
+      "kinds": {
+        "controller": 2,
+        "directive": 1
+      }
+    },
+    {
+      "file": "src/app/alarm/index.js",
+      "units": 4,
+      "kinds": {
+        "controller": 1,
+        "directive": 3
+      }
+    },
+    {
+      "file": "src/app/common/thirdparty-fix.js",
+      "units": 4,
+      "kinds": {
+        "factory": 2,
+        "provider": 2
+      }
+    },
+    {
+      "file": "src/app/event/index.js",
+      "units": 4,
+      "kinds": {
+        "controller": 1,
+        "directive": 3
+      }
+    },
+    {
+      "file": "src/app/import-export/index.js",
+      "units": 4,
+      "kinds": {
+        "controller": 2,
+        "directive": 1,
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/components/grid.directive.js",
+      "units": 5,
+      "kinds": {
+        "controller": 2,
+        "directive": 2,
+        "filter": 1
+      }
+    },
+    {
+      "file": "src/app/dashboard/states/index.js",
+      "units": 5,
+      "kinds": {
+        "controller": 3,
+        "directive": 1,
+        "factory": 1
+      }
+    },
+    {
+      "file": "src/app/extension/index.js",
+      "units": 6,
+      "kinds": {
+        "directive": 6
+      }
+    },
+    {
+      "file": "src/app/entity/index.js",
+      "units": 20,
+      "kinds": {
+        "controller": 5,
+        "directive": 15
+      }
+    }
+  ]
+}

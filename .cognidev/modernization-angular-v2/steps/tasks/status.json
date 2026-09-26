@@ -1,0 +1,25 @@
+{
+  "elapsedMs": 123,
+  "finishedAt": 1790440479,
+  "inputs": [],
+  "kind": "rust-binary",
+  "outputs": [
+    {
+      "exists": true,
+      "kind": null,
+      "name": "tasks",
+      "optional": false,
+      "path": "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/.cognidev/modernization-angular-v2/tasks.json"
+    },
+    {
+      "exists": true,
+      "kind": "report",
+      "name": "TASKS",
+      "optional": false,
+      "path": "/Users/rajasekharkarawalla/Downloads/angular-modernization/demo/angular_modernization_target/.cognidev/modernization-angular-v2/TASKS.md"
+    }
+  ],
+  "status": "Ok",
+  "step": "tasks",
+  "summary": "Tool `tools/tasks/target/release/tasks` completed."
+}

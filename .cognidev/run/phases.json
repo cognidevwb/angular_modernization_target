@@ -24,6 +24,11 @@
       "at": 1790440470,
       "reused": false,
       "status": "Ok"
+    },
+    "tasks": {
+      "at": 1790440479,
+      "reused": false,
+      "status": "Ok"
     }
   },
   "playbook": "modernization-angular-v2",
