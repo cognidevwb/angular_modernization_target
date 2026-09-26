@@ -1,5 +1,33 @@
 [
 {
+"file": "src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts",
+"line": "203",
+"col": "47",
+"code": "TS1138",
+"message": "Parameter declaration expected."
+},
+{
+"file": "src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts",
+"line": "429",
+"col": "30",
+"code": "TS1138",
+"message": "Parameter declaration expected."
+},
+{
+"file": "src/app-ng/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.ts",
+"line": "178",
+"col": "32",
+"code": "TS2339",
+"message": "Property 'scope' does not exist on type 'JQuery<any>'."
+},
+{
+"file": "src/app-ng/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.ts",
+"line": "184",
+"col": "10",
+"code": "TS2349",
+"message": "This expression is not callable.   Type 'TranslateService' has no call signatures."
+},
+{
 "file": "src/app-ng/feature/dashboard/add-widget/add-widget.component.ts",
 "line": "14",
 "col": "44",
@@ -35,6 +63,104 @@
 "message": "Cannot find module '../layouts/select-target-layout/select-target-layout.component' or its corresponding type declarations."
 },
 {
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "111",
+"col": "14",
+"code": "TS2349",
+"message": "This expression is not callable.   Type 'BreakpointObserver' has no call signatures."
+},
+{
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "113",
+"col": "21",
+"code": "TS2349",
+"message": "This expression is not callable.   Type 'BreakpointObserver' has no call signatures."
+},
+{
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "115",
+"col": "21",
+"code": "TS2349",
+"message": "This expression is not callable.   Type 'BreakpointObserver' has no call signatures."
+},
+{
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "137",
+"col": "21",
+"code": "TS2349",
+"message": "This expression is not callable.   Type 'BreakpointObserver' has no call signatures."
+},
+{
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "137",
+"col": "47",
+"code": "TS2349",
+"message": "This expression is not callable.   Type 'BreakpointObserver' has no call signatures."
+},
+{
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "144",
+"col": "21",
+"code": "TS2349",
+"message": "This expression is not callable.   Type 'BreakpointObserver' has no call signatures."
+},
+{
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "151",
+"col": "21",
+"code": "TS2349",
+"message": "This expression is not callable.   Type 'BreakpointObserver' has no call signatures."
+},
+{
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "158",
+"col": "21",
+"code": "TS2349",
+"message": "This expression is not callable.   Type 'BreakpointObserver' has no call signatures."
+},
+{
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "270",
+"col": "10",
+"code": "TS2540",
+"message": "Cannot assign to 'gridConfiguration' because it is a read-only property."
+},
+{
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "470",
+"col": "17",
+"code": "TS2339",
+"message": "Property 'show' does not exist on type 'MatDialog'."
+},
+{
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "554",
+"col": "36",
+"code": "TS2339",
+"message": "Property 'confirm' does not exist on type 'MatDialog'."
+},
+{
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "561",
+"col": "17",
+"code": "TS2339",
+"message": "Property 'show' does not exist on type 'MatDialog'."
+},
+{
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "572",
+"col": "36",
+"code": "TS2339",
+"message": "Property 'confirm' does not exist on type 'MatDialog'."
+},
+{
+"file": "src/app-ng/feature/components/tb-grid/tb-grid.directive.ts",
+"line": "579",
+"col": "17",
+"code": "TS2339",
+"message": "Property 'show' does not exist on type 'MatDialog'."
+},
+{
 "file": "src/app-ng/feature/components/tb-json-object-edit/tb-json-object-edit.directive.ts",
 "line": "51",
 "col": "14",
@@ -68,6 +194,13 @@
 "col": "45",
 "code": "TS2339",
 "message": "Property 'template' does not exist on type 'TbCustomActionPrettyEditorDirective'."
+},
+{
+"file": "src/app-ng/feature/components/tb-nav-tree/tb-nav-tree.directive.ts",
+"line": "73",
+"col": "10",
+"code": "TS2339",
+"message": "Property 'jstree' does not exist on type 'JQuery<HTMLElement>'."
 },
 {
 "file": "src/app-ng/feature/components/widget/widget.component.ts",
@@ -161,11 +294,67 @@
 "message": "Cannot find module '../../../core/types' or its corresponding type declarations."
 },
 {
-"file": "src/app-ng/feature/widget/tb-knob/tb-knob.directive.ts",
-"line": "5",
-"col": "36",
+"file": "src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts",
+"line": "13",
+"col": "41",
 "code": "TS2307",
-"message": "Cannot find module '../canvas-digital-gauge' or its corresponding type declarations."
+"message": "Cannot find module '../../../../app/widget/lib/display-columns-panel.tpl.html' or its corresponding type declarations."
+},
+{
+"file": "src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts",
+"line": "164",
+"col": "39",
+"code": "TS2349",
+"message": "This expression is not callable.   Type 'BreakpointObserver' has no call signatures."
+},
+{
+"file": "src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts",
+"line": "167",
+"col": "39",
+"code": "TS2349",
+"message": "This expression is not callable.   Type 'BreakpointObserver' has no call signatures."
+},
+{
+"file": "src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts",
+"line": "465",
+"col": "38",
+"code": "TS2339",
+"message": "Property 'newPanelPosition' does not exist on type 'Overlay'."
+},
+{
+"file": "src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts",
+"line": "467",
+"col": "40",
+"code": "TS2551",
+"message": "Property 'xPosition' does not exist on type 'Overlay'. Did you mean 'position'?"
+},
+{
+"file": "src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts",
+"line": "467",
+"col": "74",
+"code": "TS2551",
+"message": "Property 'yPosition' does not exist on type 'Overlay'. Did you mean 'position'?"
+},
+{
+"file": "src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts",
+"line": "484",
+"col": "18",
+"code": "TS2339",
+"message": "Property 'open' does not exist on type 'Overlay'."
+},
+{
+"file": "src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.html",
+"line": "20",
+"col": "79",
+"code": "NG8001",
+"message": "'md-fab-trigger' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.html",
+"line": "27",
+"col": "78",
+"code": "NG8001",
+"message": "'md-fab-actions' is not a known element:"
 },
 {
 "file": "src/app-ng/feature/extension/tb-extension-form-mqtt/tb-extension-form-mqtt.directive.html",
@@ -418,5 +607,47 @@
 "col": "49",
 "code": "NG8001",
 "message": "'v-pane-content' is not a known element:"
+},
+{
+"file": "src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html",
+"line": "38",
+"col": "85",
+"code": "TS2339",
+"message": "Property 'node' does not exist on type 'TbEntitiesHierarchyWidgetDirective'."
+},
+{
+"file": "src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html",
+"line": "38",
+"col": "91",
+"code": "TS2339",
+"message": "Property 'event' does not exist on type 'TbEntitiesHierarchyWidgetDirective'."
+},
+{
+"file": "src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html",
+"line": "38",
+"col": "134",
+"code": "TS2339",
+"message": "Property 'nodes' does not exist on type 'TbEntitiesHierarchyWidgetDirective'."
+},
+{
+"file": "src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html",
+"line": "38",
+"col": "141",
+"code": "TS2339",
+"message": "Property 'parent' does not exist on type 'TbEntitiesHierarchyWidgetDirective'."
+},
+{
+"file": "src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html",
+"line": "38",
+"col": "241",
+"code": "TS2339",
+"message": "Property 'searchText' does not exist on type 'TbEntitiesHierarchyWidgetDirective'."
+},
+{
+"file": "src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.html",
+"line": "38",
+"col": "253",
+"code": "TS2339",
+"message": "Property 'node' does not exist on type 'TbEntitiesHierarchyWidgetDirective'."
 }
 ]

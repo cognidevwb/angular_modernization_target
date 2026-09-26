@@ -1,8 +1,16 @@
-import { Component, forwardRef, output } from '@angular/core';
+import { Component, forwardRef, inject, output } from '@angular/core';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { DOCUMENT } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { UserService } from '../../api/services/user.service';
 import { CommonModule } from '@angular/common';
 import { TbScopeElementDirective } from '../tb-scope-element/tb-scope-element.directive';
 import { TbGridCardContentDirective } from '../tb-grid-card-content/tb-grid-card-content.directive';
 import { TbDetailsSidenavDirective } from '../tb-details-sidenav/tb-details-sidenav.directive';
+
+import $ from 'jquery';
 import { inject as injectRoot } from '@angular/core';
 import { RootState } from '../../../root-state';
 import { RangePipe } from '../pipes/range.pipe';
@@ -12,614 +20,17 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
-
+import { $q, $timeout } from '../../../core/q';
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let scope: any;
-
-// Helpers at the legacy file's top level, beside the registration (as written).
-function GridController(this: any, $scope?: any, $state?: any, $mdDialog?: any, $document?: any, $q?: any, $mdUtil?: any, $timeout?: any, $translate?: any, $mdMedia?: any, $templateCache?: any, $window?: any, userService?: any) {
-
-    var vm: any = this;
-
-    var columns: any = 1;
-    if ($mdMedia('md')) {
-        columns = 2;
-    } else if ($mdMedia('lg')) {
-        columns = 3;
-    } else if ($mdMedia('gt-lg')) {
-        columns = 4;
-    }
-
-    var pageSize: any = 10 * columns;
-
-    vm.columns = columns;
-
-    vm.addItem = addItem;
-    vm.deleteItem = deleteItem;
-    vm.deleteItems = deleteItems;
-    vm.hasData = hasData;
-    vm.isCurrentItem = isCurrentItem;
-    vm.moveToTop = moveToTop;
-    vm.noData = noData;
-    vm.onCloseDetails = onCloseDetails;
-    vm.onToggleDetailsEditMode = onToggleDetailsEditMode;
-    vm.openItem = openItem;
-    vm.operatingItem = operatingItem;
-    vm.refreshList = refreshList;
-    vm.saveItem = saveItem;
-    vm.toggleItemSelection = toggleItemSelection;
-    vm.triggerResize = triggerResize;
-    vm.isTenantAdmin = isTenantAdmin;
-
-    $scope.$watch(function () {
-        return $mdMedia('xs') || $mdMedia('sm');
-    }, function (sm?: any) {
-        if (sm) {
-            columnsUpdated(1);
-        }
-    });
-    $scope.$watch(function () {
-        return $mdMedia('md');
-    }, function (md?: any) {
-        if (md) {
-            columnsUpdated(2);
-        }
-    });
-    $scope.$watch(function () {
-        return $mdMedia('lg');
-    }, function (lg?: any) {
-        if (lg) {
-            columnsUpdated(3);
-        }
-    });
-    $scope.$watch(function () {
-        return $mdMedia('gt-lg');
-    }, function (gtLg?: any) {
-        if (gtLg) {
-            columnsUpdated(4);
-        }
-    });
-
-    initGridConfiguration();
-
-    vm.itemRows = {
-        getItemAtIndex: function (index?: any) {
-            if (index >= vm.items.rowData.length) {
-                vm.itemRows.fetchMoreItems_(index);
-                return null;
-            }
-            return vm.items.rowData[index];
-        },
-
-        getLength: function () {
-            if (vm.items.hasNext && !vm.items.pending) {
-                return vm.items.rowData.length + pageSize;
-            } else {
-                return vm.items.rowData.length;
-            }
-            return undefined;
-        },
-
-        fetchMoreItems_: function () {
-            if (vm.items.hasNext && !vm.items.pending) {
-                var promise: any = vm.fetchItemsFunc(vm.items.nextPageLink, $scope.searchConfig.searchEntitySubtype);
-                if (promise) {
-                    vm.items.pending = true;
-                    promise.then(
-                        function success(items?: any) {
-                            if (vm.items.reloadPending) {
-                                vm.items.pending = false;
-                                reload();
-                            } else {
-                                vm.items.data = vm.items.data.concat(items.data);
-                                var startIndex: any = vm.items.data.length - items.data.length;
-                                var endIndex: any = vm.items.data.length;
-                                for (var i: any = startIndex; i < endIndex; i++) {
-                                    var item: any = vm.items.data[i];
-                                    item.index = i;
-                                    var row: any = Math.floor(i / vm.columns);
-                                    var itemRow: any = vm.items.rowData[row];
-                                    if (!itemRow) {
-                                        itemRow = [];
-                                        vm.items.rowData.push(itemRow);
-                                    }
-                                    itemRow.push(item);
-                                }
-                                vm.items.nextPageLink = items.nextPageLink;
-                                vm.items.hasNext = items.hasNext;
-                                if (vm.items.hasNext) {
-                                    vm.items.nextPageLink.limit = pageSize;
-                                }
-                                vm.items.pending = false;
-                                if (vm.items.loadCallback) {
-                                    vm.items.loadCallback();
-                                    vm.items.loadCallback = null;
-                                }
-                            }
-                        },
-                        function fail() {
-                            vm.items.hasNext = false;
-                            vm.items.pending = false;
-                        });
-                } else {
-                    vm.items.hasNext = false;
-                }
-            }
-        }
-    };
-
-    function columnsUpdated(newColumns?: any) {
-        if (vm.columns !== newColumns) {
-            var newTopIndex: any = Math.ceil(vm.columns * vm.topIndex / newColumns);
-            pageSize = 10 * newColumns;
-            vm.items.rowData = [];
-            if (vm.items.nextPageLink) {
-                vm.items.nextPageLink.limit = pageSize;
-            }
-
-            for (var i: any = 0; i < vm.items.data.length; i++) {
-                var item: any = vm.items.data[i];
-                var row: any = Math.floor(i / newColumns);
-                var itemRow: any = vm.items.rowData[row];
-                if (!itemRow) {
-                    itemRow = [];
-                    vm.items.rowData.push(itemRow);
-                }
-                itemRow.push(item);
-            }
-
-            vm.columns = newColumns;
-            vm.topIndex = newTopIndex;
-            vm.itemRows.getItemAtIndex(newTopIndex+pageSize);
-            $timeout(function() {
-                moveToIndex(newTopIndex);
-            }, 500);
-        }
-    }
-
-    function initGridConfiguration() {
-        vm.gridConfiguration = vm.gridConfiguration || function () {
-                return {};
-            };
-
-        vm.config = vm.gridConfiguration();
-
-        vm.itemHeight = vm.config.itemHeight || 199;
-
-        vm.refreshParamsFunc = vm.config.refreshParamsFunc || function () {
-                return {"topIndex": vm.topIndex};
-            };
-
-        vm.deleteItemTitleFunc = vm.config.deleteItemTitleFunc || function () {
-                return $translate.instant('grid.delete-item-title');
-            };
-
-        vm.deleteItemContentFunc = vm.config.deleteItemContentFunc || function () {
-                return $translate.instant('grid.delete-item-text');
-            };
-
-        vm.deleteItemsTitleFunc = vm.config.deleteItemsTitleFunc || function () {
-                return $translate.instant('grid.delete-items-title', {count: vm.items.selectedCount}, 'messageformat');
-            };
-
-        vm.deleteItemsActionTitleFunc = vm.config.deleteItemsActionTitleFunc || function (selectedCount?: any) {
-                return $translate.instant('grid.delete-items-action-title', {count: selectedCount}, 'messageformat');
-            };
-
-        vm.deleteItemsContentFunc = vm.config.deleteItemsContentFunc || function () {
-                return $translate.instant('grid.delete-items-text');
-            };
-
-        vm.fetchItemsFunc = vm.config.fetchItemsFunc || function () {
-                return $q.when([]);
-            };
-
-        vm.loadItemDetailsFunc = vm.config.loadItemDetailsFunc || function (item?: any) {
-                return $q.when(item);
-            };
-
-        vm.saveItemFunc = vm.config.saveItemFunc || function (item?: any) {
-                return $q.when(item);
-            };
-
-        vm.deleteItemFunc = vm.config.deleteItemFunc || function () {
-                return $q.when();
-            };
-
-        vm.clickItemFunc = vm.config.clickItemFunc || function ($event?: any, item?: any) {
-                vm.openItem($event, item);
-            };
-
-        vm.itemCardTemplate = '<span></span>';
-        if (vm.config.itemCardTemplate) {
-            vm.itemCardTemplate = vm.config.itemCardTemplate;
-        } else if (vm.config.itemCardTemplateUrl) {
-            vm.itemCardTemplate = $templateCache.get(vm.config.itemCardTemplateUrl);
-        }
-        if (vm.config.itemCardController) {
-            vm.itemCardController =  vm.config.itemCardController;
-        } else {
-            vm.itemCardController = 'ItemCardController';
-        }
-        if (vm.config.addItemController) {
-            vm.addItemController =  vm.config.addItemController;
-        } else {
-            vm.addItemController = 'AddItemController';
-        }
-
-        vm.parentCtl = vm.config.parentCtl || vm;
-
-        vm.getItemTitleFunc = vm.config.getItemTitleFunc || function () {
-                return '';
-            };
-
-        vm.actionsList = vm.config.actionsList || [];
-
-        for (var i: any = 0; i < vm.actionsList.length; i++) {
-            var action: any = vm.actionsList[i];
-            action.isEnabled = action.isEnabled || function() {
-                    return true;
-                };
-        }
-
-        vm.groupActionsList = vm.config.groupActionsList || [
-                {
-                    onAction: function ($event?: any) {
-                        deleteItems($event);
-                    },
-                    name: function() { return $translate.instant('action.delete') },
-                    details: vm.deleteItemsActionTitleFunc,
-                    icon: "delete"
-                }
-            ];
-
-        vm.addItemText = vm.config.addItemText || function () {
-                return $translate.instant('grid.add-item-text');
-            };
-
-        vm.addItemAction = vm.config.addItemAction || {
-                onAction: function ($event?: any) {
-                    addItem($event);
-                },
-                name: function() { return $translate.instant('action.add') },
-                details: function() { return vm.addItemText() },
-                icon: "add"
-            };
-
-        vm.addItemActionsOpen = false;
-
-        vm.addItemActions = vm.config.addItemActions || [];
-
-        vm.onGridInited = vm.config.onGridInited || function () {
-            };
-
-        vm.addItemTemplateUrl = vm.config.addItemTemplateUrl;
-
-        vm.noItemsText = vm.config.noItemsText || function () {
-                return $translate.instant('grid.no-items-text');
-            };
-
-        vm.itemDetailsText = vm.config.itemDetailsText || function () {
-                return $translate.instant('grid.item-details');
-            };
-
-        vm.isDetailsReadOnly = vm.config.isDetailsReadOnly || function () {
-                return false;
-            };
-
-        vm.isSelectionEnabled = vm.config.isSelectionEnabled || function () {
-                return true;
-            };
-
-        vm.topIndex = vm.config.topIndex || 0;
-
-        vm.items = vm.config.items || {
-                data: [],
-                rowData: [],
-                nextPageLink: {
-                    limit: vm.topIndex + pageSize,
-                    textSearch: $scope.searchConfig.searchText
-                },
-                selections: {},
-                selectedCount: 0,
-                hasNext: true,
-                pending: false
-            };
-
-        vm.detailsConfig = {
-            isDetailsOpen: false,
-            isDetailsEditMode: false,
-            currentItem: null,
-            editingItem: null
-        };
-    }
-
-    $scope.$on('searchTextUpdated', function () {
-        reload();
-    });
-
-    $scope.$on('searchEntitySubtypeUpdated', function () {
-        reload();
-    });
-
-    vm.onGridInited(vm);
-
-    vm.itemRows.getItemAtIndex(pageSize);
-
-    function reload() {
-        if (vm.items && vm.items.pending) {
-            vm.items.reloadPending = true;
-        } else {
-            vm.items.data.length = 0;
-            vm.items.rowData.length = 0;
-            vm.items.nextPageLink = {
-                limit: pageSize,
-                textSearch: $scope.searchConfig.searchText
-            };
-            vm.items.selections = {};
-            vm.items.selectedCount = 0;
-            vm.items.hasNext = true;
-            vm.items.pending = false;
-            vm.detailsConfig.isDetailsOpen = false;
-            vm.items.reloadPending = false;
-            vm.itemRows.getItemAtIndex(pageSize);
-        }
-    }
-
-    function refreshList() {
-        let preservedTopIndex: any = vm.topIndex;
-        vm.items.data.length = 0;
-        vm.items.rowData.length = 0;
-        vm.items.nextPageLink = {
-            limit: preservedTopIndex + pageSize,
-            textSearch: $scope.searchConfig.searchText
-        };
-        vm.items.selections = {};
-        vm.items.selectedCount = 0;
-        vm.items.hasNext = true;
-        vm.items.pending = false;
-        vm.detailsConfig.isDetailsOpen = false;
-        vm.items.reloadPending = false;
-        vm.items.loadCallback = () => {
-            $mdUtil.nextTick(() => {
-                moveToIndex(preservedTopIndex);
-            });
-        };
-        vm.itemRows.getItemAtIndex(preservedTopIndex+pageSize);
-    }
-
-    function addItem($event?: any) {
-        $mdDialog.show({
-            controller: vm.addItemController,
-            controllerAs: 'vm',
-            templateUrl: vm.addItemTemplateUrl,
-            parent: (window as any).angular.element($document[0].body),
-            locals: {saveItemFunction: vm.saveItemFunc},
-            fullscreen: true,
-            targetEvent: $event
-        }).then(function () {
-            refreshList();
-        }, function () {
-        });
-    }
-
-    function openItem($event?: any, item?: any) {
-        $event.stopPropagation();
-        if (vm.detailsConfig.currentItem != null && vm.detailsConfig.currentItem.id.id === item.id.id) {
-            if (vm.detailsConfig.isDetailsOpen) {
-                vm.detailsConfig.isDetailsOpen = false;
-                return;
-            }
-        }
-        vm.loadItemDetailsFunc(item).then(function success(detailsItem?: any) {
-            detailsItem.index = item.index;
-            vm.detailsConfig.currentItem = detailsItem;
-            vm.detailsConfig.isDetailsEditMode = false;
-            vm.detailsConfig.isDetailsOpen = true;
-        });
-    }
-
-    function isCurrentItem(item?: any) {
-        if (item != null && vm.detailsConfig.currentItem != null &&
-            vm.detailsConfig.currentItem.id.id === item.id.id) {
-            return vm.detailsConfig.isDetailsOpen;
-        } else {
-            return false;
-        }
-        return undefined;
-    }
-
-    function onToggleDetailsEditMode(theForm?: any) {
-        if (!vm.detailsConfig.isDetailsEditMode) {
-            theForm.$setPristine();
-        }
-    }
-
-    function onCloseDetails() {
-        vm.detailsConfig.currentItem = null;
-    }
-
-    function operatingItem() {
-        if (!vm.detailsConfig.isDetailsEditMode) {
-            if (vm.detailsConfig.editingItem) {
-                vm.detailsConfig.editingItem = null;
-            }
-            return vm.detailsConfig.currentItem;
-        } else {
-            if (!vm.detailsConfig.editingItem) {
-                vm.detailsConfig.editingItem = (window as any).angular.copy(vm.detailsConfig.currentItem);
-            }
-            return vm.detailsConfig.editingItem;
-        }
-        return undefined;
-    }
-
-    function saveItem(theForm?: any) {
-        vm.saveItemFunc(vm.detailsConfig.editingItem).then(function success(item?: any) {
-            theForm.$setPristine();
-            vm.detailsConfig.isDetailsEditMode = false;
-            var index: any = vm.detailsConfig.currentItem.index;
-            item.index = index;
-            vm.detailsConfig.currentItem = item;
-            vm.items.data[index] = item;
-            var row: any = Math.floor(index / vm.columns);
-            var itemRow: any = vm.items.rowData[row];
-            var column: any = index % vm.columns;
-            itemRow[column] = item;
-        });
-    }
-
-    function deleteItem($event?: any, item?: any) {
-        if ($event) {
-            $event.stopPropagation();
-        }
-        var confirm: any = $mdDialog.confirm()
-            .targetEvent($event)
-            .title(vm.deleteItemTitleFunc(item))
-            .htmlContent(vm.deleteItemContentFunc(item))
-            .ariaLabel($translate.instant('grid.delete-item'))
-            .cancel($translate.instant('action.no'))
-            .ok($translate.instant('action.yes'));
-        $mdDialog.show(confirm).then(function () {
-                vm.deleteItemFunc(item.id.id).then(function success() {
-                    refreshList();
-                });
-            },
-            function () {
-            });
-
-    }
-
-    function deleteItems($event?: any) {
-        var confirm: any = $mdDialog.confirm()
-            .targetEvent($event)
-            .title(vm.deleteItemsTitleFunc(vm.items.selectedCount))
-            .htmlContent(vm.deleteItemsContentFunc())
-            .ariaLabel($translate.instant('grid.delete-items'))
-            .cancel($translate.instant('action.no'))
-            .ok($translate.instant('action.yes'));
-        $mdDialog.show(confirm).then(function () {
-                var tasks: any = [];
-                for (var id in vm.items.selections) {
-                    tasks.push(vm.deleteItemFunc(id));
-                }
-                $q.all(tasks).then(function () {
-                    refreshList();
-                });
-            },
-            function () {
-            });
-    }
-
-
-    function toggleItemSelection($event?: any, item?: any) {
-        $event.stopPropagation();
-        var selected: any = (window as any).angular.isDefined(item.selected) && item.selected;
-        item.selected = !selected;
-        if (item.selected) {
-            vm.items.selections[item.id.id] = true;
-            vm.items.selectedCount++;
-        } else {
-            delete vm.items.selections[item.id.id];
-            vm.items.selectedCount--;
-        }
-    }
-
-    function triggerResize() {
-        var w: any = (window as any).angular.element($window);
-        w.triggerHandler('resize');
-    }
-
-    function isTenantAdmin() {
-        return userService.getAuthority() == 'TENANT_ADMIN';
-    }
-
-    function moveToTop() {
-        moveToIndex(0, true);
-    }
-
-    function moveToIndex(index?: any, animate?: any) {
-        var repeatContainer: any = $scope.repeatContainer[0];
-        var scrollElement: any = repeatContainer.children[0];
-        var startY: any = scrollElement.scrollTop;
-        var stopY: any = index * vm.itemHeight;
-        if (stopY > 0) {
-            stopY+= 16;
-        }
-        var distance: any = Math.abs(startY - stopY);
-        if (distance < 100 || !animate) {
-            scrollElement.scrollTop = stopY;
-            return;
-        }
-        var upElseDown: any = stopY < startY;
-        var speed: any = Math.round(distance / 100);
-        if (speed >= 20) speed = 20;
-        var step: any = Math.round(distance / 25);
-
-        var leapY: any = upElseDown ? startY - step : startY + step;
-        var timer: any = 0;
-        for (var i: any = startY; upElseDown ? (i > stopY) : (i < stopY); upElseDown ? (i -= step) : (i += step)) {
-            $timeout(function (topY?: any) {
-                scrollElement.scrollTop = topY;
-            }, timer * speed, true, leapY);
-            if (upElseDown) {
-                leapY -= step;
-                if (leapY < stopY) {
-                    leapY = stopY;
-                }
-            } else {
-                leapY += step;
-                if (leapY > stopY) {
-                    leapY = stopY;
-                }
-            }
-            timer++;
-        }
-
-    }
-
-    function noData() {
-        return vm.items.data.length == 0 && !vm.items.hasNext;
-    }
-
-    function hasData() {
-        return vm.items.data.length > 0;
-    }
-
-}
-
-function AddItemController(this: any, $scope?: any, $mdDialog?: any, saveItemFunction?: any, helpLinks?: any) {
-
-    var vm: any = this;
-
-    vm.helpLinks = helpLinks;
-    vm.item = {};
-
-    vm.add = add;
-    vm.cancel = cancel;
-
-    function cancel() {
-        $mdDialog.cancel();
-    }
-
-    function add() {
-        saveItemFunction(vm.item).then(function success(item?: any) {
-            vm.item = item;
-            $scope.theForm.$setPristine();
-            $mdDialog.hide();
-        });
-    }
-}
-
-function ItemCardController(this: any) {
-
-    var vm: any = this; //eslint-disable-line
-
-}
+declare let $mdUtil: any;
+declare let $scope: any;
+declare let $templateCache: any;
+declare let $window: any;
+declare let userService: any;
 
 /**
  * Ported from the AngularJS directive `tbGrid` (module `thingsboard.directives.grid`) in src/app/components/grid.directive.js:27.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 5 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
   selector: 'tb-grid',
@@ -631,6 +42,18 @@ export class TbGridDirective {
   protected readonly rootScope = injectRoot(RootState);
   readonly gridConfiguration = output<any>();
 
+  // TODO(port): '$scope' — component state: fields and signals on this class
+  protected readonly router = inject(Router);
+  protected readonly dialog = inject(MatDialog);
+  protected readonly document = inject(DOCUMENT);
+  // TODO(port): '$q' — use Promise, or an Observable
+  // TODO(port): '$mdUtil' — AngularJS Material's internals: debounce/throttle → rxjs; nextTick → queueMicrotask
+  // TODO(port): '$timeout' — use setTimeout, or an rxjs timer
+  protected readonly translate = inject(TranslateService);
+  protected readonly breakpoints = inject(BreakpointObserver);
+  // TODO(port): '$templateCache' — templateUrl on the component
+  // TODO(port): '$window' — use window directly, or inject(DOCUMENT).defaultView
+  protected readonly userService = inject(UserService);
   // TODO(port): elements not resolved to a component: md-virtual-repeat-container, details-buttons, md-fab-speed-dial, md-fab-trigger, md-fab-actions
   // TODO(port): template: 1 × md-fab-actions left in place
   // TODO(port): template: 1 × md-fab-speed-dial left in place
@@ -638,18 +61,605 @@ export class TbGridDirective {
   // TODO(port): template: 1 × md-virtual-repeat-container left in place
   // TODO(port): template: 1 × ng-transclude left in place
 
-  restrict: any = "E";
-  transclude: any = {
-            detailsButtons: '?detailsButtons'
-        };
-  bindToController: any = {
-            gridConfiguration: '&?'
-        };
-  controller: any = GridController;
-  controllerAs: any;
+  protected columns_local: any = 1;
+  protected pageSize: any;
+  columns: any;
+  itemRows: any;
+  actionsList: any;
+  addItemAction: any;
+  addItemActions: any;
+  addItemActionsOpen: any;
+  addItemController: any;
+  addItemTemplateUrl: any;
+  addItemText: any;
+  clickItemFunc: any;
+  config: any;
+  deleteItemContentFunc: any;
+  deleteItemFunc: any;
+  deleteItemTitleFunc: any;
+  deleteItemsActionTitleFunc: any;
+  deleteItemsContentFunc: any;
+  deleteItemsTitleFunc: any;
+  detailsConfig: any;
+  fetchItemsFunc: any;
+  getItemTitleFunc: any;
+  groupActionsList: any;
+  isDetailsReadOnly: any;
+  isSelectionEnabled: any;
+  itemCardController: any;
+  itemCardTemplate: any;
+  itemDetailsText: any;
+  itemHeight: any;
+  items: any;
+  loadItemDetailsFunc: any;
+  noItemsText: any;
+  onGridInited: any;
+  parentCtl: any;
+  refreshParamsFunc: any;
+  repeatContainer: any;
+  saveItemFunc: any;
+  searchConfig: any;
+  topIndex: any;
+
+  // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
+  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
+  // TODO(port): `vm.gridConfiguration(…)` — its result was read; an output emits and returns nothing: take the value from an input callback instead
+  // TODO(port): `vm.gridConfiguration` was an optional callback; an output is always there, so its check reads `true`
+  // TODO(port): `columns` was both a local and a member the class exposes; the local is `columns_local`, the member stays `columns`
 
   constructor() {
-    let vm = this;
-    this.controllerAs = 'vm';
+    if (this.breakpoints('md')) {
+        this.columns_local = 2;
+    } else if (this.breakpoints('lg')) {
+        this.columns_local = 3;
+    } else if (this.breakpoints('gt-lg')) {
+        this.columns_local = 4;
+    }
+    this.pageSize = 10 * this.columns_local;
+    this.columns = this.columns_local;
+    this.addItem = this.addItem;
+    this.deleteItem = this.deleteItem;
+    this.deleteItems = this.deleteItems;
+    this.hasData = this.hasData;
+    this.isCurrentItem = this.isCurrentItem;
+    this.moveToTop = this.moveToTop;
+    this.noData = this.noData;
+    this.onCloseDetails = this.onCloseDetails;
+    this.onToggleDetailsEditMode = this.onToggleDetailsEditMode;
+    this.openItem = this.openItem;
+    this.operatingItem = this.operatingItem;
+    this.refreshList = this.refreshList;
+    this.saveItem = this.saveItem;
+    this.toggleItemSelection = this.toggleItemSelection;
+    this.triggerResize = this.triggerResize;
+    this.isTenantAdmin = this.isTenantAdmin;
+    $scope.$watch(() => {
+        return this.breakpoints('xs') || this.breakpoints('sm');
+    }, (sm?: any) => {
+        if (sm) {
+            this.columnsUpdated(1);
+        }
+    });
+    $scope.$watch(() => {
+        return this.breakpoints('md');
+    }, (md?: any) => {
+        if (md) {
+            this.columnsUpdated(2);
+        }
+    });
+    $scope.$watch(() => {
+        return this.breakpoints('lg');
+    }, (lg?: any) => {
+        if (lg) {
+            this.columnsUpdated(3);
+        }
+    });
+    $scope.$watch(() => {
+        return this.breakpoints('gt-lg');
+    }, (gtLg?: any) => {
+        if (gtLg) {
+            this.columnsUpdated(4);
+        }
+    });
+    this.initGridConfiguration();
+    this.itemRows = {
+        getItemAtIndex: (index?: any, ...rest: any[]) => {
+            if (index >= this.items.rowData.length) {
+                this.itemRows.fetchMoreItems_(index);
+                return null;
+            }
+            return this.items.rowData[index];
+        },
+
+        getLength: (...rest: any[]) => {
+            if (this.items.hasNext && !this.items.pending) {
+                return this.items.rowData.length + this.pageSize;
+            } else {
+                return this.items.rowData.length;
+            }
+            return undefined;
+        },
+
+        fetchMoreItems_: (...rest: any[]) => {
+            if (this.items.hasNext && !this.items.pending) {
+                var promise: any = this.fetchItemsFunc(this.items.nextPageLink, this.searchConfig.searchEntitySubtype);
+                if (promise) {
+                    this.items.pending = true;
+                    promise.then(
+                        (items?: any) => {
+                            if (this.items.reloadPending) {
+                                this.items.pending = false;
+                                this.reload();
+                            } else {
+                                this.items.data = this.items.data.concat(items.data);
+                                var startIndex: any = this.items.data.length - items.data.length;
+                                var endIndex: any = this.items.data.length;
+                                for (var i: any = startIndex; i < endIndex; i++) {
+                                    var item: any = this.items.data[i];
+                                    item.index = i;
+                                    var row: any = Math.floor(i / this.columns);
+                                    var itemRow: any = this.items.rowData[row];
+                                    if (!itemRow) {
+                                        itemRow = [];
+                                        this.items.rowData.push(itemRow);
+                                    }
+                                    itemRow.push(item);
+                                }
+                                this.items.nextPageLink = items.nextPageLink;
+                                this.items.hasNext = items.hasNext;
+                                if (this.items.hasNext) {
+                                    this.items.nextPageLink.limit = this.pageSize;
+                                }
+                                this.items.pending = false;
+                                if (this.items.loadCallback) {
+                                    this.items.loadCallback();
+                                    this.items.loadCallback = null;
+                                }
+                            }
+                        },
+                        () => {
+                            this.items.hasNext = false;
+                            this.items.pending = false;
+                        });
+                } else {
+                    this.items.hasNext = false;
+                }
+            }
+        }
+    };
+    $scope.$on('searchTextUpdated', () => {
+        this.reload();
+    });
+    $scope.$on('searchEntitySubtypeUpdated', () => {
+        this.reload();
+    });
+    this.onGridInited(this);
+    this.itemRows.getItemAtIndex(this.pageSize);
   }
+
+  columnsUpdated(newColumns?: any, ...rest: any[]): any {
+    if (this.columns !== newColumns) {
+        var newTopIndex: any = Math.ceil(this.columns * this.topIndex / newColumns);
+        this.pageSize = 10 * newColumns;
+        this.items.rowData = [];
+        if (this.items.nextPageLink) {
+            this.items.nextPageLink.limit = this.pageSize;
+        }
+
+        for (var i: any = 0; i < this.items.data.length; i++) {
+            var item: any = this.items.data[i];
+            var row: any = Math.floor(i / newColumns);
+            var itemRow: any = this.items.rowData[row];
+            if (!itemRow) {
+                itemRow = [];
+                this.items.rowData.push(itemRow);
+            }
+            itemRow.push(item);
+        }
+
+        this.columns = newColumns;
+        this.topIndex = newTopIndex;
+        this.itemRows.getItemAtIndex(newTopIndex+this.pageSize);
+        setTimeout(() => {
+            this.moveToIndex(newTopIndex);
+        }, 500);
+    }
+  }
+
+  initGridConfiguration(...rest: any[]): any {
+    this.gridConfiguration = true || function () {
+            return {};
+        };
+
+    this.config = this.gridConfiguration.emit(undefined);
+
+    this.itemHeight = this.config.itemHeight || 199;
+
+    this.refreshParamsFunc = this.config.refreshParamsFunc || (() => {
+            return {"topIndex": this.topIndex};
+        });
+
+    this.deleteItemTitleFunc = this.config.deleteItemTitleFunc || (() => {
+            return this.translate.instant('grid.delete-item-title');
+        });
+
+    this.deleteItemContentFunc = this.config.deleteItemContentFunc || (() => {
+            return this.translate.instant('grid.delete-item-text');
+        });
+
+    this.deleteItemsTitleFunc = this.config.deleteItemsTitleFunc || (() => {
+            return this.translate.instant('grid.delete-items-title', {count: this.items.selectedCount}, 'messageformat');
+        });
+
+    this.deleteItemsActionTitleFunc = this.config.deleteItemsActionTitleFunc || ((selectedCount?: any) => {
+            return this.translate.instant('grid.delete-items-action-title', {count: selectedCount}, 'messageformat');
+        });
+
+    this.deleteItemsContentFunc = this.config.deleteItemsContentFunc || (() => {
+            return this.translate.instant('grid.delete-items-text');
+        });
+
+    this.fetchItemsFunc = this.config.fetchItemsFunc || function () {
+            return Promise.resolve([]);
+        };
+
+    this.loadItemDetailsFunc = this.config.loadItemDetailsFunc || function (item?: any) {
+            return Promise.resolve(item);
+        };
+
+    this.saveItemFunc = this.config.saveItemFunc || function (item?: any) {
+            return Promise.resolve(item);
+        };
+
+    this.deleteItemFunc = this.config.deleteItemFunc || function () {
+            return Promise.resolve();
+        };
+
+    this.clickItemFunc = this.config.clickItemFunc || (($event?: any, item?: any) => {
+            this.openItem($event, item);
+        });
+
+    this.itemCardTemplate = '<span></span>';
+    if (this.config.itemCardTemplate) {
+        this.itemCardTemplate = this.config.itemCardTemplate;
+    } else if (this.config.itemCardTemplateUrl) {
+        this.itemCardTemplate = $templateCache.get(this.config.itemCardTemplateUrl);
+    }
+    if (this.config.itemCardController) {
+        this.itemCardController =  this.config.itemCardController;
+    } else {
+        this.itemCardController = 'ItemCardController';
+    }
+    if (this.config.addItemController) {
+        this.addItemController =  this.config.addItemController;
+    } else {
+        this.addItemController = 'AddItemController';
+    }
+
+    this.parentCtl = this.config.parentCtl || this;
+
+    this.getItemTitleFunc = this.config.getItemTitleFunc || function () {
+            return '';
+        };
+
+    this.actionsList = this.config.actionsList || [];
+
+    for (var i: any = 0; i < this.actionsList.length; i++) {
+        var action: any = this.actionsList[i];
+        action.isEnabled = action.isEnabled || function() {
+                return true;
+            };
+    }
+
+    this.groupActionsList = this.config.groupActionsList || [
+            {
+                onAction: ($event?: any, ...rest: any[]) => {
+                    this.deleteItems($event);
+                },
+                name: (...rest: any[]) => { return this.translate.instant('action.delete') },
+                details: this.deleteItemsActionTitleFunc,
+                icon: "delete"
+            }
+        ];
+
+    this.addItemText = this.config.addItemText || (() => {
+            return this.translate.instant('grid.add-item-text');
+        });
+
+    this.addItemAction = this.config.addItemAction || {
+            onAction: ($event?: any, ...rest: any[]) => {
+                this.addItem($event);
+            },
+            name: (...rest: any[]) => { return this.translate.instant('action.add') },
+            details: (...rest: any[]) => { return this.addItemText() },
+            icon: "add"
+        };
+
+    this.addItemActionsOpen = false;
+
+    this.addItemActions = this.config.addItemActions || [];
+
+    this.onGridInited = this.config.onGridInited || function () {
+        };
+
+    this.addItemTemplateUrl = this.config.addItemTemplateUrl;
+
+    this.noItemsText = this.config.noItemsText || (() => {
+            return this.translate.instant('grid.no-items-text');
+        });
+
+    this.itemDetailsText = this.config.itemDetailsText || (() => {
+            return this.translate.instant('grid.item-details');
+        });
+
+    this.isDetailsReadOnly = this.config.isDetailsReadOnly || function () {
+            return false;
+        };
+
+    this.isSelectionEnabled = this.config.isSelectionEnabled || function () {
+            return true;
+        };
+
+    this.topIndex = this.config.topIndex || 0;
+
+    this.items = this.config.items || {
+            data: [],
+            rowData: [],
+            nextPageLink: {
+                limit: this.topIndex + this.pageSize,
+                textSearch: this.searchConfig.searchText
+            },
+            selections: {},
+            selectedCount: 0,
+            hasNext: true,
+            pending: false
+        };
+
+    this.detailsConfig = {
+        isDetailsOpen: false,
+        isDetailsEditMode: false,
+        currentItem: null,
+        editingItem: null
+    };
+  }
+
+  reload(...rest: any[]): any {
+    if (this.items && this.items.pending) {
+        this.items.reloadPending = true;
+    } else {
+        this.items.data.length = 0;
+        this.items.rowData.length = 0;
+        this.items.nextPageLink = {
+            limit: this.pageSize,
+            textSearch: this.searchConfig.searchText
+        };
+        this.items.selections = {};
+        this.items.selectedCount = 0;
+        this.items.hasNext = true;
+        this.items.pending = false;
+        this.detailsConfig.isDetailsOpen = false;
+        this.items.reloadPending = false;
+        this.itemRows.getItemAtIndex(this.pageSize);
+    }
+  }
+
+  refreshList = (...rest: any[]): any => {
+    let preservedTopIndex: any = this.topIndex;
+    this.items.data.length = 0;
+    this.items.rowData.length = 0;
+    this.items.nextPageLink = {
+        limit: preservedTopIndex + this.pageSize,
+        textSearch: this.searchConfig.searchText
+    };
+    this.items.selections = {};
+    this.items.selectedCount = 0;
+    this.items.hasNext = true;
+    this.items.pending = false;
+    this.detailsConfig.isDetailsOpen = false;
+    this.items.reloadPending = false;
+    this.items.loadCallback = () => {
+        $mdUtil.nextTick(() => {
+            this.moveToIndex(preservedTopIndex);
+        });
+    };
+    this.itemRows.getItemAtIndex(preservedTopIndex+this.pageSize);
+  };
+
+  addItem = ($event?: any, ...rest: any[]): any => {
+    let vm = this;
+    this.dialog.show({
+        controller: this.addItemController,
+        controllerAs: 'vm',
+        templateUrl: this.addItemTemplateUrl,
+        parent: $(this.document.body),
+        locals: {saveItemFunction: this.saveItemFunc},
+        fullscreen: true,
+        targetEvent: $event
+    }).then(() => {
+        this.refreshList();
+    }, function () {
+    });
+  };
+
+  openItem = ($event?: any, item?: any, ...rest: any[]): any => {
+    $event.stopPropagation();
+    if (this.detailsConfig.currentItem != null && this.detailsConfig.currentItem.id.id === item.id.id) {
+        if (this.detailsConfig.isDetailsOpen) {
+            this.detailsConfig.isDetailsOpen = false;
+            return;
+        }
+    }
+    this.loadItemDetailsFunc(item).then((detailsItem?: any) => {
+        detailsItem.index = item.index;
+        this.detailsConfig.currentItem = detailsItem;
+        this.detailsConfig.isDetailsEditMode = false;
+        this.detailsConfig.isDetailsOpen = true;
+    });
+  };
+
+  isCurrentItem = (item?: any, ...rest: any[]): any => {
+    if (item != null && this.detailsConfig.currentItem != null &&
+        this.detailsConfig.currentItem.id.id === item.id.id) {
+        return this.detailsConfig.isDetailsOpen;
+    } else {
+        return false;
+    }
+    return undefined;
+  };
+
+  onToggleDetailsEditMode = (theForm?: any, ...rest: any[]): any => {
+    if (!this.detailsConfig.isDetailsEditMode) {
+        theForm.$setPristine();
+    }
+  };
+
+  onCloseDetails = (...rest: any[]): any => {
+    this.detailsConfig.currentItem = null;
+  };
+
+  operatingItem = (...rest: any[]): any => {
+    if (!this.detailsConfig.isDetailsEditMode) {
+        if (this.detailsConfig.editingItem) {
+            this.detailsConfig.editingItem = null;
+        }
+        return this.detailsConfig.currentItem;
+    } else {
+        if (!this.detailsConfig.editingItem) {
+            this.detailsConfig.editingItem = structuredClone(this.detailsConfig.currentItem);
+        }
+        return this.detailsConfig.editingItem;
+    }
+    return undefined;
+  };
+
+  saveItem = (theForm?: any, ...rest: any[]): any => {
+    this.saveItemFunc(this.detailsConfig.editingItem).then((item?: any) => {
+        theForm.$setPristine();
+        this.detailsConfig.isDetailsEditMode = false;
+        var index: any = this.detailsConfig.currentItem.index;
+        item.index = index;
+        this.detailsConfig.currentItem = item;
+        this.items.data[index] = item;
+        var row: any = Math.floor(index / this.columns);
+        var itemRow: any = this.items.rowData[row];
+        var column: any = index % this.columns;
+        itemRow[column] = item;
+    });
+  };
+
+  deleteItem = ($event?: any, item?: any, ...rest: any[]): any => {
+    if ($event) {
+        $event.stopPropagation();
+    }
+    var confirm: any = this.dialog.confirm()
+        .targetEvent($event)
+        .title(this.deleteItemTitleFunc(item))
+        .htmlContent(this.deleteItemContentFunc(item))
+        .ariaLabel(this.translate.instant('grid.delete-item'))
+        .cancel(this.translate.instant('action.no'))
+        .ok(this.translate.instant('action.yes'));
+    this.dialog.show(confirm).then(() => {
+            this.deleteItemFunc(item.id.id).then(() => {
+                this.refreshList();
+            });
+        },
+        function () {
+        });
+
+  };
+
+  deleteItems = ($event?: any, ...rest: any[]): any => {
+    var confirm: any = this.dialog.confirm()
+        .targetEvent($event)
+        .title(this.deleteItemsTitleFunc(this.items.selectedCount))
+        .htmlContent(this.deleteItemsContentFunc())
+        .ariaLabel(this.translate.instant('grid.delete-items'))
+        .cancel(this.translate.instant('action.no'))
+        .ok(this.translate.instant('action.yes'));
+    this.dialog.show(confirm).then(() => {
+            var tasks: any = [];
+            for (var id in this.items.selections) {
+                tasks.push(this.deleteItemFunc(id));
+            }
+            Promise.all(tasks).then(() => {
+                this.refreshList();
+            });
+        },
+        function () {
+        });
+  };
+
+  toggleItemSelection = ($event?: any, item?: any, ...rest: any[]): any => {
+    $event.stopPropagation();
+    var selected: any = (item.selected !== undefined) && item.selected;
+    item.selected = !selected;
+    if (item.selected) {
+        this.items.selections[item.id.id] = true;
+        this.items.selectedCount++;
+    } else {
+        delete this.items.selections[item.id.id];
+        this.items.selectedCount--;
+    }
+  };
+
+  triggerResize = (...rest: any[]): any => {
+    var w: any = $($window);
+    w.triggerHandler('resize');
+  };
+
+  isTenantAdmin = (...rest: any[]): any => {
+    return this.userService.getAuthority() == 'TENANT_ADMIN';
+  };
+
+  moveToTop = (...rest: any[]): any => {
+    this.moveToIndex(0, true);
+  };
+
+  moveToIndex(index?: any, animate?: any, ...rest: any[]): any {
+    var repeatContainer: any = this.repeatContainer[0];
+    var scrollElement: any = repeatContainer.children[0];
+    var startY: any = scrollElement.scrollTop;
+    var stopY: any = index * this.itemHeight;
+    if (stopY > 0) {
+        stopY+= 16;
+    }
+    var distance: any = Math.abs(startY - stopY);
+    if (distance < 100 || !animate) {
+        scrollElement.scrollTop = stopY;
+        return;
+    }
+    var upElseDown: any = stopY < startY;
+    var speed: any = Math.round(distance / 100);
+    if (speed >= 20) speed = 20;
+    var step: any = Math.round(distance / 25);
+
+    var leapY: any = upElseDown ? startY - step : startY + step;
+    var timer: any = 0;
+    for (var i: any = startY; upElseDown ? (i > stopY) : (i < stopY); upElseDown ? (i -= step) : (i += step)) {
+        setTimeout(function (topY?: any) {
+            scrollElement.scrollTop = topY;
+        }, timer * speed, true, leapY);
+        if (upElseDown) {
+            leapY -= step;
+            if (leapY < stopY) {
+                leapY = stopY;
+            }
+        } else {
+            leapY += step;
+            if (leapY > stopY) {
+                leapY = stopY;
+            }
+        }
+        timer++;
+    }
+
+  }
+
+  noData = (...rest: any[]): any => {
+    return this.items.data.length == 0 && !this.items.hasNext;
+  };
+
+  hasData = (...rest: any[]): any => {
+    return this.items.data.length > 0;
+  };
 }

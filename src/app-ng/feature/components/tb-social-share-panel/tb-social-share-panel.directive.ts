@@ -1,27 +1,9 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
+import { UtilsService } from '../../common/services/utils.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
-
-// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
-declare let scope: any;
-
-// Helpers at the legacy file's top level, beside the registration (as written).
-function SocialsharePanelController(this: any, utils?: any) {
-
-    let vm: any = this;
-
-    vm.isShareLinkLocal = function() {
-        if (vm.shareLink && vm.shareLink.length > 0) {
-            return utils.isLocalUrl(vm.shareLink);
-        } else {
-            return true;
-        }
-        return undefined;
-    }
-
-}
 
 /**
  * Ported from the AngularJS directive `tbSocialSharePanel` (module `thingsboard.directives.socialsharePanel`) in src/app/components/socialshare-panel.directive.js:23.
@@ -39,31 +21,14 @@ export class TbSocialSharePanelDirective {
   readonly shareLink = input<any>();
   readonly shareHashTags = input<any>();
 
-  restrict: any = "E";
-  bindToController: any = {
-            shareTitle: '@',
-            shareText: '@',
-            shareLink: '@',
-            shareHashTags: '@'
-        };
-  controller: any = SocialsharePanelController;
-  controllerAs: any;
+  protected readonly utils = inject(UtilsService);
 
-  constructor() {
-    let vm = this;
-    this.controllerAs = 'vm';
-  }
-
-  protected isShareLinkLocal(): boolean {
-    const link = this.shareLink();
-    if (link && link.length > 0) {
-      try {
-        const url = new URL(link, window.location.href);
-        return url.origin === window.location.origin;
-      } catch {
+  isShareLinkLocal(...rest: any[]): any {
+    if (this.shareLink() && this.shareLink().length > 0) {
+        return this.utils.isLocalUrl(this.shareLink());
+    } else {
         return true;
-      }
     }
-    return true;
+    return undefined;
   }
 }

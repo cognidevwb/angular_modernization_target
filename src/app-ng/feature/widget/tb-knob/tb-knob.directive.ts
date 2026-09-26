@@ -1,362 +1,18 @@
-import { Component, model } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+import $ from 'jquery';
+import CanvasDigitalGauge from '../../../../app/widget/lib/CanvasDigitalGauge';
 import tinycolor from 'tinycolor2';
-import { isNumber } from 'lodash-es';
-import { CanvasDigitalGauge } from '../canvas-digital-gauge';
-
-// Helpers at the legacy file's top level, beside the registration (as written).
-function KnobController(this: any, $element?: any, $scope?: any, $document?: any) {
-    let vm: any = this;
-
-    vm.value = 0;
-    vm.error = '';
-    vm.newValue = 0;
-
-    let knob: any = $(this.knobElementRef.nativeElement).find('.knob'),
-        knobContainer: any = $(this.knobElementRef.nativeElement).find('#knob-container'),
-        knobTopPointerContainer: any = knob.find('.top-pointer-container'),
-        knobTopPointer: any = knob.find('.top-pointer'),
-        knobValueContainer: any = knob.find('.value-container'),
-        knobValue: any = knob.find('.knob-value'),
-        knobErrorContainer: any = knob.find('.error-container'),
-        knobError: any = knob.find('.knob-error'),
-        knobTitleContainer: any = knob.find('.title-container'),
-        knobTitle: any = knob.find('.knob-title'),
-        knobMinmaxContainer: any = knob.find('.minmax-container'),
-        minmaxLabel: any = knob.find('.minmax-label'),
-        textMeasure: any = knob.find('#text-measure'),
-        startDeg: any = -1,
-        currentDeg: any = 0,
-        rotation: any = 0,
-        lastDeg: any = 0,
-        moving: any = false;
-
-    var minDeg: any = -45;
-    var maxDeg: any = 225;
-
-    var canvasBarElement: any = $(this.knobElementRef.nativeElement).find('#canvasBar');
-
-    var levelColors: any = ['#19ff4b', '#ffff19', '#ff3232'];
-
-    var canvasBar: any;
-
-    $scope.$watch('vm.ctx', () => {
-        if (vm.ctx) {
-            init();
-        }
-    });
-
-    function init() {
-
-        vm.minValue = vm.ctx.settings.minValue !== undefined ? vm.ctx.settings.minValue : 0;
-        vm.maxValue = vm.ctx.settings.maxValue !== undefined ? vm.ctx.settings.maxValue : 100;
-        vm.title = vm.ctx.settings.title !== undefined ? vm.ctx.settings.title : '';
-
-        var canvasBarData: any = {
-            renderTo: canvasBarElement[0],
-            hideValue: true,
-            neonGlowBrightness: 0,
-            gaugeWidthScale: 0.4,
-            gaugeColor: 'rgba(0, 0, 0, 0)',
-            levelColors: levelColors,
-            minValue: vm.minValue,
-            maxValue: vm.maxValue,
-            gaugeType: 'donut',
-            dashThickness: 2,
-            donutStartAngle: 3/4*Math.PI,
-            donutEndAngle: 9/4*Math.PI,
-            animation: false
-        };
-
-        canvasBar = new (CanvasDigitalGauge as any)(canvasBarData).draw();
-
-        knob.on('click', (e?: any) => {
-            if (moving) {
-                moving = false;
-                return false;
-            }
-            e.preventDefault();
-
-            var offset: any = knob.offset();
-            var center: any = {
-                y : offset.top + knob.height()/2,
-                x: offset.left + knob.width()/2
-            };
-            var a: any, b: any, deg: any,
-                rad2deg: any = 180/Math.PI;
-
-            e = (e.originalEvent.touches) ? e.originalEvent.touches[0] : e;
-
-            a = center.y - e.pageY;
-            b = center.x - e.pageX;
-            deg = Math.atan2(a,b)*rad2deg;
-            if(deg < 0){
-                deg = 360 + deg;
-            }
-            if (deg > maxDeg) {
-                if (deg - 360 > minDeg) {
-                    deg = deg - 360;
-                } else {
-                    return false;
-                }
-            }
-            currentDeg = deg;
-            lastDeg = deg;
-            knobTopPointerContainer.css('transform','rotate('+(currentDeg)+'deg)');
-            turn(degreeToRatio(currentDeg));
-            rotation = currentDeg;
-            startDeg = -1;
-            rpcUpdateValue(vm.newValue);
-            return undefined;
-        });
-
-        knob.on('mousedown touchstart', (e?: any) => {
-            moving = false;
-            e.preventDefault();
-            var offset: any = knob.offset();
-            var center: any = {
-                y : offset.top + knob.height()/2,
-                x: offset.left + knob.width()/2
-            };
-
-            var a: any, b: any, deg: any, tmp: any,
-                rad2deg: any = 180/Math.PI;
-
-            $document.on('mousemove.rem touchmove.rem', (e?: any) => {
-                moving = true;
-                e = (e.originalEvent.touches) ? e.originalEvent.touches[0] : e;
-
-                a = center.y - e.pageY;
-                b = center.x - e.pageX;
-                deg = Math.atan2(a,b)*rad2deg;
-                if(deg < 0){
-                    deg = 360 + deg;
-                }
-
-                if(startDeg == -1){
-                    startDeg = deg;
-                }
-
-                tmp = Math.floor((deg-startDeg) + rotation);
-
-                if(tmp < 0){
-                    tmp = 360 + tmp;
-                }
-                else if(tmp > 359){
-                    tmp = tmp % 360;
-                }
-
-                if (tmp > maxDeg) {
-                    if (tmp - 360 > minDeg) {
-                        tmp = tmp - 360;
-                    } else {
-                        var deltaMax: any = Math.abs(maxDeg - lastDeg);
-                        var deltaMin: any = Math.abs(minDeg - lastDeg);
-                        if (deltaMax < deltaMin) {
-                            tmp = maxDeg;
-                        } else {
-                            tmp = minDeg;
-                        }
-                    }
-                }
-                if(Math.abs(tmp - lastDeg) > 180){
-                    startDeg = deg;
-                    rotation = currentDeg;
-                    return false;
-                }
-
-                currentDeg = tmp;
-                lastDeg = tmp;
-
-                knobTopPointerContainer.css('transform','rotate('+(currentDeg)+'deg)');
-                turn(degreeToRatio(currentDeg));
-                return undefined;
-            });
-
-            $document.on('mouseup.rem  touchend.rem',() => {
-                if(moving) {
-                    rpcUpdateValue(vm.newValue);
-                }
-                knob.off('.rem');
-                $document.off('.rem');
-                rotation = currentDeg;
-                startDeg = -1;
-            });
-
-        });
-        vm.ctx.resize = resize;
-        resize();
-        var initialValue: any = vm.ctx.settings.initialValue !== undefined ? vm.ctx.settings.initialValue : vm.minValue;
-        setValue(initialValue);
-
-        var subscription: any = vm.ctx.defaultSubscription;
-        var rpcEnabled: any = subscription.rpcEnabled;
-
-        vm.isSimulated = $scope.widgetEditMode;
-
-        vm.requestTimeout = 500;
-        if (vm.ctx.settings.requestTimeout) {
-            vm.requestTimeout = vm.ctx.settings.requestTimeout;
-        }
-        vm.getValueMethod = 'getValue';
-        if (vm.ctx.settings.getValueMethod && vm.ctx.settings.getValueMethod.length) {
-            vm.getValueMethod = vm.ctx.settings.getValueMethod;
-        }
-        vm.setValueMethod = 'setValue';
-        if (vm.ctx.settings.setValueMethod && vm.ctx.settings.setValueMethod.length) {
-            vm.setValueMethod = vm.ctx.settings.setValueMethod;
-        }
-        if (!rpcEnabled) {
-            onError('Target device is not set!');
-        } else {
-            if (!vm.isSimulated) {
-                rpcRequestValue();
-            }
-        }
-    }
-
-    function ratioToDegree(ratio?: any) {
-        return minDeg + ratio*(maxDeg-minDeg);
-    }
-
-    function degreeToRatio(degree?: any) {
-        return (degree-minDeg)/(maxDeg-minDeg);
-    }
-
-    function resize() {
-        var width: any = knobContainer.width();
-        var height: any = knobContainer.height();
-        var size: any = Math.min(width, height);
-        knob.css({width: size, height: size});
-        canvasBar.update({width: size, height: size});
-        setFontSize(knobTitle, vm.title, knobTitleContainer.height(), knobTitleContainer.width());
-        setFontSize(knobError, vm.error, knobErrorContainer.height(), knobErrorContainer.width());
-        var minmaxHeight: any = knobMinmaxContainer.height();
-        minmaxLabel.css({'fontSize': minmaxHeight+'px', 'lineHeight': minmaxHeight+'px'});
-        checkValueSize();
-    }
-
-    function turn(ratio?: any) {
-        vm.newValue = (vm.minValue + (vm.maxValue - vm.minValue)*ratio).toFixed(vm.ctx.decimals);
-        if (canvasBar.value != vm.newValue) {
-            canvasBar.value = vm.newValue;
-        }
-        updateColor(canvasBar.getValueColor());
-        onValue(vm.newValue);
-    }
-
-    function setValue(value?: any) {
-        var ratio: any = (value-vm.minValue) / (vm.maxValue - vm.minValue);
-        rotation = lastDeg = currentDeg = ratioToDegree(ratio);
-        knobTopPointerContainer.css('transform','rotate('+(currentDeg)+'deg)');
-        if (canvasBar.value != value) {
-            canvasBar.value = value;
-        }
-        updateColor(canvasBar.getValueColor());
-        vm.value = formatValue(value);
-        checkValueSize();
-    }
-
-    function updateColor(color?: any) {
-        var glowColor: any = (tinycolor as any)(color).brighten(30).toHexString();
-        knobValue.css({'color': glowColor});
-        var textShadow: any = `${color} 1px 1px 10px, ${glowColor} 1px 1px 10px`;
-        knobValue.css({'textShadow': textShadow});
-        knobTopPointer.css({'backgroundColor': glowColor});
-        var boxShadow: any = `inset 1px 0 2px #040404, 1px 1px 8px 2px ${glowColor}`;
-        knobTopPointer.css({'boxShadow': boxShadow});
-    }
-
-    function onValue(value?: any) {
-    function onValue(value?: any) {
-        vm.value = formatValue(value);
-        checkValueSize();
-    }
-    }
-
-    function onError(error?: any) {
-    function onError(error?: any) {
-        vm.error = error;
-        setFontSize(knobError, vm.error, knobErrorContainer.height(), knobErrorContainer.width());
-    }
-    }
-
-    function formatValue(value?: any) {
-        return vm.ctx.utils.formatValue(value, vm.ctx.decimals, vm.ctx.units, true);
-    }
-
-    function checkValueSize() {
-        var fontSize: any = knobValueContainer.height()/3.3;
-        var containerWidth: any = knobValueContainer.width();
-        setFontSize(knobValue, vm.value, fontSize, containerWidth);
-    }
-
-    function setFontSize(element?: any, text?: any, fontSize?: any, maxWidth?: any) {
-        var textWidth: any = measureTextWidth(text, fontSize);
-        while (textWidth > maxWidth) {
-            fontSize--;
-            if (fontSize < 0) {
-                break;
-            }
-            textWidth = measureTextWidth(text, fontSize);
-        }
-        element.css({'fontSize': fontSize+'px', 'lineHeight': fontSize+'px'});
-    }
-
-    function measureTextWidth(text?: any, fontSize?: any) {
-        textMeasure.css({'fontSize': fontSize+'px', 'lineHeight': fontSize+'px'});
-        textMeasure.html(text);
-        return textMeasure.width();
-    }
-
-    function rpcRequestValue() {
-        vm.error = '';
-        vm.ctx.controlApi.sendTwoWayCommand(vm.getValueMethod, null, vm.requestTimeout).then(
-            (responseBody?: any) => {
-                if (isNumber(responseBody)) {
-                    var numValue: any = Number(responseBody).toFixed(vm.ctx.decimals);
-                    setValue(numValue);
-                } else {
-                    var errorText: any = `Unable to parse response: ${responseBody}`;
-                    onError(errorText);
-                }
-            },
-            () => {
-                var errorText: any = vm.ctx.defaultSubscription.rpcErrorText;
-                onError(errorText);
-            }
-        );
-    }
-
-    function rpcUpdateValue(value?: any) {
-        if (vm.executingUpdateValue) {
-            vm.scheduledValue = value;
-            return;
-        } else {
-            vm.scheduledValue = null;
-            vm.rpcValue = value;
-            vm.executingUpdateValue = true;
-        }
-        vm.error = '';
-        vm.ctx.controlApi.sendOneWayCommand(vm.setValueMethod, value, vm.requestTimeout).then(
-            () => {
-                vm.executingUpdateValue = false;
-                if (vm.scheduledValue != null && vm.scheduledValue != vm.rpcValue) {
-                    rpcUpdateValue(vm.scheduledValue);
-                }
-            },
-            () => {
-                vm.executingUpdateValue = false;
-                var errorText: any = vm.ctx.defaultSubscription.rpcErrorText;
-                onError(errorText);
-            }
-        );
-    }
-}
+import { isNumber } from '../../../../app/widget/lib/widget-utils';
+// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
+declare let $scope: any;
 
 /**
  * Ported from the AngularJS directive `tbKnob` (module `thingsboard.widgets.rpc.knob`) in src/app/widget/lib/rpc/knob.directive.js:29.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 1 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
   selector: 'tb-knob',
@@ -367,19 +23,377 @@ function KnobController(this: any, $element?: any, $scope?: any, $document?: any
 export class TbKnobDirective {
   readonly ctx = model<any>();
 
+  protected readonly element = inject(ElementRef);
+  // TODO(port): '$scope' — component state: fields and signals on this class
+  protected readonly document = inject(DOCUMENT);
+
   value: any = 0;
   error: any = '';
-  title: any = '';
+  newValue: any = 0;
+  protected knob: any;
+  protected knobContainer: any;
+  protected knobTopPointerContainer: any;
+  protected knobTopPointer: any;
+  protected knobValueContainer: any;
+  protected knobValue: any;
+  protected knobErrorContainer: any;
+  protected knobError: any;
+  protected knobTitleContainer: any;
+  protected knobTitle: any;
+  protected knobMinmaxContainer: any;
+  protected minmaxLabel: any;
+  protected textMeasure: any;
+  protected startDeg: any = -1;
+  protected currentDeg: any = 0;
+  protected rotation: any = 0;
+  protected lastDeg: any = 0;
+  protected moving: any = false;
+  protected minDeg: any = -45;
+  protected maxDeg: any = 225;
+  protected canvasBarElement: any;
+  protected levelColors: any = ['#19ff4b', '#ffff19', '#ff3232'];
+  protected canvasBar: any;
+  executingUpdateValue: any;
+  getValueMethod: any;
+  isSimulated: any;
+  maxValue: any;
+  minValue: any;
+  requestTimeout: any;
+  rpcValue: any;
+  scheduledValue: any;
+  setValueMethod: any;
+  title: any;
+  widgetEditMode: any;
 
-  restrict: any = "E";
-  bindToController: any = {
-            ctx: '='
-        };
-  controller: any = KnobController;
-  controllerAs: any;
+  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
 
   constructor() {
     let vm = this;
-    this.controllerAs = 'vm';
+    this.knob = $('.knob', $(this.element.nativeElement));
+    this.knobContainer = $('#knob-container', $(this.element.nativeElement));
+    this.knobTopPointerContainer = this.knob.find('.top-pointer-container');
+    this.knobTopPointer = this.knob.find('.top-pointer');
+    this.knobValueContainer = this.knob.find('.value-container');
+    this.knobValue = this.knob.find('.knob-value');
+    this.knobErrorContainer = this.knob.find('.error-container');
+    this.knobError = this.knob.find('.knob-error');
+    this.knobTitleContainer = this.knob.find('.title-container');
+    this.knobTitle = this.knob.find('.knob-title');
+    this.knobMinmaxContainer = this.knob.find('.minmax-container');
+    this.minmaxLabel = this.knob.find('.minmax-label');
+    this.textMeasure = this.knob.find('#text-measure');
+    this.canvasBarElement = $('#canvasBar', $(this.element.nativeElement));
+    $scope.$watch('vm.ctx', () => {
+        if (this.ctx()) {
+            this.init();
+        }
+    });
+  }
+
+  init(...rest: any[]): any {
+
+    this.minValue = (this.ctx().settings.minValue !== undefined) ? this.ctx().settings.minValue : 0;
+    this.maxValue = (this.ctx().settings.maxValue !== undefined) ? this.ctx().settings.maxValue : 100;
+    this.title = (this.ctx().settings.title !== undefined) ? this.ctx().settings.title : '';
+
+    var canvasBarData: any = {
+        renderTo: this.canvasBarElement[0],
+        hideValue: true,
+        neonGlowBrightness: 0,
+        gaugeWidthScale: 0.4,
+        gaugeColor: 'rgba(0, 0, 0, 0)',
+        levelColors: this.levelColors,
+        minValue: this.minValue,
+        maxValue: this.maxValue,
+        gaugeType: 'donut',
+        dashThickness: 2,
+        donutStartAngle: 3/4*Math.PI,
+        donutEndAngle: 9/4*Math.PI,
+        animation: false
+    };
+
+    this.canvasBar = new CanvasDigitalGauge(canvasBarData).draw();
+
+    this.knob.on('click', (e?: any) => {
+        if (this.moving) {
+            this.moving = false;
+            return false;
+        }
+        e.preventDefault();
+
+        var offset: any = this.knob.offset();
+        var center: any = {
+            y : offset.top + this.knob.height()/2,
+            x: offset.left + this.knob.width()/2
+        };
+        var a: any, b: any, deg: any,
+            rad2deg: any = 180/Math.PI;
+
+        e = (e.originalEvent.touches) ? e.originalEvent.touches[0] : e;
+
+        a = center.y - e.pageY;
+        b = center.x - e.pageX;
+        deg = Math.atan2(a,b)*rad2deg;
+        if(deg < 0){
+            deg = 360 + deg;
+        }
+        if (deg > this.maxDeg) {
+            if (deg - 360 > this.minDeg) {
+                deg = deg - 360;
+            } else {
+                return false;
+            }
+        }
+        this.currentDeg = deg;
+        this.lastDeg = deg;
+        this.knobTopPointerContainer.css('transform','rotate('+(this.currentDeg)+'deg)');
+        this.turn(this.degreeToRatio(this.currentDeg));
+        this.rotation = this.currentDeg;
+        this.startDeg = -1;
+        this.rpcUpdateValue(this.newValue);
+        return undefined;
+    });
+
+    this.knob.on('mousedown touchstart', (e?: any) => {
+        this.moving = false;
+        e.preventDefault();
+        var offset: any = this.knob.offset();
+        var center: any = {
+            y : offset.top + this.knob.height()/2,
+            x: offset.left + this.knob.width()/2
+        };
+
+        var a: any, b: any, deg: any, tmp: any,
+            rad2deg: any = 180/Math.PI;
+
+        $(this.document).on('mousemove.rem touchmove.rem', (e?: any) => {
+            this.moving = true;
+            e = (e.originalEvent.touches) ? e.originalEvent.touches[0] : e;
+
+            a = center.y - e.pageY;
+            b = center.x - e.pageX;
+            deg = Math.atan2(a,b)*rad2deg;
+            if(deg < 0){
+                deg = 360 + deg;
+            }
+
+            if(this.startDeg == -1){
+                this.startDeg = deg;
+            }
+
+            tmp = Math.floor((deg-this.startDeg) + this.rotation);
+
+            if(tmp < 0){
+                tmp = 360 + tmp;
+            }
+            else if(tmp > 359){
+                tmp = tmp % 360;
+            }
+
+            if (tmp > this.maxDeg) {
+                if (tmp - 360 > this.minDeg) {
+                    tmp = tmp - 360;
+                } else {
+                    var deltaMax: any = Math.abs(this.maxDeg - this.lastDeg);
+                    var deltaMin: any = Math.abs(this.minDeg - this.lastDeg);
+                    if (deltaMax < deltaMin) {
+                        tmp = this.maxDeg;
+                    } else {
+                        tmp = this.minDeg;
+                    }
+                }
+            }
+            if(Math.abs(tmp - this.lastDeg) > 180){
+                this.startDeg = deg;
+                this.rotation = this.currentDeg;
+                return false;
+            }
+
+            this.currentDeg = tmp;
+            this.lastDeg = tmp;
+
+            this.knobTopPointerContainer.css('transform','rotate('+(this.currentDeg)+'deg)');
+            this.turn(this.degreeToRatio(this.currentDeg));
+            return undefined;
+        });
+
+        $(this.document).on('mouseup.rem  touchend.rem',() => {
+            if(this.moving) {
+                this.rpcUpdateValue(this.newValue);
+            }
+            this.knob.off('.rem');
+            $(this.document).off('.rem');
+            this.rotation = this.currentDeg;
+            this.startDeg = -1;
+        });
+
+    });
+    this.ctx().resize = this.resize;
+    this.resize();
+    var initialValue: any = (this.ctx().settings.initialValue !== undefined) ? this.ctx().settings.initialValue : this.minValue;
+    this.setValue(initialValue);
+
+    var subscription: any = this.ctx().defaultSubscription;
+    var rpcEnabled: any = subscription.rpcEnabled;
+
+    this.isSimulated = this.widgetEditMode;
+
+    this.requestTimeout = 500;
+    if (this.ctx().settings.requestTimeout) {
+        this.requestTimeout = this.ctx().settings.requestTimeout;
+    }
+    this.getValueMethod = 'getValue';
+    if (this.ctx().settings.getValueMethod && this.ctx().settings.getValueMethod.length) {
+        this.getValueMethod = this.ctx().settings.getValueMethod;
+    }
+    this.setValueMethod = 'setValue';
+    if (this.ctx().settings.setValueMethod && this.ctx().settings.setValueMethod.length) {
+        this.setValueMethod = this.ctx().settings.setValueMethod;
+    }
+    if (!rpcEnabled) {
+        this.onError('Target device is not set!');
+    } else {
+        if (!this.isSimulated) {
+            this.rpcRequestValue();
+        }
+    }
+  }
+
+  ratioToDegree(ratio?: any, ...rest: any[]): any {
+    return this.minDeg + ratio*(this.maxDeg-this.minDeg);
+  }
+
+  degreeToRatio(degree?: any, ...rest: any[]): any {
+    return (degree-this.minDeg)/(this.maxDeg-this.minDeg);
+  }
+
+  resize = (...rest: any[]): any => {
+    var width: any = this.knobContainer.width();
+    var height: any = this.knobContainer.height();
+    var size: any = Math.min(width, height);
+    this.knob.css({width: size, height: size});
+    this.canvasBar.update({width: size, height: size});
+    this.setFontSize(this.knobTitle, this.title, this.knobTitleContainer.height(), this.knobTitleContainer.width());
+    this.setFontSize(this.knobError, this.error, this.knobErrorContainer.height(), this.knobErrorContainer.width());
+    var minmaxHeight: any = this.knobMinmaxContainer.height();
+    this.minmaxLabel.css({'fontSize': minmaxHeight+'px', 'lineHeight': minmaxHeight+'px'});
+    this.checkValueSize();
+  };
+
+  turn(ratio?: any, ...rest: any[]): any {
+    this.newValue = (this.minValue + (this.maxValue - this.minValue)*ratio).toFixed(this.ctx().decimals);
+    if (this.canvasBar.value != this.newValue) {
+        this.canvasBar.value = this.newValue;
+    }
+    this.updateColor(this.canvasBar.getValueColor());
+    this.onValue(this.newValue);
+  }
+
+  setValue(value?: any, ...rest: any[]): any {
+    var ratio: any = (value-this.minValue) / (this.maxValue - this.minValue);
+    this.rotation = this.lastDeg = this.currentDeg = this.ratioToDegree(ratio);
+    this.knobTopPointerContainer.css('transform','rotate('+(this.currentDeg)+'deg)');
+    if (this.canvasBar.value != value) {
+        this.canvasBar.value = value;
+    }
+    this.updateColor(this.canvasBar.getValueColor());
+    this.value = this.formatValue(value);
+    this.checkValueSize();
+  }
+
+  updateColor(color?: any, ...rest: any[]): any {
+    var glowColor: any = tinycolor(color).brighten(30).toHexString();
+    this.knobValue.css({'color': glowColor});
+    var textShadow: any = `${color} 1px 1px 10px, ${glowColor} 1px 1px 10px`;
+    this.knobValue.css({'textShadow': textShadow});
+    this.knobTopPointer.css({'backgroundColor': glowColor});
+    var boxShadow: any = `inset 1px 0 2px #040404, 1px 1px 8px 2px ${glowColor}`;
+    this.knobTopPointer.css({'boxShadow': boxShadow});
+  }
+
+  onValue(value?: any, ...rest: any[]): any {
+    queueMicrotask(() => {
+        this.value = this.formatValue(value);
+        this.checkValueSize();
+    });
+  }
+
+  onError(error?: any, ...rest: any[]): any {
+    queueMicrotask(() => {
+        this.error = error;
+        this.setFontSize(this.knobError, this.error, this.knobErrorContainer.height(), this.knobErrorContainer.width());
+    });
+  }
+
+  formatValue(value?: any, ...rest: any[]): any {
+    return this.ctx().utils.formatValue(value, this.ctx().decimals, this.ctx().units, true);
+  }
+
+  checkValueSize(...rest: any[]): any {
+    var fontSize: any = this.knobValueContainer.height()/3.3;
+    var containerWidth: any = this.knobValueContainer.width();
+    this.setFontSize(this.knobValue, this.value, fontSize, containerWidth);
+  }
+
+  setFontSize(element?: any, text?: any, fontSize?: any, maxWidth?: any, ...rest: any[]): any {
+    var textWidth: any = this.measureTextWidth(text, fontSize);
+    while (textWidth > maxWidth) {
+        fontSize--;
+        if (fontSize < 0) {
+            break;
+        }
+        textWidth = this.measureTextWidth(text, fontSize);
+    }
+    element.css({'fontSize': fontSize+'px', 'lineHeight': fontSize+'px'});
+  }
+
+  measureTextWidth(text?: any, fontSize?: any, ...rest: any[]): any {
+    this.textMeasure.css({'fontSize': fontSize+'px', 'lineHeight': fontSize+'px'});
+    this.textMeasure.html(text);
+    return this.textMeasure.width();
+  }
+
+  rpcRequestValue(...rest: any[]): any {
+    this.error = '';
+    this.ctx().controlApi.sendTwoWayCommand(this.getValueMethod, null, this.requestTimeout).then(
+        (responseBody?: any) => {
+            if (isNumber(responseBody)) {
+                var numValue: any = Number(responseBody).toFixed(this.ctx().decimals);
+                this.setValue(numValue);
+            } else {
+                var errorText: any = `Unable to parse response: ${responseBody}`;
+                this.onError(errorText);
+            }
+        },
+        () => {
+            var errorText: any = this.ctx().defaultSubscription.rpcErrorText;
+            this.onError(errorText);
+        }
+    );
+  }
+
+  rpcUpdateValue(value?: any, ...rest: any[]): any {
+    if (this.executingUpdateValue) {
+        this.scheduledValue = value;
+        return;
+    } else {
+        this.scheduledValue = null;
+        this.rpcValue = value;
+        this.executingUpdateValue = true;
+    }
+    this.error = '';
+    this.ctx().controlApi.sendOneWayCommand(this.setValueMethod, value, this.requestTimeout).then(
+        () => {
+            this.executingUpdateValue = false;
+            if (this.scheduledValue != null && this.scheduledValue != this.rpcValue) {
+                this.rpcUpdateValue(this.scheduledValue);
+            }
+        },
+        () => {
+            this.executingUpdateValue = false;
+            var errorText: any = this.ctx().defaultSubscription.rpcErrorText;
+            this.onError(errorText);
+        }
+    );
   }
 }

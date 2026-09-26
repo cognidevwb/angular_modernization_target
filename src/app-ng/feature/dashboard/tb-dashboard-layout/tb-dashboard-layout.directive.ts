@@ -1,259 +1,25 @@
-import { Component, forwardRef, model } from '@angular/core';
+import { Component, forwardRef, inject, model } from '@angular/core';
+import { DestroyRef } from '@angular/core';
+import { ItembufferService } from '../../services/itembuffer.service';
+import { RootState } from '../../../root-state';
+import { TranslateService } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { TbDashboardDirective } from '../../components/tb-dashboard/tb-dashboard.directive';
-import { inject as injectRoot } from '@angular/core';
-import { RootState } from '../../../root-state';
+
+import $ from 'jquery';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
-import $ from 'jquery';
-
 // Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
+declare let $scope: any;
+declare let $window: any;
+declare let hotkeys: any;
 declare let scope: any;
-
-// Helpers at the legacy file's top level, beside the registration (as written).
-function DashboardLayoutController(this: any, $scope?: any, $rootScope?: any, $translate?: any, $window?: any, hotkeys?: any, itembuffer?: any) {
-
-    var vm: any = this;
-
-    vm.noData = noData;
-    vm.addWidget = addWidget;
-    vm.editWidget = editWidget;
-    vm.exportWidget = exportWidget;
-    vm.widgetMouseDown = widgetMouseDown;
-    vm.widgetClicked = widgetClicked;
-    vm.prepareDashboardContextMenu = prepareDashboardContextMenu;
-    vm.prepareWidgetContextMenu = prepareWidgetContextMenu;
-    vm.removeWidget = removeWidget;
-    vm.pasteWidget = pasteWidget;
-    vm.pasteWidgetReference = pasteWidgetReference;
-    vm.dashboardInited = dashboardInited;
-    vm.dashboardInitFailed = dashboardInitFailed;
-
-    vm.reload = function() {
-        if (vm.dashboardContainer) {
-            vm.dashboardContainer.reload();
-        }
-    };
-
-    vm.setResizing = function(resizing?: any) {
-        if (vm.dashboardContainer) {
-            vm.dashboardContainer.isResizing = resizing;
-        }
-    }
-
-    vm.resetHighlight = function() {
-        if (vm.dashboardContainer) {
-            vm.dashboardContainer.resetHighlight();
-        }
-    };
-
-    vm.highlightWidget = function(widget?: any, delay?: any) {
-        if (vm.dashboardContainer) {
-            vm.dashboardContainer.highlightWidget(widget, delay);
-        }
-    };
-
-    vm.selectWidget = function(widget?: any, delay?: any) {
-        if (vm.dashboardContainer) {
-            vm.dashboardContainer.selectWidget(widget, delay);
-        }
-    };
-
-    vm.dashboardInitComplete = false;
-
-    initHotKeys();
-
-    $scope.$on('$destroy', function() {
-        vm.dashboardContainer = null;
-    });
-
-    $scope.$watch('vm.layoutCtx', function () {
-        if (vm.layoutCtx) {
-            vm.layoutCtx.ctrl = vm;
-        }
-    });
-
-    function noData() {
-        return vm.dashboardInitComplete && vm.layoutCtx &&
-            vm.layoutCtx.widgets && vm.layoutCtx.widgets.length == 0;
-    }
-
-    function addWidget($event?: any) {
-        if (vm.dashboardCtx.onAddWidget) {
-            vm.dashboardCtx.onAddWidget($event, vm.layoutCtx);
-        }
-    }
-
-    function editWidget($event?: any, widget?: any) {
-        if (vm.dashboardCtx.onEditWidget) {
-            vm.dashboardCtx.onEditWidget($event, vm.layoutCtx, widget);
-        }
-    }
-
-    function exportWidget($event?: any, widget?: any) {
-        if (vm.dashboardCtx.onExportWidget) {
-            vm.dashboardCtx.onExportWidget($event, vm.layoutCtx, widget);
-        }
-    }
-
-    function widgetMouseDown($event?: any, widget?: any) {
-        if (vm.dashboardCtx.onWidgetMouseDown) {
-            vm.dashboardCtx.onWidgetMouseDown($event, vm.layoutCtx, widget);
-        }
-    }
-
-    function widgetClicked($event?: any, widget?: any) {
-        if (vm.dashboardCtx.onWidgetClicked) {
-            vm.dashboardCtx.onWidgetClicked($event, vm.layoutCtx, widget);
-        }
-    }
-
-    function prepareDashboardContextMenu() {
-        if (vm.dashboardCtx.prepareDashboardContextMenu) {
-            return vm.dashboardCtx.prepareDashboardContextMenu(vm.layoutCtx);
-        }
-        return undefined;
-    }
-
-    function prepareWidgetContextMenu(widget?: any) {
-        if (vm.dashboardCtx.prepareWidgetContextMenu) {
-            return vm.dashboardCtx.prepareWidgetContextMenu(vm.layoutCtx, widget);
-        }
-        return undefined;
-    }
-
-    function removeWidget($event?: any, widget?: any) {
-        if (vm.dashboardCtx.onRemoveWidget) {
-            vm.dashboardCtx.onRemoveWidget($event, vm.layoutCtx, widget);
-        }
-    }
-
-    function dashboardInitFailed() {
-        var parentScope: any = $window.parent.angular.element($window.frameElement).scope();
-        parentScope.$emit('widgetEditModeInited');
-        parentScope.$apply();
-        vm.dashboardInitComplete = true;
-    }
-
-    function dashboardInited(dashboardContainer?: any) {
-        vm.dashboardContainer = dashboardContainer;
-        vm.dashboardInitComplete = true;
-    }
-
-    function isHotKeyAllowed(event?: any) {
-        var target: any = event.target || event.srcElement;
-        var elementScope: any = ($(target) as any).scope();
-        return elementScope && elementScope.$parent !== $rootScope;
-    }
-
-    function initHotKeys() {
-        $translate(['action.copy', 'action.paste', 'action.delete']).then(function (translations?: any) {
-            hotkeys.bindTo($scope)
-                .add({
-                    combo: 'ctrl+c',
-                    description: translations['action.copy'],
-                    callback: function (event?: any) {
-                        if (isHotKeyAllowed(event) &&
-                            vm.isEdit && !vm.isEditingWidget && !vm.widgetEditMode) {
-                            var widget: any = vm.dashboardContainer.getSelectedWidget();
-                            if (widget) {
-                                event.preventDefault();
-                                copyWidget(event, widget);
-                            }
-                        }
-                    }
-                })
-                .add({
-                    combo: 'ctrl+r',
-                    description: translations['action.copy-reference'],
-                    callback: function (event?: any) {
-                        if (isHotKeyAllowed(event) &&
-                            vm.isEdit && !vm.isEditingWidget && !vm.widgetEditMode) {
-                            var widget: any = vm.dashboardContainer.getSelectedWidget();
-                            if (widget) {
-                                event.preventDefault();
-                                copyWidgetReference(event, widget);
-                            }
-                        }
-                    }
-                })
-                .add({
-                    combo: 'ctrl+v',
-                    description: translations['action.paste'],
-                    callback: function (event?: any) {
-                        if (isHotKeyAllowed(event) &&
-                            vm.isEdit && !vm.isEditingWidget && !vm.widgetEditMode) {
-                            if (itembuffer.hasWidget()) {
-                                event.preventDefault();
-                                pasteWidget(event);
-                            }
-                        }
-                    }
-                })
-                .add({
-                    combo: 'ctrl+i',
-                    description: translations['action.paste-reference'],
-                    callback: function (event?: any) {
-                        if (isHotKeyAllowed(event) &&
-                            vm.isEdit && !vm.isEditingWidget && !vm.widgetEditMode) {
-                            if (itembuffer.canPasteWidgetReference(vm.dashboardCtx.dashboard,
-                                    vm.dashboardCtx.state, vm.layoutCtx.id)) {
-                                event.preventDefault();
-                                pasteWidgetReference(event);
-                            }
-                        }
-                    }
-                })
-
-                .add({
-                    combo: 'ctrl+x',
-                    description: translations['action.delete'],
-                    callback: function (event?: any) {
-                        if (isHotKeyAllowed(event) &&
-                            vm.isEdit && !vm.isEditingWidget && !vm.widgetEditMode) {
-                            var widget: any = vm.dashboardContainer.getSelectedWidget();
-                            if (widget) {
-                                event.preventDefault();
-                                vm.dashboardCtx.onRemoveWidget(event, vm.layoutCtx, widget);
-                            }
-                        }
-                    }
-                });
-        });
-    }
-
-    function copyWidget($event?: any, widget?: any) {
-        if (vm.dashboardCtx.copyWidget) {
-            vm.dashboardCtx.copyWidget($event, vm.layoutCtx, widget);
-        }
-    }
-
-    function copyWidgetReference($event?: any, widget?: any) {
-        if (vm.dashboardCtx.copyWidgetReference) {
-            vm.dashboardCtx.copyWidgetReference($event, vm.layoutCtx, widget);
-        }
-    }
-
-    function pasteWidget($event?: any) {
-        var pos: any = vm.dashboardContainer.getEventGridPosition($event);
-        if (vm.dashboardCtx.pasteWidget) {
-            vm.dashboardCtx.pasteWidget($event, vm.layoutCtx, pos);
-        }
-    }
-
-    function pasteWidgetReference($event?: any) {
-        var pos: any = vm.dashboardContainer.getEventGridPosition($event);
-        if (vm.dashboardCtx.pasteWidgetReference) {
-            vm.dashboardCtx.pasteWidgetReference($event, vm.layoutCtx, pos);
-        }
-    }
-
-}
+declare let itembuffer: any;
 
 /**
  * Ported from the AngularJS directive `tbDashboardLayout` (module `thingsboard.dashboard.layouts`) in src/app/dashboard/layouts/index.js:20.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 2 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
   selector: 'tb-dashboard-layout',
@@ -262,94 +28,257 @@ function DashboardLayoutController(this: any, $scope?: any, $rootScope?: any, $t
   templateUrl: './tb-dashboard-layout.directive.html',
 })
 export class TbDashboardLayoutDirective {
-  protected readonly rootScope = injectRoot(RootState);
   readonly layoutCtx = model<any>();
   readonly dashboardCtx = model<any>();
   readonly isEdit = model<any>();
   readonly isMobile = model<any>();
   readonly widgetEditMode = model<any>();
 
-  protected dashboardInitComplete = false;
-  protected dashboardContainer: any;
+  // TODO(port): '$scope' — component state: fields and signals on this class
+  protected readonly rootScope = inject(RootState);
+  protected readonly translate = inject(TranslateService);
+  // TODO(port): '$window' — use window directly, or inject(DOCUMENT).defaultView
+  // TODO(port): 'hotkeys' — no Angular counterpart found: not a built-in, not downgraded, not a legacy registration
+  protected readonly itembuffer = inject(ItembufferService);
+  protected readonly destroyRef = inject(DestroyRef);
 
-  protected noData(): boolean {
-    return this.dashboardInitComplete && this.layoutCtx() &&
-      this.layoutCtx().widgets && this.layoutCtx().widgets.length == 0;
-  }
+  dashboardInitComplete: any = false;
+  dashboardContainer: any;
+  isEditingWidget: any;
 
-  protected addWidget($event?: any) {
-    if (this.dashboardCtx().onAddWidget) {
-      this.dashboardCtx().onAddWidget($event, this.layoutCtx());
-    }
-  }
-
-  protected editWidget($event?: any, widget?: any) {
-    if (this.dashboardCtx().onEditWidget) {
-      this.dashboardCtx().onEditWidget($event, this.layoutCtx(), widget);
-    }
-  }
-
-  protected exportWidget($event?: any, widget?: any) {
-    if (this.dashboardCtx().onExportWidget) {
-      this.dashboardCtx().onExportWidget($event, this.layoutCtx(), widget);
-    }
-  }
-
-  protected widgetMouseDown($event?: any, widget?: any) {
-    if (this.dashboardCtx().onWidgetMouseDown) {
-      this.dashboardCtx().onWidgetMouseDown($event, this.layoutCtx(), widget);
-    }
-  }
-
-  protected widgetClicked($event?: any, widget?: any) {
-    if (this.dashboardCtx().onWidgetClicked) {
-      this.dashboardCtx().onWidgetClicked($event, this.layoutCtx(), widget);
-    }
-  }
-
-  protected prepareDashboardContextMenu() {
-    if (this.dashboardCtx().prepareDashboardContextMenu) {
-      return this.dashboardCtx().prepareDashboardContextMenu(this.layoutCtx());
-    }
-    return undefined;
-  }
-
-  protected prepareWidgetContextMenu(widget?: any) {
-    if (this.dashboardCtx().prepareWidgetContextMenu) {
-      return this.dashboardCtx().prepareWidgetContextMenu(this.layoutCtx(), widget);
-    }
-    return undefined;
-  }
-
-  protected removeWidget($event?: any, widget?: any) {
-    if (this.dashboardCtx().onRemoveWidget) {
-      this.dashboardCtx().onRemoveWidget($event, this.layoutCtx(), widget);
-    }
-  }
-
-  protected dashboardInited(dashboardContainer?: any) {
-    this.dashboardContainer = dashboardContainer;
-    this.dashboardInitComplete = true;
-  }
-
-  protected dashboardInitFailed() {
-    this.dashboardInitComplete = true;
-  }
-
-  restrict: any = "E";
-  directiveScope: any = true;
-  bindToController: any = {
-            layoutCtx: '=',
-            dashboardCtx: '=',
-            isEdit: '=',
-            isMobile: '=',
-            widgetEditMode: '='
-        };
-  controller: any = DashboardLayoutController;
-  controllerAs: any;
+  // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
+  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
 
   constructor() {
     let vm = this;
-    this.controllerAs = 'vm';
+    let ctrl = this;
+    this.noData = this.noData;
+    this.addWidget = this.addWidget;
+    this.editWidget = this.editWidget;
+    this.exportWidget = this.exportWidget;
+    this.widgetMouseDown = this.widgetMouseDown;
+    this.widgetClicked = this.widgetClicked;
+    this.prepareDashboardContextMenu = this.prepareDashboardContextMenu;
+    this.prepareWidgetContextMenu = this.prepareWidgetContextMenu;
+    this.removeWidget = this.removeWidget;
+    this.pasteWidget = this.pasteWidget;
+    this.pasteWidgetReference = this.pasteWidgetReference;
+    this.dashboardInited = this.dashboardInited;
+    this.dashboardInitFailed = this.dashboardInitFailed;
+    this.initHotKeys();
+    this.destroyRef.onDestroy(() => {
+        this.dashboardContainer = null;
+    });
+    $scope.$watch('vm.layoutCtx', () => {
+        if (this.layoutCtx()) {
+            this.layoutCtx().ctrl = this;
+        }
+    });
   }
+
+  reload(...rest: any[]): any {
+    if (this.dashboardContainer) {
+        this.dashboardContainer.reload();
+    }
+  }
+
+  setResizing(resizing?: any, ...rest: any[]): any {
+    if (this.dashboardContainer) {
+        this.dashboardContainer.isResizing = resizing;
+    }
+  }
+
+  resetHighlight(...rest: any[]): any {
+    if (this.dashboardContainer) {
+        this.dashboardContainer.resetHighlight();
+    }
+  }
+
+  highlightWidget(widget?: any, delay?: any, ...rest: any[]): any {
+    if (this.dashboardContainer) {
+        this.dashboardContainer.highlightWidget(widget, delay);
+    }
+  }
+
+  selectWidget(widget?: any, delay?: any, ...rest: any[]): any {
+    if (this.dashboardContainer) {
+        this.dashboardContainer.selectWidget(widget, delay);
+    }
+  }
+
+  noData = (...rest: any[]): any => {
+    return this.dashboardInitComplete && this.layoutCtx() &&
+        this.layoutCtx().widgets && this.layoutCtx().widgets.length == 0;
+  };
+
+  addWidget = ($event?: any, ...rest: any[]): any => {
+    if (this.dashboardCtx().onAddWidget) {
+        this.dashboardCtx().onAddWidget($event, this.layoutCtx());
+    }
+  };
+
+  editWidget = ($event?: any, widget?: any, ...rest: any[]): any => {
+    if (this.dashboardCtx().onEditWidget) {
+        this.dashboardCtx().onEditWidget($event, this.layoutCtx(), widget);
+    }
+  };
+
+  exportWidget = ($event?: any, widget?: any, ...rest: any[]): any => {
+    if (this.dashboardCtx().onExportWidget) {
+        this.dashboardCtx().onExportWidget($event, this.layoutCtx(), widget);
+    }
+  };
+
+  widgetMouseDown = ($event?: any, widget?: any, ...rest: any[]): any => {
+    if (this.dashboardCtx().onWidgetMouseDown) {
+        this.dashboardCtx().onWidgetMouseDown($event, this.layoutCtx(), widget);
+    }
+  };
+
+  widgetClicked = ($event?: any, widget?: any, ...rest: any[]): any => {
+    if (this.dashboardCtx().onWidgetClicked) {
+        this.dashboardCtx().onWidgetClicked($event, this.layoutCtx(), widget);
+    }
+  };
+
+  prepareDashboardContextMenu = (...rest: any[]): any => {
+    if (this.dashboardCtx().prepareDashboardContextMenu) {
+        return this.dashboardCtx().prepareDashboardContextMenu(this.layoutCtx());
+    }
+    return undefined;
+  };
+
+  prepareWidgetContextMenu = (widget?: any, ...rest: any[]): any => {
+    if (this.dashboardCtx().prepareWidgetContextMenu) {
+        return this.dashboardCtx().prepareWidgetContextMenu(this.layoutCtx(), widget);
+    }
+    return undefined;
+  };
+
+  removeWidget = ($event?: any, widget?: any, ...rest: any[]): any => {
+    if (this.dashboardCtx().onRemoveWidget) {
+        this.dashboardCtx().onRemoveWidget($event, this.layoutCtx(), widget);
+    }
+  };
+
+  dashboardInitFailed = (...rest: any[]): any => {
+    var parentScope: any = $window.parent.angular.element($window.frameElement).scope();
+    parentScope.$emit('widgetEditModeInited');
+    parentScope.$apply();
+    this.dashboardInitComplete = true;
+  };
+
+  dashboardInited = (dashboardContainer?: any, ...rest: any[]): any => {
+    this.dashboardContainer = dashboardContainer;
+    this.dashboardInitComplete = true;
+  };
+
+  isHotKeyAllowed(event?: any, ...rest: any[]): any {
+    var target: any = event.target || event.srcElement;
+    var scope: any = $(target).scope();
+    return scope && scope.$parent !== this.rootScope;
+  }
+
+  initHotKeys(...rest: any[]): any {
+    let ctrl = this;
+    this.translate(['action.copy', 'action.paste', 'action.delete']).then((translations?: any) => {
+        hotkeys.bindTo(this)
+            .add({
+                combo: 'ctrl+c',
+                description: translations['action.copy'],
+                callback: (event?: any, ...rest: any[]) => {
+                    if (this.isHotKeyAllowed(event) &&
+                        this.isEdit() && !this.isEditingWidget && !this.widgetEditMode()) {
+                        var widget: any = this.dashboardContainer.getSelectedWidget();
+                        if (widget) {
+                            event.preventDefault();
+                            this.copyWidget(event, widget);
+                        }
+                    }
+                }
+            })
+            .add({
+                combo: 'ctrl+r',
+                description: translations['action.copy-reference'],
+                callback: (event?: any, ...rest: any[]) => {
+                    if (this.isHotKeyAllowed(event) &&
+                        this.isEdit() && !this.isEditingWidget && !this.widgetEditMode()) {
+                        var widget: any = this.dashboardContainer.getSelectedWidget();
+                        if (widget) {
+                            event.preventDefault();
+                            this.copyWidgetReference(event, widget);
+                        }
+                    }
+                }
+            })
+            .add({
+                combo: 'ctrl+v',
+                description: translations['action.paste'],
+                callback: (event?: any, ...rest: any[]) => {
+                    if (this.isHotKeyAllowed(event) &&
+                        this.isEdit() && !this.isEditingWidget && !this.widgetEditMode()) {
+                        if (this.itembuffer.hasWidget()) {
+                            event.preventDefault();
+                            this.pasteWidget(event);
+                        }
+                    }
+                }
+            })
+            .add({
+                combo: 'ctrl+i',
+                description: translations['action.paste-reference'],
+                callback: (event?: any, ...rest: any[]) => {
+                    if (this.isHotKeyAllowed(event) &&
+                        this.isEdit() && !this.isEditingWidget && !this.widgetEditMode()) {
+                        if (this.itembuffer.canPasteWidgetReference(this.dashboardCtx().dashboard,
+                                this.dashboardCtx().state, this.layoutCtx().id)) {
+                            event.preventDefault();
+                            this.pasteWidgetReference(event);
+                        }
+                    }
+                }
+            })
+
+            .add({
+                combo: 'ctrl+x',
+                description: translations['action.delete'],
+                callback: (event?: any, ...rest: any[]) => {
+                    if (this.isHotKeyAllowed(event) &&
+                        this.isEdit() && !this.isEditingWidget && !this.widgetEditMode()) {
+                        var widget: any = this.dashboardContainer.getSelectedWidget();
+                        if (widget) {
+                            event.preventDefault();
+                            this.dashboardCtx().onRemoveWidget(event, this.layoutCtx(), widget);
+                        }
+                    }
+                }
+            });
+    });
+  }
+
+  copyWidget($event?: any, widget?: any, ...rest: any[]): any {
+    if (this.dashboardCtx().copyWidget) {
+        this.dashboardCtx().copyWidget($event, this.layoutCtx(), widget);
+    }
+  }
+
+  copyWidgetReference($event?: any, widget?: any, ...rest: any[]): any {
+    if (this.dashboardCtx().copyWidgetReference) {
+        this.dashboardCtx().copyWidgetReference($event, this.layoutCtx(), widget);
+    }
+  }
+
+  pasteWidget = ($event?: any, ...rest: any[]): any => {
+    var pos: any = this.dashboardContainer.getEventGridPosition($event);
+    if (this.dashboardCtx().pasteWidget) {
+        this.dashboardCtx().pasteWidget($event, this.layoutCtx(), pos);
+    }
+  };
+
+  pasteWidgetReference = ($event?: any, ...rest: any[]): any => {
+    var pos: any = this.dashboardContainer.getEventGridPosition($event);
+    if (this.dashboardCtx().pasteWidgetReference) {
+        this.dashboardCtx().pasteWidgetReference($event, this.layoutCtx(), pos);
+    }
+  };
 }

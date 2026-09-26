@@ -1,264 +1,20 @@
-import { Component, model } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
+import { DestroyRef } from '@angular/core';
+import { ElementRef } from '@angular/core';
+import { UtilsService } from '../../common/services/utils.service';
+import { types } from '../../common/constants/types';
 import { CommonModule } from '@angular/common';
 
-// Helpers at the legacy file's top level, beside the registration (as written).
-function LedIndicatorController(this: any, $element?: any, $scope?: any, $timeout?: any, utils?: any, types?: any) {
-    let vm: any = this;
-
-    vm.showTitle = false;
-    vm.value = false;
-    vm.error = '';
-
-    const checkStatusPollingInterval: any = 10000;
-
-    vm.subscriptionOptions = {
-        callbacks: {
-            onDataUpdated: onDataUpdated,
-            onDataUpdateError: onDataUpdateError,
-            dataLoading: () => {}
-        }
-    };
-
-    const $: any = (window as any).$;
-    var led: any = $('.led', $element),
-        ledContainer: any = $('#led-container', $element),
-        textMeasure: any = $('#text-measure', $element),
-        ledTitleContainer: any = $('.title-container', $element),
-        ledTitle: any = $('.led-title', $element),
-        ledErrorContainer: any = $('.error-container', $element),
-        ledError: any = $('.led-error', $element);
-
-    // Watch replaced by ngOnChanges on the host component, which invokes this when vm.ctx changes.
-    if (vm.ctx) {
-        init();
-    }
-
-    $scope.$on('$destroy', () => {
-        vm.destroyed = true;
-        if (vm.checkStatusTimeoutHandle) {
-            $timeout.cancel(vm.checkStatusTimeoutHandle);
-        }
-        if (vm.subscription) {
-            vm.ctx.subscriptionApi.removeSubscription(vm.subscription.id);
-        }
-    });
-
-    resize();
-
-    function init() {
-
-        const tinycolor: any = (window as any).tinycolor;
-
-        vm.title = vm.ctx.settings.title !== undefined ? vm.ctx.settings.title : '';
-        vm.showTitle = vm.title && vm.title.length ? true : false;
-
-        var origColor: any = vm.ctx.settings.ledColor !== undefined ? vm.ctx.settings.ledColor : 'green';
-
-        vm.valueAttribute = vm.ctx.settings.valueAttribute !== undefined ? vm.ctx.settings.valueAttribute : 'value';
-
-        vm.ledColor = tinycolor(origColor).brighten(30).toHexString();
-        vm.ledMiddleColor = tinycolor(origColor).toHexString();
-        vm.disabledColor = tinycolor(origColor).darken(40).toHexString();
-        vm.disabledMiddleColor = tinycolor(origColor).darken(60).toHexString();
-
-        vm.ctx.resize = resize;
-        resize();
-        var initialValue: any = vm.ctx.settings.initialValue !== undefined ? vm.ctx.settings.initialValue : false;
-        setValue(initialValue, true);
-
-        var subscription: any = vm.ctx.defaultSubscription;
-        var rpcEnabled: any = subscription.rpcEnabled;
-
-        vm.isSimulated = $scope.widgetEditMode;
-
-        vm.requestTimeout = 500;
-        if (vm.ctx.settings.requestTimeout) {
-            vm.requestTimeout = vm.ctx.settings.requestTimeout;
-        }
-        vm.retrieveValueMethod = 'attribute';
-        if (vm.ctx.settings.retrieveValueMethod && vm.ctx.settings.retrieveValueMethod.length) {
-            vm.retrieveValueMethod = vm.ctx.settings.retrieveValueMethod;
-        }
-
-        vm.parseValueFunction = (data?: any) => data ? true : false;
-        if (vm.ctx.settings.parseValueFunction && vm.ctx.settings.parseValueFunction.length) {
-            try {
-                vm.parseValueFunction = new Function('data', vm.ctx.settings.parseValueFunction);
-            } catch (e) {
-                vm.parseValueFunction = (data?: any) => data ? true : false;
-            }
-        }
-
-        vm.performCheckStatus = vm.ctx.settings.performCheckStatus != false;
-        if (vm.performCheckStatus) {
-            vm.checkStatusMethod = 'checkStatus';
-            if (vm.ctx.settings.checkStatusMethod && vm.ctx.settings.checkStatusMethod.length) {
-                vm.checkStatusMethod = vm.ctx.settings.checkStatusMethod;
-            }
-        }
-        if (!rpcEnabled) {
-            onError('Target device is not set!');
-        } else {
-            if (!vm.isSimulated) {
-                if (vm.performCheckStatus) {
-                    rpcCheckStatus();
-                } else {
-                    subscribeForValue();
-                }
-            }
-        }
-    }
-
-    function resize() {
-        var width: any = ledContainer.width();
-        var height: any = ledContainer.height();
-        var size: any = Math.min(width, height);
-
-        led.css({width: size, height: size});
-
-        if (vm.showTitle) {
-            setFontSize(ledTitle, vm.title, ledTitleContainer.height() * 2 / 3, ledTitleContainer.width());
-        }
-        setFontSize(ledError, vm.error, ledErrorContainer.height(), ledErrorContainer.width());
-    }
-
-    function setValue(value?: any, forceUpdate?: any) {
-        if (vm.value != value || forceUpdate) {
-            vm.value = value;
-            updateColor();
-        }
-    }
-
-    function updateColor() {
-        var color: any = vm.value ? vm.ledColor : vm.disabledColor;
-        var middleColor: any = vm.value ? vm.ledMiddleColor : vm.disabledMiddleColor;
-        var boxShadow: any = `#000 0 -1px 6px 1px, inset ${middleColor} 0 -1px 8px, ${color} 0 3px 11px`;
-        led.css({'backgroundColor': color});
-        led.css({'boxShadow': boxShadow});
-        if (vm.value) {
-            led.removeClass( 'disabled' );
-        } else {
-            led.addClass( 'disabled' );
-        }
-    }
-
-    function onError(error?: any) {
-    function onError(error?: any) {
-        vm.error = error;
-        setFontSize(ledError, vm.error, ledErrorContainer.height(), ledErrorContainer.width());
-    }
-    }
-
-    function setFontSize(element?: any, text?: any, fontSize?: any, maxWidth?: any) {
-        var textWidth: any = measureTextWidth(text, fontSize);
-        while (textWidth > maxWidth) {
-            fontSize--;
-            textWidth = measureTextWidth(text, fontSize);
-        }
-        element.css({'fontSize': fontSize+'px', 'lineHeight': fontSize+'px'});
-    }
-
-    function measureTextWidth(text?: any, fontSize?: any) {
-        textMeasure.css({'fontSize': fontSize+'px', 'lineHeight': fontSize+'px'});
-        textMeasure.text(text);
-        return textMeasure.width();
-    }
-
-    function rpcCheckStatus() {
-        if (vm.destroyed) {
-            return;
-        }
-        vm.error = '';
-        vm.ctx.controlApi.sendTwoWayCommand(vm.checkStatusMethod, null, vm.requestTimeout).then(
-            (responseBody?: any) => {
-                var status: any = responseBody ? true : false;
-                if (status) {
-                    if (vm.checkStatusTimeoutHandle) {
-                        $timeout.cancel(vm.checkStatusTimeoutHandle);
-                        vm.checkStatusTimeoutHandle = null;
-                    }
-                    subscribeForValue();
-                } else {
-                    var errorText: any = 'Unknown device status!';
-                    onError(errorText);
-                    if (vm.checkStatusTimeoutHandle) {
-                        $timeout.cancel(vm.checkStatusTimeoutHandle);
-                    }
-                    vm.checkStatusTimeoutHandle = $timeout(rpcCheckStatus, checkStatusPollingInterval);
-                }
-            },
-            () => {
-                var errorText: any = vm.ctx.defaultSubscription.rpcErrorText;
-                onError(errorText);
-                if (vm.checkStatusTimeoutHandle) {
-                    $timeout.cancel(vm.checkStatusTimeoutHandle);
-                }
-                vm.checkStatusTimeoutHandle = $timeout(rpcCheckStatus, checkStatusPollingInterval);
-            }
-        );
-    }
-
-    function subscribeForValue() {
-        var subscriptionsInfo: any = [{
-            type: types.datasourceType.entity,
-            entityType: types.entityType.device,
-            entityId: vm.ctx.defaultSubscription.targetDeviceId
-        }];
-
-        if (vm.retrieveValueMethod == 'attribute') {
-            subscriptionsInfo[0].attributes = [
-                {name: vm.valueAttribute}
-            ];
-        } else {
-            subscriptionsInfo[0].timeseries = [
-                {name: vm.valueAttribute}
-            ];
-        }
-
-        vm.ctx.subscriptionApi.createSubscriptionFromInfo (
-            types.widgetType.latest.value, subscriptionsInfo, vm.subscriptionOptions, false, true).then(
-            function(subscription?: any) {
-                vm.subscription = subscription;
-            }
-        );
-    }
-
-    function onDataUpdated(subscription?: any, apply?: any) {
-        var value: any = false;
-        var data: any = subscription.data;
-        if (data.length) {
-            var keyData: any = data[0];
-            if (keyData && keyData.data && keyData.data[0]) {
-                var attrValue: any = keyData.data[0][1];
-                if (attrValue) {
-                    var parsed: any = null;
-                    try {
-                        parsed = vm.parseValueFunction(JSON.parse(attrValue));
-                    } catch (e){/**/}
-                    value = parsed ? true : false;
-                }
-            }
-        }
-        setValue(value);
-        if (apply) {
-            $scope.$digest();
-        }
-    }
-
-    function onDataUpdateError(subscription?: any, e?: any) {
-        var exceptionData: any = utils.parseException(e);
-        var errorText: any = exceptionData.name;
-        if (exceptionData.message) {
-            errorText += ': ' + exceptionData.message;
-        }
-        onError(errorText);
-    }
-
-}
+import $ from 'jquery';
+import tinycolor from 'tinycolor2';
+import { $timeout } from '../../../core/q';
+// Globals the original relied on (loaded as scripts by the legacy page); type them, or import the package.
+declare let $scope: any;
+declare let utils: any;
 
 /**
  * Ported from the AngularJS directive `tbLedIndicator` (module `thingsboard.widgets.rpc.ledIndicator`) in src/app/widget/lib/rpc/led-indicator.directive.js:26.
- * Scaffolded by the playbook: the shape and the body are ported by syntax tree; nothing is left for a model.
+ * Scaffolded by the playbook: the shape and the body are ported by syntax tree; 3 thing(s) stay as written under a TODO(port) for a person or a model.
  */
 @Component({
   selector: 'tb-led-indicator',
@@ -269,20 +25,284 @@ function LedIndicatorController(this: any, $element?: any, $scope?: any, $timeou
 export class TbLedIndicatorDirective {
   readonly ctx = model<any>();
 
-  showTitle: any;
-  title: any;
-  error: any;
+  protected readonly element = inject(ElementRef);
+  // TODO(port): '$scope' — component state: fields and signals on this class
+  // TODO(port): '$timeout' — use setTimeout, or an rxjs timer
+  protected readonly utils = inject(UtilsService);
+  protected readonly destroyRef = inject(DestroyRef);
 
-  restrict: any = "E";
-  bindToController: any = {
-            ctx: '='
-        };
-  controller: any = LedIndicatorController;
-  controllerAs: any;
-  templateUrl: any = './tb-led-indicator.directive.html';
+  showTitle: any = false;
+  value: any = false;
+  error: any = '';
+  protected checkStatusPollingInterval: any = 10000;
+  subscriptionOptions: any;
+  protected led: any;
+  protected ledContainer: any;
+  protected textMeasure: any;
+  protected ledTitleContainer: any;
+  protected ledTitle: any;
+  protected ledErrorContainer: any;
+  protected ledError: any;
+  checkStatusMethod: any;
+  checkStatusTimeoutHandle: any;
+  destroyed: any;
+  disabledColor: any;
+  disabledMiddleColor: any;
+  isSimulated: any;
+  ledColor: any;
+  ledMiddleColor: any;
+  parseValueFunction: any;
+  performCheckStatus: any;
+  requestTimeout: any;
+  retrieveValueMethod: any;
+  subscription: any;
+  title: any;
+  valueAttribute: any;
+  widgetEditMode: any;
+
+  // TODO(port): $scope.$digest — $digest is not needed: Angular detects the change
+  // TODO(port): $scope.$on — a scope event: subscribe to the service that raises it
+  // TODO(port): $scope.$watch — a $watch: compute this from a signal or an effect()
 
   constructor() {
     let vm = this;
-    this.controllerAs = 'vm';
+    this.subscriptionOptions = {
+        callbacks: {
+            onDataUpdated: this.onDataUpdated,
+            onDataUpdateError: this.onDataUpdateError,
+            dataLoading: (...rest: any[]) => {}
+        }
+    };
+    this.led = $('.led', $(this.element.nativeElement));
+    this.ledContainer = $('#led-container', $(this.element.nativeElement));
+    this.textMeasure = $('#text-measure', $(this.element.nativeElement));
+    this.ledTitleContainer = $('.title-container', $(this.element.nativeElement));
+    this.ledTitle = $('.led-title', $(this.element.nativeElement));
+    this.ledErrorContainer = $('.error-container', $(this.element.nativeElement));
+    this.ledError = $('.led-error', $(this.element.nativeElement));
+    $scope.$watch('vm.ctx', () => {
+        if (this.ctx()) {
+            this.init();
+        }
+    });
+    this.destroyRef.onDestroy(() => {
+        this.destroyed = true;
+        if (this.checkStatusTimeoutHandle) {
+            clearTimeout(this.checkStatusTimeoutHandle);
+        }
+        if (this.subscription) {
+            this.ctx().subscriptionApi.removeSubscription(this.subscription.id);
+        }
+    });
+    this.resize();
   }
+
+  init(...rest: any[]): any {
+
+    this.title = (this.ctx().settings.title !== undefined) ? this.ctx().settings.title : '';
+    this.showTitle = this.title && this.title.length ? true : false;
+
+    var origColor: any = (this.ctx().settings.ledColor !== undefined) ? this.ctx().settings.ledColor : 'green';
+
+    this.valueAttribute = (this.ctx().settings.valueAttribute !== undefined) ? this.ctx().settings.valueAttribute : 'value';
+
+    this.ledColor = tinycolor(origColor).brighten(30).toHexString();
+    this.ledMiddleColor = tinycolor(origColor).toHexString();
+    this.disabledColor = tinycolor(origColor).darken(40).toHexString();
+    this.disabledMiddleColor = tinycolor(origColor).darken(60).toHexString();
+
+    this.ctx().resize = this.resize;
+    queueMicrotask(() => {
+        this.resize();
+    });
+    var initialValue: any = (this.ctx().settings.initialValue !== undefined) ? this.ctx().settings.initialValue : false;
+    this.setValue(initialValue, true);
+
+    var subscription: any = this.ctx().defaultSubscription;
+    var rpcEnabled: any = subscription.rpcEnabled;
+
+    this.isSimulated = this.widgetEditMode;
+
+    this.requestTimeout = 500;
+    if (this.ctx().settings.requestTimeout) {
+        this.requestTimeout = this.ctx().settings.requestTimeout;
+    }
+    this.retrieveValueMethod = 'attribute';
+    if (this.ctx().settings.retrieveValueMethod && this.ctx().settings.retrieveValueMethod.length) {
+        this.retrieveValueMethod = this.ctx().settings.retrieveValueMethod;
+    }
+
+    this.parseValueFunction = (data?: any) => data ? true : false;
+    if (this.ctx().settings.parseValueFunction && this.ctx().settings.parseValueFunction.length) {
+        try {
+            this.parseValueFunction = new Function('data', this.ctx().settings.parseValueFunction);
+        } catch (e: any) {
+            this.parseValueFunction = (data?: any) => data ? true : false;
+        }
+    }
+
+    this.performCheckStatus = this.ctx().settings.performCheckStatus != false;
+    if (this.performCheckStatus) {
+        this.checkStatusMethod = 'checkStatus';
+        if (this.ctx().settings.checkStatusMethod && this.ctx().settings.checkStatusMethod.length) {
+            this.checkStatusMethod = this.ctx().settings.checkStatusMethod;
+        }
+    }
+    if (!rpcEnabled) {
+        this.onError('Target device is not set!');
+    } else {
+        if (!this.isSimulated) {
+            if (this.performCheckStatus) {
+                this.rpcCheckStatus();
+            } else {
+                this.subscribeForValue();
+            }
+        }
+    }
+  }
+
+  resize = (...rest: any[]): any => {
+    var width: any = this.ledContainer.width();
+    var height: any = this.ledContainer.height();
+    var size: any = Math.min(width, height);
+
+    this.led.css({width: size, height: size});
+
+    if (this.showTitle) {
+        this.setFontSize(this.ledTitle, this.title, this.ledTitleContainer.height() * 2 / 3, this.ledTitleContainer.width());
+    }
+    this.setFontSize(this.ledError, this.error, this.ledErrorContainer.height(), this.ledErrorContainer.width());
+  };
+
+  setValue(value?: any, forceUpdate?: any, ...rest: any[]): any {
+    if (this.value != value || forceUpdate) {
+        this.value = value;
+        this.updateColor();
+    }
+  }
+
+  updateColor(...rest: any[]): any {
+    var color: any = this.value ? this.ledColor : this.disabledColor;
+    var middleColor: any = this.value ? this.ledMiddleColor : this.disabledMiddleColor;
+    var boxShadow: any = `#000 0 -1px 6px 1px, inset ${middleColor} 0 -1px 8px, ${color} 0 3px 11px`;
+    this.led.css({'backgroundColor': color});
+    this.led.css({'boxShadow': boxShadow});
+    if (this.value) {
+        this.led.removeClass( 'disabled' );
+    } else {
+        this.led.addClass( 'disabled' );
+    }
+  }
+
+  onError(error?: any, ...rest: any[]): any {
+    queueMicrotask(() => {
+        this.error = error;
+        this.setFontSize(this.ledError, this.error, this.ledErrorContainer.height(), this.ledErrorContainer.width());
+    });
+  }
+
+  setFontSize(element?: any, text?: any, fontSize?: any, maxWidth?: any, ...rest: any[]): any {
+    var textWidth: any = this.measureTextWidth(text, fontSize);
+    while (textWidth > maxWidth) {
+        fontSize--;
+        textWidth = this.measureTextWidth(text, fontSize);
+    }
+    element.css({'fontSize': fontSize+'px', 'lineHeight': fontSize+'px'});
+  }
+
+  measureTextWidth(text?: any, fontSize?: any, ...rest: any[]): any {
+    this.textMeasure.css({'fontSize': fontSize+'px', 'lineHeight': fontSize+'px'});
+    this.textMeasure.text(text);
+    return this.textMeasure.width();
+  }
+
+  rpcCheckStatus = (...rest: any[]): any => {
+    if (this.destroyed) {
+        return;
+    }
+    this.error = '';
+    this.ctx().controlApi.sendTwoWayCommand(this.checkStatusMethod, null, this.requestTimeout).then(
+        (responseBody?: any) => {
+            var status: any = responseBody ? true : false;
+            if (status) {
+                if (this.checkStatusTimeoutHandle) {
+                    clearTimeout(this.checkStatusTimeoutHandle);
+                    this.checkStatusTimeoutHandle = null;
+                }
+                this.subscribeForValue();
+            } else {
+                var errorText: any = 'Unknown device status!';
+                this.onError(errorText);
+                if (this.checkStatusTimeoutHandle) {
+                    clearTimeout(this.checkStatusTimeoutHandle);
+                }
+                this.checkStatusTimeoutHandle = setTimeout(this.rpcCheckStatus, this.checkStatusPollingInterval);
+            }
+        },
+        () => {
+            var errorText: any = this.ctx().defaultSubscription.rpcErrorText;
+            this.onError(errorText);
+            if (this.checkStatusTimeoutHandle) {
+                clearTimeout(this.checkStatusTimeoutHandle);
+            }
+            this.checkStatusTimeoutHandle = setTimeout(this.rpcCheckStatus, this.checkStatusPollingInterval);
+        }
+    );
+  };
+
+  subscribeForValue(...rest: any[]): any {
+    var subscriptionsInfo: any = [{
+        type: types.datasourceType.entity,
+        entityType: types.entityType.device,
+        entityId: this.ctx().defaultSubscription.targetDeviceId
+    }];
+
+    if (this.retrieveValueMethod == 'attribute') {
+        subscriptionsInfo[0].attributes = [
+            {name: this.valueAttribute}
+        ];
+    } else {
+        subscriptionsInfo[0].timeseries = [
+            {name: this.valueAttribute}
+        ];
+    }
+
+    this.ctx().subscriptionApi.createSubscriptionFromInfo (
+        types.widgetType.latest.value, subscriptionsInfo, this.subscriptionOptions, false, true).then(
+        (subscription?: any) => {
+            this.subscription = subscription;
+        }
+    );
+  }
+
+  onDataUpdated = (subscription?: any, apply?: any, ...rest: any[]): any => {
+    var value: any = false;
+    var data: any = subscription.data;
+    if (data.length) {
+        var keyData: any = data[0];
+        if (keyData && keyData.data && keyData.data[0]) {
+            var attrValue: any = keyData.data[0][1];
+            if (attrValue) {
+                var parsed: any = null;
+                try {
+                    parsed = this.parseValueFunction(JSON.parse(attrValue));
+                } catch (e: any){/**/}
+                value = parsed ? true : false;
+            }
+        }
+    }
+    this.setValue(value);
+    if (apply) {
+
+    }
+  };
+
+  onDataUpdateError = (subscription?: any, e?: any, ...rest: any[]): any => {
+    var exceptionData: any = this.utils.parseException(e);
+    var errorText: any = exceptionData.name;
+    if (exceptionData.message) {
+        errorText += ': ' + exceptionData.message;
+    }
+    this.onError(errorText);
+  };
 }

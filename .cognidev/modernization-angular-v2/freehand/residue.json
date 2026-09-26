@@ -1,11 +1,11 @@
 {
 "summary": {
-"files": 17,
-"uses": 80,
-"names": 47,
+"files": 25,
+"uses": 131,
+"names": 59,
 "by_kind": {
-"angularjs": 24,
-"lost": 27,
+"angularjs": 64,
+"lost": 38,
 "legacy-import": 29
 }
 },
@@ -21,6 +21,13 @@
 "name": "$filter",
 "kind": "angularjs",
 "at": [
+"src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:363",
+"src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:365",
+"src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:414",
+"src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:243",
+"src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:259",
+"src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:386",
+"src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:392",
 "src/app-ng/feature/components/widget/widget.component.ts:231"
 ]
 },
@@ -46,17 +53,55 @@
 ]
 },
 {
+"name": "$mdUtil",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:461"
+]
+},
+{
 "name": "$scope",
 "kind": "angularjs",
 "at": [
-"src/app-ng/feature/components/widget/widget.component.ts:229"
+"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:89",
+"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:99",
+"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:104",
+"src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:139",
+"src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:150",
+"src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:155",
+"src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:164",
+"src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:167",
+"src/app-ng/feature/widget/tb-led-indicator/tb-led-indicator.directive.ts:83",
+"src/app-ng/feature/widget/tb-round-switch/tb-round-switch.directive.ts:77",
+"src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:84",
+"src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:93",
+"src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:98",
+"src/app-ng/feature/widget/tb-knob/tb-knob.directive.ts:86",
+"src/app-ng/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.ts:72",
+"src/app-ng/feature/components/widget/widget.component.ts:229",
+"src/app-ng/feature/components/tb-nav-tree/tb-nav-tree.directive.ts:42",
+"src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:136",
+"src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:143",
+"src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:150",
+"src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:157",
+"src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:230",
+"src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:233"
 ]
 },
 {
 "name": "$templateCache",
 "kind": "angularjs",
 "at": [
+"src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:326",
 "src/app-ng/feature/event/tb-event-header/tb-event-header.directive.ts:57"
+]
+},
+{
+"name": "$window",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.ts:165",
+"src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:606"
 ]
 },
 {
@@ -138,12 +183,31 @@
 ]
 },
 {
+"name": "addResizeListener",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.ts:53"
+]
+},
+{
 "name": "aliasController",
 "kind": "lost",
 "at": [
 "src/app-ng/feature/components/widget/widget.component.ts:75",
 "src/app-ng/feature/components/widget/widget.component.ts:208",
 "src/app-ng/feature/components/widget/widget.component.ts:243"
+]
+},
+{
+"name": "angular",
+"kind": "angularjs",
+"at": [
+"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:100",
+"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:269",
+"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:274",
+"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:283",
+"src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:151",
+"src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.ts:91"
 ]
 },
 {
@@ -207,6 +271,13 @@
 ]
 },
 {
+"name": "display-columns-panel.tpl.html",
+"kind": "legacy-import",
+"at": [
+"src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:13"
+]
+},
+{
 "name": "element",
 "kind": "angularjs",
 "at": [
@@ -229,10 +300,17 @@
 ]
 },
 {
-"name": "entitiesHierarchyDataUpdatedService",
+"name": "entityRelationService",
 "kind": "lost",
 "at": [
-"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:552"
+"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:46"
+]
+},
+{
+"name": "entityService",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:45"
 ]
 },
 {
@@ -264,6 +342,13 @@
 ]
 },
 {
+"name": "hotkeys",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.ts:185"
+]
+},
+{
 "name": "isEdit",
 "kind": "lost",
 "at": [
@@ -288,6 +373,13 @@
 ]
 },
 {
+"name": "itembuffer",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.ts:42"
+]
+},
+{
 "name": "make-dashboard-public-dialog.tpl.html",
 "kind": "legacy-import",
 "at": [
@@ -302,6 +394,20 @@
 ]
 },
 {
+"name": "mdFabToolbarAnimation",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.ts:79"
+]
+},
+{
+"name": "removeResizeListener",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/dashboard/tb-dashboard-toolbar/tb-dashboard-toolbar.directive.ts:55"
+]
+},
+{
 "name": "rulechain-card.tpl.html",
 "kind": "legacy-import",
 "at": [
@@ -312,7 +418,8 @@
 "name": "scope",
 "kind": "angularjs",
 "at": [
-"src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:459"
+"src/app-ng/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.ts:178",
+"src/app-ng/feature/dashboard/tb-dashboard-layout/tb-dashboard-layout.directive.ts:179"
 ]
 },
 {
@@ -331,10 +438,10 @@
 ]
 },
 {
-"name": "timeseries-table-widget.tpl.html?raw",
-"kind": "legacy-import",
+"name": "toast",
+"kind": "lost",
 "at": [
-"src/app-ng/feature/widget/tb-timeseries-table-widget/tb-timeseries-table-widget.directive.ts:4"
+"src/app-ng/feature/widget/tb-entities-hierarchy-widget/tb-entities-hierarchy-widget.directive.ts:44"
 ]
 },
 {
@@ -342,6 +449,22 @@
 "kind": "legacy-import",
 "at": [
 "src/app-ng/feature/user/user/user.component.ts:20"
+]
+},
+{
+"name": "userService",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/components/tb-grid/tb-grid.directive.ts:56"
+]
+},
+{
+"name": "utils",
+"kind": "lost",
+"at": [
+"src/app-ng/feature/widget/tb-entities-table-widget/tb-entities-table-widget.directive.ts:63",
+"src/app-ng/feature/widget/tb-led-indicator/tb-led-indicator.directive.ts:31",
+"src/app-ng/feature/widget/tb-round-switch/tb-round-switch.directive.ts:28"
 ]
 },
 {
